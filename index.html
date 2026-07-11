@@ -267,6 +267,38 @@
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
     .reveal.in { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce){ .fx, .reveal { opacity: 1 !important; transform: none !important; animation: none !important; } }
+
+    /* ===== EMAIL CAPTURE MODAL ===== */
+    .capture-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(18,17,16,.85); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    .capture-overlay.active { display: flex; }
+    .capture-modal {
+      background: var(--paper); border-radius: var(--radius-lg);
+      padding: 40px 32px; max-width: 440px; width: 90%;
+      text-align: center; box-shadow: 0 30px 60px -20px rgba(0,0,0,.5);
+    }
+    .capture-modal h3 {
+      font-family: var(--display); text-transform: uppercase;
+      font-size: 1.6rem; margin-bottom: 8px; line-height: 1.1;
+    }
+    .capture-modal p { color: var(--dove); font-size: .95rem; margin-bottom: 22px; }
+    .capture-modal input {
+      width: 100%; padding: 14px 18px; margin-bottom: 12px;
+      border: 2px solid var(--line); border-radius: 60px;
+      font-family: var(--body); font-size: 1rem; outline: none;
+      transition: border-color .2s;
+    }
+    .capture-modal input:focus { border-color: var(--orange); }
+    .capture-modal .btn { width: 100%; margin-top: 8px; }
+    .capture-modal .close-btn {
+      background: none; border: none; color: var(--dove);
+      font-size: .85rem; cursor: pointer; margin-top: 14px;
+      text-decoration: underline;
+    }
+
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -330,7 +362,7 @@
   <!-- ===== NAV ===== -->
   <nav class="nav" id="nav">
     <div class="logo">BOOT CAMP <b>FX</b></div>
-    <a class="nav-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1" target="_blank" rel="noopener">Free Week →</a>
+    <a class="nav-cta" href="#" onclick="showCapture(event)" rel="noopener">Free Week →</a>
   </nav>
 
   <!-- ===== HERO ===== -->
@@ -346,7 +378,7 @@
       </h1>
       <p class="hero-tag fx fx-3">45-minute coached sessions at Acacia Park. <b>Real results, a crew that won't let you quit, and a 21-year track record</b> to prove it works.</p>
       <div class="hero-actions fx fx-4">
-        <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1" target="_blank" rel="noopener">Claim Your Free Week <span class="arw">→</span></a>
+        <a class="btn btn-primary" href="#" onclick="showCapture(event)" rel="noopener">Claim Your Free Week <span class="arw">→</span></a>
         <a class="btn btn-ghost" href="#schedule">See the Schedule</a>
       </div>
       <div class="hero-trust fx fx-5">
@@ -589,7 +621,7 @@
       </div>
       <p class="scarcity reveal">New members are capped each month so groups stay small. Spots fill fast.</p>
       <div style="text-align:center; margin-top:22px;" class="reveal">
-        <a class="btn btn-dark" href="https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1" target="_blank" rel="noopener">Claim Your Free Week →</a>
+        <a class="btn btn-dark" href="#" onclick="showCapture(event)" rel="noopener">Claim Your Free Week →</a>
       </div>
     </div>
   </section>
@@ -634,7 +666,7 @@
     <div class="narrow reveal">
       <h2>Your first week<br>is on us.</h2>
       <p>Join the Fullerton crew that's been getting people strong since 2005. No card. No contract. Just show up.</p>
-      <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1" target="_blank" rel="noopener">Claim Your Free Week <span class="arw">→</span></a>
+      <a class="btn btn-primary" href="#" onclick="showCapture(event)" rel="noopener">Claim Your Free Week <span class="arw">→</span></a>
       <p class="fineprint">★★★★★ 4.9 on Google · Acacia Park, Fullerton CA</p>
     </div>
   </section>
@@ -650,7 +682,7 @@
       </p>
       <p><span class="stars">★★★★★</span> <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;"><strong>4.9 on Google</strong></a> — Rated by Fullerton locals</p>
       <p style="margin-top:16px;">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1" target="_blank" rel="noopener">Claim Your Free Week →</a>
+        <a href="#" onclick="showCapture(event)" rel="noopener">Claim Your Free Week →</a>
         &nbsp;|&nbsp;
         <a href="#schedule">See Schedule</a>
       </p>
@@ -664,6 +696,21 @@
       <span class="btn btn-primary">Claim Your Free Week →</span>
     </a>
   </div>
+
+  <!-- ===== EMAIL CAPTURE MODAL ===== -->
+  <div class="capture-overlay" id="capture-overlay">
+    <div class="capture-modal">
+      <h3>Claim Your <span class="hl">Free Week</span></h3>
+      <p>Enter your details and we'll get you started — no credit card, no catch.</p>
+      <form id="capture-form" onsubmit="handleCapture(event)">
+        <input type="text" id="capture-name" name="name" placeholder="Your name" required>
+        <input type="email" id="capture-email" name="email" placeholder="Your email" required>
+        <button type="submit" class="btn btn-primary">Continue to Schedule →</button>
+      </form>
+      <button class="close-btn" onclick="closeCapture()">Skip, go straight to the form</button>
+    </div>
+  </div>
+
 <!-- ===== PayPal SDK & Buttons ===== -->
   <script src="https://www.paypal.com/sdk/js?client-id=AYigo9tlNOhP2BkO2hAvgd3JWJWlZKm1Xjp6qTIF_taEInJATGLV_R5SAQTXJ6MNUJhePUiAFAsnT1H4&vault=true&intent=subscription" data-sdk-integration-source="button-factory" defer></script>
   <script>
@@ -682,6 +729,45 @@
         }).render('#paypal-elite-container');
       }
     });
+  </script>
+
+
+  <!-- ===== EMAIL CAPTURE LOGIC ===== -->
+  <script>
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1';
+    const overlay = document.getElementById('capture-overlay');
+
+    function showCapture(e) {
+      if (e) e.preventDefault();
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('capture-name').focus();
+    }
+
+    function closeCapture() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      window.open(GOOGLE_FORM_URL, '_blank');
+    }
+
+    function handleCapture(e) {
+      e.preventDefault();
+      const name = document.getElementById('capture-name').value.trim();
+      const email = document.getElementById('capture-email').value.trim();
+      
+      // Store in localStorage as basic CRM
+      try {
+        const leads = JSON.parse(localStorage.getItem('bcx_leads') || '[]');
+        leads.push({ name, email, date: new Date().toISOString() });
+        localStorage.setItem('bcx_leads', JSON.stringify(leads));
+      } catch(e) {}
+
+      // Redirect to Google Form with name prefilled via URL params
+      const formUrl = GOOGLE_FORM_URL + '&usp=pp_url&entry.1952821363=' + encodeURIComponent(name) + '&entry.876543210=' + encodeURIComponent(email);
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      window.location.href = formUrl;
+    }
   </script>
 
   <!-- ===== UI: nav, FAQ, reveal ===== -->
