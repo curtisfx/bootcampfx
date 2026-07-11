@@ -667,19 +667,21 @@
 <!-- ===== PayPal SDK & Buttons ===== -->
   <script src="https://www.paypal.com/sdk/js?client-id=AYigo9tlNOhP2BkO2hAvgd3JWJWlZKm1Xjp6qTIF_taEInJATGLV_R5SAQTXJ6MNUJhePUiAFAsnT1H4&vault=true&intent=subscription" data-sdk-integration-source="button-factory" defer></script>
   <script>
-    if (window.paypal) {
-      paypal.Buttons({
-        style: { shape: 'pill', color: 'black', layout: 'vertical', label: 'subscribe' },
-        createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: 'P-01R729078S772880RNGW6Y2Q' }); },
-        onApprove: function(data) { alert('Welcome to Boot Camp FX Starter! Your subscription ID: ' + data.subscriptionID); }
-      }).render('#paypal-starter-container');
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.paypal) {
+        paypal.Buttons({
+          style: { shape: 'pill', color: 'black', layout: 'vertical', label: 'subscribe' },
+          createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: 'P-01R729078S772880RNGW6Y2Q' }); },
+          onApprove: function(data) { alert('Welcome to Boot Camp FX Starter! Your subscription ID: ' + data.subscriptionID); }
+        }).render('#paypal-starter-container');
 
-      paypal.Buttons({
-        style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
-        createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: 'P-5LX3921079692330VNGW67ZI' }); },
-        onApprove: function(data) { alert('Welcome to Boot Camp FX Elite! Your subscription ID: ' + data.subscriptionID); }
-      }).render('#paypal-elite-container');
-    }
+        paypal.Buttons({
+          style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
+          createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: 'P-5LX3921079692330VNGW67ZI' }); },
+          onApprove: function(data) { alert('Welcome to Boot Camp FX Elite! Your subscription ID: ' + data.subscriptionID); }
+        }).render('#paypal-elite-container');
+      }
+    });
   </script>
 
   <!-- ===== UI: nav, FAQ, reveal ===== -->
