@@ -734,7 +734,7 @@
 
   <!-- ===== EMAIL CAPTURE LOGIC ===== -->
   <script>
-    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeZ_onENyU4z6EucKiYs_nv4KazwAb5DML_ffNWdYwHiVgucA/viewform?pli=1';
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform';
     const overlay = document.getElementById('capture-overlay');
 
     function showCapture(e) {
@@ -763,7 +763,8 @@
       } catch(e) {}
 
       // Redirect to Google Form with name prefilled via URL params
-      const formUrl = GOOGLE_FORM_URL + '&usp=pp_url&entry.1952821363=' + encodeURIComponent(name) + '&entry.876543210=' + encodeURIComponent(email);
+      // entry.383864956 = Name field. Email is collected via Google sign-in on the form.
+      const formUrl = GOOGLE_FORM_URL + '?usp=pp_url&entry.383864956=' + encodeURIComponent(name);
       overlay.classList.remove('active');
       document.body.style.overflow = '';
       window.location.href = formUrl;
