@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="view-transition" content="same-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The 6-Week Fullerton Challenge | Boot Camp FX — Outdoor Coaching Since 2005</title>
   <meta name="description" content="6 weeks of coached outdoor training at Acacia Park, Fullerton. Measured results or your money back. 21 years, 94% of members stay. Next cohort starts Monday.">
@@ -49,11 +50,16 @@
     .eyebrow::before{ content:""; width:26px; height:3px; background:var(--orange); }
 
     .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; font-weight:800; text-decoration:none; border-radius:60px; padding:16px 30px; font-size:1.02rem; transition:transform .16s var(--ease), box-shadow .16s var(--ease); cursor:pointer; border:0; }
-    .btn-primary{ background:var(--orange); color:#fff; box-shadow:0 6px 0 var(--orange-dk); }
-    .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 0 var(--orange-dk); }
+    .btn-primary{ background:var(--orange); color:#fff; box-shadow:0 6px 0 var(--orange-dk); animation:ctaPulse 3s ease-in-out infinite; }
+    .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 0 var(--orange-dk); animation:none; }
     .btn-primary:active{ transform:translateY(2px); box-shadow:0 3px 0 var(--orange-dk); }
     .btn-ghost{ background:transparent; color:var(--ink); border:2px solid var(--ink); }
     .btn-ghost:hover{ background:var(--ink); color:#fff; }
+
+    @keyframes ctaPulse{
+      0%,100%{ transform:scale(1); }
+      50%    { transform:scale(1.02); }
+    }
 
     /* ============ NAV ============ */
     .nav{ position:sticky; top:0; z-index:60; background:rgba(255,255,255,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
@@ -204,6 +210,7 @@
       html{ scroll-behavior:auto; }
       .reveal{ opacity:1; transform:none; transition:none; }
       .btn{ transition:none; }
+      .btn-primary{ animation:none; }
     }
   </style>
   <script type="application/ld+json">
@@ -269,10 +276,10 @@
 
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem"><b>21</b><span>Years in Fullerton</span></div>
-      <div role="listitem"><b>94%</b><span>Of Members Stay</span></div>
-      <div role="listitem"><b>4.9★</b><span>Google Rating</span></div>
-      <div role="listitem"><b>#1</b><span>Boot Camp on Yelp</span></div>
+      <div role="listitem"><b><span class="count-up" data-target="21">0</span></b><span>Years in Fullerton</span></div>
+      <div role="listitem"><b><span class="count-up" data-target="94">0</span>%</b><span>Of Members Stay</span></div>
+      <div role="listitem"><b><span class="count-up" data-target="4.9">0</span>★</b><span>Google Rating</span></div>
+      <div role="listitem"><b><span class="count-up" data-target="hash">#1</span></b><span>Boot Camp on Yelp</span></div>
     </div>
     <div style="text-align:center;padding:40px 0 0;">
       <video autoplay muted loop playsinline style="width:100%;max-width:900px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.3);">
@@ -576,6 +583,27 @@
       if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
     }), { threshold:.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ===== Feature 5 — Count-up numbers =====
+    (function(){
+      function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
+      var ob = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          var el = e.target, t = el.dataset.target;
+          if (t==='hash'){ el.textContent='#1'; ob.unobserve(el); return; }
+          var tn = parseFloat(t), fl = t.indexOf('.')!==-1, dur=1500, st=performance.now();
+          function anim(now){
+            var p = Math.min((now-st)/dur, 1), ev = easeOutExpo(p), cv = tn*ev;
+            el.textContent = fl ? cv.toFixed(1) : Math.floor(cv);
+            if (p<1) requestAnimationFrame(anim);
+          }
+          requestAnimationFrame(anim);
+          ob.unobserve(el);
+        });
+      }, {threshold:.3});
+      document.querySelectorAll('.count-up').forEach(function(el){ ob.observe(el); });
+    })();
   </script>
 </body>
 </html>
