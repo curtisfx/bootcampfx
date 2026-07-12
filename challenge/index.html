@@ -104,7 +104,7 @@
     .proof-in{ display:grid; grid-template-columns:repeat(4,1fr); max-width:1120px; margin:0 auto; }
     .proof-in div{ padding:22px 12px; text-align:center; border-left:1px solid var(--line); }
     .proof-in div:first-child{ border-left:0; }
-    .proof b{ font-family:var(--display); font-size:clamp(1.5rem,3vw,2.1rem); display:block; }
+    .proof b{ font-family:var(--display); font-size:clamp(1.8rem,3.5vw,2.5rem); display:block; }
     .proof span{ font-size:.76rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ash); font-weight:700; }
     @media (max-width:680px){ .proof-in{ grid-template-columns:repeat(2,1fr); } .proof-in div:nth-child(3){ border-left:0; } .proof-in div:nth-child(n+3){ border-top:1px solid var(--line); } }
 
@@ -276,10 +276,10 @@
 
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem"><b><span class="count-up" data-target="21">0</span></b><span>Years in Fullerton</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="94">0</span>%</b><span>Of Members Stay</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="4.9">0</span>★</b><span>Google Rating</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="hash">#1</span></b><span>Boot Camp on Yelp</span></div>
+      <div role="listitem"><b>21</b><span>Years in Fullerton</span></div>
+      <div role="listitem"><b>94%</b><span>Of Members Stay</span></div>
+      <div role="listitem"><b>4.9★</b><span>Google Rating</span></div>
+      <div role="listitem"><b>#1</b><span>Boot Camp on Yelp</span></div>
     </div>
     <div style="text-align:center;padding:40px 0 0;">
       <video autoplay muted loop playsinline style="width:100%;max-width:900px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.3);">
@@ -584,26 +584,6 @@
     }), { threshold:.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // ===== Feature 5 — Count-up numbers =====
-    (function(){
-      function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
-      var ob = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (!e.isIntersecting) return;
-          var el = e.target, t = el.dataset.target;
-          if (t==='hash'){ el.textContent='#1'; ob.unobserve(el); return; }
-          var tn = parseFloat(t), fl = t.indexOf('.')!==-1, dur=1500, st=performance.now();
-          function anim(now){
-            var p = Math.min((now-st)/dur, 1), ev = easeOutExpo(p), cv = tn*ev;
-            el.textContent = fl ? cv.toFixed(1) : Math.floor(cv);
-            if (p<1) requestAnimationFrame(anim);
-          }
-          requestAnimationFrame(anim);
-          ob.unobserve(el);
-        });
-      }, {threshold:.3});
-      document.querySelectorAll('.count-up').forEach(function(el){ ob.observe(el); });
-    })();
   </script>
 </body>
 </html>
