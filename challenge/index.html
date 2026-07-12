@@ -212,6 +212,33 @@
       .btn{ transition:none; }
       .btn-primary{ animation:none; }
     }
+
+.slot{
+  font: inherit; font-family: var(--mono); font-weight: 600; font-size: .86rem;
+  cursor: pointer; background: transparent; color: inherit;
+  border: 1.5px solid var(--line-day, var(--line)); border-radius: 10px;
+  padding: 9px 14px; margin: 0 8px 8px 0;
+  transition: border-color .15s var(--ease), background .15s var(--ease), transform .12s var(--ease);
+}
+.slot:hover{ border-color: var(--dawn, var(--orange)); transform: translateY(-1px); }
+.slot[aria-pressed="true"]{
+  border-color: var(--dawn, var(--orange));
+  background: var(--dawn, var(--orange));
+  color: #1B1206;
+}
+.slot[aria-pressed="true"]::before{ content: "✓ "; font-weight: 800; }
+
+.slot-commit{
+  margin-top: 22px; padding: 20px;
+  border: 1.5px solid var(--dawn, var(--orange)); border-radius: 16px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+}
+.slot-picked{ font-weight: 700; margin: 0; }
+@media (max-width: 620px){
+  .slot-commit{ flex-direction: column; align-items: stretch; text-align: center; }
+  .slot-commit .btn{ width: 100%; }
+}
+@media (prefers-reduced-motion: reduce){ .slot{ transition: none; } }
   </style>
   <script type="application/ld+json">
   {
@@ -457,11 +484,33 @@
       <table>
         <thead><tr><th>Days</th><th>Session Times</th></tr></thead>
         <tbody>
-          <tr><td>Monday – Thursday</td><td class="time">5:30 AM · 8:00 AM · 6:00 PM</td></tr>
-          <tr><td>Friday</td><td class="time">5:30 AM · 8:00 AM</td></tr>
-          <tr><td>Saturday</td><td class="time">8:00 AM</td></tr>
+          <tr>
+            <td>Monday – Thursday</td>
+            <td class="time">
+              <button class="slot" type="button" data-days="Mon–Thu" data-time="5:30 AM">5:30 AM</button>
+              <button class="slot" type="button" data-days="Mon–Thu" data-time="8:00 AM">8:00 AM</button>
+              <button class="slot" type="button" data-days="Mon–Thu" data-time="6:00 PM">6:00 PM</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Friday</td>
+            <td class="time">
+              <button class="slot" type="button" data-days="Fri" data-time="5:30 AM">5:30 AM</button>
+              <button class="slot" type="button" data-days="Fri" data-time="8:00 AM">8:00 AM</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Saturday</td>
+            <td class="time">
+              <button class="slot" type="button" data-days="Sat" data-time="8:00 AM">8:00 AM</button>
+            </td>
+          </tr>
         </tbody>
       </table>
+      <div class="slot-commit" id="slotCommit" hidden>
+        <p class="slot-picked" id="slotPicked"></p>
+        <a class="btn btn-primary" id="slotCta" href="#">Text Curtis about these sessions →</a>
+      </div>
       <p class="where">Pick any 3 sessions per week — mix and match. Questions about which times fit your life? <a href="sms:+16572170820">Text Curtis</a> and he'll help you map your six weeks.</p>
     </div>
   </section>
@@ -583,6 +632,45 @@
       if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
     }), { threshold:.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ===== Schedule picker =====
+(function(){
+  const PHONE  = '16572170820';
+  const INTENT = 'I want in on the next 6-week cohort.';
+  const picked = new Map();
+  const commit = document.getElementById('slotCommit');
+  const label  = document.getElementById('slotPicked');
+  const cta    = document.getElementById('slotCta');
+  if (!commit) return;
+
+  function render(){
+    if (picked.size === 0){ commit.hidden = true; return; }
+    const list = [...picked.values()].map(s => `${s.days} ${s.time}`);
+    const human = list.length === 1
+      ? list[0]
+      : list.slice(0, -1).join(', ') + ' and ' + list.at(-1);
+    label.textContent = `Your sessions: ${human}`;
+    cta.textContent = list.length === 1
+      ? `Text Curtis about the ${picked.values().next().value.time} session →`
+      : `Text Curtis about these ${list.length} sessions →`;
+    const body = `${INTENT} I'd like to train: ${list.join('; ')}. My name is `;
+    cta.href = `sms:+${PHONE}?&body=${encodeURIComponent(body)}`;
+    commit.hidden = false;
+  }
+
+  document.querySelectorAll('.slot').forEach(btn => {
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', () => {
+      const key = `${btn.dataset.days}|${btn.dataset.time}`;
+      const on  = btn.getAttribute('aria-pressed') === 'true';
+      btn.setAttribute('aria-pressed', String(!on));
+      if (on) picked.delete(key);
+      else picked.set(key, { days: btn.dataset.days, time: btn.dataset.time });
+      render();
+      if (!on && window.gtag) gtag('event', 'slot_select', { slot: key });
+    });
+  });
+})();
 
   </script>
 </body>
