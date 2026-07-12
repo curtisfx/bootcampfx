@@ -396,10 +396,10 @@
   <!-- ============ PROOF ============ -->
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem"><b><span class="count-up" data-target="21">0</span> yrs</b><span>Training Fullerton</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="94">0</span>%</b><span>Of Members Stay</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="4.9">0</span>★</b><span>On Google</span></div>
-      <div role="listitem"><b><span class="count-up" data-target="hash">#1</span></b><span>Boot Camp on Yelp</span></div>
+      <div role="listitem"><b>21 yrs</b><span>Training Fullerton</span></div>
+      <div role="listitem"><b>94%</b><span>Of Members Stay</span></div>
+      <div role="listitem"><b>4.9★</b><span>On Google</span></div>
+      <div role="listitem"><b>#1</b><span>Boot Camp on Yelp</span></div>
     </div>
   </div>
 
@@ -706,24 +706,6 @@
     }), { threshold:.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // ===== Feature 2 — Parallax horizon =====
-    (function(){
-      const paths = document.querySelectorAll('.horizon path');
-      if (!paths.length) return;
-      let ticking = false;
-      window.addEventListener('scroll', function(){
-        if (!ticking) {
-          requestAnimationFrame(function(){
-            const s = window.scrollY;
-            paths[0].style.transform = 'translateY(' + (-s * 0.5) + 'px)';
-            paths[1].style.transform = 'translateY(' + (-s * 0.3) + 'px)';
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, { passive: true });
-    })();
-
     // ===== Feature 3 — Next-session ticker =====
     (function(){
       const el = document.getElementById('next-session');
@@ -770,28 +752,6 @@
         window.location.href = 'sms:+16572170820?&body=' + encodeURIComponent(body);
       });
     });
-
-    // ===== Feature 5 — Count-up numbers =====
-    (function(){
-      function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
-      var ob = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (!e.isIntersecting) return;
-          var el = e.target, t = el.dataset.target;
-          if (t==='hash'){ el.textContent='#1'; ob.unobserve(el); return; }
-          var tn = parseFloat(t), fl = t.indexOf('.')!==-1, dur=1500, st=performance.now();
-          function anim(now){
-            var p = Math.min((now-st)/dur, 1), ev = easeOutExpo(p), cv = tn*ev;
-            el.textContent = fl ? cv.toFixed(1) : Math.floor(cv);
-            if (p<1) requestAnimationFrame(anim);
-          }
-          requestAnimationFrame(anim);
-          ob.unobserve(el);
-        });
-      }, {threshold:.3});
-      document.querySelectorAll('.count-up').forEach(function(el){ ob.observe(el); });
-    })();
-
     // ===== Feature 6 — 3D tilt on tier cards =====
     (function(){
       if ('ontouchstart' in window) return;
