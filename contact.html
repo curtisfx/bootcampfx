@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Boot Camp FX</title>
+  <meta name="description" content="Contact Boot Camp FX in Fullerton, CA. Acacia Park. Phone, email, hours, and directions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & TOKENS ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #F85A2B;
+      --orange-dk: #C4421C;
+      --ink: #121110;
+      --ink-2: #1C1A18;
+      --sand: #F2E9DB;
+      --cream: #FBF7F0;
+      --paper: #FFFFFF;
+      --dove: #6B635A;
+      --gold: #F5A623;
+      --green: #2E7D32;
+      --red: #B0381E;
+      --line: #E6DCCC;
+      --radius: 18px;
+      --radius-lg: 28px;
+      --display: 'Anton', sans-serif;
+      --body: 'Archivo', sans-serif;
+      --ease: cubic-bezier(.2,.7,.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    /* film grain */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+      opacity: .04; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .display { font-family: var(--display); font-weight: 400; letter-spacing: .01em; line-height: .92; text-transform: uppercase; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .tight { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+    .hl { color: var(--orange); }
+    section { position: relative; padding: 64px 0; }
+
+    .eyebrow {
+      font-family: var(--body);
+      text-transform: uppercase; letter-spacing: .22em;
+      font-weight: 800; font-size: .78rem; color: var(--orange);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--orange); display: inline-block; }
+    .eyebrow.center { justify-content: center; }
+    .kicker { font-size: clamp(2.1rem, 5.5vw, 3.6rem); margin: 16px 0 14px; }
+    .lede { font-size: 1.1rem; color: var(--dove); max-width: 580px; }
+    .lede.center { margin: 0 auto; text-align: center; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      font-family: var(--body); font-weight: 800; font-size: 1.02rem;
+      letter-spacing: .01em; text-decoration: none; cursor: pointer; border: none;
+      display: inline-flex; align-items: center; gap: 10px; justify-content: center;
+      padding: 17px 34px; border-radius: 60px; transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s;
+    }
+    .btn-primary { background: var(--orange); color: #fff; box-shadow: 0 14px 30px -10px rgba(248,90,43,.55); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 22px 38px -12px rgba(248,90,43,.65); }
+    .btn-primary .arw { transition: transform .2s var(--ease); }
+    .btn-primary:hover .arw { transform: translateX(4px); }
+    .btn-dark { background: var(--ink); color: #fff; }
+    .btn-dark:hover { transform: translateY(-3px); box-shadow: 0 18px 30px -14px rgba(0,0,0,.5); }
+
+    /* ===== STICKY NAV ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; transition: background .3s, padding .3s, box-shadow .3s;
+    }
+    .nav .logo { font-family: var(--display); text-transform: uppercase; color: #fff; font-size: 1.35rem; letter-spacing: .02em; }
+    .nav .logo b { color: var(--orange); }
+    .nav-cta { font-family: var(--body); font-weight: 800; font-size: .92rem; padding: 11px 22px; border-radius: 60px; background: var(--orange); color: #fff; text-decoration: none; transition: transform .18s var(--ease); }
+    .nav-cta:hover { transform: translateY(-2px); }
+    .nav.scrolled { background: rgba(18,17,16,.92); backdrop-filter: blur(12px); padding: 11px 24px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+    @media (max-width: 520px){ .nav .logo { font-size: 1.1rem; } .nav-cta { font-size: .82rem; padding: 10px 16px; } }
+
+    /* ===== FOOTER ===== */
+    .footer { background: #0C0B0A; color: #8c847b; padding: 56px 0 120px; text-align: center; font-size: .9rem; line-height: 1.9; }
+    .footer .brand { font-family: var(--display); text-transform: uppercase; font-size: 2rem; color: #fff; }
+    .footer .brand b { color: var(--orange); }
+    .footer a { color: #fff; text-decoration: none; font-weight: 600; }
+    .footer a:hover { color: var(--orange); }
+    .footer .stars { color: var(--gold); }
+    .footer .copyright { margin-top: 22px; font-size: .78rem; color: #5a534c; }
+
+    /* contact specific */
+    .contact-hero { padding: 120px 0 60px; text-align: center; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; }
+    .contact-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px; }
+    .contact-card h3 { font-family: var(--display); text-transform: uppercase; font-size: 1.3rem; margin-bottom: 16px; }
+    .contact-list { list-style: none; }
+    .contact-list li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .contact-list li:last-child { border-bottom: none; }
+    .contact-list a { color: var(--ink); font-weight: 700; }
+    .contact-list a:hover { color: var(--orange); }
+    .hours-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .hours-table th, .hours-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: .95rem; }
+    .hours-table th { font-weight: 800; color: var(--dove); text-transform: uppercase; letter-spacing: .06em; font-size: .8rem; }
+    .map-wrap { border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 14px 30px -20px rgba(0,0,0,.2); }
+    @media (max-width: 820px) { .contact-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <!-- ===== NAV ===== -->
+  <nav class="nav" id="nav">
+    <div class="logo">BOOT CAMP <b>FX</b></div>
+    <a class="nav-cta" href="index.html">Free Week →</a>
+  </nav>
+
+  <!-- HERO / INTRO -->
+  <header class="contact-hero container">
+    <span class="eyebrow center">Come find us</span>
+    <h1 class="display kicker">Acacia Park — <span class="hl">Fullerton, CA</span></h1>
+    <p class="lede center">Outdoor sessions. Rain or shine. 21 years strong.</p>
+  </header>
+
+  <div class="container">
+    <!-- MAP -->
+    <div class="map-wrap" style="margin-bottom: 40px;">
+      <iframe src="https://maps.google.com/maps?q=1636+Fullerton+Creek+Drive+Fullerton+CA+92831&output=embed" width="100%" height="350" style="border:0; border-radius:var(--radius-lg);" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+
+    <div class="contact-grid">
+      <!-- ADDRESS & CONTACT -->
+      <div class="contact-card">
+        <h3>Location &amp; Contact</h3>
+        <ul class="contact-list">
+          <li><strong>Address</strong><br>
+            1636 Fullerton Creek Drive<br>
+            Fullerton, CA 92831
+          </li>
+          <li><strong>Phone</strong><br>
+            <a href="tel:+16572170820">(657) 217-0820</a>
+          </li>
+          <li><strong>Email</strong><br>
+            <a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a>
+          </li>
+        </ul>
+        <div style="margin-top: 24px;">
+          <a class="btn btn-primary" href="index.html">Claim Your Free Week →</a>
+        </div>
+      </div>
+
+      <!-- HOURS -->
+      <div class="contact-card">
+        <h3>Session Hours</h3>
+        <table class="hours-table">
+          <tbody>
+            <tr><td><strong>Mon–Thu</strong></td><td>5:30–6:15 AM<br>8:00–8:45 AM<br>6:00–6:45 PM</td></tr>
+            <tr><td><strong>Fri</strong></td><td>5:30–6:15 AM<br>8:00–8:45 AM</td></tr>
+            <tr><td><strong>Sat</strong></td><td>8:00–8:45 AM</td></tr>
+            <tr><td><strong>Sun</strong></td><td>Rest day</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:16px; font-size:.9rem; color:var(--dove);">45-minute sessions. Show up 5 minutes early.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="brand">BOOT CAMP <b>FX</b></div>
+      <p>📍 Acacia Park — 1636 Fullerton Creek Drive, Fullerton, CA 92831</p>
+      <p>
+        <a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a> &nbsp;|&nbsp;
+        <a href="tel:+16572170820">(657) 217-0820</a>
+      </p>
+      <p><span class="stars">★★★★★</span> <strong>4.9 on Google</strong> — Fullerton since 2005</p>
+      <p style="margin-top:18px;">
+        <a href="index.html">Home</a> &nbsp;|&nbsp;
+        <a href="index.html#schedule">Schedule</a> &nbsp;|&nbsp;
+        <a href="index.html#pricing">Pricing</a> &nbsp;|&nbsp;
+        <a href="faq.html">FAQ</a> &nbsp;|&nbsp;
+        <a href="contact.html">Contact</a> &nbsp;|&nbsp;
+        <a href="privacy.html">Privacy</a> &nbsp;|&nbsp;
+        <a href="terms.html">Terms</a> &nbsp;|&nbsp;
+        <a href="waiver.html">Waiver</a> &nbsp;|&nbsp;
+        <a href="refund.html">Refunds</a> &nbsp;|&nbsp;
+        <a href="copyright.html">Copyright</a>
+      </p>
+      <p class="copyright">© 2026 Boot Camp FX · Fullerton, CA · Since 2005</p>
+    </div>
+  </footer>
+
+  <script>
+    // sticky nav
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</body>
+</html>

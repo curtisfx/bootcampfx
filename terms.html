@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service | Boot Camp FX</title>
+  <meta name="description" content="Boot Camp FX terms of service. Month-to-month membership, park rules, conduct, cancellation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & TOKENS ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #F85A2B;
+      --orange-dk: #C4421C;
+      --ink: #121110;
+      --ink-2: #1C1A18;
+      --sand: #F2E9DB;
+      --cream: #FBF7F0;
+      --paper: #FFFFFF;
+      --dove: #6B635A;
+      --gold: #F5A623;
+      --green: #2E7D32;
+      --red: #B0381E;
+      --line: #E6DCCC;
+      --radius: 18px;
+      --radius-lg: 28px;
+      --display: 'Anton', sans-serif;
+      --body: 'Archivo', sans-serif;
+      --ease: cubic-bezier(.2,.7,.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    /* film grain */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+      opacity: .04; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .display { font-family: var(--display); font-weight: 400; letter-spacing: .01em; line-height: .92; text-transform: uppercase; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .tight { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+    .hl { color: var(--orange); }
+    section { position: relative; }
+
+    .eyebrow {
+      font-family: var(--body);
+      text-transform: uppercase; letter-spacing: .22em;
+      font-weight: 800; font-size: .78rem; color: var(--orange);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--orange); display: inline-block; }
+    .eyebrow.center { justify-content: center; }
+    .kicker { font-size: clamp(2.1rem, 5.5vw, 3.6rem); margin: 16px 0 14px; }
+    .lede { font-size: 1.1rem; color: var(--dove); max-width: 580px; }
+    .lede.center { margin: 0 auto; text-align: center; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      font-family: var(--body); font-weight: 800; font-size: 1.02rem;
+      letter-spacing: .01em; text-decoration: none; cursor: pointer; border: none;
+      display: inline-flex; align-items: center; gap: 10px; justify-content: center;
+      padding: 17px 34px; border-radius: 60px; transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s;
+    }
+    .btn-primary { background: var(--orange); color: #fff; box-shadow: 0 14px 30px -10px rgba(248,90,43,.55); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 22px 38px -12px rgba(248,90,43,.65); }
+    .btn-dark { background: var(--ink); color: #fff; }
+    .btn-dark:hover { transform: translateY(-3px); box-shadow: 0 18px 30px -14px rgba(0,0,0,.5); }
+
+    /* ===== STICKY NAV ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; transition: background .3s, padding .3s, box-shadow .3s;
+    }
+    .nav .logo { font-family: var(--display); text-transform: uppercase; color: #fff; font-size: 1.35rem; letter-spacing: .02em; }
+    .nav .logo b { color: var(--orange); }
+    .nav-cta { font-family: var(--body); font-weight: 800; font-size: .92rem; padding: 11px 22px; border-radius: 60px; background: var(--orange); color: #fff; text-decoration: none; transition: transform .18s var(--ease); }
+    .nav-cta:hover { transform: translateY(-2px); }
+    .nav.scrolled { background: rgba(18,17,16,.92); backdrop-filter: blur(12px); padding: 11px 24px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+    @media (max-width: 520px){ .nav .logo { font-size: 1.1rem; } .nav-cta { font-size: .82rem; padding: 10px 16px; } }
+
+    /* ===== FOOTER ===== */
+    .footer { background: #0C0B0A; color: #8c847b; padding: 56px 0 120px; text-align: center; font-size: .9rem; line-height: 1.9; }
+    .footer .brand { font-family: var(--display); text-transform: uppercase; font-size: 2rem; color: #fff; }
+    .footer .brand b { color: var(--orange); }
+    .footer a { color: #fff; text-decoration: none; font-weight: 600; }
+    .footer a:hover { color: var(--orange); }
+    .footer .stars { color: var(--gold); }
+    .footer .copyright { margin-top: 22px; font-size: .78rem; color: #5a534c; }
+
+    .policy { padding: 100px 0 80px; }
+    .policy h2 { font-family: var(--display); text-transform: uppercase; font-size: 1.8rem; margin: 32px 0 12px; }
+    .policy p, .policy li { color: #4a423a; font-size: 1.02rem; margin-bottom: 14px; }
+    .policy ul { margin: 16px 0 24px 20px; }
+    .policy strong { color: var(--ink); }
+    .callout { background: var(--paper); border-left: 5px solid var(--orange); padding: 20px 24px; margin: 24px 0; border-radius: 0 var(--radius) var(--radius) 0; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <!-- ===== NAV ===== -->
+  <nav class="nav" id="nav">
+    <div class="logo">BOOT CAMP <b>FX</b></div>
+    <a class="nav-cta" href="index.html">Free Week →</a>
+  </nav>
+
+  <div class="container tight policy">
+    <span class="eyebrow">Legal</span>
+    <h1 class="display kicker">Terms of Service</h1>
+    <p class="lede">Show up, work hard, be cool to everyone. Cancel anytime — we earn your business every month.</p>
+
+    <h2>Membership</h2>
+    <p>Month-to-month only. No long-term contracts. You pay via PayPal subscription and can cancel at any time.</p>
+    <p>Payments are processed on the schedule you select at signup. You keep access through the end of your paid period.</p>
+
+    <h2>Cancellation</h2>
+    <p>Cancel anytime by emailing support@bootcampfx.com or managing your subscription directly in your PayPal dashboard.</p>
+    <p>No early termination fees.</p>
+
+    <h2>Park Rules</h2>
+    <ul>
+      <li>Respect Acacia Park and its other users.</li>
+      <li>Leave the area cleaner than you found it. Pack out what you bring in.</li>
+      <li>Be on time. Sessions start at the listed time.</li>
+    </ul>
+
+    <h2>Conduct</h2>
+    <p>Support your fellow members. Follow coach instructions. Train hard but train smart. No ego, no drama.</p>
+    <p>We reserve the right to ask anyone to leave if behavior disrupts the group or violates park rules.</p>
+
+    <h2>Liability</h2>
+    <p>See the full Waiver of Liability for details. By participating you acknowledge the inherent risks of outdoor group fitness.</p>
+
+    <h2>Governing Law</h2>
+    <p>These terms are governed by the laws of the State of California.</p>
+
+    <p style="margin-top: 32px; color: var(--dove); font-size: .95rem;">Questions? Email support@bootcampfx.com</p>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="brand">BOOT CAMP <b>FX</b></div>
+      <p>📍 Acacia Park — 1636 Fullerton Creek Drive, Fullerton, CA 92831</p>
+      <p>
+        <a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a> &nbsp;|&nbsp;
+        <a href="tel:+16572170820">(657) 217-0820</a>
+      </p>
+      <p><span class="stars">★★★★★</span> <strong>4.9 on Google</strong> — Fullerton since 2005</p>
+      <p style="margin-top:18px;">
+        <a href="index.html">Home</a> &nbsp;|&nbsp;
+        <a href="index.html#schedule">Schedule</a> &nbsp;|&nbsp;
+        <a href="index.html#pricing">Pricing</a> &nbsp;|&nbsp;
+        <a href="faq.html">FAQ</a> &nbsp;|&nbsp;
+        <a href="contact.html">Contact</a> &nbsp;|&nbsp;
+        <a href="privacy.html">Privacy</a> &nbsp;|&nbsp;
+        <a href="terms.html">Terms</a> &nbsp;|&nbsp;
+        <a href="waiver.html">Waiver</a> &nbsp;|&nbsp;
+        <a href="refund.html">Refunds</a> &nbsp;|&nbsp;
+        <a href="copyright.html">Copyright</a>
+      </p>
+      <p class="copyright">© 2026 Boot Camp FX · Fullerton, CA · Since 2005</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</body>
+</html>
