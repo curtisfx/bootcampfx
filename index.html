@@ -168,6 +168,26 @@
     @keyframes drip{ 0%{ transform:scaleY(0); transform-origin:top; } 45%{ transform:scaleY(1); transform-origin:top; } 46%{ transform-origin:bottom; } 100%{ transform:scaleY(0); transform-origin:bottom; } }
 
     /* ============ WILDLIFE — the 5:30 AM regulars ============ */
+    /* Soaring egret — crosses the pre-dawn sky on a loop */
+    .egret{ position:absolute; top:0; left:0; z-index:2; pointer-events:none;
+      animation:egretFly 34s linear infinite; animation-delay:2s; will-change:transform; }
+    .egret-bob{ animation:egretBob 4.6s ease-in-out infinite; }
+    .egret svg{ width:150px; height:auto; filter:drop-shadow(0 2px 6px rgba(15,27,44,.35)); transform:scaleX(-1); }
+    .egret .wing-t{ transform-origin:98px 34px; animation:wingFlapT 1.1s ease-in-out infinite alternate; }
+    .egret .wing-b{ transform-origin:98px 36px; animation:wingFlapB 1.1s ease-in-out infinite alternate; }
+    @keyframes egretFly{
+      0%   { transform:translate(-18vw, 17vh) rotate(0deg); opacity:0; }
+      4%   { opacity:1; }
+      30%  { transform:translate(18vw, 9vh) rotate(-1.5deg); }
+      55%  { transform:translate(52vw, 13vh) rotate(1deg); }
+      80%  { transform:translate(84vw, 7vh) rotate(-1deg); opacity:1; }
+      96%  { opacity:1; }
+      100% { transform:translate(118vw, 10vh) rotate(0deg); opacity:0; }
+    }
+    @keyframes egretBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+    @keyframes wingFlapT{ from{ transform:rotate(-8deg); } to{ transform:rotate(26deg); } }
+    @keyframes wingFlapB{ from{ transform:rotate(10deg); } to{ transform:rotate(-24deg); } }
+
     /* Waddling ducks — along the grass line, one trailing the other */
     .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; }
     .duck.d1{ --settle:15vw; animation:duckStroll 20s var(--ease) 2s forwards, duckForage 3.5s ease-in-out 22s infinite; }
@@ -225,6 +245,7 @@
       75%    { transform:translateX(74vw) translateY(-3px); }
     }
     @media (max-width:640px){
+      .egret svg{ width:104px; }
       .duck svg{ width:40px; } .duck.d2 svg{ width:33px; }
       .rabbit svg{ width:36px; }
     }
@@ -418,7 +439,8 @@
       .mq-track{ animation:none; }
       .grain{ display:none; }
       .hero-scroll::after{ animation:none; }
-      .duck, .rabbit, .waddle, .hop, .ears{ animation:none !important; }
+      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears{ animation:none !important; }
+      .egret{ transform:translate(60vw, 16vh); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
       .rabbit{ transform:none; opacity:1; left:auto; right:14vw; }
@@ -502,6 +524,21 @@
     </svg>
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
+    <!-- Soaring egret -->
+    <div class="egret" aria-hidden="true">
+      <div class="egret-bob">
+        <svg viewBox="0 0 160 90" fill="none">
+          <path class="wing-b" d="M62 36 C46 40 28 52 14 70 C30 62 48 52 64 42 Z" fill="#C9D4E2" opacity=".85"/>
+          <path d="M94 40 L118 46 M94 42 L117 52" stroke="#14100A" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M52 34 C60 28 78 27 92 34 C100 38 100 44 92 46 C76 50 58 46 50 40 Z" fill="#FBF7EE"/>
+          <path d="M54 36 C46 30 40 30 36 24 C33 19 36 14 41 15 C45 16 45 20 43 23 C46 27 52 29 58 33 Z" fill="#FBF7EE"/>
+          <path d="M38 17 L18 21 L37 23 Z" fill="#E8933A"/>
+          <circle cx="39.5" cy="18.5" r="1.3" fill="#14100A"/>
+          <path class="wing-t" d="M62 34 C44 26 24 12 8 -6 C30 -2 52 10 68 28 Z" fill="#F3ECDC"/>
+        </svg>
+      </div>
+    </div>
+
     <!-- Two waddling ducks -->
     <div class="duck d1" aria-hidden="true">
       <span class="waddle">
