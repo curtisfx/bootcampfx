@@ -154,8 +154,8 @@
 
   /* Waddling ducks — along the grass line, one trailing the other */
   .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; }
-  .duck.d1{ animation:duckStroll 20s var(--ease) 2s forwards; }
-  .duck.d2{ animation:duckStroll 20s var(--ease) 4.5s forwards; }
+  .duck.d1{ --settle:15vw; animation:duckStroll 20s var(--ease) 2s forwards, duckForage 3.5s ease-in-out 22s infinite; }
+  .duck.d2{ --settle:22vw; animation:duckStroll 20s var(--ease) 4.5s forwards, duckForage 3.2s ease-in-out 24.5s infinite; }
   .duck svg{ width:52px; height:auto; transform:scaleX(-1); }
   .duck.d2 svg{ width:42px; }
   .duck .waddle{ display:block; animation:waddle .55s ease-in-out 12 alternate, waddleCalm 1.6s ease-in-out 6.6s infinite alternate; transform-origin:50% 88%; }
@@ -163,14 +163,19 @@
   @keyframes duckStroll{
     0%   { transform:translateX(-8vw); opacity:0; }
     4%   { opacity:1; }
-    100% { transform:translateX(15vw); opacity:1; }
+    100% { transform:translateX(var(--settle)); opacity:1; }
   }
   @keyframes waddle{ from{ transform:rotate(-7deg) translateY(0); } to{ transform:rotate(7deg) translateY(-2px); } }
   @keyframes waddleCalm{ from{ transform:rotate(-1.2deg); } to{ transform:rotate(1.2deg); } }
+  @keyframes duckForage{
+    0%,100%{ transform:translateX(var(--settle,15vw)) translateY(0); }
+    30%    { transform:translateX(var(--settle,15vw)) translateY(-3px); }
+    65%    { transform:translateX(var(--settle,15vw)) translateY(-1.5px); }
+  }
 
   /* Rabbit — hops in from the right to his own patch of grass, and stays */
   .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none; opacity:0;
-    animation:rabbitIn 10s var(--ease) 6s forwards; will-change:transform; }
+    animation:rabbitIn 10s var(--ease) 6s forwards, rabbitForage 2.8s ease-in-out 16.5s infinite; will-change:transform; }
   .rabbit svg{ width:46px; height:auto; }
   .rabbit .hop{ display:block; animation:rabbitHop 10s ease-in-out 6s forwards, rabbitIdle 3.2s ease-in-out 16.5s infinite; transform-origin:50% 100%; }
   @keyframes rabbitIn{
@@ -196,6 +201,13 @@
   }
   .rabbit .ears{ transform-origin:24px 12px; animation:earTwitch 2.6s ease-in-out infinite; }
   @keyframes earTwitch{ 0%,88%,100%{ transform:rotate(0); } 92%{ transform:rotate(-9deg); } 96%{ transform:rotate(5deg); } }
+  @keyframes rabbitForage{
+    0%,100%{ transform:translateX(74vw) translateY(0); }
+    15%    { transform:translateX(74vw) translateY(-2px); }
+    35%    { transform:translateX(74vw) translateY(-4px); }
+    55%    { transform:translateX(74vw) translateY(-1.5px); }
+    75%    { transform:translateX(74vw) translateY(-3px); }
+  }
 
   @media (max-width:640px){
     .egret svg{ width:104px; }
@@ -213,7 +225,7 @@
     .egret, .duck, .rabbit, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears{ animation:none !important; }
     .egret{ transform:translate(60vw, 16vh); opacity:.9; }
     .duck{ transform:none; opacity:1; }
-    .duck.d1{ left:12vw; } .duck.d2{ left:calc(12vw + 60px); }
+    .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
     .rabbit{ transform:none; opacity:1; left:auto; right:14vw; }
   }
 </style>
