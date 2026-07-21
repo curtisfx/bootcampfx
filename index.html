@@ -69,8 +69,6 @@
     .btn-dawn::after{ content:""; position:absolute; top:0; left:-80%; width:50%; height:100%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform:skewX(-20deg); transition:left .55s var(--ease); }
     .btn-dawn:hover{ transform:translateY(-2px); background:var(--gold); animation:none; box-shadow:0 14px 40px rgba(232,147,58,.45); }
     .btn-dawn:hover::after{ left:130%; }
-    .btn-outline-light{ background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,.45); }
-    .btn-outline-light:hover{ border-color:#fff; transform:translateY(-2px); background:rgba(255,255,255,.06); }
     .btn-ink{ background:var(--ink); color:var(--day); }
     .btn-ink:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(20,16,10,.3); }
     @keyframes ctaPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.02); } }
@@ -162,8 +160,6 @@
     .hero p.sub{ font-size:clamp(1rem, 1.6vw, 1.2rem); color:var(--mist); max-width:620px; margin:0 auto 38px; }
     .hero p.sub strong{ color:#fff; font-weight:600; }
     .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; align-items:center; }
-    .hero-alt{ margin-top:16px; font-size:.85rem; color:var(--mist); text-shadow:0 1px 10px rgba(15,27,44,.75); }
-    .hero-alt a{ color:#fff; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
     .hero-meta{ position:absolute; z-index:3; bottom:186px; font-family:var(--mono); font-size:.62rem; letter-spacing:.24em; color:rgba(159,176,196,.75); text-transform:uppercase; }
     .hero-meta.l{ left:28px; } .hero-meta.r{ right:28px; }
     @media (max-width:900px){ .hero-meta{ display:none; } }
