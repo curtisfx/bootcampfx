@@ -167,6 +167,68 @@
     .hero-scroll::after{ content:""; width:2px; height:44px; background:linear-gradient(var(--gold), transparent); animation:drip 2.2s var(--ease) infinite; }
     @keyframes drip{ 0%{ transform:scaleY(0); transform-origin:top; } 45%{ transform:scaleY(1); transform-origin:top; } 46%{ transform-origin:bottom; } 100%{ transform:scaleY(0); transform-origin:bottom; } }
 
+    /* ============ WILDLIFE — the 5:30 AM regulars ============ */
+    /* Waddling ducks — along the grass line, one trailing the other */
+    .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; }
+    .duck.d1{ --settle:15vw; animation:duckStroll 20s var(--ease) 2s forwards, duckForage 3.5s ease-in-out 22s infinite; }
+    .duck.d2{ --settle:22vw; animation:duckStroll 20s var(--ease) 4.5s forwards, duckForage 3.2s ease-in-out 24.5s infinite; }
+    .duck svg{ width:52px; height:auto; transform:scaleX(-1); }
+    .duck.d2 svg{ width:42px; }
+    .duck .waddle{ display:block; animation:waddle .55s ease-in-out 12 alternate, waddleCalm 1.6s ease-in-out 6.6s infinite alternate; transform-origin:50% 88%; }
+    .duck.d2 .waddle{ animation-delay:.27s, 6.87s; }
+    @keyframes duckStroll{
+      0%   { transform:translateX(-8vw); opacity:0; }
+      4%   { opacity:1; }
+      100% { transform:translateX(var(--settle)); opacity:1; }
+    }
+    @keyframes waddle{ from{ transform:rotate(-7deg) translateY(0); } to{ transform:rotate(7deg) translateY(-2px); } }
+    @keyframes waddleCalm{ from{ transform:rotate(-1.2deg); } to{ transform:rotate(1.2deg); } }
+    @keyframes duckForage{
+      0%,100%{ transform:translateX(var(--settle,15vw)) translateY(0); }
+      30%    { transform:translateX(var(--settle,15vw)) translateY(-3px); }
+      65%    { transform:translateX(var(--settle,15vw)) translateY(-1.5px); }
+    }
+
+    /* Rabbit — hops in from the right to his own patch of grass, and stays */
+    .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none; opacity:0;
+      animation:rabbitIn 10s var(--ease) 6s forwards, rabbitForage 2.8s ease-in-out 16.5s infinite; will-change:transform; }
+    .rabbit svg{ width:46px; height:auto; }
+    .rabbit .hop{ display:block; animation:rabbitHop 10s ease-in-out 6s forwards, rabbitIdle 3.2s ease-in-out 16.5s infinite; transform-origin:50% 100%; }
+    @keyframes rabbitIn{
+      0%   { transform:translateX(96vw); opacity:0; }
+      8%   { opacity:1; }
+      22%  { transform:translateX(86vw); }
+      38%  { transform:translateX(79.5vw); }
+      55%  { transform:translateX(76vw); }
+      100% { transform:translateX(74vw); opacity:1; }
+    }
+    @keyframes rabbitHop{
+      0%,6%   { transform:translateY(0); }
+      11%     { transform:translateY(-14px); }
+      16%     { transform:translateY(0); }
+      26%     { transform:translateY(-14px); }
+      31%     { transform:translateY(0); }
+      42%     { transform:translateY(-14px); }
+      47%,100%{ transform:translateY(0); }
+    }
+    @keyframes rabbitIdle{
+      0%,100%{ transform:scaleY(1); }
+      50%    { transform:scaleY(1.025); }
+    }
+    .rabbit .ears{ transform-origin:24px 12px; animation:earTwitch 2.6s ease-in-out infinite; }
+    @keyframes earTwitch{ 0%,88%,100%{ transform:rotate(0); } 92%{ transform:rotate(-9deg); } 96%{ transform:rotate(5deg); } }
+    @keyframes rabbitForage{
+      0%,100%{ transform:translateX(74vw) translateY(0); }
+      15%    { transform:translateX(74vw) translateY(-2px); }
+      35%    { transform:translateX(74vw) translateY(-4px); }
+      55%    { transform:translateX(74vw) translateY(-1.5px); }
+      75%    { transform:translateX(74vw) translateY(-3px); }
+    }
+    @media (max-width:640px){
+      .duck svg{ width:40px; } .duck.d2 svg{ width:33px; }
+      .rabbit svg{ width:36px; }
+    }
+
     /* ============ PROOF ============ */
     .proof{ background:var(--pine); color:var(--day); position:relative; }
     .proof-in{ display:grid; grid-template-columns:repeat(4,1fr); max-width:1160px; margin:0 auto; }
@@ -356,6 +418,10 @@
       .mq-track{ animation:none; }
       .grain{ display:none; }
       .hero-scroll::after{ animation:none; }
+      .duck, .rabbit, .waddle, .hop, .ears{ animation:none !important; }
+      .duck{ transform:none; opacity:1; }
+      .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
+      .rabbit{ transform:none; opacity:1; left:auto; right:14vw; }
       .fw-card::before{ animation:none; }
       .std-item, .mcard, .why{ transition:none; }
     }
@@ -436,6 +502,47 @@
     </svg>
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
+    <!-- Two waddling ducks -->
+    <div class="duck d1" aria-hidden="true">
+      <span class="waddle">
+        <svg viewBox="0 0 60 44" fill="none">
+          <path d="M14 26 C10 20 14 14 22 13 L24 8 C25 4 30 3 33 6 C36 9 35 12 32 14 L34 16 C42 17 50 22 52 28 C54 35 48 40 38 40 L22 40 C14 40 10 34 12 28 Z" fill="#E8933A"/>
+          <path d="M26 7 L14 10 L25 12 Z" fill="#F2B84B"/>
+          <circle cx="29" cy="8.5" r="1.4" fill="#14100A"/>
+          <path d="M46 22 C50 20 54 21 56 24 C53 25 49 25 46 24 Z" fill="#D07F2E"/>
+          <path d="M26 40 L26 43 M36 40 L36 43" stroke="#14100A" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+    <div class="duck d2" aria-hidden="true">
+      <span class="waddle">
+        <svg viewBox="0 0 60 44" fill="none">
+          <path d="M14 26 C10 20 14 14 22 13 L24 8 C25 4 30 3 33 6 C36 9 35 12 32 14 L34 16 C42 17 50 22 52 28 C54 35 48 40 38 40 L22 40 C14 40 10 34 12 28 Z" fill="#F2B84B"/>
+          <path d="M26 7 L14 10 L25 12 Z" fill="#E8933A"/>
+          <circle cx="29" cy="8.5" r="1.4" fill="#14100A"/>
+          <path d="M46 22 C50 20 54 21 56 24 C53 25 49 25 46 24 Z" fill="#E3A93F"/>
+          <path d="M26 40 L26 43 M36 40 L36 43" stroke="#14100A" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- Rabbit -->
+    <div class="rabbit" aria-hidden="true">
+      <span class="hop">
+        <svg viewBox="0 0 52 48" fill="none">
+          <g class="ears">
+            <path d="M20 14 C17 6 17 1 20 0 C23 1 23 8 23 14 Z" fill="#9FB0C4"/>
+            <path d="M26 14 C25 5 26 1 29 1 C31 3 30 9 29 14 Z" fill="#8B9DB4"/>
+          </g>
+          <path d="M18 22 C12 24 8 30 9 36 C10 43 18 46 28 46 C38 46 44 42 44 35 C44 28 38 22 30 21 Z" fill="#9FB0C4"/>
+          <circle cx="16" cy="22" r="6" fill="#9FB0C4"/>
+          <circle cx="14" cy="20.5" r="1.3" fill="#14100A"/>
+          <circle cx="45" cy="40" r="4" fill="#F3ECDC"/>
+          <path d="M12 46 L8 46 M34 46 L40 46" stroke="#9FB0C4" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
     <div class="hero-in">
       <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
       <span class="next-session" id="next-session">NEXT SESSION: —</span>
