@@ -136,9 +136,9 @@
   .egret{ position:absolute; top:0; left:0; z-index:2; pointer-events:none;
     animation:egretFly 34s linear infinite; animation-delay:2s; will-change:transform; }
   .egret-bob{ animation:egretBob 4.6s ease-in-out infinite; }
-  .egret svg{ width:150px; height:auto; filter:drop-shadow(0 2px 6px rgba(15,27,44,.35)); }
-  .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.1s ease-in-out infinite alternate; }
-  .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.1s ease-in-out infinite alternate; }
+  .egret svg{ width:150px; height:auto; filter:drop-shadow(0 2px 6px rgba(15,27,44,.35)); transform:scaleX(-1); }
+  .egret .wing-t{ transform-origin:98px 34px; animation:wingFlapT 1.1s ease-in-out infinite alternate; }
+  .egret .wing-b{ transform-origin:98px 36px; animation:wingFlapB 1.1s ease-in-out infinite alternate; }
   @keyframes egretFly{
     0%   { transform:translate(-18vw, 17vh) rotate(0deg); opacity:0; }
     4%   { opacity:1; }
@@ -153,38 +153,46 @@
   @keyframes wingFlapB{ from{ transform:rotate(10deg); } to{ transform:rotate(-24deg); } }
 
   /* Waddling ducks — along the grass line, one trailing the other */
-  .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; }
-  .duck.d1{ animation:duckWalk 46s linear infinite; animation-delay:5s; }
-  .duck.d2{ animation:duckWalk 46s linear infinite; animation-delay:8.5s; }
-  .duck svg{ width:52px; height:auto; }
+  .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; }
+  .duck.d1{ animation:duckStroll 20s var(--ease) 2s forwards; }
+  .duck.d2{ animation:duckStroll 20s var(--ease) 4.5s forwards; }
+  .duck svg{ width:52px; height:auto; transform:scaleX(-1); }
   .duck.d2 svg{ width:42px; }
-  .duck .waddle{ display:block; animation:waddle .55s ease-in-out infinite alternate; transform-origin:50% 88%; }
-  .duck.d2 .waddle{ animation-delay:.27s; }
-  @keyframes duckWalk{
+  .duck .waddle{ display:block; animation:waddle .55s ease-in-out 12 alternate, waddleCalm 1.6s ease-in-out 6.6s infinite alternate; transform-origin:50% 88%; }
+  .duck.d2 .waddle{ animation-delay:.27s, 6.87s; }
+  @keyframes duckStroll{
     0%   { transform:translateX(-8vw); opacity:0; }
-    3%   { opacity:1; }
-    97%  { opacity:1; }
-    100% { transform:translateX(106vw); opacity:0; }
+    4%   { opacity:1; }
+    100% { transform:translateX(15vw); opacity:1; }
   }
   @keyframes waddle{ from{ transform:rotate(-7deg) translateY(0); } to{ transform:rotate(7deg) translateY(-2px); } }
+  @keyframes waddleCalm{ from{ transform:rotate(-1.2deg); } to{ transform:rotate(1.2deg); } }
 
-  /* Rabbit — hops across the grass, pauses, keeps going */
-  .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none;
-    animation:rabbitTrail 26s linear infinite; animation-delay:12s; will-change:transform; }
+  /* Rabbit — hops in from the right to his own patch of grass, and stays */
+  .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none; opacity:0;
+    animation:rabbitIn 10s var(--ease) 6s forwards; will-change:transform; }
   .rabbit svg{ width:46px; height:auto; }
-  .rabbit .hop{ display:block; animation:rabbitHop .52s cubic-bezier(.35,.1,.6,1) infinite; transform-origin:50% 100%; }
-  @keyframes rabbitTrail{
-    0%   { transform:translateX(110vw); opacity:0; }
-    2%   { opacity:1; }
-    38%  { transform:translateX(58vw); }
-    46%  { transform:translateX(58vw); }  /* sits for a moment */
-    96%  { opacity:1; }
-    100% { transform:translateX(-10vw); opacity:0; }
+  .rabbit .hop{ display:block; animation:rabbitHop 10s ease-in-out 6s forwards, rabbitIdle 3.2s ease-in-out 16.5s infinite; transform-origin:50% 100%; }
+  @keyframes rabbitIn{
+    0%   { transform:translateX(96vw); opacity:0; }
+    8%   { opacity:1; }
+    22%  { transform:translateX(86vw); }
+    38%  { transform:translateX(79.5vw); }
+    55%  { transform:translateX(76vw); }
+    100% { transform:translateX(74vw); opacity:1; }
   }
   @keyframes rabbitHop{
-    0%,100%{ transform:translateY(0) scaleX(1); }
-    35%    { transform:translateY(-13px) scaleX(1.04); }
-    60%    { transform:translateY(0) scaleX(.97); }
+    0%,6%   { transform:translateY(0); }
+    11%     { transform:translateY(-14px); }
+    16%     { transform:translateY(0); }
+    26%     { transform:translateY(-14px); }
+    31%     { transform:translateY(0); }
+    42%     { transform:translateY(-14px); }
+    47%,100%{ transform:translateY(0); }
+  }
+  @keyframes rabbitIdle{
+    0%,100%{ transform:scaleY(1); }
+    50%    { transform:scaleY(1.025); }
   }
   .rabbit .ears{ transform-origin:24px 12px; animation:earTwitch 2.6s ease-in-out infinite; }
   @keyframes earTwitch{ 0%,88%,100%{ transform:rotate(0); } 92%{ transform:rotate(-9deg); } 96%{ transform:rotate(5deg); } }
@@ -242,17 +250,12 @@
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
         <svg viewBox="0 0 160 90" fill="none">
-          <!-- far wing -->
           <path class="wing-b" d="M62 36 C46 40 28 52 14 70 C30 62 48 52 64 42 Z" fill="#C9D4E2" opacity=".85"/>
-          <!-- trailing legs -->
           <path d="M94 40 L118 46 M94 42 L117 52" stroke="#14100A" stroke-width="2.4" stroke-linecap="round"/>
-          <!-- body -->
           <path d="M52 34 C60 28 78 27 92 34 C100 38 100 44 92 46 C76 50 58 46 50 40 Z" fill="#FBF7EE"/>
-          <!-- S-neck + head + beak -->
           <path d="M54 36 C46 30 40 30 36 24 C33 19 36 14 41 15 C45 16 45 20 43 23 C46 27 52 29 58 33 Z" fill="#FBF7EE"/>
           <path d="M38 17 L18 21 L37 23 Z" fill="#E8933A"/>
           <circle cx="39.5" cy="18.5" r="1.3" fill="#14100A"/>
-          <!-- near wing -->
           <path class="wing-t" d="M62 34 C44 26 24 12 8 -6 C30 -2 52 10 68 28 Z" fill="#F3ECDC"/>
         </svg>
       </div>
