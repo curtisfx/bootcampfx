@@ -106,8 +106,7 @@
   </style>
   <style>
     /* ============ HERO — 5:30 AM ============ */
-    .hero{ position:relative; min-height:100svh; display:flex; align-items:center; background:linear-gradient(180deg, var(--predawn) 0%, var(--predawn-2) 62%, #2C3A50 100%); color:#fff; padding:130px 0 210px; }
-    .hero-clip{ position:relative; overflow:hidden; }
+    .hero{ position:relative; min-height:100svh; display:flex; align-items:center; background:linear-gradient(180deg, var(--predawn) 0%, var(--predawn-2) 62%, #2C3A50 100%); color:#fff; overflow:hidden; padding:130px 0 210px; }
     .hero-stars{ position:absolute; inset:0; opacity:0; animation:starsAppear 1.4s ease-out .4s forwards; transition:transform .6s var(--ease); }
     .star{ position:absolute; left:var(--x); top:var(--y); width:calc(5px * var(--s)); height:calc(5px * var(--s)); border-radius:50%;
       background:radial-gradient(circle, rgba(255,255,255,.92), rgba(255,249,220,.35) 40%, transparent 70%);
@@ -496,7 +495,6 @@
 
   <!-- ============ HERO · 5:30 AM ============ -->
   <header class="hero" id="top" data-rail="top">
-    <div class="hero-clip">
     <div class="hero-stars" id="stars" aria-hidden="true">
       <span class="star" style="--x:12%;--y:18%;--s:.9;--d:0s;--t:1"></span>
       <span class="star" style="--x:28%;--y:8%;--s:.6;--d:0.7s;--t:2"></span>
@@ -526,20 +524,6 @@
     </svg>
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
-    <div class="hero-in">
-      <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
-      <span class="next-session" id="next-session">NEXT SESSION: —</span>
-      <h1 class="display">
-        <span class="lm" style="--ld:.15s"><span class="lmi">The sun isn't up yet.</span></span>
-        <span class="lm" style="--ld:.32s"><span class="lmi"><em>We are.</em></span></span>
-      </h1>
-      <p class="sub reveal" style="--rd:.55s">Coached outdoor group training on the same grass since <strong>2005</strong>. No franchise, no fluorescent lights, no contract — just a coach who knows your name and <strong>15,000+ sessions on the same grass</strong>.</p>
-      <div class="hero-ctas reveal" style="--rd:.7s">
-        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Start With a Free Week</a>
-      </div>
-    </div>
-    <div class="hero-scroll" aria-hidden="true">Scroll into daylight</div>
-    </div>
     <!-- Soaring egret -->
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
@@ -596,11 +580,19 @@
       </span>
     </div>
 
-  
-
-    
-
-
+    <div class="hero-in">
+      <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
+      <span class="next-session" id="next-session">NEXT SESSION: —</span>
+      <h1 class="display">
+        <span class="lm" style="--ld:.15s"><span class="lmi">The sun isn't up yet.</span></span>
+        <span class="lm" style="--ld:.32s"><span class="lmi"><em>We are.</em></span></span>
+      </h1>
+      <p class="sub reveal" style="--rd:.55s">Coached outdoor group training on the same grass since <strong>2005</strong>. No franchise, no fluorescent lights, no contract — just a coach who knows your name and <strong>15,000+ sessions on the same grass</strong>.</p>
+      <div class="hero-ctas reveal" style="--rd:.7s">
+        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Start With a Free Week</a>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">Scroll into daylight</div>
   </header>
 
   <!-- ============ PROOF ============ -->

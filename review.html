@@ -43,8 +43,7 @@
   .btn-dawn:hover{ transform:translateY(-2px); background:var(--gold); animation:none; }
 
   /* ============ REVIEW HERO — same system as the site's 5:30 AM hero ============ */
-  .hero{ position:relative; min-height:100svh; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, var(--predawn) 0%, var(--predawn-2) 62%, #2C3A50 100%); color:#fff; padding:120px 24px 160px; text-align:center; }
-  .hero-clip{ overflow:hidden; }
+  .hero{ position:relative; min-height:100svh; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, var(--predawn) 0%, var(--predawn-2) 62%, #2C3A50 100%); color:#fff; overflow:hidden; padding:120px 24px 160px; text-align:center; }
 
   .hero-stars{ position:absolute; inset:0; opacity:0; animation:starsAppear 1.2s ease-out .3s forwards; }
   .star{
@@ -233,7 +232,6 @@
 </head>
 <body>
   <header class="hero" id="top">
-    <div class="hero-clip">
     <div class="hero-stars" aria-hidden="true">
       <span class="star" style="--x:12%;--y:18%;--s:.9;--d:0s;--t:1"></span>
       <span class="star" style="--x:28%;--y:8%;--s:.6;--d:0.7s;--t:2"></span>
@@ -260,7 +258,6 @@
     </svg>
 
     <!-- ============ THE 5:30 AM REGULARS ============ -->
-    </div>
     <!-- Soaring egret -->
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
