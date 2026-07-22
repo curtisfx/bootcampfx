@@ -163,8 +163,7 @@
     .hero-meta{ position:absolute; z-index:3; bottom:186px; font-family:var(--mono); font-size:.62rem; letter-spacing:.24em; color:rgba(159,176,196,.75); text-transform:uppercase; }
     .hero-meta.l{ left:28px; } .hero-meta.r{ right:28px; }
     @media (max-width:900px){ .hero-meta{ display:none; } }
-    .hero-scroll{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; font-family:var(--mono); font-size:.68rem; letter-spacing:.3em; color:var(--mist); text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:10px; }
-    .hero-scroll::after{ content:""; width:2px; height:44px; background:linear-gradient(var(--gold), transparent); }
+    .hero-scroll{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; font-family:var(--mono); font-size:.68rem; letter-spacing:.3em; color:var(--mist); text-transform:uppercase; }
 
     /* ============ WILDLIFE — the 5:30 AM regulars ============ */
     /* Soaring egret — crosses the pre-dawn sky on a loop */
@@ -432,7 +431,6 @@
       .btn-dawn::after{ display:none; }
       .mq-track{ animation:none; }
       .grain{ display:none; }
-      .hero-scroll::after{ animation:none; }
       .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears{ animation:none !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
