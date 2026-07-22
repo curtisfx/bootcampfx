@@ -1081,12 +1081,12 @@
         const nx = getNext(); if (!nx) return;
         const ms = nx.date - new Date();
         if (ms<0){ el.textContent = 'NEXT SESSION: '+nx.label+' (starting now)'; return; }
-        const dd=Math.floor(ms/86400000), hh=Math.floor(ms%86400000/3600000), mm=Math.floor(ms%3600000/60000);
-        let cn = hh+'h '+mm+'m';
+        const dd=Math.floor(ms/86400000), hh=Math.floor(ms%86400000/3600000), mm=Math.floor(ms%3600000/60000), ss=Math.floor(ms%60000/1000);
+        let cn = hh+'h '+mm+'m '+ss+'s';
         if (dd>0) cn = dd+'d '+cn;
         el.textContent = 'NEXT SESSION: '+nx.label+' (in '+cn+')';
       }
-      tick(); setInterval(tick, 60000);
+      tick(); setInterval(tick, 1000);
     })();
 
     // ===== Schedule picker =====
