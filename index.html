@@ -185,9 +185,10 @@
     @keyframes wingFlapB{ from{ transform:rotate(-10deg); } to{ transform:rotate(24deg); } }
 
     /* Waddling ducks — along the grass line, one trailing the other */
-    .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; }
+    .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; animation-play-state:paused; }
     .duck.d1{ --settle:15vw; animation:duckStroll 20s var(--ease) 2s forwards, duckForage 3.5s ease-in-out 22s infinite; }
     .duck.d2{ --settle:22vw; animation:duckStroll 20s var(--ease) 4.5s forwards, duckForage 3.2s ease-in-out 24.5s infinite; }
+    .hero.live .duck{ animation-play-state:running; }
     .duck svg{ width:52px; height:auto; transform:scaleX(-1); }
     .duck.d2 svg{ width:42px; }
     .duck .waddle{ display:block; animation:waddle .55s ease-in-out 12 alternate, waddleCalm 1.6s ease-in-out 6.6s infinite alternate; transform-origin:50% 88%; }
@@ -206,8 +207,9 @@
     }
 
     /* Rabbit — hops in from the right to his own patch of grass, and stays */
-    .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none; opacity:0;
+    .rabbit{ position:absolute; bottom:20px; left:0; z-index:3; pointer-events:none; opacity:0; animation-play-state:paused;
       animation:rabbitIn 10s var(--ease) 6s forwards, rabbitForage 2.8s ease-in-out 16.5s infinite; will-change:transform; }
+    .hero.live .rabbit{ animation-play-state:running; }
     .rabbit svg{ width:46px; height:auto; }
     .rabbit .hop{ display:block; animation:rabbitHop 10s ease-in-out 6s forwards, rabbitIdle 3.2s ease-in-out 16.5s infinite; transform-origin:50% 100%; }
     @keyframes rabbitIn{
@@ -1035,6 +1037,17 @@
         stars.style.transform = 'translateX(' + (x * -14) + 'px)';
         horizon.style.transform = 'translateX(' + (x * -7) + 'px)';
       });
+    })();
+
+    // Wildlife — start ducks + rabbit only when hero is in view
+    (function(){
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+      if (reduced){ hero.classList.add('live'); return; }
+      const wio = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting){ hero.classList.add('live'); wio.unobserve(hero); }
+      }), { threshold:.05 });
+      wio.observe(hero);
     })();
 
     // ===== Next-session ticker =====
