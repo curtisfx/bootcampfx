@@ -447,6 +447,31 @@
       .fw-card::before{ animation:none; }
       .std-item, .mcard, .why{ transition:none; }
     }
+
+    /* ---------- VS COMPARISON ---------- */
+    .vs{ background:var(--day); }
+    .vs h2.k em{ font-style:italic; color:var(--dawn); }
+    .vs-hint{ display:none; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--stone); margin-bottom:12px; }
+    @media (max-width:820px){ .vs-hint{ display:block; } }
+    .vs-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:20px; box-shadow:0 10px 28px rgba(20,16,10,.12); }
+    .vs-table{ width:100%; min-width:820px; border-collapse:collapse; background:#fff; font-size:.95rem; }
+    .vs-table caption{ text-align:left; padding:0 0 10px; color:var(--stone); font-size:.78rem; }
+    .vs-table th, .vs-table td{ padding:16px 14px; text-align:left; border-bottom:1px solid var(--line-day); vertical-align:top; }
+    .vs-table thead th{ font-family:var(--display); font-weight:600; font-size:1.05rem; padding:20px 14px; background:var(--day-2); border-bottom:2px solid var(--line-day); }
+    .vs-table thead th small{ display:block; font-family:var(--body); font-weight:600; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--stone); margin-top:4px; }
+    .vs-table .rowh{ font-weight:700; font-size:.82rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone); background:var(--day); width:150px; }
+    .vs-table tbody tr:hover td{ background:#FDFAF2; }
+    .vs-table tbody tr:hover .rowh{ background:var(--day-2); }
+    /* BootCampFX winning column */
+    .vs-table .bfx{ background:#FFF6E8; border-left:2px solid var(--dawn); border-right:2px solid var(--dawn); }
+    .vs-table thead .bfx{ background:var(--ink); color:var(--day); border-top:2px solid var(--dawn); border-radius:10px 10px 0 0; }
+    .vs-table thead .bfx small{ color:var(--gold); }
+    .vs-table tbody tr:last-child .bfx{ border-bottom:2px solid var(--dawn); border-radius:0 0 10px 10px; }
+    .vs-table .win{ color:#1F7A4D; font-weight:700; }
+    .vs-table .no{ color:#B3562E; }
+    .confirm{ font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; color:#A4761B; background:#FBF1DA; border:1px dashed #D9B869; padding:1px 7px; border-radius:99px; white-space:nowrap; }
+    .vs-note{ margin-top:20px; font-size:.86rem; color:var(--stone); }
+    @media (min-width:1000px){ .vs-table{ min-width:0; } }
   </style>
   <script type="application/ld+json">
   {
@@ -474,6 +499,7 @@
       <div class="nav-links">
         <a href="#standard">The Standard</a>
         <a href="#members">Members</a>
+        <a href="#vs">Compare</a>
         <a href="#membership">Membership</a>
         <a href="#schedule">Schedule</a>
         <a class="nav-cta" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Free Week</a>
@@ -637,6 +663,89 @@
       </div>
     </div>
   </section>
+
+  <!-- ============ VS — how we compare ============ -->
+  <section class="vs" id="vs">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <!-- BOOTCAMPFX_EDIT: VS section heading + lede -->
+        <span class="clock" style="color:var(--dawn);">The honest comparison</span>
+        <h2 class="display k">Four big names in OC fitness. <em>One grass field that beats them.</em></h2>
+        <p class="sec-lede">Same goal — getting you fit. Very different ways of getting there. Here's where Boot Camp FX wins, side by side.</p>
+      </div>
+      <p class="vs-hint">Swipe to compare all five →</p>
+      <div class="vs-scroll reveal">
+        <table class="vs-table">
+          <caption><!-- BOOTCAMPFX_EDIT: table caption -->What you get, brand by brand. <span class="confirm">[CONFIRM]</span> = verify competitor details before publishing.</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="small">Category</span></th>
+              <th scope="col" class="bfx">Boot Camp FX<small>Owner-coached · Est. 2005</small></th>
+              <th scope="col">F45<small>Franchise</small></th>
+              <th scope="col">Orangetheory<small>Franchise</small></th>
+              <th scope="col">ZOB<small>Small group</small></th>
+              <th scope="col">Camp Gladiator<small>Outdoor</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="rowh">Coaching</th>
+              <!-- BOOTCAMPFX_EDIT: BFX column copy -->
+              <td class="bfx"><span class="win">✓</span> 21-year strength &amp; conditioning coach — the owner, every session</td>
+              <td>Rotating trainers, franchise playbook <span class="confirm">[CONFIRM]</span></td>
+              <td>Coach-led, heart-rate zone script <span class="confirm">[CONFIRM]</span></td>
+              <td>Small-group coaches, younger team <span class="confirm">[CONFIRM]</span></td>
+              <td>Certified trainers, licensed curriculum <span class="confirm">[CONFIRM]</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="rowh">Setting</th>
+              <td class="bfx"><span class="win">✓</span> Outdoors at Acacia Park — air, light, real ground</td>
+              <td>Indoor studio, screens &amp; circuits</td>
+              <td>Dark studio, treadmill + rower stations</td>
+              <td>Indoor studio <span class="confirm">[CONFIRM]</span></td>
+              <td>Outdoor parks — closest to our model</td>
+            </tr>
+            <tr>
+              <th scope="row" class="rowh">Group size</th>
+              <td class="bfx"><span class="win">✓</span> Small — your absence gets noticed</td>
+              <td>Large circuits, ~27+ per class <span class="confirm">[CONFIRM]</span></td>
+              <td>~24–36 per class <span class="confirm">[CONFIRM]</span></td>
+              <td>Small groups</td>
+              <td>Larger outdoor groups <span class="confirm">[CONFIRM]</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="rowh">Franchise fees</th>
+              <td class="bfx"><span class="win">✓</span> None — locally owned, your dues stay in Fullerton</td>
+              <td><span class="no">✕</span> Franchise system</td>
+              <td><span class="no">✕</span> Franchise system</td>
+              <td>Local brand — confirm ownership <span class="confirm">[CONFIRM]</span></td>
+              <td><span class="no">✕</span> Franchise license system</td>
+            </tr>
+            <tr>
+              <th scope="row" class="rowh">Contract</th>
+              <td class="bfx"><span class="win">✓</span> Month to month, cancel anytime — since day one</td>
+              <td>Terms vary <span class="confirm">[CONFIRM]</span></td>
+              <td>Terms vary <span class="confirm">[CONFIRM]</span></td>
+              <td>Terms vary <span class="confirm">[CONFIRM]</span></td>
+              <td>Terms vary <span class="confirm">[CONFIRM]</span></td>
+            </tr>
+            <tr>
+              <th scope="row" class="rowh">Monthly price</th>
+              <!-- BOOTCAMPFX_EDIT: BFX pricing summary -->
+              <td class="bfx"><span class="win">✓</span> $249–$429 · ≈ $17–19 per coached session</td>
+              <td>$199+/mo <span class="confirm">[CONFIRM]</span></td>
+              <td>Premium tier pricing <span class="confirm">[CONFIRM]</span></td>
+              <td>Local mid-market <span class="confirm">[CONFIRM]</span></td>
+              <td>Lower price point <span class="confirm">[CONFIRM]</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- BOOTCAMPFX_EDIT: fairness footnote -->
+      <p class="vs-note reveal">Competitor details are from public materials and member reports — they're good brands with different trade-offs. Items marked <span class="confirm">[CONFIRM]</span> should be verified before this page goes live.</p>
+    </div>
+  </section>
+  <!-- ============ /VS ============ -->
 
   <!-- ============ THE STANDARD · 8:00 AM ============ -->
   <section class="standard" id="standard" data-rail="standard">
