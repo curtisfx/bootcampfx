@@ -7,38 +7,38 @@
   <meta name="description" content="Boot Camp FX privacy policy. We collect minimal info for boot camp only. No selling data. No tracking.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
   <style>
     /* ===== RESET & TOKENS ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --orange: #F85A2B;
-      --orange-dk: #C4421C;
-      --ink: #121110;
-      --ink-2: #1C1A18;
-      --sand: #F2E9DB;
-      --cream: #FBF7F0;
-      --paper: #FFFFFF;
-      --dove: #6B635A;
-      --gold: #F5A623;
-      --green: #2E7D32;
-      --red: #B0381E;
-      --line: #E6DCCC;
-      --radius: 18px;
-      --radius-lg: 28px;
-      --display: 'Anton', sans-serif;
-      --body: 'Archivo', sans-serif;
-      --ease: cubic-bezier(.2,.7,.2,1);
+      --predawn:#0F1B2C;
+      --predawn-2:#16273D;
+      --pine:#14291F;
+      --dawn:#E8933A;
+      --gold:#F2B84B;
+      --day:#FBF7EE;
+      --day-2:#F3ECDC;
+      --ink:#14100A;
+      --mist:#9FB0C4;
+      --stone:#6A6255;
+      --line-day:#E4DAC6;
+      --line-dark:rgba(251,247,238,.14);
+      --display:'Fraunces', serif;
+      --body:'Instrument Sans', sans-serif;
+      --mono:'Spline Sans Mono', monospace;
+      --ease:cubic-bezier(.22,.7,.25,1);
+      /* legacy aliases */
+      --orange:var(--dawn);
+      --orange-dk:#B46B1E;
+      --ink2:var(--predawn);
+      --sand:var(--day-2);
+      --cream:var(--day);
+      --paper:#FFFFFF;
+      --dove:var(--stone);
     }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--body);
-      background: var(--cream);
-      color: var(--ink);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+    body { font-family:var(--body); background:var(--day); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
     /* film grain */
     body::before {
       content: "";
