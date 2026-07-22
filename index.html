@@ -314,8 +314,9 @@
     .coach .ghost{ position:absolute; right:-2%; bottom:-6%; font-family:var(--display); font-weight:700; font-size:clamp(9rem,24vw,20rem); line-height:1; color:transparent; -webkit-text-stroke:1.5px rgba(20,16,10,.09); pointer-events:none; user-select:none; }
     .coach-grid{ display:grid; grid-template-columns:.85fr 1.15fr; gap:64px; align-items:center; position:relative; }
     @media (max-width:880px){ .coach-grid{ grid-template-columns:1fr; } }
-    .portrait{ aspect-ratio:4/5; border-radius:22px; background:linear-gradient(160deg, var(--predawn) 0%, var(--pine) 70%); position:relative; overflow:hidden; display:flex; align-items:flex-end; box-shadow:0 30px 70px rgba(20,16,10,.22); }
+    .portrait{ aspect-ratio:4/5; border-radius:22px; background:linear-gradient(160deg, var(--predawn) 0%, var(--pine) 70%); position:relative; overflow:hidden; display:flex; align-items:flex-end; box-shadow:0 30px 70px rgba(20,16,10,.22); width:50%; max-width:260px; justify-self:start; }
     .portrait video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    @media (max-width:880px){ .portrait{ width:50%; max-width:220px; justify-self:center; } }
     .portrait .p-label{ width:100%; padding:20px 22px; font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; color:var(--gold); text-transform:uppercase; background:linear-gradient(transparent, rgba(15,27,44,.9)); position:relative; z-index:2; }
     .coach h2.k{ margin-top:12px; font-size:clamp(2.4rem,4.6vw,3.8rem); }
     .coach .bio p{ margin-bottom:18px; color:var(--stone); font-size:1.05rem; }
@@ -709,7 +710,7 @@
         </div>
         <div class="mcard reveal" style="--rd:.08s">
           <span class="qmark" aria-hidden="true">”</span>
-          <img class="t-photo" src="images/mariela.jpg" alt="Mariela Iglesias Youngren" loading="lazy">
+          <img class="t-photo" src="images/mariela.jpg" alt="Mariela Iglesias Youngren" loading="lazy" style="object-position:center top">
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">"I met Curtis in 2005 and within a year lost all the weight from four kids — got in the best shape of my life. Now at 47 I can do pull-ups, strenuous hikes, lift anything. It changed everything."</p>
           <div class="who">Mariela Iglesias Youngren</div>
