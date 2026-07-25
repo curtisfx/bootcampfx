@@ -172,13 +172,13 @@
     .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.05s ease-in-out infinite alternate; }
     .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.05s ease-in-out infinite alternate-reverse; }
     @keyframes egretFly{
-      0%   { transform:translate(-18vw, calc(17vh + 12px - 150px)) rotate(0deg); opacity:0; }
+      0%   { transform:translate(-18vw, calc(17vh + 12px - 75px)) rotate(0deg); opacity:0; }
       4%   { opacity:1; }
-      30%  { transform:translate(18vw, calc(9vh + 12px - 150px)) rotate(-1.5deg); }
-      55%  { transform:translate(52vw, calc(13vh + 12px - 150px)) rotate(1deg); }
-      80%  { transform:translate(84vw, calc(7vh + 12px - 150px)) rotate(-1deg); opacity:1; }
+      30%  { transform:translate(18vw, calc(9vh + 12px - 75px)) rotate(-1.5deg); }
+      55%  { transform:translate(52vw, calc(13vh + 12px - 75px)) rotate(1deg); }
+      80%  { transform:translate(84vw, calc(7vh + 12px - 75px)) rotate(-1deg); opacity:1; }
       96%  { opacity:1; }
-      100% { transform:translate(118vw, calc(10vh + 12px - 150px)) rotate(0deg); opacity:0; }
+      100% { transform:translate(118vw, calc(10vh + 12px - 75px)) rotate(0deg); opacity:0; }
     }
     @keyframes egretBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
     @keyframes wingFlapT{ from{ transform:rotate(16deg); } to{ transform:rotate(-24deg); } }
@@ -453,7 +453,7 @@
       .mq-track{ animation:none; }
       .grain{ display:none; }
       .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears{ animation:none !important; }
-      .egret{ transform:translate(60vw, calc(16vh + 12px - 150px)); opacity:.9; }
+      .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
       .rabbit{ transform:none; opacity:1; left:auto; right:14vw; }
