@@ -348,7 +348,7 @@
     .tier{ background:rgba(251,247,238,.06); border:1px solid rgba(251,247,238,.16); border-radius:22px; padding:36px 30px; display:flex; flex-direction:column; transform-style:preserve-3d; transition:border-color .3s var(--ease); }
     .tier:hover{ border-color:rgba(251,247,238,.35); }
     .tier.featured{ background:var(--day); color:var(--ink); border-color:var(--gold); position:relative; transform:translateY(-10px); box-shadow:0 30px 70px rgba(0,0,0,.4); }
-    .tier.featured::before{ content:"MOST MEMBERS CHOOSE THIS"; position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:var(--dawn); color:#1B1206; font-weight:800; font-size:.66rem; letter-spacing:.18em; padding:7px 16px; border-radius:40px; white-space:nowrap; }
+    .tier.featured::before{ content:"MOST POPULAR"; position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:var(--dawn); color:#1B1206; font-weight:800; font-size:.66rem; letter-spacing:.18em; padding:7px 16px; border-radius:40px; white-space:nowrap; }
     .tier h3{ font-family:var(--display); font-weight:600; font-size:1.5rem; letter-spacing:-.01em; }
     .tier .for{ font-size:.9rem; opacity:.72; margin:5px 0 20px; }
     .tier .amt{ font-family:var(--display); font-weight:700; font-size:2.8rem; line-height:1; letter-spacing:-.02em; }
@@ -366,6 +366,31 @@
     .tier .cap{ font-family:var(--mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; text-align:center; margin-top:14px; opacity:.7; }
     .tiers .under{ text-align:center; margin-top:40px; color:#C6D2C1; font-size:.96rem; }
     .tiers .under a{ color:#fff; font-weight:700; }
+
+
+    /* disabled decoy tiers — tokens only, no new palette */
+    .tier.disabled{ opacity:.72; filter:grayscale(.35); }
+    .tier.disabled .join-link,
+    .tier .join-link.is-disabled{
+      opacity:.45; cursor:not-allowed; pointer-events:auto;
+      background:rgba(251,247,238,.06); border-color:rgba(251,247,238,.18);
+    }
+    .tier.disabled .join-link:hover{ transform:none; border-color:rgba(251,247,238,.18); }
+    .tier .decoy-reason{ font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-align:center; margin-top:10px; opacity:.75; color:var(--mist); }
+    .tier .backup-links{ margin-top:14px; text-align:center; font-size:.88rem; line-height:1.6; }
+    .tier .backup-links a{ color:var(--gold); font-weight:700; }
+    .tier.featured .backup-links a{ color:var(--dawn); }
+    .letter{ background:var(--day); }
+    .letter .letter-body{ max-width:720px; margin:0 auto; }
+    .letter .letter-body p{ margin:0 0 1.1em; color:var(--ink); font-size:1.06rem; }
+    .letter .letter-body .lede-kicker{ font-family:var(--display); font-size:clamp(1.35rem,2.4vw,1.75rem); font-weight:600; margin:1.4em 0 .6em; }
+    .letter table.math{ width:100%; border-collapse:collapse; margin:28px 0; font-size:.95rem; }
+    .letter table.math th, .letter table.math td{ border:1px solid var(--line-day); padding:12px 14px; text-align:left; }
+    .letter table.math th{ background:var(--day-2); font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; }
+    .letter table.math td strong{ color:var(--dawn); }
+    .letter .quote-block{ border-left:3px solid var(--dawn); padding:8px 0 8px 18px; margin:22px 0; }
+    .letter .quote-block p{ font-style:italic; margin-bottom:.4em; }
+    .letter .quote-who{ font-style:normal; font-weight:700; font-size:.92rem; color:var(--stone); }
 
     /* ============ SCHEDULE ============ */
     .sched{ background:var(--day); }
@@ -469,7 +494,7 @@
     "url":"https://bootcampfx.com",
     "telephone":"+1-657-217-0820",
     "email":"support@bootcampfx.com",
-    "priceRange":"$249-$429",
+    "priceRange":"$197",
     "foundingDate":"2005",
     "address":{"@type":"PostalAddress","addressLocality":"Fullerton","addressRegion":"CA","addressCountry":"US"},
     "location":{"@type":"Place","name":"Acacia Park, Fullerton, CA"},
@@ -597,11 +622,11 @@
       <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
       <span class="next-session" id="next-session">NEXT SESSION: —</span>
       <h1 class="display">
-        <span class="lm" style="--ld:.08s"><span class="lmi">21 years. Same park. Same coach.</span></span>
-        <span class="lm" style="--ld:.22s"><span class="lmi">The sun isn't up yet.</span></span>
-        <span class="lm" style="--ld:.38s"><span class="lmi"><em>We are.</em></span></span>
+        <span class="lm" style="--ld:.08s"><span class="lmi">Why I Turn Down</span></span>
+        <span class="lm" style="--ld:.22s"><span class="lmi">$1,200-A-Month Clients</span></span>
+        <span class="lm" style="--ld:.38s"><span class="lmi"><em>$197. Unlimited. Outdoors.</em></span></span>
       </h1>
-      <p class="sub reveal" style="--rd:.55s">Coached outdoor group training at Acacia Park since <strong>2005</strong> — measured on day one, remeasured as you go, led by the same coach every session. No franchise, no fluorescent lights, no contract. <strong>Your first week is free, because the sessions do the selling.</strong></p>
+      <p class="sub reveal" style="--rd:.55s">Coached outdoor group training at Acacia Park since <strong>2005</strong>. Your body changes from how often you show up — not how much you pay per session. <strong>Unlimited coaching is $197/mo. Your first week is free.</strong></p>
     </div>
 </header>
 
@@ -768,7 +793,7 @@
           <h3>You'll thrive here if</h3>
           <ul>
             <li>✓ You're 20–80 and done starting over every January</li>
-            <li>✓ You can give 2–3 sessions a week — mornings or evenings</li>
+            <li>✓ You can give frequency a chance — 2–3+ sessions a week, ideally more</li>
             <li>✓ You want a coach who knows your name, not a keycard</li>
             <li>✓ You'd rather train under the sky than under fluorescent lights</li>
             <li>✓ You want progress measured in numbers, not mirror selfies</li>
@@ -777,7 +802,7 @@
         <div class="filter-card save">
           <h3>Save your money if</h3>
           <ul>
-            <li>✕ You want a $10/month membership you'll never use — Chuze is down the street</li>
+            <li>✕ You want a cheap keycard membership you'll never use — those are down the street</li>
             <li>✕ You're shopping for a discount, not a result</li>
             <li>✕ You can't make 2 sessions a week — come back when you can</li>
             <li>✕ You need it to be easy. It's simple. It isn't easy.</li>
@@ -795,67 +820,147 @@
     </div>
   </div>
 
-  <!-- ============ MEMBERSHIP · 5:00 PM ============ -->
-  <section class="tiers" id="membership" data-rail="membership">
-    <div class="ghost" aria-hidden="true">21</div>
+
+  <!-- ============ SALES LETTER (copy only) ============ -->
+  <section class="letter" id="letter" aria-label="Sales letter">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="clock">5:00 PM · Membership</span>
-        <h2 class="display k">Priced like coaching, <em>because it is</em></h2>
-        <p class="sec-lede">Here's the honest math. Personal training in OC runs $80–100 a session — over $1,000 a month for the same frequency. A big-box keycard costs $10 and gets used twice. Boot Camp FX is the middle path done right: a 21-year professional coach, small groups, measured results — at <strong>≈ $17–19 per coached session</strong> with 3–5 sessions a week. Month to month, no contract, cancel anytime. That has been the deal since 2005.</p>
+        <span class="clock" style="color:var(--dawn);">From Curtis · Acacia Park</span>
+        <h2 class="display k">Why I turn down $1,200-a-month clients</h2>
+        <p class="sec-lede">And what I tell them to do instead — $197, unlimited, outdoors, and it works faster because you can actually show up enough times for a body to change.</p>
       </div>
-      <div class="tier-grid">
-        <div class="tier reveal">
-          <h3>Foundation</h3>
-          <p class="for">For building the habit</p>
-          <div class="amt">$249<span>/mo</span></div>
-          <p class="per">3 SESSIONS / WEEK · ≈ $19 PER SESSION — VS $80–100 FOR PERSONAL TRAINING</p>
-          <ul>
-            <li>3 coached outdoor sessions weekly</li>
-            <li>Baseline &amp; progress measurements — numbers on a card, not vibes</li>
-            <li>Simple SoCal nutrition guide</li>
-            <li>A coach and crew who notice when you're gone</li>
-            <li>Month to month, cancel anytime — no contract, ever</li>
-          </ul>
-          <div class="paypal-slot" id="paypal-foundation"></div>
-          <a class="join-link" data-plan="foundation" href="sms:+16572170820?&body=FOUNDATION%20—%20I%27d%20like%20to%20join%20at%20%24249%2Fmo.%20My%20name%20is%20">Join Foundation</a>
+      <div class="letter-body reveal">
+        <p>About once a month, somebody sits across from me ready to buy personal training. Twice a week. $75 to $200 a session, depending on location. They're ready to pay $600 to $1,200 a month right now.</p>
+        <p>And most of the time, I talk them out of it.</p>
+        <p>Not because I don't want the money. (I have three dogs, a wife, and a mortgage. I want the money.)</p>
+        <p>I talk them out of it because I've been coaching in Fullerton for over 20 years, and I've watched this movie too many times:</p>
+        <p>A motivated person buys twice-a-week personal training. Progress for about six weeks. Then life happens — work trip, sick kid, busy season. They miss sessions they already paid for. Progress stalls because <strong>two hours a week was never enough to change a body in the first place.</strong> They get discouraged. They quit. And they tell their friends, “I tried working with a trainer. It didn't work.”</p>
+        <p>The training worked fine. The <em>math</em> didn't.</p>
+        <p class="lede-kicker">Your body does not change based on how much you pay per session. It changes based on how many sessions you actually show up to.</p>
+        <p>Twice a week <em>maintains</em>. Four times a week <em>transforms</em>. The best program done twice a month loses to a solid program done four times a week. Every client I've seen completely change their body had one thing in common. Not genetics. Not a miracle plan. <strong>Showing up.</strong></p>
+        <p>So I stopped asking people to pay $150 for an hour a couple times a week. Instead: <strong>$197 for the month</strong> — and you come as often as you want. Fifteen coached sessions a week on the board at Acacia Park. Let frequency do what frequency does.</p>
+
+        <div class="quote-block">
+          <p>“One of the best decisions I made many years ago was to join Curtis’s Bootcamp. His workouts never seem like a chore as he changes things up all the time. He meets you where you are and then proceeds to motivate and challenge you. And, because we’re outdoors at a park, we’re privileged to see wildlife; owls, geese, bunnies, coyotes, skunks, squirrels and an assortment of birds. Thank you Curtis for all the years of training.”</p>
+          <div class="quote-who">— Judi Heylek · Google review · 5★</div>
+        </div>
+        <div class="quote-block">
+          <p>“Bootcamp FX has been a part of my daily routine for more than 15 years. Curtis Ludlow is an excellent trainer and always keeps the workouts fresh with the appropriate amount of challenge. In addition to helping me to stay fit, Bootcamp FX has been the source of creating lasting friendships. We sweat together and have a great time along the way!”</p>
+          <div class="quote-who">— Margaret Martinazzi · Google review · 5★</div>
         </div>
 
-        <div class="tier featured reveal" style="--rd:.1s">
-          <h3>All-In</h3>
-          <p class="for">For making it your lifestyle</p>
-          <div class="amt">$299<span>/mo</span></div>
-          <p class="per">UNLIMITED SESSIONS · ≈ $17/SESSION AT 4×/WEEK</p>
-          <ul>
-            <li>Unlimited coached sessions</li>
-            <li>Every measurement &amp; benchmark</li>
-            <li>Nutrition guide + accountability check-ins</li>
-            <li>Priority access to events &amp; challenges</li>
-            <li>Month to month, cancel anytime</li>
-          </ul>
-          <div class="paypal-slot" id="paypal-allin"></div>
-          <a class="join-link" data-plan="allin" href="sms:+16572170820?&body=ALL-IN%20—%20I%27d%20like%20to%20join%20at%20%24299%2Fmo.%20My%20name%20is%20">Join All-In</a>
-        </div>
+        <p class="lede-kicker">The honest math</p>
+        <table class="math">
+          <thead><tr><th></th><th>Personal training (2×/week)</th><th>BootCampFX Unlimited</th></tr></thead>
+          <tbody>
+            <tr><td>Monthly cost</td><td>$600 – $1,200</td><td><strong>$197</strong></td></tr>
+            <tr><td>Coached sessions / month</td><td>8</td><td>17 – 26+ (your choice)</td></tr>
+            <tr><td>Cost per session</td><td>$75 – $200</td><td><strong>as low as ~$9</strong> at 5×/week</td></tr>
+            <tr><td>Who programs &amp; coaches</td><td>Curtis</td><td>Curtis</td></tr>
+          </tbody>
+        </table>
+        <p>One hour of personal training with me costs the same as <strong>about twelve days</strong> of Unlimited BootCampFX.</p>
+        <p>Over a year, the Unlimited member training 4× a week instead of paying for 2× personal training keeps <strong>$4,800 to $12,000</strong> in their own pocket — and gets more than double the coached reps.</p>
+        <p>The only person this math is bad for is my accountant.</p>
 
-        <div class="tier reveal" style="--rd:.2s">
-          <h3>Elite</h3>
-          <p class="for">For going all the way</p>
-          <div class="amt">$429<span>/mo</span></div>
-          <p class="per">EVERYTHING + PRIVATE COACHING LAYER · CAPPED AT 20 MEMBERS</p>
-          <ul>
-            <li>Everything in All-In</li>
-            <li>Monthly 1-on-1 program review with Curtis</li>
-            <li>Monthly body-composition measurement</li>
-            <li>Personal nutrition accountability</li>
-          </ul>
-          <div class="paypal-slot" id="paypal-elite"></div>
-          <a class="join-link" data-plan="elite" href="sms:+16572170820?&body=ELITE%20—%20I%27d%20like%20one%20of%20the%2020%20Elite%20spots%20at%20%24429%2Fmo.%20My%20name%20is%20">Join Elite</a>
-          <p class="cap">Limited to 20 members</p>
-        </div>
+        <p class="lede-kicker">“Why is it so cheap?”</p>
+        <p>Group training is efficient. I can coach a small group in the same hour I used to coach one person. I pass that efficiency to you. The coaching is the same — the delivery is smarter. You get a price that works. I get a business that works.</p>
+
+        <p class="lede-kicker">What $197/month gets you</p>
+        <p>Unlimited coached sessions — 15 per week at Acacia Park (5:30 AM, 8:00 AM, 6:00 PM Mon–Thu pattern, Friday mornings, Saturday 8:00 AM). Every movement scaled to you. Priority check-ins and nutrition framework. A group that notices when you're gone. 30-day Love It Or Leave It guarantee.</p>
+
+        <p class="lede-kicker">The guarantee</p>
+        <p>Train 30 days. If you're not stronger, if you're not looking forward to the next session, if you just decide this isn't your thing — tell me. Full refund. No forms. No exit interview. No retention specialist.</p>
+
+        <p class="lede-kicker">The catch (it's real)</p>
+        <p>I cap new Unlimited members at <strong>12 per month</strong>. Small groups keep coaching tight. When the month's spots are gone, you wait. The 5:30 AM session fills first.</p>
+
+        <p><strong>Step 1:</strong> Try a free week — buttons below. No card. No catch.<br>
+        <strong>Step 2:</strong> When you're ready, pick Unlimited. It's the one that works.</p>
+        <p>See you at the park.<br><strong>Curtis Ludlow</strong><br>BootCampFX — Acacia Park, Fullerton</p>
       </div>
-      <p class="under reveal">Not sure yet? <a href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Your first week is free</a> — every membership here starts with proof, not a pitch (or <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener">use the form</a> if you'd rather not text). Prefer a six-week test run? Ask about the <a href="/challenge/">6-Week Challenge</a>.</p>
     </div>
   </section>
+
+
+  <!-- ============ FREE WEEK · 9:00 PM ============ -->
+  <section class="freeweek" id="freeweek" data-rail="freeweek">
+    <div class="wrap reveal">
+      <div class="fw-card">
+        <span class="clock">Tomorrow · 5:30 AM</span>
+        <h2 class="display">Your first week is <em>free.</em></h2>
+        <p>No credit card, no contract, no sales script — there's nothing to reverse because there's nothing to charge. Come train with us for a week: meet the crew, feel the coaching, see the park at sunrise. If it's not for you, you've lost nothing but a few early mornings. If it is, you'll wonder why you waited. <span class="hl-in">Same offer for 21 years, because the sessions do the selling.</span></p>
+        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a>
+        <p class="fw-fine">Prefer a form? <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">Use the free week form</a> · or text FREE WEEK to (657) 217-0820 — Curtis answers his own phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MEMBERSHIP · offer sandwich ============ -->
+  <section class="tiers" id="membership" data-rail="membership">
+    <div class="ghost" aria-hidden="true">197</div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="clock">Membership · Pick your path</span>
+        <h2 class="display k">One live offer. <em>Two honest comparisons.</em></h2>
+        <p class="sec-lede">Free week first if you want proof. Then the middle column is the only path that makes sense if you're serious about changing — <strong>$197 unlimited</strong>, coached by me, outdoors at Acacia Park. Month to month. Cancel anytime.</p>
+      </div>
+      <div class="tier-grid">
+        <div class="tier disabled reveal" data-decoy="starter">
+          <h3>Starter</h3>
+          <p class="for">The base · 2× / week</p>
+          <div class="amt">$97<span>/mo</span></div>
+          <p class="per">2 COACHED SESSIONS / WEEK · ≈ $12 PER SESSION</p>
+          <ul>
+            <li>2 coached outdoor sessions weekly</li>
+            <li>Nutrition framework included</li>
+            <li>Same park, same coach</li>
+            <li>Month to month</li>
+          </ul>
+          <a class="join-link is-disabled" href="#membership" role="button" aria-disabled="true" data-scroll-unlimited="1">Not available online</a>
+          <p class="decoy-reason">Not available online — choose Unlimited</p>
+        </div>
+
+        <div class="tier featured reveal" id="tier-unlimited" style="--rd:.1s">
+          <h3>Unlimited</h3>
+          <p class="for">The frequency advantage</p>
+          <div class="amt">$197<span>/mo</span></div>
+          <p class="per">UNLIMITED COACHED SESSIONS · AS LOW AS ~$9 / SESSION AT 5×/WEEK</p>
+          <ul>
+            <li>Train as often as you want — 15 sessions/week on the board</li>
+            <li>Every movement scaled to you</li>
+            <li>Priority coaching &amp; check-ins</li>
+            <li>Advanced nutrition framework</li>
+            <li>Group that notices when you're gone</li>
+            <li>30-day Love It Or Leave It guarantee</li>
+            <li>New members capped at 12 / month</li>
+          </ul>
+          <div class="paypal-slot" id="paypal-unlimited"></div>
+          <div class="backup-links">
+            <a href="sms:+16572170820?&body=UNLIMITED%20%24197%2Fmo%20%E2%80%94%20I%27d%20like%20to%20join.%20My%20name%20is%20">Prefer to text Curtis to join →</a><br>
+            <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-5LX3921079692330VNGW67ZI" target="_blank" rel="noopener">Or open PayPal subscribe link →</a>
+          </div>
+        </div>
+
+        <div class="tier disabled reveal" data-decoy="pt" style="--rd:.2s">
+          <h3>Personal Training</h3>
+          <p class="for">The premium option · 1-on-1</p>
+          <div class="amt">$600–$1,200<span>/mo</span></div>
+          <p class="per">2× / WEEK · $75–$200 PER SESSION</p>
+          <ul>
+            <li>Private sessions with Curtis</li>
+            <li>Fully customized programming</li>
+            <li>Highest touch, lowest frequency</li>
+            <li>I usually talk people toward Unlimited instead</li>
+          </ul>
+          <a class="join-link is-disabled" href="#membership" role="button" aria-disabled="true" data-scroll-unlimited="1">Waitlist only</a>
+          <p class="decoy-reason">Waitlist only — text Curtis</p>
+        </div>
+      </div>
+      <p class="under reveal">Not sure yet? <a href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Your first week is free</a> — proof before a pitch (or <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener">use the form</a> if you'd rather not text). Prefer a six-week test run? Ask about the <a href="/challenge/">6-Week Challenge</a>.</p>
+    </div>
+  </section>
+
 
   <!-- ============ SCHEDULE · 6:00 PM ============ -->
   <section class="sched" id="schedule" data-rail="schedule">
@@ -877,19 +982,6 @@
     </div>
   </section>
 
-  <!-- ============ FREE WEEK · 9:00 PM ============ -->
-  <section class="freeweek" id="freeweek" data-rail="freeweek">
-    <div class="wrap reveal">
-      <div class="fw-card">
-        <span class="clock">Tomorrow · 5:30 AM</span>
-        <h2 class="display">Your first week is <em>free.</em></h2>
-        <p>No credit card, no contract, no sales script — there's nothing to reverse because there's nothing to charge. Come train with us for a week: meet the crew, feel the coaching, see the park at sunrise. If it's not for you, you've lost nothing but a few early mornings. If it is, you'll wonder why you waited. <span class="hl-in">Same offer for 21 years, because the sessions do the selling.</span></p>
-        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a>
-        <p class="fw-fine">Or just text FREE WEEK to (657) 217-0820 — Curtis answers his own phone.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ FAQ ============ -->
   <section class="faq">
     <div class="narrow">
@@ -900,8 +992,10 @@
         <div class="fa"><p>Because every other plan depended on your willpower, and this one depends on design. A coach expects you at 5:30. A crew notices when you're gone. Your progress is written on a card, so you can see it working. That's the accountability a keycard can't sell you — and it's why members stay 17, 18 years instead of two months.</p></div>
         <button class="fq" aria-expanded="false">Are there contracts?</button>
         <div class="fa"><p>Never have been, never will be — not in 21 years. Every membership is month to month, cancel anytime. People stay because it works, not because paperwork traps them: 20+ five-star reviews say so.</p></div>
-        <button class="fq" aria-expanded="false">Why is it priced above other gyms?</button>
-        <div class="fa"><p>Because it isn't a gym — it's coaching. You're paying for a 21-year professional who knows your name, watches your form, and tracks your results, in a group small enough that all three are possible. Per coached session it's ≈$17–19 — a fraction of the $80–100 personal training costs — with results a $10 keycard has never produced.</p></div>
+        <button class="fq" aria-expanded="false">Why is Unlimited only $197?</button>
+        <div class="fa"><p>Because it isn't a gym keycard — it's coaching, delivered in a small outdoor group so the hour is efficient. Same coach who would charge $75–$200 for a private session. Unlimited is $197/mo so you can show up often enough for a body to change. Personal training at $600–$1,200/mo is still listed as a comparison — most people are happier in Unlimited.</p></div>
+        <button class="fq" aria-expanded="false">Why is Starter greyed out?</button>
+        <div class="fa"><p>Starter ($97, 2×/week) is not available online. If you're serious about results, Unlimited is the path — frequency beats a cheaper twice-a-week ceiling.</p></div>
         <button class="fq" aria-expanded="false">What should I expect at my first session?</button>
         <div class="fa"><p>Introduce yourself, get a quick rundown, and jump in at your own pace. The group will know your name by the end of the warm-up — that part we can promise. Bring a mat, water, and shoes you can move in; everything else is provided.</p></div>
         <button class="fq" aria-expanded="false">How is this different from F45 or OrangeTheory?</button>
@@ -941,28 +1035,36 @@
   </div>
 
   <!-- ============ PayPal subscriptions ============ -->
-  <!-- TODO(Drago): create three NEW subscription plans in PayPal ($249, $299, $429/mo)
-       and paste the plan IDs below. Until then, the styled "Join" text-links above
-       handle signups via SMS — the page works either way. -->
+  <!-- Live plan: Unlimited $197 only. Starter/PT are visual decoys — do not render PayPal for them. -->
   <script src="https://www.paypal.com/sdk/js?client-id=AYigo9tlNOhP2BkO2hAvgd3JWJWlZKm1Xjp6qTIF_taEInJATGLV_R5SAQTXJ6MNUJhePUiAFAsnT1H4&vault=true&intent=subscription" defer></script>
   <script>
-    const PLANS = {
-      foundation: { el:'#paypal-foundation', planId:'REPLACE_WITH_249_PLAN_ID', color:'silver' },
-      allin:      { el:'#paypal-allin',      planId:'REPLACE_WITH_299_PLAN_ID', color:'gold' },
-      elite:      { el:'#paypal-elite',      planId:'REPLACE_WITH_429_PLAN_ID', color:'black' }
-    };
+    const UNLIMITED_PLAN = 'P-5LX3921079692330VNGW67ZI';
     document.addEventListener('DOMContentLoaded', function(){
-      if (!window.paypal || !paypal.Buttons) return;
-      Object.entries(PLANS).forEach(([key, p]) => {
-        if (p.planId.startsWith('REPLACE')) return; // keep SMS join-link until real plan exists
-        paypal.Buttons({
-          style:{ shape:'pill', color:p.color, layout:'vertical', label:'subscribe' },
-          createSubscription:(d,a)=>a.subscription.create({ plan_id:p.planId }),
-          onApprove:(d)=>{ window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform'; }
-        }).render(p.el);
-        const link = document.querySelector('.join-link[data-plan="'+key+'"]');
-        if (link) link.style.display = 'none';
+      // Grey decoys → scroll to Unlimited
+      document.querySelectorAll('[data-scroll-unlimited]').forEach(function(el){
+        el.addEventListener('click', function(e){
+          e.preventDefault();
+          var t = document.getElementById('tier-unlimited') || document.getElementById('membership');
+          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
       });
+
+      if (!window.paypal || !paypal.Buttons) return;
+      var slot = document.querySelector('#paypal-unlimited');
+      if (!slot) return;
+      paypal.Buttons({
+        style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
+        createSubscription: function(d, a){ return a.subscription.create({ plan_id: UNLIMITED_PLAN }); },
+        onApprove: function(data){
+          var body = 'I just subscribed to Unlimited $197. My PayPal subscription ID is ' + (data.subscriptionID || '') + '. My name is ';
+          window.location.href = 'sms:+16572170820?&body=' + encodeURIComponent(body);
+        },
+        onCancel: function(data){ console.log('Subscription cancelled at checkout', data); },
+        onError: function(err){
+          alert('Something hiccuped at checkout. Nothing was charged. Please try again or email support@bootcampfx.com.');
+          console.error(err);
+        }
+      }).render('#paypal-unlimited');
     });
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
