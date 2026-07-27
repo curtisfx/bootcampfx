@@ -555,12 +555,12 @@
     .jackers .j-tree svg { display:block; height:auto; overflow:visible; width:100%; }
     .jackers .j-tree.t1 {
       width:130px;
-      animation:treeSwayA 7.5s ease-in-out infinite;
+      animation:treeSwayA 5.2s ease-in-out infinite;
     }
     .jackers .j-tree.t2 {
       width:100px;
       margin-left:4px;
-      animation:treeSwayB 6.2s ease-in-out 0.4s infinite;
+      animation:treeSwayB 4.4s ease-in-out 0.35s infinite;
     }
     /* clear air between tree cluster and people / people and far trees */
     .jackers .j-tree.t1 { margin-right:6px; }
@@ -568,12 +568,18 @@
     .jackers .jacker.b { margin-right:0; }
     .jackers .jacker { position:relative; z-index:1; }
     @keyframes treeSwayA {
-      0%, 100% { transform:rotate(-1.2deg); }
-      50% { transform:rotate(1.4deg); }
+      0% { transform:rotate(-3.2deg); }
+      25% { transform:rotate(2.8deg); }
+      50% { transform:rotate(-4.2deg); }
+      75% { transform:rotate(3.6deg); }
+      100% { transform:rotate(-3.2deg); }
     }
     @keyframes treeSwayB {
-      0%, 100% { transform:rotate(1deg); }
-      50% { transform:rotate(-1.6deg); }
+      0% { transform:rotate(2.6deg); }
+      30% { transform:rotate(-4.5deg); }
+      55% { transform:rotate(3.8deg); }
+      80% { transform:rotate(-3.2deg); }
+      100% { transform:rotate(2.6deg); }
     }
 
     /* ============ TIME RAIL ============ */
@@ -1189,44 +1195,49 @@
   <section class="standard" id="standard" data-rail="standard">
     <div class="wrap">
     <div class="jackers" aria-hidden="true">
-<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 90 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
-    <!-- apex — narrow -->
-    <path d="M45 4 L56 34 L50 34 L60 62 L45 62 L30 62 L40 34 L34 34 Z"/>
-    <!-- tier 2 -->
-    <path opacity=".96" d="M45 46 L66 90 L54 90 L72 128 L45 128 L18 128 L36 90 L24 90 Z"/>
-    <!-- tier 3 — widest living canopy (stopped higher) -->
-    <path opacity=".92" d="M45 105 L74 155 L60 155 L80 185 L45 185 L10 185 L30 155 L16 155 Z"/>
-    <!-- light under-skirt only — not full base layers -->
-    <path opacity=".86" d="M22 170 L45 155 L68 170 L72 188 L45 182 L18 188 Z"/>
+    <!-- apex — slight leeward bias -->
+    <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+    <!-- tier 2 — mass shifts right -->
+    <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+    <!-- tier 3 -->
+    <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+    <!-- previous under-skirt -->
+    <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+    <!-- NEW bottom foliage layer — fullest, pushed leeward (right) -->
+    <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+    <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
   </g>
-  <!-- long naked trunk -->
-  <rect x="40" y="180" width="10" height="108" rx="2" fill="var(--ink)" opacity=".85"/>
-  <ellipse cx="45" cy="290" rx="18" ry="3.5" fill="var(--ink)" opacity=".12"/>
+  <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+  <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
 </svg></div>
-      <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 80 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
-    <!-- top tight -->
-    <ellipse cx="40" cy="16" rx="11" ry="13" opacity=".95"/>
-    <ellipse cx="33" cy="30" rx="12" ry="12"/>
-    <ellipse cx="47" cy="28" rx="11" ry="12" opacity=".92"/>
-    <!-- upper growing -->
-    <ellipse cx="40" cy="46" rx="18" ry="15" opacity=".9"/>
-    <ellipse cx="28" cy="60" rx="14" ry="13" opacity=".93"/>
-    <ellipse cx="52" cy="62" rx="14" ry="13" opacity=".88"/>
-    <ellipse cx="40" cy="76" rx="22" ry="16"/>
-    <!-- mid fuller -->
-    <ellipse cx="24" cy="94" rx="16" ry="15" opacity=".9"/>
-    <ellipse cx="56" cy="96" rx="16" ry="14" opacity=".87"/>
-    <ellipse cx="40" cy="110" rx="26" ry="16" opacity=".92"/>
-    <!-- lowest canopy — ends higher; removed former base 2–3 lobes -->
-    <ellipse cx="28" cy="128" rx="18" ry="12" opacity=".88"/>
-    <ellipse cx="52" cy="130" rx="18" ry="12" opacity=".86"/>
-    <ellipse cx="40" cy="138" rx="24" ry="11" opacity=".84"/>
+    <!-- top tight, slight right bias -->
+    <ellipse cx="46" cy="16" rx="11" ry="13" opacity=".95"/>
+    <ellipse cx="38" cy="30" rx="12" ry="12"/>
+    <ellipse cx="56" cy="28" rx="13" ry="12" opacity=".92"/>
+    <!-- upper -->
+    <ellipse cx="48" cy="46" rx="18" ry="15" opacity=".9"/>
+    <ellipse cx="34" cy="60" rx="14" ry="13" opacity=".93"/>
+    <ellipse cx="62" cy="58" rx="16" ry="14" opacity=".88"/>
+    <ellipse cx="50" cy="76" rx="24" ry="16"/>
+    <!-- mid fuller, leeward heavy -->
+    <ellipse cx="30" cy="94" rx="16" ry="15" opacity=".9"/>
+    <ellipse cx="68" cy="92" rx="18" ry="15" opacity=".87"/>
+    <ellipse cx="52" cy="110" rx="28" ry="16" opacity=".92"/>
+    <ellipse cx="34" cy="128" rx="18" ry="12" opacity=".88"/>
+    <ellipse cx="66" cy="126" rx="20" ry="13" opacity=".86"/>
+    <ellipse cx="50" cy="138" rx="26" ry="11" opacity=".84"/>
+    <!-- NEW bottom foliage — wide, wind-swept right -->
+    <ellipse cx="42" cy="152" rx="24" ry="12" opacity=".82"/>
+    <ellipse cx="70" cy="150" rx="22" ry="13" opacity=".8"/>
+    <ellipse cx="56" cy="162" rx="32" ry="12" opacity=".78"/>
+    <ellipse cx="72" cy="168" rx="18" ry="10" opacity=".75"/>
   </g>
-  <!-- long naked trunk -->
-  <rect x="36" y="140" width="8" height="108" rx="2" fill="var(--stone)"/>
-  <ellipse cx="40" cy="250" rx="16" ry="3" fill="var(--ink)" opacity=".1"/>
+  <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
+  <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
 </svg></div>
 <div class="jacker a">
         <div class="j-ground"></div>
