@@ -92,7 +92,7 @@
     /* === Partner jumping-jack figures (multi-part, #standard) === */
     .jackers {
       display:flex; justify-content:flex-start; align-items:flex-end;
-      gap:20px; padding:8px 0 10px 0; min-height:min(780px, 85vh);
+      gap:20px; padding:8px 0 10px 0; min-height:360px;
       pointer-events:none; position:relative;
       overflow:visible;
     }
@@ -742,7 +742,7 @@
       .jacker .j-arm.l{ left:10px; } .jacker .j-arm.r{ right:10px; }
       .jacker .j-leg{ width:9px; height:44px; top:50px; }
       .jacker .j-leg.l{ left:14px; } .jacker .j-leg.r{ right:14px; }
-      .jackers{ min-height:min(560px, 70vh); gap:12px; }
+      .jackers{ min-height:280px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
       .jackers .j-tree.t2{ width:78px; }
       .jackers .jacker.a{ margin-left:14px; }
@@ -1189,44 +1189,51 @@
   <section class="standard" id="standard" data-rail="standard">
     <div class="wrap">
     <div class="jackers" aria-hidden="true">
-<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 60 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 90 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
-    <!-- tier 1 apex -->
-    <path d="M30 6 L44 48 L36 48 L48 88 L30 88 L12 88 L24 48 L16 48 Z"/>
-    <!-- tier 2 -->
-    <path opacity=".96" d="M30 70 L50 125 L40 125 L54 175 L30 175 L6 175 L20 125 L10 125 Z"/>
-    <!-- tier 3 -->
-    <path opacity=".93" d="M30 145 L52 205 L42 205 L56 255 L30 255 L4 255 L18 205 L8 205 Z"/>
-    <!-- tier 4 -->
-    <path opacity=".9" d="M30 220 L54 285 L44 285 L58 320 L30 320 L2 320 L16 285 L6 285 Z"/>
-    <!-- tier 5 base foliage -->
-    <path opacity=".86" d="M8 300 L30 275 L52 300 L56 330 L30 322 L4 330 Z"/>
+    <!-- narrow apex -->
+    <path d="M45 4 L56 32 L50 32 L60 58 L45 58 L30 58 L40 32 L34 32 Z"/>
+    <!-- tier 2 wider -->
+    <path opacity=".96" d="M45 42 L64 82 L54 82 L70 118 L45 118 L20 118 L36 82 L26 82 Z"/>
+    <!-- tier 3 fuller -->
+    <path opacity=".93" d="M45 95 L72 140 L60 140 L78 175 L45 175 L12 175 L30 140 L18 140 Z"/>
+    <!-- tier 4 wide -->
+    <path opacity=".9" d="M45 150 L78 195 L66 195 L84 218 L45 218 L6 218 L24 195 L12 195 Z"/>
+    <!-- base skirt — fullest -->
+    <path opacity=".86" d="M10 200 L45 178 L80 200 L86 225 L45 218 L4 225 Z"/>
+    <path opacity=".82" d="M14 218 L45 205 L76 218 L82 232 L45 228 L8 232 Z"/>
   </g>
-  <rect x="25" y="318" width="10" height="34" rx="2" fill="var(--ink)" opacity=".85"/>
-  <ellipse cx="30" cy="352" rx="15" ry="3.5" fill="var(--ink)" opacity=".12"/>
+  <rect x="40" y="220" width="10" height="16" rx="2" fill="var(--ink)" opacity=".85"/>
+  <ellipse cx="45" cy="236" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
 </svg></div>
-      <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 48 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
-    <!-- multi-lobe canopy stacked vertically -->
-    <ellipse cx="24" cy="28" rx="14" ry="16" opacity=".95"/>
-    <ellipse cx="16" cy="48" rx="13" ry="15"/>
-    <ellipse cx="32" cy="46" rx="12" ry="14" opacity=".92"/>
-    <ellipse cx="24" cy="62" rx="18" ry="17" opacity=".9"/>
-    <ellipse cx="12" cy="78" rx="11" ry="13" opacity=".93"/>
-    <ellipse cx="36" cy="80" rx="11" ry="13" opacity=".88"/>
-    <ellipse cx="24" cy="95" rx="19" ry="16"/>
-    <ellipse cx="14" cy="118" rx="13" ry="15" opacity=".9"/>
-    <ellipse cx="34" cy="120" rx="12" ry="14" opacity=".87"/>
-    <ellipse cx="24" cy="138" rx="18" ry="15" opacity=".92"/>
-    <ellipse cx="16" cy="160" rx="12" ry="14"/>
-    <ellipse cx="32" cy="162" rx="12" ry="13" opacity=".9"/>
-    <ellipse cx="24" cy="182" rx="17" ry="14" opacity=".88"/>
-    <ellipse cx="18" cy="200" rx="11" ry="12" opacity=".9"/>
-    <ellipse cx="30" cy="202" rx="11" ry="12" opacity=".86"/>
-    <ellipse cx="24" cy="218" rx="15" ry="12" opacity=".84"/>
+    <!-- top: tight cluster -->
+    <ellipse cx="40" cy="18" rx="11" ry="13" opacity=".95"/>
+    <ellipse cx="33" cy="32" rx="12" ry="12"/>
+    <ellipse cx="47" cy="30" rx="11" ry="12" opacity=".92"/>
+    <!-- upper-mid: growing -->
+    <ellipse cx="40" cy="48" rx="18" ry="15" opacity=".9"/>
+    <ellipse cx="28" cy="62" rx="14" ry="13" opacity=".93"/>
+    <ellipse cx="52" cy="64" rx="14" ry="13" opacity=".88"/>
+    <ellipse cx="40" cy="78" rx="22" ry="16"/>
+    <!-- mid: fuller -->
+    <ellipse cx="24" cy="96" rx="16" ry="15" opacity=".9"/>
+    <ellipse cx="56" cy="98" rx="16" ry="14" opacity=".87"/>
+    <ellipse cx="40" cy="112" rx="26" ry="16" opacity=".92"/>
+    <!-- lower: wide and dense -->
+    <ellipse cx="20" cy="132" rx="18" ry="15"/>
+    <ellipse cx="60" cy="134" rx="18" ry="14" opacity=".9"/>
+    <ellipse cx="40" cy="148" rx="30" ry="16" opacity=".88"/>
+    <ellipse cx="18" cy="162" rx="16" ry="12" opacity=".9"/>
+    <ellipse cx="62" cy="164" rx="16" ry="12" opacity=".86"/>
+    <!-- base canopy — widest/fullest -->
+    <ellipse cx="40" cy="172" rx="34" ry="14" opacity=".84"/>
+    <ellipse cx="28" cy="180" rx="20" ry="10" opacity=".8"/>
+    <ellipse cx="52" cy="180" rx="20" ry="10" opacity=".78"/>
   </g>
-  <rect x="20" y="222" width="8" height="68" rx="2" fill="var(--stone)"/>
-  <ellipse cx="24" cy="292" rx="13" ry="3" fill="var(--ink)" opacity=".1"/>
+  <rect x="36" y="178" width="8" height="18" rx="2" fill="var(--stone)"/>
+  <ellipse cx="40" cy="196" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
 </svg></div>
 <div class="jacker a">
         <div class="j-ground"></div>
