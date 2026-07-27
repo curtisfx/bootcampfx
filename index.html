@@ -555,12 +555,12 @@
     .jackers .j-tree svg { display:block; height:auto; overflow:visible; width:100%; }
     .jackers .j-tree.t1 {
       width:130px;
-      animation:treeSwayA 5.2s ease-in-out infinite;
+      animation:treeSwayA 7.5s ease-in-out infinite;
     }
     .jackers .j-tree.t2 {
       width:100px;
       margin-left:4px;
-      animation:treeSwayB 4.4s ease-in-out 0.35s infinite;
+      animation:treeSwayB 6.2s ease-in-out 0.4s infinite;
     }
     /* clear air between tree cluster and people / people and far trees */
     .jackers .j-tree.t1 { margin-right:6px; }
@@ -568,18 +568,12 @@
     .jackers .jacker.b { margin-right:0; }
     .jackers .jacker { position:relative; z-index:1; }
     @keyframes treeSwayA {
-      0% { transform:rotate(-3.2deg); }
-      25% { transform:rotate(2.8deg); }
-      50% { transform:rotate(-4.2deg); }
-      75% { transform:rotate(3.6deg); }
-      100% { transform:rotate(-3.2deg); }
+      0%, 100% { transform:rotate(-1.2deg); }
+      50% { transform:rotate(1.4deg); }
     }
     @keyframes treeSwayB {
-      0% { transform:rotate(2.6deg); }
-      30% { transform:rotate(-4.5deg); }
-      55% { transform:rotate(3.8deg); }
-      80% { transform:rotate(-3.2deg); }
-      100% { transform:rotate(2.6deg); }
+      0%, 100% { transform:rotate(1deg); }
+      50% { transform:rotate(-1.6deg); }
     }
 
     /* ============ TIME RAIL ============ */
