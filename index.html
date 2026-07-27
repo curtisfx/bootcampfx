@@ -791,6 +791,30 @@
     .why .wn{ font-family:var(--mono); font-size:.68rem; letter-spacing:.22em; color:var(--cream); opacity:.9; display:block; margin-bottom:14px; }
     .why h3{ font-family:var(--display); font-weight:600; font-size:1.45rem; margin-bottom:10px; letter-spacing:-.01em; }
     .why p{ font-size:.99rem; color:rgba(255,255,255,.94); }
+    .why .sun {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 36px;
+      height: 36px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .why .sun .sun-rays {
+      transform-origin: 40px 40px;
+      animation: sun-radiate 16s linear infinite;
+    }
+    .why .sun .sun-core {
+      animation: sun-shimmer 2.6s ease-in-out infinite;
+    }
+    @keyframes sun-radiate {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes sun-shimmer {
+      0%,100% { opacity: 0.9; }
+      50% { opacity: 1; }
+    }
+
 
     /* Rabbit moved from left hero into Air, light, ground card */
     .wr-air { position:absolute; right:10px; bottom:6px; width:34px; color:#C9BCC0; z-index:2; }
@@ -1302,7 +1326,6 @@ to { transform:rotate(17deg); }
       <span class="star" style="--x:58%;--y:58%;--s:.42;--d:0.2s;--t:3"></span>
       <span class="star" style="--x:81%;--y:56%;--s:.45;--d:1.9s;--t:1"></span>
     </div>
-    <div class="sun" aria-hidden="true"></div>
     <svg class="horizon" id="horizon" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
       <path fill="currentColor" d="M0,96 L60,92 C90,90 120,74 150,76 C200,80 220,54 260,56 C300,58 320,84 380,86 C440,88 470,62 520,64 C570,66 600,92 660,94 C740,96 760,68 820,66 C870,64 900,86 960,88 C1030,90 1060,60 1120,62 C1170,64 1200,90 1260,92 C1320,94 1380,78 1440,82 L1440,160 L0,160 Z"/>
       <path fill="currentColor" opacity=".55" d="M0,126 C240,114 480,132 720,122 C960,112 1200,130 1440,118 L1440,160 L0,160 Z"/>
@@ -1439,6 +1462,22 @@ to { transform:rotate(17deg); }
           <span class="wn">03 — CLIMATE</span>
           <h3>Weather is our advantage</h3>
           <p>This is Fullerton. We train outside year-round. On the rare rough day, Curtis adjusts the plan and texts the group. Twenty-one years in the same park — while franchise studios open and close around us.</p>
+        <div class="sun" aria-hidden="true">
+          <svg viewBox="0 0 80 80" width="36" height="36">
+            <circle cx="40" cy="40" r="22" fill="#F3D36B" opacity="0.16"/>
+            <g class="sun-rays">
+              <line x1="40" y1="24" x2="40" y2="7" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="55" y1="25" x2="66" y2="14" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="65" y1="40" x2="78" y2="40" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="55" y1="55" x2="66" y2="66" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="40" y1="56" x2="40" y2="73" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="25" y1="55" x2="14" y2="66" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="15" y1="40" x2="2" y2="40" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="25" y1="25" x2="14" y2="14" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <circle cx="40" cy="40" r="14" fill="#F3D36B" class="sun-core"/>
+          </svg>
+        </div>
         </div>
       </div>
     </div>
