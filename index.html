@@ -1108,9 +1108,9 @@
       .roper .r-hop, .roper .r-rope{ animation:none !important; transform:none !important; }
       .fw-card::before{ animation:none; }
       .std-item, .mcard, .why{ transition:none; }
-      .wild-rabbit, .scene-tree, .wr-inner, .wr-ears, 
+      .wild-rabbit, , .wr-inner, .wr-ears, 
       .wild-rabbit, { opacity:.75; }
-      .scene-tree{ transform:none !important; opacity:0.65; }
+      
       .wr-hero2, .wr-outside, .wr-coach, .wr-members, .wr-schedule, .wr-freeweek{ opacity:.7; transform:none !important; }
     }
   </style>
@@ -1210,29 +1210,21 @@ to { transform:rotate(17deg); }
     }
 
     /* Scene trees — foreground, unique personalities, higher opacity */
-    .scene-tree { 
-      position:absolute; 
-      bottom:0; 
-      pointer-events:none; 
-      z-index:2; 
-      transform-origin:50% 100%; 
-      will-change:transform; 
-      opacity:0.72;   /* increased ~25% for more presence in foreground */
-    }
-    .scene-tree svg { display:block; width:100%; height:auto; overflow:visible; }
+    
+     svg { display:block; width:100%; height:auto; overflow:visible; }
 
     /* Unique personalities - each has its own size, lean, density, sway */
-    .st-hero-left   { width:92px;  animation:treeSwayA 7.8s ease-in-out infinite; transform:rotate(-1.5deg); }
-    .st-hero-right  { width:124px; animation:treeSwayB 6.4s ease-in-out .8s infinite; transform:rotate(2deg); }
-    .st-out-left    { width:156px; animation:treeSwayA 8.6s ease-in-out 1.1s infinite; transform:rotate(1deg); }
-    .st-out-right   { width:78px;  animation:treeSwayB 7.1s ease-in-out .3s infinite; transform:rotate(-3deg); }
-    .st-coach       { width:142px; animation:treeSwayA 6.9s ease-in-out .6s infinite; transform:rotate(0.8deg); }
-    .st-mem-left    { width:68px;  animation:treeSwayB 9.2s ease-in-out 1.4s infinite; transform:rotate(-2.2deg); }
-    .st-mem-right   { width:168px; animation:treeSwayA 7.4s ease-in-out .4s infinite; transform:rotate(1.8deg); }
-    .st-sched       { width:105px; animation:treeSwayB 8.1s ease-in-out .9s infinite; transform:rotate(-1deg); }
-    .st-free        { width:135px; animation:treeSwayA 6.2s ease-in-out 1.7s infinite; transform:rotate(3deg); }
-    .st-foot-left   { width:82px;  animation:treeSwayB 7.7s ease-in-out .5s infinite; transform:rotate(-0.7deg); }
-    .st-foot-right  { width:119px; animation:treeSwayA 9.0s ease-in-out 1.2s infinite; transform:rotate(2.5deg); } 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+     
     }
   </style>
   <script type="application/ld+json">
@@ -1385,30 +1377,8 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Hero flanking trees (varying heights & shapes) -->
-    <div class="scene-tree st-hero-left" aria-hidden="true" style="left:0.5%;bottom:0;">
-<svg viewBox="0 0 80 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".92" d="M40 8 L55 48 L48 48 L62 92 L40 92 L20 92 L32 48 L25 48 Z"/>
-    <path opacity=".88" d="M40 70 L66 130 L50 130 L70 178 L40 178 L12 178 L30 130 L16 130 Z"/>
-    <path opacity=".82" d="M40 155 L68 220 L52 220 L74 268 L40 268 L8 268 L26 220 L12 220 Z"/>
-    <path opacity=".76" d="M18 245 L40 218 L65 242 L70 275 L40 268 L12 278 Z"/>
-  </g>
-  <rect x="35" y="265" width="9" height="78" rx="2" fill="#14100A" opacity=".6"/>
-</svg>
-    </div>
-    <div class="scene-tree st-hero-right" aria-hidden="true" style="right:1%;bottom:0;">
-<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <ellipse cx="80" cy="38" rx="42" ry="30" opacity=".94"/>
-    <ellipse cx="58" cy="68" rx="36" ry="28" opacity=".9"/>
-    <ellipse cx="108" cy="66" rx="34" ry="26" opacity=".87"/>
-    <ellipse cx="80" cy="94" rx="52" ry="26" opacity=".91"/>
-    <ellipse cx="48" cy="118" rx="30" ry="16" opacity=".8"/>
-    <ellipse cx="112" cy="116" rx="28" ry="17" opacity=".78"/>
-  </g>
-  <rect x="72" y="122" width="14" height="42" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
+    
+    
 
     <div class="hero-in">
       <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
@@ -1484,29 +1454,8 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Outside trees (different shapes) -->
-    <div class="scene-tree st-out-left" aria-hidden="true" style="left:1%;bottom:0;">
-<svg viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <ellipse cx="70" cy="52" rx="38" ry="32" opacity=".95"/>
-    <ellipse cx="48" cy="82" rx="32" ry="26" opacity=".9"/>
-    <ellipse cx="96" cy="78" rx="30" ry="28" opacity=".88"/>
-    <ellipse cx="70" cy="108" rx="46" ry="24" opacity=".92"/>
-    <ellipse cx="42" cy="132" rx="28" ry="18" opacity=".82"/>
-    <ellipse cx="100" cy="130" rx="30" ry="19" opacity=".8"/>
-  </g>
-  <rect x="63" y="138" width="12" height="48" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
-    <div class="scene-tree st-out-right" aria-hidden="true" style="right:0.5%;bottom:0;">
-<svg viewBox="0 0 70 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".88" d="M35 10 L48 38 L40 38 L52 68 L35 68 L20 68 L28 38 L20 38 Z"/>
-    <path opacity=".78" d="M35 85 L55 128 L42 128 L58 168 L35 168 L14 168 L26 128 L14 128 Z"/>
-    <path opacity=".68" d="M35 185 L54 238 L40 238 L56 278 L35 278 L16 278 L28 238 L16 238 Z"/>
-  </g>
-  <rect x="31" y="270" width="7" height="112" rx="2" fill="#14100A" opacity=".5"/>
-</svg>
-    </div>
+    
+    
   </section>
 
   <!-- ============ THE STANDARD · 8:00 AM ============ -->
@@ -1648,17 +1597,7 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Coach tree -->
-    <div class="scene-tree st-coach" aria-hidden="true" style="right:1.5%;bottom:0;">
-<svg viewBox="0 0 110 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".9" d="M55 6 L78 42 L62 42 L88 82 L55 82 L28 82 L42 42 L26 42 Z"/>
-    <path opacity=".86" d="M55 68 L90 122 L68 122 L96 162 L55 162 L18 162 L38 122 L22 122 Z"/>
-    <path opacity=".78" d="M62 145 L98 195 L72 195 L102 230 L55 230 L22 230 L42 195 L20 195 Z"/>
-    <path opacity=".72" d="M70 208 L102 240 L82 248 L108 272 L55 268 L28 275 Z"/>
-  </g>
-  <rect x="50" y="255" width="10" height="62" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
+    
   </section>
 
   <!-- ============ MEMBERS · 12:30 PM ============ -->
@@ -1735,26 +1674,8 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Members trees -->
-    <div class="scene-tree st-mem-left" aria-hidden="true" style="left:0.8%;bottom:0;">
-<svg viewBox="0 0 70 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".88" d="M35 10 L48 38 L40 38 L52 68 L35 68 L20 68 L28 38 L20 38 Z"/>
-    <path opacity=".78" d="M35 85 L55 128 L42 128 L58 168 L35 168 L14 168 L26 128 L14 128 Z"/>
-    <path opacity=".68" d="M35 185 L54 238 L40 238 L56 278 L35 278 L16 278 L28 238 L16 238 Z"/>
-  </g>
-  <rect x="31" y="270" width="7" height="112" rx="2" fill="#14100A" opacity=".5"/>
-</svg>
-    </div>
-    <div class="scene-tree st-mem-right" aria-hidden="true" style="right:1%;bottom:0;">
-<svg viewBox="0 0 120 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".9" d="M60 4 L92 36 L70 36 L98 72 L60 72 L25 72 L42 36 L20 36 Z"/>
-    <path opacity=".84" d="M68 58 L102 108 L74 108 L104 148 L60 148 L22 148 L42 108 L18 108 Z"/>
-    <path opacity=".76" d="M72 130 L106 182 L78 182 L106 220 L55 220 L20 220 L40 182 L16 182 Z"/>
-  </g>
-  <rect x="52" y="208" width="9" height="58" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
+    
+    
     </div>
   </section>
 
@@ -1921,19 +1842,7 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Freeweek bush tree -->
-    <div class="scene-tree st-free" aria-hidden="true" style="left:1.5%;bottom:0;">
-<svg viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <ellipse cx="70" cy="52" rx="38" ry="32" opacity=".95"/>
-    <ellipse cx="48" cy="82" rx="32" ry="26" opacity=".9"/>
-    <ellipse cx="96" cy="78" rx="30" ry="28" opacity=".88"/>
-    <ellipse cx="70" cy="108" rx="46" ry="24" opacity=".92"/>
-    <ellipse cx="42" cy="132" rx="28" ry="18" opacity=".82"/>
-    <ellipse cx="100" cy="130" rx="30" ry="19" opacity=".8"/>
-  </g>
-  <rect x="63" y="138" width="12" height="48" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
+    
     </div>
   </section>
 
@@ -2097,30 +2006,8 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Footer trees (more variety) -->
-    <div class="scene-tree st-foot-left" aria-hidden="true" style="left:0.6%;bottom:0;">
-<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <ellipse cx="80" cy="38" rx="42" ry="30" opacity=".94"/>
-    <ellipse cx="58" cy="68" rx="36" ry="28" opacity=".9"/>
-    <ellipse cx="108" cy="66" rx="34" ry="26" opacity=".87"/>
-    <ellipse cx="80" cy="94" rx="52" ry="26" opacity=".91"/>
-    <ellipse cx="48" cy="118" rx="30" ry="16" opacity=".8"/>
-    <ellipse cx="112" cy="116" rx="28" ry="17" opacity=".78"/>
-  </g>
-  <rect x="72" y="122" width="14" height="42" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
-    <div class="scene-tree st-foot-right" aria-hidden="true" style="right:0.8%;bottom:0;">
-<svg viewBox="0 0 110 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="currentColor">
-    <path opacity=".9" d="M55 6 L78 42 L62 42 L88 82 L55 82 L28 82 L42 42 L26 42 Z"/>
-    <path opacity=".86" d="M55 68 L90 122 L68 122 L96 162 L55 162 L18 162 L38 122 L22 122 Z"/>
-    <path opacity=".78" d="M62 145 L98 195 L72 195 L102 230 L55 230 L22 230 L42 195 L20 195 Z"/>
-    <path opacity=".72" d="M70 208 L102 240 L82 248 L108 272 L55 268 L28 275 Z"/>
-  </g>
-  <rect x="50" y="255" width="10" height="62" rx="2" fill="#14100A" opacity=".55"/>
-</svg>
-    </div>
+    
+    
   </footer>
 
   <div class="mbar">
