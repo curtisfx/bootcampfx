@@ -937,13 +937,13 @@
       border-radius:9px; background:currentColor;
     }
     .roper .r-arm {
-      position:absolute; top:30px; width:9px; height:34px;
+      position:absolute; top:28px; width:9px; height:38px;
       border-radius:999px; background:currentColor;
-      transform-origin:50% 5px;
+      transform-origin:50% 4px;
     }
-    /* arms slightly out — hands = rope anchors */
-    .roper .r-arm.l { left:20px; transform:rotate(32deg); }
-    .roper .r-arm.r { right:20px; left:auto; transform:rotate(-32deg); }
+    /* arms come from shoulder (torso sides), angle outward so hands line up with rope ends */
+    .roper .r-arm.l { left:31px; transform:rotate(22deg); }
+    .roper .r-arm.r { right:31px; left:auto; transform:rotate(-22deg); }
     .roper .r-leg {
       position:absolute; top:62px; width:10px; height:52px;
       border-radius:999px; background:currentColor;
@@ -958,15 +958,12 @@
     }
     .roper .r-handle.l { left:14px; }
     .roper .r-handle.r { right:14px; left:auto; }
-    /*
-      Rope: ellipse centered on the hand line. rotateX around that axis so the
-      far side of the rope swings under the feet then over the head — handles stay put.
-    */
+    /* Half-loop rope: fixed to hands, swings under feet then over head like a real jump rope */
     .roper .r-rope {
       position:absolute; left:50%; top:0;
       width:100px; height:130px; margin-left:-50px;
       transform-style:preserve-3d;
-      transform-origin:50% 58px; /* hand height */
+      transform-origin:50% 58px; /* hand height = top of rope */
       animation:ropeSwing .56s linear infinite;
       will-change:transform;
       z-index:1;
@@ -975,14 +972,14 @@
     .roper .r-rope svg {
       width:100%; height:100%; display:block; overflow:visible;
     }
-    .roper .r-rope ellipse {
+    .roper .r-rope path {
       fill:none;
       stroke:var(--dawn);
       stroke-width:2.75;
       stroke-linecap:round;
       opacity:.92;
     }
-    /* 0° = rope under feet; 180° = rope over head */
+    /* 0° = rope bottom (under feet); 180° = rope top (over head) */
     @keyframes ropeSwing {
       0%   { transform:rotateX(0deg); }
       100% { transform:rotateX(360deg); }
@@ -999,13 +996,13 @@
       .ropers{ min-height:120px; }
       .roper{ width:88px; height:112px; }
       .roper .r-stage{ width:80px; height:104px; margin-left:-40px; }
-      .roper .r-rope{ width:80px; height:104px; margin-left:-40px; transform-origin:50% 46px; }
+      .roper .r-rope{ width:80px; height:104px; margin-left:-40px; transform-origin:50% 45px; }
       .roper .r-handle{ top:46px; width:6px; height:6px; }
       .roper .r-handle.l{ left:10px; } .roper .r-handle.r{ right:10px; }
       .roper .r-head{ width:16px; height:18px; margin-left:-8px; }
       .roper .r-torso{ width:18px; height:30px; margin-left:-9px; top:22px; }
-      .roper .r-arm{ height:28px; top:24px; width:7px; }
-      .roper .r-arm.l{ left:14px; } .roper .r-arm.r{ right:14px; }
+      .roper .r-arm{ height:32px; top:22px; width:7px; }
+      .roper .r-arm.l{ left:25px; } .roper .r-arm.r{ right:25px; }
       .roper .r-leg{ height:40px; top:50px; width:8px; }
     }
 
@@ -1692,8 +1689,8 @@
           <div class="r-stage">
             <div class="r-rope">
               <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <!-- ellipse centered on hand line (cy≈58); swings under feet / over head via rotateX -->
-                <ellipse cx="50" cy="58" rx="34" ry="52"/>
+                <!-- Half-loop rope: one end from each hand, arcs under feet, swings over head via rotateX -->
+                <path d="M20 58 Q50 112 80 58"/>
               </svg>
             </div>
             <span class="r-handle l"></span>
