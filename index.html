@@ -936,13 +936,13 @@
       border-radius:9px; background:currentColor;
     }
     .roper .r-arm {
-      position:absolute; top:24px; width:9px; height:38px;
+      position:absolute; top:18px; width:9px; height:56px;
       border-radius:999px; background:currentColor;
       transform-origin:50% 4px;
     }
-    /* arms reach from shoulders to hands, rope ends anchor at hands */
-    .roper .r-arm.l { left:31.5px; transform:rotate(-29deg); }
-    .roper .r-arm.r { right:31.5px; left:auto; transform:rotate(29deg); }
+    /* arms reach from shoulder to hand; hand touches rope end */
+    .roper .r-arm.l { left:45.5px; transform:rotate(-42deg); }
+    .roper .r-arm.r { right:45.5px; left:auto; transform:rotate(42deg); }
     .roper .r-leg {
       position:absolute; top:62px; width:10px; height:68px;
       border-radius:999px; background:currentColor;
@@ -952,11 +952,11 @@
     .roper .r-leg.r { right:32px; left:auto; }
     /* fixed handle nubs at hand level (matches rope path endpoints) */
     .roper .r-handle {
-      position:absolute; top:57.5px; width:7px; height:7px;
+      position:absolute; top:60px; width:6px; height:6px;
       border-radius:50%; background:var(--dawn); z-index:3;
     }
-    .roper .r-handle.l { left:13.5px; }
-    .roper .r-handle.r { right:13.5px; left:auto; }
+    .roper .r-handle.l { left:12px; }
+    .roper .r-handle.r { right:12px; left:auto; }
     /*
       Half-loop rope: ends fixed at the hands, long arc swings under the feet
       then over the head by rotating around the hand line.
@@ -965,7 +965,7 @@
       position:absolute; left:50%; top:0;
       width:100px; height:130px; margin-left:-50px;
       transform-style:preserve-3d;
-      transform-origin:50% 61px; /* hand line */
+      transform-origin:50% 60px; /* hand line */
       animation:ropeSwing .56s linear infinite;
       will-change:transform;
       z-index:1;
@@ -1001,14 +1001,14 @@
       .roper .r-hop{ z-index:2; }
       .roper .r-head{ width:16px; height:18px; top:3px; margin-left:-8px; }
       .roper .r-torso{ width:18px; height:30px; top:22px; margin-left:-9px; }
-      .roper .r-arm{ height:30px; top:18px; width:7px; }
-      .roper .r-arm.l{ left:25px; transform:rotate(-30deg); }
-      .roper .r-arm.r{ right:25px; transform:rotate(30deg); }
+      .roper .r-arm{ height:44px; top:16px; width:7px; }
+      .roper .r-arm.l{ left:36px; transform:rotate(-42deg); }
+      .roper .r-arm.r{ right:36px; transform:rotate(42deg); }
       .roper .r-leg{ height:54px; top:50px; width:8px; }
       .roper .r-leg.l{ left:29px; } .roper .r-leg.r{ right:29px; }
-      .roper .r-handle{ top:45.5px; width:6px; height:6px; }
-      .roper .r-handle.l{ left:11px; } .roper .r-handle.r{ right:11px; }
-      .roper .r-rope{ width:80px; height:104px; margin-left:-40px; transform-origin:50% 48px; }
+      .roper .r-handle{ top:47px; width:5px; height:5px; }
+      .roper .r-handle.l{ left:10px; } .roper .r-handle.r{ right:10px; }
+      .roper .r-rope{ width:80px; height:104px; margin-left:-40px; transform-origin:50% 47px; /* hand line */ }
       .roper .r-ground{ bottom:1px; height:3px; }
     }
 
@@ -1698,7 +1698,7 @@
               <div class="r-rope">
                 <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <!-- Half-loop rope: ends anchored at hands, long arc swings under feet / over head -->
-                  <path d="M17 61 Q50 219 83 61"/>
+                  <path d="M12 60 Q50 218 88 60"/>
                 </svg>
               </div>
               <span class="r-handle l"></span>
