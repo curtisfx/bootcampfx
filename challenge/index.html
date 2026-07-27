@@ -114,10 +114,6 @@
     .cohort::before{ content:"NEXT COHORT"; position:absolute; top:-13px; left:24px; background:var(--dawn); color:#1B1206; font-weight:800; font-size:.68rem; letter-spacing:.2em; padding:6px 14px; border-radius:40px; }
     .cohort .c-date{ font-family:var(--display); font-weight:600; font-size:clamp(1.6rem,3.2vw,2.1rem); line-height:1.05; margin:12px 0 4px; }
     .cohort .c-time{ font-family:var(--mono); font-size:.82rem; color:var(--mist); margin-bottom:18px; }
-    .count{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
-    .count div{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:12px 6px; text-align:center; }
-    .count b{ display:block; font-family:var(--mono); font-weight:600; font-size:1.7rem; color:var(--gold); }
-    .count span{ font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; color:var(--mist); }
     .c-list{ list-style:none; font-size:.93rem; }
     .c-list li{ padding:8px 0 8px 26px; position:relative; border-top:1px dashed rgba(255,255,255,.14); }
     .c-list li:first-child{ border-top:0; }
@@ -340,9 +336,11 @@
         <!-- BOOTCAMPFX_EDIT: eyebrow -->
         <span class="clock">Acacia Park · Fullerton · Since 2005</span>
         <!-- BOOTCAMPFX_EDIT: the big promise -->
-        <h1 class="display">Six weeks from now, you'll have <em>proof</em> — or you won't have paid a thing.</h1>
+        <h1 class="display">Six weeks from now you'll have proof. <em>Or you won't have paid a thing.</em></h1>
         <!-- BOOTCAMPFX_EDIT: mechanism subhead -->
-        <p class="lede">The 6-Week Fullerton Challenge: 18 coached outdoor sessions, measured on day 1 and day 42 by the coach Fullerton has trusted for <strong>21 years</strong>. <strong>If your numbers don't move, every dollar comes back.</strong> That's not a slogan. It's in writing, further down this page.</p>
+        <p class="lede"><strong>Your $349 isn't a fee. It's a deposit on your membership.</strong></p>
+        <p class="lede">Eighteen coached outdoor sessions. Measured on day 1 and day 42 by the coach Fullerton has trusted for twenty-one years. <strong>If your numbers don't move, every dollar comes back</strong> — that's in writing further down this page.</p>
+        <p class="lede">And if they do move and you decide to stay? <strong>The entire $349 credits to your membership</strong> — <strong>$197</strong> covers your first month of Unlimited in full, and <strong>$152</strong> applies to month two. The six weeks (measurements, nutrition plan, weekly check-ins, guarantee) become a paid tryout that pays for itself.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#enroll">Claim One of 20 Spots →</a>
           <a class="btn btn-ghost-light" href="#how">How It Works</a>
@@ -350,18 +348,13 @@
         <div class="hero-proof">
           <span><i>✓</i> Measured results, guaranteed</span>
           <span><i>✓</i> No contract, ever</span>
-          <span><i>✓</i> 4.9★ · 20+ Google reviews</span>
+          <span><i>✓</i> 4.9★ · 30+ Google reviews</span>
         </div>
       </div>
 
       <aside class="cohort" aria-label="Next cohort details">
         <div class="c-date" id="cohort-date">Monday</div>
         <div class="c-time">5:30 AM &amp; 8:00 AM &amp; 6:00 PM starts · Acacia Park</div>
-        <div class="count" aria-label="Countdown to cohort start">
-          <div><b id="cd-days">–</b><span>Days</span></div>
-          <div><b id="cd-hours">–</b><span>Hours</span></div>
-          <div><b id="cd-mins">–</b><span>Min</span></div>
-        </div>
         <ul class="c-list">
           <li>18 coached sessions (3× per week)</li>
           <li>Day-1 and day-42 measurements</li>
@@ -376,6 +369,20 @@
       </aside>
     </div>
   </header>
+
+  <!-- ============ 2B. RUN THE NUMBERS (deposit math) ============ -->
+  <section class="truth math-door" id="math" style="padding-top:48px;padding-bottom:48px;">
+    <div class="wrap reveal">
+      <span class="clock" style="color:var(--dawn);">Run the numbers yourself</span>
+      <h2 class="display k">Six weeks. <em>One deposit.</em> Real arithmetic.</h2>
+      <p>Six weeks of Boot Camp FX, three sessions a week, measured on both ends: <strong>$349.</strong></p>
+      <p>Stay after day 42, and that <strong>$349 credits to your membership in full</strong> — <strong>$197</strong> pays month one of Unlimited, and <strong>$152</strong> applies to month two.</p>
+      <p>So here's what $349 actually buys: <strong>six weeks of coached training, before-and-after measurements, a nutrition plan, weekly check-ins by text, a money-back guarantee — plus your first month of membership and a credit into month two.</strong></p>
+      <p>That's not a discount trick. It's what happens when you let people prove it before they commit open-ended.</p>
+      <p>Don't want the deadline and the measurement card? Then don't take this. <a href="https://bootcampfx.com" style="color:var(--dawn);font-weight:700;">Take a free week</a> and join at $197 like everyone else. Both doors open onto the same park.</p>
+      <p style="margin-top:22px;"><a class="btn btn-primary" href="#enroll">Claim One of 20 Spots →</a></p>
+    </div>
+  </section>
 
   <!-- ============ 2. PROOF STRIP (authority, quantified) ============ -->
   <div class="proof" role="list" aria-label="Track record">
@@ -394,11 +401,12 @@
       <span class="clock" style="color:var(--dawn);">Read this before you join anything</span>
       <h2 class="display k">Why your last plan died <em>in week two</em></h2>
       <p>Be honest. This isn't your first attempt.</p>
-      <p>You've done the January membership. The app with the streak counter. Maybe a franchise "transformation challenge" with a countdown timer that quietly reset for the next batch of sign-ups the day yours ended.</p>
-      <p>None of them worked. And here's the part nobody tells you: <strong>it wasn't your discipline. It was the design.</strong></p>
-      <p>A gym membership is a building full of equipment — <strong>nobody notices when you stop showing up.</strong> An app is a notification you learn to swipe away in four days. A franchise challenge is a funnel, and you were the product being moved through it.</p>
+      <p>You've done the January membership. The app with the streak counter. Maybe a franchise "transformation challenge" with a countdown timer that quietly reset for the next batch the day yours ended.</p>
+      <p>None of it worked. And here's the part nobody says out loud: <strong>it wasn't your discipline. It was the design.</strong></p>
+      <p>A gym membership is a building full of equipment — nobody notices when you stop coming. An app is a notification you learn to swipe away in four days. A franchise challenge is a funnel, and you were the thing being moved through it.</p>
       <span class="hl">What actually works is boring, old, and proven: a coach who knows your name, a group that expects you at 5:30, and numbers on a card that don't lie.</span>
-      <p>That's what this is. It's what it's been at Acacia Park since 2005 — long enough that some of our first members' kids now train here. Six weeks is enough time to prove it to yourself. That's the whole pitch.</p>
+      <p>That's all this is. It's what's been happening at Acacia Park since 2005 — long enough that some of our first members' kids train here now. Six weeks is enough to prove it to yourself.</p>
+      <p>That's the whole pitch.</p>
     </div>
   </section>
 
@@ -445,7 +453,7 @@
         <span class="clock">The man making you the guarantee</span>
         <h2 class="display k">Curtis Ludlow has staked <em>21 years</em> on this working.</h2>
         <p><strong>No franchise, no rotating staff, no script.</strong> Curtis founded Boot Camp FX in 2005 and has coached every era of it in person — 15,000+ sessions on the same grass at Acacia Park. The coach who measures you on day one is the one who re-measures you on day 42.</p>
-        <p>His members range from their 30s to their 70s — parents, teachers, nurses, business owners. He knows their names, their goals, and their old injuries. That's why he can put his money where his mouth is: in two decades, <strong>the people who show up get results.</strong> Every time. So the guarantee costs him almost nothing — and tells you everything.</p>
+        <p>His members range from their 20s to their 80s — parents, teachers, nurses, business owners. He knows their names, their goals, and their old injuries. That's why he can put his money where his mouth is: in two decades, <strong>the people who show up get results.</strong> Every time. So the guarantee costs him almost nothing — and tells you everything.</p>
         <p class="sig">Show up. I'll handle the rest.</p>
       </div>
     </div>
@@ -500,7 +508,7 @@
           <div class="res">Lost 20 lbs in 3 weeks</div>
         </div>
       </div>
-      <p class="t-more reveal">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener">Read all 20+ five-star reviews on Google →</a></p>
+      <p class="t-more reveal">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener">Read all 30+ five-star reviews on Google →</a></p>
     </div>
   </section>
 
@@ -511,24 +519,25 @@
         <!-- BOOTCAMPFX_EDIT: offer section -->
         <span class="clock">The offer — all of it, in writing</span>
         <h2 class="display k">One price. <em>Nothing hidden.</em></h2>
-        <p class="sec-lede">Here's everything in the challenge, what it would cost piece by piece, and what you actually pay.</p>
+        <p class="sec-lede"><strong>$349.</strong> One payment. No contract, no enrollment fee, no weekly billing surprise.</p>
       </div>
       <div class="offer-card reveal">
-        <ul class="stack">
-          <li><span>18 coached outdoor sessions <small style="opacity:.7;">(6 weeks × 3/week, 45 min each)</small></span><span>$414 value</span></li>
-          <li><span>Day-1 &amp; day-42 measurement + benchmark sessions</span><span>$90 value</span></li>
-          <li><span>Simple SoCal Nutrition guide + weekly personal check-ins</span><span>$120 value</span></li>
-          <li><span>Direct text line to Coach Curtis, all 6 weeks</span><span>Not for sale</span></li>
-          <li><span>The Acacia Park Guarantee — results or full refund</span><span>Priceless</span></li>
+        <p style="margin:0 0 14px;font-weight:700;">What that covers:</p>
+        <ul class="honest-list" style="list-style:none;margin:0 0 22px;padding:0;">
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">18 coached outdoor sessions — 6 weeks × 3 per week, 45 minutes each</li>
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">Day-1 and day-42 measurement sessions — weight, inches, fitness benchmark</li>
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">The SoCal Nutrition guide — real food, no macro spreadsheet</li>
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">Weekly check-ins by text, from me, not an app</li>
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">A direct line to your coach for six weeks</li>
+          <li style="padding:10px 0;border-bottom:1px dashed rgba(251,247,238,.18);">Measured results or every dollar back</li>
+          <li style="padding:10px 0;"><strong>Your first month of membership ($197) + $152 toward month two, if you stay</strong></li>
         </ul>
-        <div class="stack-total"><span>Total value</span><span>$624+</span></div>
         <div class="price-row">
-          <span class="was">$624</span>
           <span class="big">$349</span>
-          <span class="note">One payment. No contract, no enrollment fee, no "weekly billing" surprise.</span>
+          <span class="note">One payment. No contract, no enrollment fee, no weekly billing surprise.</span>
         </div>
-        <span class="persession">≈ $19.38 PER COACHED SESSION — PERSONAL TRAINING RUNS $80–100</span>
-        <div class="credit">Finish the challenge and decide to stay? <b>Your entire $349 is credited to your first month of membership.</b> The challenge effectively becomes your tryout — not an extra cost.</div>
+        <span class="persession">THAT'S <strong>$19</strong> A COACHED SESSION. PRIVATE TRAINING IN NORTH ORANGE COUNTY RUNS <strong>$75 TO $200</strong>. SAME COACH, EITHER WAY.</span>
+        <div class="credit">Stay after day 42? <b>The entire $349 credits to membership — $197 for month one Unlimited, $152 toward month two.</b> Refund path is separate: see the guarantee. One or the other, never both.</div>
         <div id="paypal-challenge" aria-label="Pay with PayPal"></div>
         <a class="btn btn-primary" id="enroll-fallback" href="sms:+16572170820?&body=CHALLENGE%20—%20I%20want%20one%20of%20the%2020%20spots%20in%20the%20next%206-week%20cohort.%20My%20name%20is%20">Claim Your Spot — Text CHALLENGE to (657) 217-0820 →</a>
         <p class="alt-cta">Prefer to talk first? <a href="tel:+16572170820">Call Curtis directly</a> — he answers his own phone — or <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener">request a spot online</a>.</p>
@@ -542,8 +551,10 @@
       <div class="seal">
         <!-- BOOTCAMPFX_EDIT: guarantee -->
         <h3>Measured results, or your $349 back. All of it.</h3>
-        <p>Show up three times a week for all six weeks and follow the nutrition guide. If your day-42 measurements haven't improved from day one, tell Curtis and he'll refund every dollar — and shake your hand for doing the work anyway.</p>
-        <p class="fine">That's the whole condition: do the program. We can make this guarantee because in 21 years and 15,000+ coached sessions, the people who show up get results. The math is on your side — and the risk is entirely on ours.</p>
+        <p>Show up three times a week for six weeks and follow the nutrition guide. If your day-42 measurements haven't improved on day one's, tell me. Every dollar back — and a handshake for doing the work anyway.</p>
+        <p>That's the entire condition: <strong>do the program.</strong></p>
+        <p><strong>So there's no confusion:</strong> the $349 either comes back to you as a refund, or forward as credit toward your membership ($197 to month one + $152 to month two). One or the other, your choice, never both. Either way it doesn't stay in my pocket unless you got what you came for.</p>
+        <p class="fine">I can make that offer because in twenty-one years and 15,000+ coached sessions, the people who show up get results. The math is on your side. The risk is entirely on mine.</p>
       </div>
     </div>
   </section>
@@ -560,7 +571,7 @@
         <div class="fit yes reveal">
           <h3>Take the spot if</h3>
           <ul>
-            <li>You're 30–65 (or a young 74) and done starting over</li>
+            <li>You're 20 to 80 and done starting over</li>
             <li>You'll commit to 3 sessions a week for 6 weeks — mornings or evenings</li>
             <li>You want a coach and a crew, not a keycard</li>
             <li>You'd rather train under the sky than under fluorescent lights</li>
@@ -608,7 +619,7 @@
         <button class="fq" aria-expanded="false">I'm out of shape. Will I survive?</button>
         <div class="fa"><p>Yes. Every exercise scales — same workout, different intensity. Curtis has coached beginners, post-injury comebacks, and 74-year-olds in the same session for two decades. Your only job is to show up; his job is everything else.</p></div>
         <button class="fq" aria-expanded="false">What exactly does the guarantee cover?</button>
-        <div class="fa"><p>Everything you paid. Show up 3× a week and follow the nutrition guide; if your day-42 measurements haven't improved on day one's, you get $349 back. No forms, no fight. It's survived 21 years because it almost never gets used.</p></div>
+        <div class="fa"><p>Show up 3× a week for six weeks and follow the nutrition guide. If day-42 numbers didn't improve vs day one, you get every dollar back. If you stay instead, the $349 credits to membership ($197 month one + $152 month two). Refund or credit — never both. That's the whole deal.</p></div>
         <button class="fq" aria-expanded="false">What if I can't start this cohort?</button>
         <div class="fa"><p>Cohorts start regularly. Text CHALLENGE to (657) 217-0820 and Curtis will lock you into the next start date that fits your calendar. But if you can start this one, start this one — six weeks from now you'll wish you had.</p></div>
         <button class="fq" aria-expanded="false">Is it really outdoors year-round?</button>
@@ -674,16 +685,6 @@
     const fmt = cohort.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
     document.getElementById('cohort-date').textContent = fmt;
     document.getElementById('final-date').textContent = fmt.split(',')[0] + ', ' + fmt.split(', ')[1];
-
-    function tick(){
-      const ms = cohort - new Date();
-      if (ms <= 0) return;
-      const dd = Math.floor(ms/86400000), hh = Math.floor(ms%86400000/3600000), mm = Math.floor(ms%3600000/60000);
-      document.getElementById('cd-days').textContent = dd;
-      document.getElementById('cd-hours').textContent = hh;
-      document.getElementById('cd-mins').textContent = mm;
-    }
-    tick(); setInterval(tick, 30000);
 
     // ===== Seats bar =====
     document.getElementById('seats-left').textContent = SPOTS_LEFT + ' of ' + SPOTS_TOTAL + ' left';
