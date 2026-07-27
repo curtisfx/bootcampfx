@@ -915,11 +915,14 @@
       position:absolute; left:50%; bottom:6px;
       width:100px; height:130px; margin-left:-50px;
       transform-origin:50% 100%;
+      perspective:420px;
+      perspective-origin:50% 22%;
     }
+    /* hop — airborne as rope passes under feet */
     .roper .r-hop {
       position:absolute; inset:0;
       transform-origin:50% 100%;
-      animation:ropeHop .52s ease-in-out infinite;
+      animation:ropeHop .56s ease-in-out infinite;
       will-change:transform;
       z-index:2;
     }
@@ -934,12 +937,13 @@
       border-radius:9px; background:currentColor;
     }
     .roper .r-arm {
-      position:absolute; top:30px; width:9px; height:36px;
+      position:absolute; top:30px; width:9px; height:34px;
       border-radius:999px; background:currentColor;
       transform-origin:50% 5px;
     }
-    .roper .r-arm.l { left:22px; transform:rotate(28deg); }
-    .roper .r-arm.r { right:22px; left:auto; transform:rotate(-28deg); }
+    /* arms slightly out — hands = rope anchors */
+    .roper .r-arm.l { left:20px; transform:rotate(32deg); }
+    .roper .r-arm.r { right:20px; left:auto; transform:rotate(-32deg); }
     .roper .r-leg {
       position:absolute; top:62px; width:10px; height:52px;
       border-radius:999px; background:currentColor;
@@ -947,40 +951,61 @@
     }
     .roper .r-leg.l { left:32px; }
     .roper .r-leg.r { right:32px; left:auto; }
+    /* fixed handle nubs at hand level */
+    .roper .r-handle {
+      position:absolute; top:58px; width:7px; height:7px;
+      border-radius:50%; background:var(--dawn); z-index:3;
+    }
+    .roper .r-handle.l { left:14px; }
+    .roper .r-handle.r { right:14px; left:auto; }
+    /*
+      Rope: ellipse centered on the hand line. rotateX around that axis so the
+      far side of the rope swings under the feet then over the head — handles stay put.
+    */
     .roper .r-rope {
-      position:absolute; left:50%; top:28px;
-      width:96px; height:108px; margin-left:-48px;
-      transform-origin:50% 12px;
-      animation:ropeSpin .52s linear infinite;
+      position:absolute; left:50%; top:0;
+      width:100px; height:130px; margin-left:-50px;
+      transform-style:preserve-3d;
+      transform-origin:50% 58px; /* hand height */
+      animation:ropeSwing .56s linear infinite;
       will-change:transform;
-      z-index:0;
+      z-index:1;
       pointer-events:none;
     }
-    .roper .r-rope svg { width:100%; height:100%; display:block; overflow:visible; }
-    .roper .r-rope path {
-      fill:none; stroke:var(--dawn); stroke-width:3; stroke-linecap:round;
-      opacity:.9;
+    .roper .r-rope svg {
+      width:100%; height:100%; display:block; overflow:visible;
     }
+    .roper .r-rope ellipse {
+      fill:none;
+      stroke:var(--dawn);
+      stroke-width:2.75;
+      stroke-linecap:round;
+      opacity:.92;
+    }
+    /* 0° = rope under feet; 180° = rope over head */
+    @keyframes ropeSwing {
+      0%   { transform:rotateX(0deg); }
+      100% { transform:rotateX(360deg); }
+    }
+    /* sync: leave ground before under-pass, peak at under-pass (0°/360°) */
     @keyframes ropeHop {
-      0%, 100% { transform:translateY(0); }
-      40% { transform:translateY(-14px); }
-      55% { transform:translateY(-12px); }
-    }
-    @keyframes ropeSpin {
-      0%   { transform:rotate(0deg) scaleY(1); }
-      25%  { transform:rotate(90deg) scaleY(.35); }
-      50%  { transform:rotate(180deg) scaleY(1); }
-      75%  { transform:rotate(270deg) scaleY(.35); }
-      100% { transform:rotate(360deg) scaleY(1); }
+      0%, 100% { transform:translateY(-15px); }
+      12% { transform:translateY(-15px); }
+      28% { transform:translateY(0); }
+      70% { transform:translateY(0); }
+      88% { transform:translateY(-6px); }
     }
     @media (max-width:640px){
       .ropers{ min-height:120px; }
       .roper{ width:88px; height:112px; }
       .roper .r-stage{ width:80px; height:104px; margin-left:-40px; }
-      .roper .r-rope{ width:78px; height:88px; margin-left:-39px; top:22px; }
+      .roper .r-rope{ width:80px; height:104px; margin-left:-40px; transform-origin:50% 46px; }
+      .roper .r-handle{ top:46px; width:6px; height:6px; }
+      .roper .r-handle.l{ left:10px; } .roper .r-handle.r{ right:10px; }
       .roper .r-head{ width:16px; height:18px; margin-left:-8px; }
       .roper .r-torso{ width:18px; height:30px; margin-left:-9px; top:22px; }
       .roper .r-arm{ height:28px; top:24px; width:7px; }
+      .roper .r-arm.l{ left:14px; } .roper .r-arm.r{ right:14px; }
       .roper .r-leg{ height:40px; top:50px; width:8px; }
     }
 
@@ -1666,10 +1691,13 @@
           <div class="r-ground"></div>
           <div class="r-stage">
             <div class="r-rope">
-              <svg viewBox="0 0 96 108" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M18 22 Q48 100 78 22"/>
+              <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <!-- ellipse centered on hand line (cy≈58); swings under feet / over head via rotateX -->
+                <ellipse cx="50" cy="58" rx="34" ry="52"/>
               </svg>
             </div>
+            <span class="r-handle l"></span>
+            <span class="r-handle r"></span>
             <div class="r-hop">
               <span class="r-head"></span>
               <span class="r-torso"></span>
