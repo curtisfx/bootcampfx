@@ -896,6 +896,94 @@
     .letter .quote-who{ font-style:normal; font-weight:700; font-size:.92rem; color:var(--stone); }
 
     /* ============ SCHEDULE ============ */
+
+    /* === Jump-rope figure at #schedule === */
+    .ropers {
+      display:flex; justify-content:flex-start; align-items:flex-end;
+      min-height:150px; margin:0 0 8px; padding:4px 0 6px;
+      pointer-events:none; position:relative; overflow:visible;
+    }
+    .roper {
+      position:relative; width:110px; height:140px;
+      color:var(--ink); z-index:1;
+    }
+    .roper .r-ground {
+      position:absolute; left:24%; right:24%; bottom:4px; height:5px;
+      border-radius:50%; background:rgba(20,16,10,.2); z-index:0;
+    }
+    .roper .r-stage {
+      position:absolute; left:50%; bottom:6px;
+      width:100px; height:130px; margin-left:-50px;
+      transform-origin:50% 100%;
+    }
+    .roper .r-hop {
+      position:absolute; inset:0;
+      transform-origin:50% 100%;
+      animation:ropeHop .52s ease-in-out infinite;
+      will-change:transform;
+      z-index:2;
+    }
+    .roper .r-head {
+      position:absolute; left:50%; top:4px;
+      width:20px; height:22px; margin-left:-10px;
+      border-radius:50%; background:currentColor;
+    }
+    .roper .r-torso {
+      position:absolute; left:50%; top:28px;
+      width:22px; height:38px; margin-left:-11px;
+      border-radius:9px; background:currentColor;
+    }
+    .roper .r-arm {
+      position:absolute; top:30px; width:9px; height:36px;
+      border-radius:999px; background:currentColor;
+      transform-origin:50% 5px;
+    }
+    .roper .r-arm.l { left:22px; transform:rotate(28deg); }
+    .roper .r-arm.r { right:22px; left:auto; transform:rotate(-28deg); }
+    .roper .r-leg {
+      position:absolute; top:62px; width:10px; height:52px;
+      border-radius:999px; background:currentColor;
+      transform-origin:50% 4px;
+    }
+    .roper .r-leg.l { left:32px; }
+    .roper .r-leg.r { right:32px; left:auto; }
+    .roper .r-rope {
+      position:absolute; left:50%; top:28px;
+      width:96px; height:108px; margin-left:-48px;
+      transform-origin:50% 12px;
+      animation:ropeSpin .52s linear infinite;
+      will-change:transform;
+      z-index:0;
+      pointer-events:none;
+    }
+    .roper .r-rope svg { width:100%; height:100%; display:block; overflow:visible; }
+    .roper .r-rope path {
+      fill:none; stroke:var(--dawn); stroke-width:3; stroke-linecap:round;
+      opacity:.9;
+    }
+    @keyframes ropeHop {
+      0%, 100% { transform:translateY(0); }
+      40% { transform:translateY(-14px); }
+      55% { transform:translateY(-12px); }
+    }
+    @keyframes ropeSpin {
+      0%   { transform:rotate(0deg) scaleY(1); }
+      25%  { transform:rotate(90deg) scaleY(.35); }
+      50%  { transform:rotate(180deg) scaleY(1); }
+      75%  { transform:rotate(270deg) scaleY(.35); }
+      100% { transform:rotate(360deg) scaleY(1); }
+    }
+    @media (max-width:640px){
+      .ropers{ min-height:120px; }
+      .roper{ width:88px; height:112px; }
+      .roper .r-stage{ width:80px; height:104px; margin-left:-40px; }
+      .roper .r-rope{ width:78px; height:88px; margin-left:-39px; top:22px; }
+      .roper .r-head{ width:16px; height:18px; margin-left:-8px; }
+      .roper .r-torso{ width:18px; height:30px; margin-left:-9px; top:22px; }
+      .roper .r-arm{ height:28px; top:24px; width:7px; }
+      .roper .r-leg{ height:40px; top:50px; width:8px; }
+    }
+
     .sched{ background:var(--day); }
     .sched-table{ width:100%; border-collapse:collapse; font-size:1rem; }
     .sched-table th, .sched-table td{ padding:20px 12px; border-bottom:1px solid var(--line-day); text-align:left; }
@@ -980,7 +1068,7 @@
       .btn-dawn::after{ display:none; }
       .mq-track{ animation:none; }
       .grain{ display:none; }
-      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree{ animation:none !important; }
+      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope{ animation:none !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
@@ -992,6 +1080,8 @@
       .jacker .j-leg.l{ transform:rotate(6deg) !important; }
       .jacker .j-leg.r{ transform:rotate(-6deg) !important; }
       .jackers .j-tree{ transform:none !important; }
+      .ropers{ opacity:.9; }
+      .roper .r-hop, .roper .r-rope{ animation:none !important; transform:none !important; }
       .fw-card::before{ animation:none; }
       .std-item, .mcard, .why{ transition:none; }
     }
@@ -1570,6 +1660,27 @@
   <!-- ============ SCHEDULE · 6:00 PM ============ -->
   <section class="sched" id="schedule" data-rail="schedule">
     <div class="narrow">
+
+      <div class="ropers" aria-hidden="true">
+        <div class="roper">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div class="r-rope">
+              <svg viewBox="0 0 96 108" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M18 22 Q48 100 78 22"/>
+              </svg>
+            </div>
+            <div class="r-hop">
+              <span class="r-head"></span>
+              <span class="r-torso"></span>
+              <span class="r-arm l"></span>
+              <span class="r-arm r"></span>
+              <span class="r-leg l"></span>
+              <span class="r-leg r"></span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="sec-head reveal">
         <span class="clock" style="color:var(--dawn);">6:00 PM · The week at Acacia Park</span>
         <h2 class="display k">Schedule</h2>
