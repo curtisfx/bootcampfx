@@ -253,7 +253,6 @@
 
     /* ============ FINAL ============ */
     .final{ background:var(--predawn); color:#fff; text-align:center; position:relative; overflow:hidden; }
-    .final::before{ content:""; position:absolute; top:-180px; left:50%; transform:translateX(-50%); width:420px; height:420px; border-radius:50%; background:radial-gradient(circle, rgba(255,233,184,.4), rgba(242,184,75,.18) 45%, transparent 70%); animation:glowPulse 4s ease-in-out infinite; pointer-events:none; }
     .final .clock{ color:var(--gold); justify-content:center; position:relative; }
     .final h2{ position:relative; font-size:clamp(2.5rem,6vw,4.2rem); margin:18px 0 16px; }
     .final h2 em{ font-style:italic; color:var(--gold); }
@@ -279,7 +278,7 @@
       .reveal{ opacity:1; transform:none; transition:none; }
       .hero-stars{ opacity:1; animation:none; }
       .star{ animation:none; opacity:.5; transform:scale(.85); }
-      .hero-sun, .final::before{ animation:none; }
+      .hero-sun{ animation:none; }
       .btn{ transition:none; }
       .btn-primary{ animation:none; }
       .seats .s-fill{ transition:none; }
