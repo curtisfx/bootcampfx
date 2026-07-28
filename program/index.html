@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boot Camp FX | The Program — Fullerton Outdoor Training</title>
+  <meta name="description" content="15 coached sessions a week at Acacia Park. Same coach since 2005. $197/mo unlimited. Your first week is free. Fullerton's #1 outdoor boot camp.">
+  <meta property="og:title" content="Boot Camp FX — Fullerton Outdoor Training Since 2005">
+  <meta property="og:description" content="15 coached sessions a week at Acacia Park. $197/mo unlimited. Same coach since 2005. Your first week is free.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0F1B2C">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F1B2C'/%3E%3Ccircle cx='32' cy='34' r='13' fill='%23F2B84B'/%3E%3Crect y='40' width='64' height='24' fill='%2314291F'/%3E%3Cpath d='M0 40 Q16 32 32 38 T64 36 L64 40 Z' fill='%2314291F'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.paypal.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <!-- GA4: paste gtag snippet here. Tag this page as variant "B-program". See README-AB.md -->
+  <style>
+    /* ============ TOKENS — a day at Acacia Park ============ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root{
+      --predawn:#0F1B2C;   /* 5:20 AM sky */
+      --predawn-2:#16273D;
+      --pine:#14291F;      /* the tree line */
+      --dawn:#E8933A;      /* first light */
+      --gold:#F2B84B;
+      --cream:#FFE9B8;
+      --day:#FBF7EE;       /* 8 AM */
+      --day-2:#F3ECDC;
+      --ink:#14100A;
+      --mist:#9FB0C4;      /* pre-dawn secondary text */
+      --stone:#6A6255;     /* daylight secondary text */
+      --line-day:#E4DAC6;
+      --line-dark:rgba(251,247,238,.14);
+      --display:'Fraunces', serif;
+      --body:'Instrument Sans', sans-serif;
+      --mono:'Spline Sans Mono', monospace;
+      --ease:cubic-bezier(.22,.7,.25,1);
+    }
+    html{ scroll-behavior:smooth; }
+    body{ font-family:var(--body); background:var(--day); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+    img, svg{ display:block; max-width:100%; }
+    a{ color:inherit; }
+    ::selection{ background:var(--dawn); color:#fff; }
+    :focus-visible{ outline:3px solid var(--dawn); outline-offset:3px; border-radius:4px; }
+    ::-webkit-scrollbar{ width:10px; }
+    ::-webkit-scrollbar-track{ background:var(--day-2); }
+    ::-webkit-scrollbar-thumb{ background:#C9BCA0; border-radius:99px; border:2px solid var(--day-2); }
+    ::-webkit-scrollbar-thumb:hover{ background:var(--dawn); }
+
+    .display{ font-family:var(--display); font-weight:600; line-height:1.04; letter-spacing:-.015em; }
+    .mono{ font-family:var(--mono); }
+    .wrap{ max-width:1160px; margin:0 auto; padding:0 24px; }
+    .narrow{ max-width:820px; margin:0 auto; padding:0 24px; }
+
+    /* film grain */
+    .grain{ position:fixed; inset:0; z-index:120; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+    .skip{ position:absolute; left:-9999px; top:0; z-index:200; background:var(--dawn); color:#1B1206; font-weight:700; padding:12px 20px; border-radius:0 0 12px 0; }
+    .skip:focus{ left:0; }
+
+    .clock{ font-family:var(--mono); font-weight:600; font-size:.74rem; letter-spacing:.26em; text-transform:uppercase; display:inline-flex; align-items:center; gap:10px; }
+    .clock::before{ content:""; width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.75; box-shadow:0 0 10px currentColor; }
+
+    .btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px; font-weight:700; text-decoration:none; border-radius:14px; padding:17px 30px; font-size:1rem; transition:transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease); cursor:pointer; border:0; overflow:hidden; }
+    .btn-dawn{ background:var(--dawn); color:#1B1206; animation:ctaPulse 3s ease-in-out infinite; box-shadow:0 8px 30px rgba(232,147,58,.35); }
+    .btn-dawn::after{ content:""; position:absolute; top:0; left:-80%; width:50%; height:100%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform:skewX(-20deg); transition:left .55s var(--ease); }
+    .btn-dawn:hover{ transform:translateY(-2px); background:var(--gold); animation:none; box-shadow:0 14px 40px rgba(232,147,58,.45); }
+    .btn-dawn:hover::after{ left:130%; }
+    .btn-ink{ background:var(--ink); color:var(--day); }
+    .btn-ink:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(20,16,10,.3); }
+    @keyframes ctaPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.02); } }
+
+    /* ============ NAV ============ */
+    .nav{ position:fixed; top:0; left:0; right:0; z-index:100; transition:background .3s var(--ease), box-shadow .3s var(--ease), transform .35s var(--ease); }
+    .nav.scrolled{ background:rgba(15,27,44,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:0 1px 0 rgba(255,255,255,.08); }
+    .nav-in{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; max-width:1280px; margin:0 auto; color:#fff; }
+    .logo{ font-family:var(--display); font-weight:700; font-size:1.3rem; text-decoration:none; letter-spacing:.01em; }
+    .logo em{ color:var(--dawn); font-style:normal; }
+    .nav-links{ display:flex; gap:30px; align-items:center; font-size:.92rem; font-weight:600; }
+    .nav-links a{ text-decoration:none; opacity:.8; transition:opacity .2s var(--ease); position:relative; }
+    .nav-links a:not(.nav-cta)::after{ content:""; position:absolute; left:0; bottom:-6px; width:100%; height:1.5px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease); }
+    .nav-links a:not(.nav-cta):hover{ opacity:1; }
+    .nav-links a:not(.nav-cta):hover::after{ transform:scaleX(1); }
+    .nav-cta{ background:var(--dawn); color:#1B1206 !important; padding:11px 22px; border-radius:12px; opacity:1 !important; transition:transform .18s var(--ease), background .18s var(--ease); }
+    .nav-cta:hover{ background:var(--gold); transform:translateY(-1px); }
+    @media (max-width:820px){ .nav-links a:not(.nav-cta){ display:none; } }
+
+    /* REVEAL SYSTEM */
+    .reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .7s var(--ease); transition-delay:var(--rd, 0s); }
+    .reveal.in{ opacity:1; transform:none; }
+
+    /* SECTION BASE */
+    section{ padding:110px 0; position:relative; }
+    .sec-head{ max-width:680px; margin-bottom:54px; }
+    .sec-head.center{ text-align:center; margin-left:auto; margin-right:auto; }
+    .sec-head.center .clock{ justify-content:center; }
+    h2.k{ font-size:clamp(2.3rem,5vw,3.6rem); margin:18px 0 18px; line-height:1.02; }
+    h2.k em{ font-style:italic; color:var(--dawn); }
+    .sec-lede{ font-size:1.12rem; color:var(--stone); }
+
+    /* HIGHLIGHT */
+    .hl{ font-family:var(--display); font-weight:600; font-size:clamp(1.15rem,2.2vw,1.5rem); line-height:1.25; display:block; margin:22px 0; padding-left:18px; border-left:3px solid var(--dawn); color:var(--ink); }
+    .hl-in{ font-family:var(--display); font-weight:600; color:var(--dawn); }
+
+    /* ============ FOOTER — nightfall ============ */
+    footer{ position:relative; background:var(--predawn); color:var(--mist); padding:80px 0 120px; font-size:.94rem; overflow:hidden; }
+    footer .f-stars{ position:absolute; inset:0 0 auto 0; height:200px; pointer-events:none; }
+    footer .f-word{ font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,8vw,6rem); color:#fff; letter-spacing:-.02em; line-height:1; margin-bottom:44px; position:relative; }
+    footer .f-word em{ color:var(--dawn); font-style:italic; }
+    footer .f-grid{ display:flex; flex-wrap:wrap; gap:26px 60px; justify-content:space-between; align-items:flex-start; position:relative; border-top:1px solid rgba(255,255,255,.1); padding-top:40px; }
+    footer a{ color:#D7DFEA; text-decoration:none; }
+    footer a:hover{ color:var(--gold); }
+    footer .f-clock{ font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; margin-top:16px; color:#5E7089; }
+    footer .f-legal{ margin-top:8px; font-size:.8rem; opacity:.75; display:flex; flex-wrap:wrap; gap:4px 14px; }
+    footer .f-copy{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; }
+
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto; }
+      .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+      .btn{ transition:none; }
+      .btn-dawn{ animation:none; }
+      .btn-dawn::after{ display:none; }
+      .grain{ display:none; }
+    }
+
+    /* ===== SUB-PAGE STYLES ===== */
+    .hero-sub {
+      padding: 140px 0 80px;
+      text-align: center;
+      background: var(--day);
+    }
+    .hero-sub h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      color: var(--ink);
+      max-width: 900px;
+      margin: 0 auto 20px;
+    }
+    .hero-sub-text {
+      font-size: 1.15rem;
+      max-width: 720px;
+      margin: 0 auto 30px;
+      color: var(--stone);
+      line-height: 1.7;
+    }
+    .hero-sub .btn { margin-top: 10px; }
+
+    section {
+      padding: 80px 0;
+    }
+    section:nth-child(even) {
+      background: var(--day-2);
+    }
+    section h2 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.12;
+      letter-spacing: -.01em;
+      margin-bottom: 24px;
+      color: var(--ink);
+    }
+    section h3 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    section p, section li {
+      font-size: 1.05rem;
+      color: var(--stone);
+      line-height: 1.75;
+    }
+    section p + p { margin-top: 16px; }
+
+    /* Comparison table */
+    .comp-table {
+      width: 100%;
+      max-width: 700px;
+      margin: 30px auto;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+    .comp-table th {
+      text-align: left;
+      padding: 14px 16px;
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--stone);
+      border-bottom: 2px solid var(--line-day);
+    }
+    .comp-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line-day);
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table .highlight {
+      color: var(--dawn);
+      font-weight: 700;
+    }
+
+    /* Two-column lists */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .split h3 { margin-bottom: 16px; }
+    .split ul { list-style: none; padding: 0; }
+    .split li { padding: 8px 0 8px 28px; position: relative; }
+    .split .pro li::before {
+      content: "✓"; position: absolute; left: 0; color: var(--pine); font-weight: 800;
+    }
+    .split .con li::before {
+      content: "✗"; position: absolute; left: 0; color: #C44; font-weight: 800;
+    }
+
+    /* Testimonial cards */
+    .testimonial {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.05);
+      border: 1px solid var(--line-day);
+    }
+    .testimonial p { font-style: italic; color: var(--ink); }
+    .testimonial .attr {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--dawn);
+      font-weight: 600;
+      letter-spacing: .04em;
+      font-style: normal;
+    }
+
+    /* Guarantee box */
+    .guarantee {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 36px 32px;
+      text-align: center;
+      border: 1px solid var(--gold);
+    }
+    .guarantee h2 { color: var(--ink); }
+    .guarantee p { color: var(--ink); max-width: 640px; margin: 0 auto; }
+
+    /* Catch section */
+    .catch-note {
+      background: var(--predawn);
+      color: var(--day);
+      padding: 40px 32px;
+      border-radius: 16px;
+      text-align: center;
+    }
+    .catch-note p { color: var(--mist); }
+
+    /* CTA section */
+    .cta-section {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .cta-section h2 { margin-bottom: 16px; }
+    .cta-section p { margin-bottom: 28px; }
+
+    /* PS section */
+    .postscript {
+      padding: 40px 0 80px;
+      color: var(--stone);
+      font-size: .92rem;
+    }
+    .postscript p + p { margin-top: 12px; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      background: var(--predawn);
+      color: var(--mist);
+      font-size: .85rem;
+    }
+    footer a { color: var(--dawn); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      .hero-sub { padding: 110px 0 60px; }
+      section { padding: 50px 0; }
+      .split { grid-template-columns: 1fr; gap: 24px; }
+      .comp-table { font-size: .85rem; }
+      .comp-table th, .comp-table td { padding: 10px 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn { animation: none !important; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ExerciseGym",
+    "name":"Boot Camp FX",
+    "url":"https://bootcampfx.com",
+    "telephone":"+1-657-217-0820",
+    "email":"support@bootcampfx.com",
+    "priceRange":"$197",
+    "foundingDate":"2005",
+    "address":{"@type":"PostalAddress","addressLocality":"Fullerton","addressRegion":"CA","addressCountry":"US"},
+    "location":{"@type":"Place","name":"Acacia Park, Fullerton, CA"},
+    "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"20"}
+  }
+  </script>
+</head>
+<body data-variant="B-program">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav" aria-label="Main">
+    <div class="nav-in">
+      <a class="logo" href="/">Boot Camp <em>FX</em></a>
+      <div class="nav-links">
+        <a href="/#standard">The Standard</a>
+        <a href="/#members">Members</a>
+        <a href="/#membership">Membership</a>
+        <a href="/#schedule">Schedule</a>
+        <a class="nav-cta" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Free Week</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <header class="hero-sub">
+      <div class="wrap">
+        <h1 class="display">Stronger. Healthier. Actually Having Fun While You Sweat.</h1>
+        <p class="hero-sub-text">Fifteen coached sessions a week at Acacia Park in Fullerton. Outdoors, sunrise to sunset. Same coach, same park since 2005. No keycards, no mirrors, no machines that feel like punishment. Just grass under your feet, a small group that knows your name, and a workout you'll actually want to come back to. First week's free — no strings.</p>
+        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week →</a>
+        <p style="margin-top:14px;font-size:.95rem;color:var(--stone);">Or text FREE WEEK to (657) 217-0820</p>
+      </div>
+    </header>
+
+    <!-- ============ STATS BAR ============ -->
+    <div class="wrap" style="text-align:center;padding:20px 24px;font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;color:var(--stone);border-top:1px solid var(--line-day);border-bottom:1px solid var(--line-day);">
+      21 Years · 15,000+ Sessions · 5★ Rating · #1 Fullerton Boot Camp
+    </div>
+
+    <!-- ============ I TALK PEOPLE OUT ============ -->
+    <section>
+      <div class="narrow">
+        <h2 class="display">I Talk People Out Of Paying Me $2,400 A Month</h2>
+        <p>And into a plan that actually fits their life.</p>
+        <p>Once a month or so, somebody sits across from me at Acacia Park ready to buy personal training. Twice a week. Ready to hand me $600 to $2,400 a month, right there on the spot.</p>
+        <p>Most of the time, I talk them out of it.</p>
+        <p>I'm not stupid — I want the money. (Three dogs. A wife. A mortgage.)</p>
+        <p>I talk them out of it because 21 years of coaching taught me one thing: the people who stick with fitness don't do it with willpower. They do it with frequency, a group they like, and a coach they trust. Twice-a-week private training gives you none of that.</p>
+        <p>This is how it actually works.</p>
+        <p>Your body changes based on how often you show up. Not how much you pay per session. Not how fancy the gym looks. Not how loud the music is.</p>
+        <p>Twice a week, you tread water. Three times, you progress. Four times — that's where the fun starts. You know what you're doing. You're getting stronger without thinking about it. The group becomes part of your week.</p>
+        <p>So I built a plan around showing up often enough to actually feel it.</p>
+        <p>$197 a month. Unlimited sessions. Fifteen coached sessions a week.</p>
+
+        <table class="comp-table">
+          <thead>
+            <tr><th></th><th>Unlimited</th><th>Personal Training</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Price</td><td class="highlight">$197/mo</td><td>$600–$2,400/mo</td></tr>
+            <tr><td>Sessions</td><td>Unlimited</td><td>2–3/week</td></tr>
+            <tr><td>Per session</td><td class="highlight">~$9–$11</td><td>$75–$200</td></tr>
+            <tr><td>Coach</td><td>Curtis</td><td>Curtis</td></tr>
+            <tr><td>Status</td><td class="highlight">Open now</td><td>Waitlist</td></tr>
+          </tbody>
+        </table>
+
+        <p>Same coach. Same programming. More sessions. A fraction of the price. The only person this math hurts is my accountant.</p>
+      </div>
+    </section>
+
+    <!-- ============ 30-DAY GUARANTEE ============ -->
+    <section>
+      <div class="narrow">
+        <div class="guarantee">
+          <h2 class="display">30-Day Guarantee</h2>
+          <p>Train thirty days. Not feeling stronger? Not looking forward to the sessions? Just not your thing? Tell me. Full refund. No forms, no exit interview, no script. I've made this guarantee for 21 years and it's cost me almost nothing — because the people who show up stick around.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THIS WORKS / NOT FOR EVERYONE ============ -->
+    <section>
+      <div class="narrow">
+        <h2 class="display">This Works For Almost Everyone. It's Not For Everyone.</h2>
+        <p style="margin-bottom:32px;">Read both columns before you spend a dollar. I'd rather lose a sale than sign up someone who won't show up.</p>
+        <div class="split">
+          <div>
+            <h3>You'll thrive here if:</h3>
+            <ul class="pro">
+              <li>You want to feel stronger and healthier — for the long haul, not for a before-and-after photo</li>
+              <li>You can show up a few times a week and make it part of your routine</li>
+              <li>You want a coach who knows your name, your history, and what you're capable of today</li>
+              <li>You'd rather train under the sky than under fluorescent lights</li>
+              <li>You want to actually enjoy the people you're sweating next to</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Save your money if:</h3>
+            <ul class="con">
+              <li>You want a $10 keycard membership you'll never use — Chuze is down the street, seriously</li>
+              <li>You're shopping for a discount, not a lifestyle change</li>
+              <li>You can't make 2 sessions a week — come back when your schedule opens up</li>
+              <li>You need it to be easy. It's simple. It's not easy.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIALS ============ -->
+    <section>
+      <div class="narrow">
+        <h2 class="display">What It Feels Like To Show Up</h2>
+
+        <div class="testimonial">
+          <p>"This is my daily routine. Bootcamp FX has been a part of my daily routine for more than 15 years. Curtis keeps the workouts fresh with the right amount of challenge. We sweat together and have a great time along the way!"</p>
+          <div class="attr">— Margaret Martinazzi · Member since 2011 · Google 5★</div>
+        </div>
+
+        <div class="testimonial">
+          <p>"I've been with Curtis 18 years. I'm 74 and still in good shape thanks to his training, the community, and his nutrition plan. Love the 5:30 AM workout."</p>
+          <div class="attr">— Elizabeth Ramos · 18 years · Age 74</div>
+        </div>
+
+        <div class="testimonial">
+          <p>"I met Curtis in 2005 and within a year lost all the weight from four kids — got in the best shape of my life. Now at 47 I can do pull-ups, strenuous hikes, lift anything. It changed everything."</p>
+          <div class="attr">— Mariela Iglesias Youngren · Member since 2005</div>
+        </div>
+
+        <div class="testimonial">
+          <p>"One of the best decisions I made many years ago was to join Curtis's Bootcamp. His workouts never seem like a chore as he changes things up all the time. He meets you where you are and then proceeds to motivate and challenge you. And, because we're outdoors at a park, we're privileged to see wildlife — owls, geese, bunnies, coyotes, skunks, squirrels and an assortment of birds."</p>
+          <div class="attr">— Judi Heylek · Google · 5★</div>
+        </div>
+
+        <div class="testimonial">
+          <p>"Going since 2016. Curtis adapts to every fitness level, and I love that it's outdoors in my community."</p>
+          <div class="attr">— Jairo Delgado · Member since 2016</div>
+        </div>
+
+        <div class="testimonial">
+          <p>"I was in the best shape of my life! The workouts are quick, outdoors, the groups are small, the people are great, and Curtis really modifies the workouts to meet your needs. I just started again after taking 3 years off due to pregnancies and kids and I'm so excited to get back into shape!"</p>
+          <div class="attr">— Margie Patel · Member since 2014 · Came back after 3 years</div>
+        </div>
+
+        <p style="text-align:center;margin-top:30px;">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX" style="font-weight:700;color:var(--dawn);">Read all 30+ five-star reviews on Google →</a></p>
+      </div>
+    </section>
+
+    <!-- ============ CURTIS LUDLOW ============ -->
+    <section>
+      <div class="narrow">
+        <h2 class="display">Curtis Ludlow</h2>
+        <p><strong>Two decades of coaching. One park. Thousands of Fullerton mornings.</strong></p>
+        <p>Curtis founded Boot Camp FX in 2005 and has led it in person ever since. Not a franchise operator. Not a rotating staff. Not a script.</p>
+        <p>The same coach who measures you on day one is the one watching your form in year ten. He trains parents, teachers, nurses, cops, business owners — from their 20s to their 80s. He knows every name, every goal, every old injury. That's why the guarantee costs him almost nothing: the people who show up stick around.</p>
+        <p style="font-family:var(--display);font-style:italic;font-size:1.3rem;color:var(--ink);margin-top:18px;">"Show up. I'll handle the rest." — Curtis · Acacia Park · 5:30 AM</p>
+      </div>
+    </section>
+
+    <!-- ============ WHAT YOU GET ============ -->
+    <section>
+      <div class="narrow">
+        <h2 class="display">What You Get</h2>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:10px 0 10px 28px;position:relative;border-bottom:1px solid var(--line-day);">✓ 15 coached sessions a week — 5:30 AM, 8:00 AM, 6:00 PM Monday–Thursday, Friday mornings, Saturday at 8. Rain or shine.</li>
+          <li style="padding:10px 0 10px 28px;position:relative;border-bottom:1px solid var(--line-day);">✓ Every movement scaled to you — first-timer and former college athlete, same session, different weight on the bar.</li>
+          <li style="padding:10px 0 10px 28px;position:relative;border-bottom:1px solid var(--line-day);">✓ Your name, your goals, your old injuries. Nobody hides in a group this size.</li>
+          <li style="padding:10px 0 10px 28px;position:relative;border-bottom:1px solid var(--line-day);">✓ Nutrition check-ins — real food, no macro spreadsheets.</li>
+          <li style="padding:10px 0 10px 28px;position:relative;border-bottom:1px solid var(--line-day);">✓ A group that notices when you're gone. That's the accountability people pay $200 an hour for. Here it's just how we do things.</li>
+          <li style="padding:10px 0 10px 28px;position:relative;">✓ 30-day Love It Or Leave It guarantee.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ THE CATCH ============ -->
+    <section>
+      <div class="narrow">
+        <div class="catch-note">
+          <h2 class="display" style="color:var(--day);">The catch</h2>
+          <p>I cap new Unlimited members at 12 a month. Small groups are the whole product. The day I stop capping is the day this stops working. When the spots are gone, the waitlist opens. 5:30 AM always fills first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ YOUR FIRST WEEK IS FREE ============ -->
+    <section class="cta-section">
+      <div class="narrow">
+        <h2 class="display">Your first week is free.</h2>
+        <p>No credit card. No contract. Nothing to cancel — there's nothing to charge. Come train with us for seven days, meet the group, feel the coaching, see the park at sunrise. If it's not for you, you've lost nothing. If it is, you just found the thing that makes staying fit feel natural instead of like work.</p>
+        <p style="font-size:.92rem;color:var(--stone);margin-bottom:10px;">12 spots a month. 5:30 AM fills first.</p>
+        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week →</a>
+        <p style="margin-top:14px;font-size:.92rem;color:var(--stone);">Or text FREE WEEK to (657) 217-0820</p>
+      </div>
+    </section>
+
+    <!-- ============ P.S. ============ -->
+    <section class="postscript">
+      <div class="narrow">
+        <p><strong>P.S.</strong> — $197 a month. Unlimited sessions. Show up four times a week, you're training for under ten bucks a session — with a coach who's been doing this 21 years. The most expensive fitness plan is the one you keep not using.</p>
+        <p><strong>P.P.S.</strong> — Paying a trainer $600+ a month right now? Ask 'em: "What happens when I miss a week?" Then read this page again. Same coach. Same programming. Thousands less a year.</p>
+        <p><strong>P.P.P.S.</strong> — Want a deadline and a measurement card instead of an open-ended plan? That's the <a href="/challenge/" style="color:var(--dawn);font-weight:700;">6-week challenge</a>. Same park, same coach, day-1 and day-42 numbers. Money back if they don't move.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="f-word">Boot Camp <em>FX</em></div>
+      <div class="f-grid">
+        <div>
+          <div>Acacia Park · Fullerton, California</div>
+          <div class="f-clock">Est. 2005 · Trained through 7,600 sunrises</div>
+        </div>
+        <div>
+          <div><a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a></div>
+          <div style="margin-top:4px;"><a href="tel:+16572170820">(657) 217-0820</a></div>
+          <div style="margin-top:10px;"><a href="/challenge/">6-Week Challenge</a> · <a href="/#membership">Membership</a> · <a href="/#schedule">Schedule</a></div>
+          <div class="f-legal"><a href="/contact.html">Contact</a> <a href="/faq.html">FAQ</a> <a href="/privacy.html">Privacy</a> <a href="/terms.html">Terms</a> <a href="/waiver.html">Waiver</a> <a href="/refund.html">Refunds</a> <a href="/copyright.html">Copyright</a></div>
+        </div>
+        <div class="f-copy">© <span id="yr">2026</span> BOOT CAMP FX</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+    onScroll(); window.addEventListener('scroll', onScroll, { passive:true });
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
