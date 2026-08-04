@@ -727,6 +727,31 @@
       55%    { transform:translateX(74vw) translateY(-1.5px); }
       75%    { transform:translateX(74vw) translateY(-3px); }
     }
+
+    /* ============ CLOUD DRIFT — slow horizontal pass across the sky ============ */
+    .cloud-drift {
+      position:absolute; top:8%; left:0; z-index:0;
+      opacity:0;
+      animation:cloudDrift 60s linear 2s infinite;
+      animation-play-state:paused;
+      pointer-events:none;
+      will-change:transform, opacity;
+      color:rgba(255,255,255,0.6);
+    }
+    /* On light sections, use a near-transparent dark tint */
+    .day-section .cloud-drift,
+    .outside .cloud-drift,
+    .freeweek .cloud-drift { color:rgba(20,16,10,0.06); }
+    .cloud-drift svg { display:block; width:100px; height:auto; overflow:visible; }
+    .live .cloud-drift { animation-play-state:running; }
+    @keyframes cloudDrift {
+      0%   { transform:translateX(-20vw); opacity:0; }
+      5%   { opacity:0.7; }
+      90%  { opacity:0.7; }
+      100% { transform:translateX(120vw); opacity:0; }
+    }
+    @media (max-width:640px){ .cloud-drift svg { width:80px; } }
+
     @media (max-width:640px){
       .egret svg{ width:104px; }
       .duck svg{ width:40px; } .duck.d2 svg{ width:33px; }
@@ -1191,7 +1216,8 @@
       .btn-dawn::after{ display:none; }
       .mq-track{ animation:none; }
       .grain{ display:none; }
-      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope{ animation:none !important; }
+      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope, .cloud-drift, .cloud-drift > *{ animation:none !important; }
+      .cloud-drift, .cloud-drift > *{ transform:none !important; opacity:0.5 !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
@@ -1398,6 +1424,13 @@ to { transform:rotate(17deg); }
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
     <!-- Soaring egret -->
+    <div class="cloud-drift" aria-hidden="true">
+      <svg viewBox="0 0 120 50">
+        <ellipse cx="30" cy="30" rx="24" ry="14" fill="currentColor"/>
+        <ellipse cx="60" cy="24" rx="30" ry="18" fill="currentColor"/>
+        <ellipse cx="90" cy="30" rx="22" ry="13" fill="currentColor"/>
+      </svg>
+    </div>
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
         <svg viewBox="0 0 160 90" fill="none">
