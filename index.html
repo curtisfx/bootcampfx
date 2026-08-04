@@ -728,29 +728,34 @@
       75%    { transform:translateX(74vw) translateY(-3px); }
     }
 
-    /* ============ CLOUD DRIFT — slow horizontal pass across the sky ============ */
+    /* ============ CLOUD DRIFT — grouped, varied, organic puffs ============ */
     .cloud-drift {
-      position:absolute; top:8%; left:0; z-index:0;
+      position:absolute;
+      top:var(--top, 12%);
+      left:0;
+      z-index:0;
+      width:var(--size, 200px);
       opacity:0;
-      animation:cloudDrift 60s linear 2s infinite;
+      animation:cloudDrift var(--duration, 64s) linear var(--delay, 2s) infinite;
       animation-play-state:paused;
       pointer-events:none;
       will-change:transform, opacity;
-      color:rgba(255,255,255,0.6);
+      color:rgba(255,255,255,0.62);
     }
     /* On light sections, use a near-transparent dark tint */
     .day-section .cloud-drift,
     .outside .cloud-drift,
     .freeweek .cloud-drift { color:rgba(20,16,10,0.06); }
-    .cloud-drift svg { display:block; width:100px; height:auto; overflow:visible; }
+    .cloud-drift svg { display:block; width:100%; height:auto; overflow:visible; }
+    .cloud-drift ellipse { fill:currentColor; }
     .live .cloud-drift { animation-play-state:running; }
     @keyframes cloudDrift {
-      0%   { transform:translateX(-20vw); opacity:0; }
-      5%   { opacity:0.7; }
-      90%  { opacity:0.7; }
+      0%   { transform:translateX(-40vw); opacity:0; }
+      7%   { opacity:0.66; }
+      90%  { opacity:0.66; }
       100% { transform:translateX(120vw); opacity:0; }
     }
-    @media (max-width:640px){ .cloud-drift svg { width:80px; } }
+    @media (max-width:640px){ .cloud-drift { width:min(var(--size), 34vw); } }
 
     @media (max-width:640px){
       .egret svg{ width:104px; }
@@ -1423,14 +1428,42 @@ to { transform:rotate(17deg); }
     </svg>
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
-    <!-- Soaring egret -->
-    <div class="cloud-drift" aria-hidden="true">
-      <svg viewBox="0 0 120 50">
-        <ellipse cx="30" cy="30" rx="24" ry="14" fill="currentColor"/>
-        <ellipse cx="60" cy="24" rx="30" ry="18" fill="currentColor"/>
-        <ellipse cx="90" cy="30" rx="22" ry="13" fill="currentColor"/>
+    <!-- Clouds — grouped, varied, organic -->
+    <div class="cloud-drift" aria-hidden="true" style="--size:260px;--top:7%;--delay:0s;--duration:68s;">
+      <svg viewBox="0 0 200 80">
+        <ellipse cx="100" cy="48" rx="82" ry="26"/>
+        <ellipse cx="64" cy="38" rx="46" ry="32"/>
+        <ellipse cx="138" cy="34" rx="52" ry="36"/>
+        <ellipse cx="26" cy="48" rx="22" ry="14"/>
+        <ellipse cx="178" cy="46" rx="20" ry="15"/>
       </svg>
     </div>
+    <div class="cloud-drift" aria-hidden="true" style="--size:160px;--top:18%;--delay:22s;--duration:58s;">
+      <svg viewBox="0 0 200 80">
+        <ellipse cx="102" cy="50" rx="74" ry="22"/>
+        <ellipse cx="58" cy="40" rx="40" ry="28"/>
+        <ellipse cx="146" cy="42" rx="40" ry="26"/>
+        <ellipse cx="168" cy="52" rx="18" ry="12"/>
+      </svg>
+    </div>
+    <div class="cloud-drift" aria-hidden="true" style="--size:340px;--top:4%;--delay:38s;--duration:78s;">
+      <svg viewBox="0 0 240 100">
+        <ellipse cx="120" cy="58" rx="96" ry="34"/>
+        <ellipse cx="68" cy="46" rx="56" ry="42"/>
+        <ellipse cx="172" cy="44" rx="62" ry="44"/>
+        <ellipse cx="28" cy="58" rx="26" ry="18"/>
+        <ellipse cx="214" cy="56" rx="24" ry="18"/>
+      </svg>
+    </div>
+    <div class="cloud-drift" aria-hidden="true" style="--size:120px;--top:24%;--delay:50s;--duration:52s;">
+      <svg viewBox="0 0 200 80">
+        <ellipse cx="100" cy="50" rx="60" ry="18"/>
+        <ellipse cx="58" cy="44" rx="34" ry="22"/>
+        <ellipse cx="140" cy="44" rx="34" ry="22"/>
+      </svg>
+    </div>
+
+    <!-- Soaring egret -->
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
         <svg viewBox="0 0 160 90" fill="none">
