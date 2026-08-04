@@ -77,69 +77,8 @@
     .nav{ position:fixed; top:0; left:0; right:0; z-index:100; transition:background .3s var(--ease), box-shadow .3s var(--ease), transform .35s var(--ease); }
     .nav.scrolled{ background:rgba(15,27,44,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:0 1px 0 rgba(255,255,255,.08); }
     .nav-in{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; max-width:1280px; margin:0 auto; color:#fff; }
-    .logo{ position:relative; font-family:var(--display); font-weight:700; font-size:1.3rem; text-decoration:none; letter-spacing:.01em; }
+    .logo{ font-family:var(--display); font-weight:700; font-size:1.3rem; text-decoration:none; letter-spacing:.01em; }
     .logo em{ color:var(--dawn); font-style:normal; }
-
-    /* ============ NAV FOX — prowl across the bar ============ */
-    .fox{
-      position:absolute; top:50%; left:100%;
-      width:48px; height:34px;
-      margin-left:6px; margin-top:-17px;
-      z-index:101; pointer-events:none;
-      opacity:0; animation-play-state:paused;
-      will-change:transform, opacity;
-      color:var(--dawn);
-    }
-    .fox svg{ display:block; width:100%; height:100%; overflow:visible; fill:currentColor; }
-    .fox .fox-prowl, .fox .fox-creep, .fox .fox-tail, .fox .fox-head,
-    .fox .fox-leg { transform-origin:var(--org, 50% 50%); animation-play-state:paused; }
-    .nav.live .fox, .nav.live .fox .fox-prowl, .nav.live .fox .fox-creep, .nav.live .fox .fox-tail,
-    .nav.live .fox .fox-head, .nav.live .fox .fox-leg { animation-play-state:running; }
-    .fox .fox-prowl{ --org:50% 90%; animation:foxCreep 1.4s var(--ease) 1.5s infinite alternate; }
-    .fox .fox-creep{ --org:40% 80%; animation:foxPounce 5s ease-in-out 17.5s infinite; }
-    .fox .fox-tail{ --org:36px 24px; animation:foxTailSway 1.4s var(--ease) 1.5s infinite alternate; }
-    .fox .fox-head{ --org:10px 24px; animation:foxSniff 2.2s var(--ease) 1.5s infinite alternate; }
-    .fox .fox-leg.fl{ --org:12px 28px; animation:foxStepF 1.4s var(--ease) 1.5s infinite alternate; }
-    .fox .fox-leg.fr{ --org:18px 28px; animation:foxStepF 1.4s var(--ease) 1.57s infinite alternate-reverse; }
-    .fox .fox-leg.bl{ --org:38px 28px; animation:foxStepB 1.4s var(--ease) 1.57s infinite alternate; }
-    .fox .fox-leg.br{ --org:44px 28px; animation:foxStepB 1.4s var(--ease) 1.5s infinite alternate-reverse; }
-    .fox{ animation:foxProwl 16s var(--ease) 1.5s forwards; }
-    @keyframes foxProwl{
-      0% { transform:translateX(12vw); opacity:0; }
-      6% { opacity:1; }
-      100% { transform:translateX(-14vw); opacity:1; }
-    }
-    @keyframes foxCreep{
-      from { transform:rotate(-1deg) translateY(0); }
-      to { transform:rotate(1deg) translateY(-1px); }
-    }
-    @keyframes foxPounce{
-      0%, 70%, 100% { transform:translateY(0) scaleY(1); }
-      80% { transform:translateY(-18px) scaleY(1.06); }
-      88% { transform:translateY(0) scaleY(0.96); }
-      93% { transform:translateY(-2px) scaleY(1); }
-    }
-    @keyframes foxTailSway{
-      from { transform:rotate(-8deg); }
-      to { transform:rotate(6deg); }
-    }
-    @keyframes foxSniff{
-      from { transform:rotate(-3deg) translateY(0); }
-      to { transform:rotate(5deg) translateY(1.5px); }
-    }
-    @keyframes foxStepF{
-      from { transform:rotate(-10deg); }
-      to { transform:rotate(10deg); }
-    }
-    @keyframes foxStepB{
-      from { transform:rotate(10deg); }
-      to { transform:rotate(-10deg); }
-    }
-    @media (max-width:820px){ .fox{ width:40px; height:28px; margin-top:-14px; } }
-    @media (prefers-reduced-motion:reduce){
-      .fox, .fox .fox-prowl, .fox .fox-creep, .fox .fox-tail, .fox .fox-head, .fox .fox-leg{ animation:none !important; }
-      .fox{ opacity:0.8 !important; transform:translateX(0) !important; }
-    }
     .nav-links{ display:flex; gap:30px; align-items:center; font-size:.92rem; font-weight:600; }
     .nav-links a{ text-decoration:none; opacity:.8; transition:opacity .2s var(--ease); position:relative; }
     .nav-links a:not(.nav-cta)::after{ content:""; position:absolute; left:0; bottom:-6px; width:100%; height:1.5px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease); }
@@ -1436,30 +1375,7 @@ to { transform:rotate(17deg); }
 
   <nav class="nav" id="nav" aria-label="Main">
     <div class="nav-in">
-      <a class="logo" href="#top">Boot Camp <em>FX</em>
-        <span class="fox" aria-hidden="true">
-          <svg viewBox="0 0 120 68" xmlns="http://www.w3.org/2000/svg">
-            <g class="fox-creep">
-              <g class="fox-prowl">
-                <g class="fox-tail" transform="translate(76,32)">
-                  <path d="M0 16 C16 8 38 6 54 0 C58 12 50 24 40 28 C28 32 14 24 0 22 Z"/>
-                </g>
-                <g class="fox-head" transform="translate(18,20)">
-                  <path d="M0 0 L26 6 L24 22 L2 20 Z"/>
-                  <path d="M20 8 L34 10 L26 18 Z"/>
-                </g>
-                <ellipse cx="58" cy="40" rx="34" ry="18"/>
-                <g class="fox-legs">
-                  <rect class="fox-leg fl" x="22" y="40" width="8" height="22" rx="4"/>
-                  <rect class="fox-leg fr" x="36" y="40" width="8" height="22" rx="4"/>
-                  <rect class="fox-leg bl" x="68" y="40" width="8" height="22" rx="4"/>
-                  <rect class="fox-leg br" x="82" y="40" width="8" height="22" rx="4"/>
-                </g>
-              </g>
-            </g>
-          </svg>
-        </span>
-      </a>
+      <a class="logo" href="#top">Boot Camp <em>FX</em></a>
       <div class="nav-links">
         <a href="#standard">The Standard</a>
         <a href="#members">Members</a>
@@ -2376,7 +2292,7 @@ to { transform:rotate(17deg); }
 
     // Live wildlife in scenes (rabbits + unique foreground trees)
     (function(){
-      const scenes = document.querySelectorAll('.outside, .coach, .members, .sched, .freeweek, .hero, .nav');
+      const scenes = document.querySelectorAll('.outside, .coach, .members, .sched, .freeweek, .hero');
       if (reduced){ scenes.forEach(s => s.classList.add('live')); return; }
       const sio = new IntersectionObserver(es => es.forEach(e => {
         if (e.isIntersecting){ e.target.classList.add('live'); sio.unobserve(e.target); }
