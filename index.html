@@ -742,13 +742,22 @@
       will-change:transform, opacity;
       color:rgba(255,255,255,0.62);
     }
+    .cloud-drift.early {
+      opacity:var(--early-opacity, 0.66);
+      animation:cloudDriftEarly var(--duration, 64s) linear infinite;
+    }
+    @keyframes cloudDriftEarly {
+      0%   { transform:translateX(var(--start, 10vw)); opacity:var(--early-opacity, 0.66); }
+      100% { transform:translateX(120vw); opacity:var(--early-opacity, 0.66); }
+    }
     /* On light sections, use a near-transparent dark tint */
     .day-section .cloud-drift,
     .outside .cloud-drift,
     .freeweek .cloud-drift { color:rgba(20,16,10,0.06); }
     .cloud-drift svg { display:block; width:100%; height:auto; overflow:visible; }
     .cloud-drift ellipse { fill:currentColor; }
-    .live .cloud-drift { animation-play-state:running; }
+    .live .cloud-drift:not(.early) { animation-play-state:running; }
+    .live .cloud-drift.early { animation-play-state:running; }
     @keyframes cloudDrift {
       0%   { transform:translateX(-40vw); opacity:0; }
       7%   { opacity:0.66; }
@@ -1222,7 +1231,7 @@
       .mq-track{ animation:none; }
       .grain{ display:none; }
       .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope, .cloud-drift, .cloud-drift > *{ animation:none !important; }
-      .cloud-drift, .cloud-drift > *{ transform:none !important; opacity:0.5 !important; }
+      .cloud-drift, .cloud-drift.early, .cloud-drift > *{ animation:none !important; transform:none !important; opacity:0.5 !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
@@ -1429,7 +1438,7 @@ to { transform:rotate(17deg); }
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
     <!-- Clouds — grouped, varied, organic -->
-    <div class="cloud-drift" aria-hidden="true" style="--size:260px;--top:7%;--delay:0s;--duration:68s;">
+    <div class="cloud-drift early" aria-hidden="true" style="--size:260px;--top:7%;--delay:0s;--duration:68s;--start:22vw;">
       <svg viewBox="0 0 200 80">
         <ellipse cx="100" cy="48" rx="82" ry="26"/>
         <ellipse cx="64" cy="38" rx="46" ry="32"/>
@@ -1438,7 +1447,7 @@ to { transform:rotate(17deg); }
         <ellipse cx="178" cy="46" rx="20" ry="15"/>
       </svg>
     </div>
-    <div class="cloud-drift" aria-hidden="true" style="--size:160px;--top:18%;--delay:22s;--duration:58s;">
+    <div class="cloud-drift early" aria-hidden="true" style="--size:160px;--top:18%;--delay:0s;--duration:58s;--start:64vw;">
       <svg viewBox="0 0 200 80">
         <ellipse cx="102" cy="50" rx="74" ry="22"/>
         <ellipse cx="58" cy="40" rx="40" ry="28"/>
