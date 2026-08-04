@@ -126,13 +126,13 @@
   </style>
   <style>
     /* ============ PROOF STRIP ============ */
-    .proof{ background:var(--pine); color:var(--day); }
-    .proof-in{ display:grid; grid-template-columns:repeat(4,1fr); max-width:1120px; margin:0 auto; }
-    .proof-in > div{ padding:30px 12px; text-align:center; border-left:1px solid rgba(251,247,238,.12); }
+    .proof{ background:var(--pine); color:var(--day); position:relative; }
+    .proof-in{ display:grid; grid-template-columns:repeat(4,1fr); max-width:1160px; margin:0 auto; }
+    .proof-in > div{ padding:44px 16px; text-align:center; border-left:1px solid rgba(251,247,238,.12); }
     .proof-in > div:first-child{ border-left:0; }
     .proof b{ font-family:var(--display); font-weight:600; font-size:clamp(2.2rem,4.4vw,3.4rem); display:block; line-height:1; letter-spacing:-.01em; }
     .proof b i{ font-style:normal; color:var(--gold); }
-    .proof span{ display:block; margin-top:8px; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:#B9C8B4; font-weight:600; }
+    .proof-in > div > span{ display:block; margin-top:10px; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:#B9C8B4; font-weight:600; }
     @media (max-width:680px){ .proof-in{ grid-template-columns:repeat(2,1fr); } .proof-in > div:nth-child(3){ border-left:0; } .proof-in > div:nth-child(n+3){ border-top:1px solid rgba(251,247,238,.12); } }
 
     /* ============ SECTIONS ============ */
@@ -386,10 +386,10 @@
   <!-- ============ 2. PROOF STRIP (authority, quantified) ============ -->
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem" class="reveal"><b><span class="countup" data-count="21">0</span><i> yrs</i></b><span>Same park, same coach</span></div>
-      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="countup" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
-      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="countup" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Google Rating</span></div>
-      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Boot Camp on Yelp</span></div>
+      <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span></div>
+      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
+      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span></div>
+      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span></div>
     </div>
   </div>
 
@@ -735,7 +735,7 @@
 
     // ===== Count-up stats =====
     (function(){
-      const els = document.querySelectorAll('.countup');
+      const els = document.querySelectorAll('.count');
       const setFinal = el => {
         const dec = parseInt(el.dataset.dec || 0);
         el.textContent = parseFloat(el.dataset.count).toFixed(dec);
