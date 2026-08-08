@@ -1405,12 +1405,16 @@ to { transform:rotate(17deg); }
 
     .heron .hr-body { transform-origin: 45px 55px; }
 
-    .heron .hr-leg {
+    .heron .hr-leg.front {
       transform-origin: 50% 4px;
-      animation: heronWalk 0.95s ease-in-out 2s infinite alternate;
+      animation: heronWalkFront 0.95s ease-in-out 2s 21 forwards;
       animation-play-state: paused;
     }
-    .heron .hr-leg.rear { animation-delay: 2.47s; }
+    .heron .hr-leg.rear {
+      transform-origin: 50% 4px;
+      animation: heronWalkRear 0.95s ease-in-out 2.47s 21 forwards;
+      animation-play-state: paused;
+    }
     .live .heron .hr-leg { animation-play-state: running; }
 
     .heron .hr-neck {
@@ -1451,10 +1455,16 @@ to { transform:rotate(17deg); }
       100% { transform: rotate(0.5deg) translateY(-1px); }
     }
 
-    @keyframes heronWalk {
+    @keyframes heronWalkFront {
       0% { transform: rotate(0deg) translateY(0); }
       50% { transform: rotate(14deg) translateY(-2px); }
-      100% { transform: rotate(-2deg) translateY(0); }
+      100% { transform: rotate(0deg) translateY(0); }
+    }
+
+    @keyframes heronWalkRear {
+      0% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(-14deg) translateY(-2px); }
+      100% { transform: rotate(0deg) translateY(0); }
     }
 
     @keyframes heronNeckStrike {
