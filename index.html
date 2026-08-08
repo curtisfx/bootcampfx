@@ -1361,6 +1361,100 @@ to { transform:rotate(17deg); }
      
     }
   </style>
+  <style>
+    /* ============ HERON (A11) · wading the outside section ============ */
+    .heron {
+      position: absolute;
+      bottom: 18px;
+      left: 5%;
+      z-index: 1;
+      opacity: 0;
+      color: var(--stone);
+      animation: heronStalk 20s var(--ease) 2s forwards;
+      animation-play-state: paused;
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+    .live .heron { animation-play-state: running; }
+
+    .heron svg {
+      display: block;
+      width: 70px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .heron .hr-shadow {
+      position: absolute;
+      bottom: -2px;
+      left: 15%;
+      width: 70%;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(20, 16, 10, 0.15);
+      filter: blur(1px);
+      z-index: -1;
+    }
+
+    .heron .hr-stalk {
+      transform-origin: 50% 88%;
+      animation: heronBob 3s ease-in-out 2s infinite alternate;
+      animation-play-state: paused;
+    }
+    .live .heron .hr-stalk { animation-play-state: running; }
+
+    .heron .hr-neck {
+      transform-origin: 40px 30px;
+      animation: heronNeckStrike 6s ease-in-out 2s infinite;
+      animation-play-state: paused;
+    }
+    .live .heron .hr-neck { animation-play-state: running; }
+
+    .heron .hr-head {
+      transform-origin: 50px 8px;
+      animation: heronHeadTwitch 6s ease-in-out 2s infinite;
+      animation-play-state: paused;
+    }
+    .live .heron .hr-head { animation-play-state: running; }
+
+    @keyframes heronStalk {
+      0% { transform: translateX(-14vw); opacity: 0; }
+      6% { opacity: 1; }
+      100% { transform: translateX(22vw); opacity: 1; }
+    }
+
+    @keyframes heronBob {
+      from { transform: rotate(-0.5deg) translateY(0); }
+      to { transform: rotate(0.5deg) translateY(-1px); }
+    }
+
+    @keyframes heronNeckStrike {
+      0%, 50%, 100% { transform: rotate(0deg); }
+      60% { transform: rotate(-25deg) translateY(4px); }
+      70% { transform: rotate(-15deg); }
+      80% { transform: rotate(0deg); }
+    }
+
+    @keyframes heronHeadTwitch {
+      0%, 50%, 100% { transform: rotate(0deg); }
+      60% { transform: rotate(-30deg); }
+      70% { transform: rotate(-18deg); }
+      80% { transform: rotate(0deg); }
+    }
+
+    @media (max-width: 640px) {
+      .heron svg { width: 52px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .heron, .heron .hr-stalk, .heron .hr-neck, .heron .hr-head {
+        animation: none !important;
+        transform: none !important;
+        opacity: 0.85 !important;
+      }
+    }
+  </style>
+
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -1611,8 +1705,28 @@ to { transform:rotate(17deg); }
     </div>
 
     <!-- Outside trees (different shapes) -->
-    
-    
+
+    <!-- Wading heron -->
+    <div class="heron" aria-hidden="true">
+      <div class="hr-shadow"></div>
+      <div class="hr-stalk">
+        <svg viewBox="0 0 100 120" style="overflow:visible;">
+          <g class="hr-body">
+            <ellipse cx="45" cy="55" rx="12" ry="22" fill="currentColor"/>
+            <rect x="40.5" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
+            <rect x="47" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
+          </g>
+          <g class="hr-neck">
+            <path d="M44 38 C42 32 40 24 44 18 C46 14 48 13 50 14" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </g>
+          <g class="hr-head">
+            <ellipse cx="50" cy="8" rx="6" ry="4" fill="currentColor"/>
+            <path d="M54 8 L70 8 L54 9.5 Z" fill="currentColor"/>
+            <circle cx="48" cy="7" r="1" fill="#14100A"/>
+          </g>
+        </svg>
+      </div>
+    </div>
   </section>
 
   <!-- ============ THE STANDARD · 8:00 AM ============ -->
