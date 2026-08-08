@@ -1362,7 +1362,7 @@ to { transform:rotate(17deg); }
     }
   </style>
   <style>
-    /* ============ HERON (A11) · wading the outside section ============ */
+    /* ============ HERON (A11) · wading, striking, alive ============ */
     .heron {
       position: absolute;
       bottom: 18px;
@@ -1379,7 +1379,7 @@ to { transform:rotate(17deg); }
 
     .heron svg {
       display: block;
-      width: 70px;
+      width: 88px;
       height: auto;
       overflow: visible;
     }
@@ -1403,19 +1403,42 @@ to { transform:rotate(17deg); }
     }
     .live .heron .hr-stalk { animation-play-state: running; }
 
+    .heron .hr-body { transform-origin: 45px 55px; }
+
+    .heron .hr-leg {
+      transform-origin: 50% 4px;
+      animation: heronWalk 0.95s ease-in-out 2s infinite alternate;
+      animation-play-state: paused;
+    }
+    .heron .hr-leg.rear { animation-delay: 2.47s; }
+    .live .heron .hr-leg { animation-play-state: running; }
+
     .heron .hr-neck {
       transform-origin: 40px 30px;
-      animation: heronNeckStrike 6s ease-in-out 2s infinite;
+      animation: heronNeckStrike 6.8s ease-in-out 2s infinite;
       animation-play-state: paused;
     }
     .live .heron .hr-neck { animation-play-state: running; }
 
     .heron .hr-head {
       transform-origin: 50px 8px;
-      animation: heronHeadTwitch 6s ease-in-out 2s infinite;
+      animation: heronHeadTwitch 6.8s ease-in-out 2s infinite;
       animation-play-state: paused;
     }
     .live .heron .hr-head { animation-play-state: running; }
+
+    .heron .hr-tail {
+      transform-origin: 34px 50px;
+      animation: heronTailFlick 4.2s ease-in-out 2s infinite;
+      animation-play-state: paused;
+    }
+    .live .heron .hr-tail { animation-play-state: running; }
+
+    .heron .hr-eye {
+      animation: heronBlink 5.5s ease-in-out 2s infinite;
+      animation-play-state: paused;
+    }
+    .live .heron .hr-eye { animation-play-state: running; }
 
     @keyframes heronStalk {
       0% { transform: translateX(-14vw); opacity: 0; }
@@ -1424,30 +1447,50 @@ to { transform:rotate(17deg); }
     }
 
     @keyframes heronBob {
-      from { transform: rotate(-0.5deg) translateY(0); }
-      to { transform: rotate(0.5deg) translateY(-1px); }
+      0% { transform: rotate(-0.5deg) translateY(0); }
+      100% { transform: rotate(0.5deg) translateY(-1px); }
+    }
+
+    @keyframes heronWalk {
+      0% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(14deg) translateY(-2px); }
+      100% { transform: rotate(-2deg) translateY(0); }
     }
 
     @keyframes heronNeckStrike {
-      0%, 50%, 100% { transform: rotate(0deg); }
-      60% { transform: rotate(-25deg) translateY(4px); }
-      70% { transform: rotate(-15deg); }
-      80% { transform: rotate(0deg); }
+      0%, 48%, 86%, 100% { transform: rotate(0deg); }
+      56% { transform: rotate(-34deg) translateY(5px); }
+      62% { transform: rotate(-26deg) translateY(2px); }
+      68% { transform: rotate(-34deg) translateY(5px); }
+      76% { transform: rotate(-18deg); }
     }
 
     @keyframes heronHeadTwitch {
-      0%, 50%, 100% { transform: rotate(0deg); }
-      60% { transform: rotate(-30deg); }
-      70% { transform: rotate(-18deg); }
-      80% { transform: rotate(0deg); }
+      0%, 48%, 86%, 100% { transform: rotate(0deg); }
+      56% { transform: rotate(-40deg); }
+      62% { transform: rotate(-28deg); }
+      68% { transform: rotate(-40deg); }
+      76% { transform: rotate(-22deg); }
+    }
+
+    @keyframes heronTailFlick {
+      0%, 90%, 100% { transform: rotate(0deg); }
+      92% { transform: rotate(-4deg); }
+      96% { transform: rotate(2deg); }
+    }
+
+    @keyframes heronBlink {
+      0%, 94%, 100% { transform: scaleY(1); }
+      96% { transform: scaleY(0.1); }
+      98% { transform: scaleY(1); }
     }
 
     @media (max-width: 640px) {
-      .heron svg { width: 52px; }
+      .heron svg { width: 65px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .heron, .heron .hr-stalk, .heron .hr-neck, .heron .hr-head {
+      .heron, .heron .hr-stalk, .heron .hr-leg, .heron .hr-neck, .heron .hr-head, .heron .hr-tail, .heron .hr-eye {
         animation: none !important;
         transform: none !important;
         opacity: 0.85 !important;
@@ -1711,9 +1754,16 @@ to { transform:rotate(17deg); }
       <div class="hr-shadow"></div>
       <div class="hr-stalk">
         <svg viewBox="0 0 100 120" style="overflow:visible;">
+          <g class="hr-tail">
+            <path d="M33 50 L18 42 L20 58 Z" fill="currentColor" opacity=".85"/>
+          </g>
           <g class="hr-body">
             <ellipse cx="45" cy="55" rx="12" ry="22" fill="currentColor"/>
+          </g>
+          <g class="hr-leg front">
             <rect x="40.5" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
+          </g>
+          <g class="hr-leg rear">
             <rect x="47" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
           </g>
           <g class="hr-neck">
@@ -1722,7 +1772,7 @@ to { transform:rotate(17deg); }
           <g class="hr-head">
             <ellipse cx="50" cy="8" rx="6" ry="4" fill="currentColor"/>
             <path d="M54 8 L70 8 L54 9.5 Z" fill="currentColor"/>
-            <circle cx="48" cy="7" r="1" fill="#14100A"/>
+            <circle class="hr-eye" cx="48" cy="7" r="1" fill="#14100A"/>
           </g>
         </svg>
       </div>
