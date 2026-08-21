@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BootCampFX SPRINT — Endless Runner</title>
-<meta name="description" content="BootCampFX SPRINT: an endless boot-camp runner. Jump the ropes, slide the bars, chain combos. Free to play.">
+<meta name="description" content="BootCampFX SPRINT: an endless boot-camp runner. Jump the ball, slide the bars, chain combos. Free to play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -47,6 +47,13 @@
   .overlay .title em{font-style:italic;color:var(--dawn);}
   .overlay .tag{color:var(--mist);font-family:var(--mono);letter-spacing:.3em;text-transform:uppercase;
     font-size:.7rem;margin-top:12px;}
+  .controls{display:flex;flex-direction:column;gap:10px;margin-top:24px;}
+  .ctl{display:flex;justify-content:center;align-items:baseline;gap:16px;
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;}
+  .ctl .lbl{color:var(--day);font-weight:600;}
+  .ctl .keys{color:var(--mist);}
+  .tip{color:var(--gold);font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;
+    text-transform:uppercase;margin-top:20px;}
   .overlay .scores{display:flex;gap:38px;margin:30px 0 26px;text-align:center;}
   .overlay .scores .num{font-family:var(--display);font-weight:600;font-size:2.3rem;color:var(--day);line-height:1;}
   .overlay .scores .lbl{font-family:var(--mono);font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--mist);margin-top:6px;}
@@ -83,8 +90,12 @@
 
 <div class="overlay on" id="menu">
   <div class="title">Boot Camp <em>FX</em><br>SPRINT</div>
-  <div class="tag">Jump the ropes · Slide the bars · Chain the combos</div>
-  <div class="hint"><b>SPACE</b> / <b>TAP</b> = jump &nbsp;·&nbsp; <b>↓</b> / <b>SWIPE</b> = slide<br>Perfect clears double your combo points</div>
+  <div class="tag">Run · Jump · Slide · Chain combos</div>
+  <div class="controls">
+    <div class="ctl"><span class="lbl">Jump</span><span class="keys">Space · ↑ · Tap</span></div>
+    <div class="ctl"><span class="lbl">Slide</span><span class="keys">↓ · Swipe down</span></div>
+  </div>
+  <div class="tip">Perfect clears double your points</div>
   <button class="btn" id="startBtn">Start Sprint</button>
 </div>
 
@@ -159,7 +170,7 @@ function resetPlayer(){
 
 /* ---------- world ---------- */
 var GRAV = 2350, JUMP_V = -820, FAST_FALL_V = 1150;
-var BASE_SPEED = 330;
+var BASE_SPEED = 250;
 var TIERS = [1, 1.35, 1.7, 2.1];
 var TIER_EVERY = 25; // seconds of play per ramp
 var objs = [], particles = [], pops = [];
@@ -189,9 +200,9 @@ function initDecor(){
   var i;
   for (i = 0; i < 14; i++) trees.push(randTree(rnd(0.45, 1.0)));
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.08, H*0.4), s: rnd(0.5, 1.1), a: rnd(0.3, 0.55) });
-  for (i = 0; i < 2; i++) egrets.push({ x: rnd(W*0.2, W*1.2), y: rnd(H*0.12, H*0.3), s: rnd(0.8, 1.15), fl: rnd(0, Math.PI*2) });
-  for (i = 0; i < 2; i++) ducks.push({ x: rnd(W*0.3, W), s: rnd(0.8, 1.0), w: rnd(0, Math.PI*2) });
-  for (i = 0; i < 2; i++) rabbits.push({ x: rnd(W*0.4, W), s: rnd(0.75, 1.0), hp: rnd(0, Math.PI*2) });
+  for (i = 0; i < 2; i++) egrets.push({ x: rnd(W*0.2, W*1.2), y: rnd(H*0.12, H*0.3), s: rnd(0.35, 0.5), fl: rnd(0, Math.PI*2) });
+  for (i = 0; i < 1; i++) ducks.push({ x: rnd(W*0.3, W), s: rnd(0.8, 1.0), w: rnd(0, Math.PI*2) });
+  for (i = 0; i < 1; i++) rabbits.push({ x: rnd(W*0.4, W), s: rnd(0.75, 1.0), hp: rnd(0, Math.PI*2) });
 }
 initDecor();
 
@@ -246,11 +257,11 @@ function makeObstacle(){
   var last = objs.length ? objs[objs.length-1].type : null;
   var roll = Math.random();
   var type;
-  if (objs.length === 0) type = roll < 0.5 ? 'rope' : 'block';
-  else if (last === 'bar') type = roll < 0.6 ? 'rope' : 'block';
-  else type = roll < 0.42 ? 'rope' : (roll < 0.72 ? 'block' : 'bar');
+  if (objs.length === 0) type = roll < 0.5 ? 'ball' : 'block';
+  else if (last === 'bar') type = roll < 0.6 ? 'ball' : 'block';
+  else type = roll < 0.42 ? 'ball' : (roll < 0.72 ? 'block' : 'bar');
   var o = { type:type, x:W + 60, passed:false, minGap:1e9, seed:Math.random()*100 };
-  if (type === 'rope'){ o.w = 74; o.h = 26; }
+  if (type === 'ball'){ o.w = 40; o.h = 40; }
   else if (type === 'block'){ o.w = 44; o.h = 46; }
   else { o.w = 110; o.h = 34; o.gap = 42; } // overhead bar: 42px clearance
   return o;
@@ -339,6 +350,11 @@ cv.addEventListener('pointermove', function(e){
 cv.addEventListener('pointerup', function(e){
   if (touchY0 !== null && (Date.now() - touchT0) < 320) pressJump();
   touchY0 = null;
+  releaseSlide();
+});
+cv.addEventListener('pointercancel', function(e){
+  touchY0 = null;
+  releaseSlide();
 });
 cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
@@ -518,6 +534,15 @@ function poly(pts){
   for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
   ctx.closePath(); ctx.fill();
 }
+function ballPent(cx, cy, r, rot){
+  ctx.beginPath();
+  for (var i = 0; i < 5; i++){
+    var a = rot + i * Math.PI * 2 / 5 - Math.PI / 2;
+    var px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath(); ctx.fill();
+}
 function drawCloud(c){
   ctx.save();
   ctx.translate(c.x, c.y); ctx.scale(c.s, c.s);
@@ -681,22 +706,17 @@ function draw(){
 }
 
 function drawObstacle(o){
-  if (o.type === 'rope'){
-    // battle rope — site's dawn rope language
-    ctx.strokeStyle = C.dawn; ctx.lineWidth = 6; ctx.lineCap = 'round';
-    ctx.beginPath();
-    for (var x = 0; x <= o.w; x += 8){
-      var y = GROUND - o.h + Math.sin((o.x + x) * 0.05 + o.seed) * 4;
-      if (x === 0) ctx.moveTo(o.x + x, y); else ctx.lineTo(o.x + x, y);
+  if (o.type === 'ball'){
+    // soccer ball — cream with ink pentagons, rolling on the ground
+    var br = o.w / 2, bx = o.x + br, by = GROUND - br;
+    ctx.fillStyle = C.day;
+    ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = C.ink;
+    ballPent(bx, by, br * 0.42, 0);
+    for (var pn = 0; pn < 5; pn++){
+      var pa = -Math.PI / 2 + pn * Math.PI * 2 / 5;
+      ballPent(bx + Math.cos(pa) * br * 0.72, by + Math.sin(pa) * br * 0.72, br * 0.28, pa);
     }
-    ctx.stroke();
-    ctx.strokeStyle = 'rgba(20,16,10,0.35)'; ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (var x2 = 0; x2 <= o.w; x2 += 8){
-      var y2 = GROUND - o.h + Math.sin((o.x + x2) * 0.05 + o.seed) * 4;
-      if (x2 === 0) ctx.moveTo(o.x + x2, y2); else ctx.lineTo(o.x + x2, y2);
-    }
-    ctx.stroke();
   } else if (o.type === 'block'){
     // cinderblock — flat ink + dawn top stripe
     ctx.fillStyle = C.ink;
