@@ -185,6 +185,19 @@
   .modal .time b{color:var(--gold);font-size:1.3rem;}
   .modal .btn{width:100%;justify-content:center;}
 
+  /* ---- Rules / How to Play ---- */
+  #rules-overlay{ z-index:2100; }
+  .rules-title{ font-family:var(--display); font-weight:700; font-size:2.1rem; color:var(--gold); line-height:1.05; }
+  .rules-sub{ font-family:var(--mono); font-size:.6rem; letter-spacing:.26em; text-transform:uppercase; color:var(--dawn); margin:6px 0 18px; }
+  .rules{ text-align:left; list-style:none; margin-bottom:18px; }
+  .rules li{ color:var(--mist); font-size:.9rem; line-height:1.55; margin-bottom:13px; }
+  .rules li b{ color:var(--day); font-weight:600; }
+  .rules li em{ color:var(--gold); font-style:normal; }
+  .rules-tools{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:22px; }
+  .rules-tools span{ font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--mist);
+    border:1px solid rgba(159,176,196,.2); border-radius:8px; padding:6px 11px; }
+  .rules-tools b{ color:var(--dawn); font-weight:600; }
+
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;}
     .sun{ opacity:1; top:15%; }
@@ -227,6 +240,7 @@
   </div>
 
   <footer>
+    <button class="btn" id="btn-rules">? Rules</button>
     <button class="btn" id="btn-undo">↶ Undo</button>
     <button class="btn" id="btn-hint">✦ Hint</button>
     <button class="btn" id="btn-shuffle">⇄ Shuffle</button>
@@ -244,6 +258,25 @@
     <p>You cleared the turtle with perfect precision, Marine.</p>
     <div class="time">Time <b id="win-time">0:00</b></div>
     <button class="btn primary" id="btn-again">Play Again</button>
+  </div>
+</div>
+
+<div class="overlay" id="rules-overlay">
+  <div class="modal">
+    <div class="rules-title">How to Play</div>
+    <div class="rules-sub">Mahjong Solitaire</div>
+    <ul class="rules">
+      <li><b>1 · Match the pairs.</b> Tap two tiles with the same symbol to clear them. Same number, same suit. Winds and dragons match like-for-like. Any <em>flower</em> clears with any flower — any <em>season</em> with any season.</li>
+      <li><b>2 · Only open tiles move.</b> A tile plays when nothing sits on top of it <em>and</em> a left or right side is open. Dimmed tiles are locked until you clear around them.</li>
+      <li><b>3 · Clear all 144.</b> Empty the whole turtle to win. Chain three matches in a row and the board glows golden.</li>
+    </ul>
+    <div class="rules-tools">
+      <span><b>↶</b> Undo</span>
+      <span><b>✦</b> Hint</span>
+      <span><b>⇄</b> Shuffle</span>
+      <span><b>New Game</b> restart</span>
+    </div>
+    <button class="btn primary" id="btn-rules-close">Let's Play</button>
   </div>
 </div>
 
@@ -651,6 +684,14 @@
   document.getElementById('btn-again').addEventListener('click', newGame);
   window.addEventListener('resize', fitBoard);
   window.addEventListener('orientationchange', function(){ setTimeout(fitBoard, 200); });
+
+  // ---- Rules overlay ----
+  var rulesOverlay = document.getElementById('rules-overlay');
+  document.getElementById('btn-rules').addEventListener('click', function(){ rulesOverlay.classList.add('on'); });
+  document.getElementById('btn-rules-close').addEventListener('click', function(){ rulesOverlay.classList.remove('on'); });
+  rulesOverlay.addEventListener('click', function(e){ if (e.target === rulesOverlay) rulesOverlay.classList.remove('on'); });
+  var RULES_KEY = 'bootcampfxMahjongSeenRules';
+  if (!localStorage.getItem(RULES_KEY)){ rulesOverlay.classList.add('on'); localStorage.setItem(RULES_KEY, '1'); }
 
   loadBest();
   newGame();
