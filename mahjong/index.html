@@ -16,12 +16,24 @@
     --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif; --mono:'Spline Sans Mono',monospace;
     --ease:cubic-bezier(.22,.7,.25,1);
   }
+  @property --clearance{ syntax:'<number>'; inherits:true; initial-value:0; }
   *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{height:100%;background:radial-gradient(circle at 50% 20%, var(--predawn-2), var(--predawn));
+  html,body{height:100%;background:var(--predawn);
     font-family:var(--body); color:var(--day);
     -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
     overflow:hidden;}
-  #app{height:100%;display:flex;flex-direction:column;}
+  #app{--clearance:0; height:100%; display:flex; flex-direction:column; position:relative;
+    background:radial-gradient(circle at 50% 20%, var(--predawn-2), var(--predawn));
+    background:radial-gradient(circle at 50% 20%,
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn-2)),
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn)));
+    transition:--clearance 1.2s var(--ease);}
+
+  /* victory warm wash */
+  #app.victory::after{ content:''; position:absolute; inset:0; pointer-events:none; z-index:1500;
+    background:radial-gradient(circle at 50% 30%, rgba(232,147,58,.38), rgba(232,147,58,.10));
+    opacity:0; animation:victoryWarm 2s var(--ease) forwards; }
+  @keyframes victoryWarm{ from{ opacity:0; } to{ opacity:1; } }
 
   /* ---- Header / brand ---- */
   header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
@@ -73,6 +85,38 @@
   @keyframes hintPulse{from{box-shadow:-2px 2px 0 #C8BFB0,-3px 3px 0 #9E9484,-5px 5px 0 var(--pine),-6px 6px 10px rgba(0,0,0,.5);}
     to{box-shadow:-2px 2px 0 #C8BFB0,-3px 3px 0 #9E9484,-5px 5px 0 var(--dawn),0 0 16px rgba(232,147,58,.65);}}
 
+  /* ---- 1. Sunrise dissolve on match ---- */
+  .tile.dawn-out{ pointer-events:none; z-index:1000 !important;
+    animation:dawnOut .75s var(--ease) forwards; }
+  @keyframes dawnOut{
+    0%  { transform:translateY(0) scale(1); filter:brightness(1); }
+    45% { transform:translateY(-2px) scale(1.05); filter:brightness(1.6) saturate(1.25) sepia(.15);
+          box-shadow:0 0 18px rgba(232,147,58,.85), 0 0 36px rgba(242,184,75,.5); }
+    100%{ transform:translateY(-14px) scale(1.12); opacity:0; filter:brightness(2.1) saturate(1.35) sepia(.3);
+          box-shadow:0 0 30px rgba(232,147,58,.9), 0 0 60px rgba(242,184,75,.6); }
+  }
+
+  /* ---- 3. Golden hour combo ---- */
+  #app.golden-hour #board{ filter:sepia(.15) saturate(1.2) brightness(1.05); transition:filter .3s var(--ease); }
+  #app.golden-hour .tile{ box-shadow:-2px 2px 0 #C8BFB0, -3px 3px 0 #9E9484, -5px 5px 0 var(--pine), -6px 6px 10px rgba(0,0,0,.5), 0 0 12px rgba(242,184,75,.42); }
+  .tile.ghost{ animation:ghostOut .6s ease-out forwards; pointer-events:none;
+    box-shadow:0 0 14px rgba(242,184,75,.7), 0 0 30px rgba(242,184,75,.4) !important; }
+  @keyframes ghostOut{ from{ transform:scale(1); opacity:.85; } to{ transform:scale(1.15); opacity:0; } }
+
+  /* ---- 5. Wildlife on layer clear ---- */
+  .critter{ position:absolute; left:0; pointer-events:none; z-index:3; opacity:0;
+    animation:critterCross 4.2s var(--ease) forwards; will-change:transform; }
+  .critter svg{ display:block; height:auto; transform:scaleX(-1); }
+  .critter-rabbit svg{ width:34px; }
+  .critter-duck svg{ width:42px; }
+  .critter-egret svg{ width:60px; }
+  @keyframes critterCross{
+    0%  { transform:translateX(-90px); opacity:0; }
+    10% { opacity:1; }
+    90% { opacity:1; }
+    100%{ transform:translateX(calc(100vw + 90px)); opacity:0; }
+  }
+
   /* ---- Controls ---- */
   footer{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:10px;
     padding:12px 16px 14px;flex-wrap:wrap;z-index:10;}
@@ -93,17 +137,27 @@
   .foot a{color:rgba(159,176,196,.6);text-decoration:none;}
   .foot a:hover{color:var(--mist);}
 
-  /* ---- Win overlay ---- */
+  /* ---- 2. Victory overlay + sunrise ---- */
   .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
     background:rgba(15,27,44,.82);backdrop-filter:blur(6px);z-index:2000;
     opacity:0;pointer-events:none;transition:opacity .28s var(--ease);}
   .overlay.on{opacity:1;pointer-events:auto;}
+  .sun{ position:absolute; left:50%; margin-left:-40px; width:80px; height:80px; border-radius:50%;
+    top:calc(100% + 40px); opacity:0;
+    background:radial-gradient(circle at 50% 40%, var(--gold), var(--dawn));
+    box-shadow:0 0 40px rgba(242,184,75,.6), 0 0 90px rgba(232,147,58,.4), 0 0 140px rgba(232,147,58,.25); }
+  .overlay.on .sun{ animation:sunRise 2.5s cubic-bezier(.25,1,.5,1) forwards; }
+  @keyframes sunRise{ 0%{ top:calc(100% + 40px); opacity:0; } 12%{ opacity:1; } 100%{ top:15%; opacity:1; } }
+  .particle{ position:absolute; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 8px rgba(242,184,75,.8); opacity:0; animation:particleUp 2.5s ease-out forwards; }
+  @keyframes particleUp{ 0%{ transform:translateY(0); opacity:1; } 100%{ transform:translateY(-42vh); opacity:0; } }
   .modal{background:var(--predawn-2);border:1px solid var(--stone);border-radius:16px;
-    padding:36px 30px;max-width:400px;width:min(88vw,400px);text-align:center;
+    padding:36px 30px;max-width:400px;width:min(88vw,400px);text-align:center;position:relative;z-index:2;
     box-shadow:0 20px 50px rgba(0,0,0,.55);}
-  .modal .tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.28em;text-transform:uppercase;color:var(--dawn);}
-  .modal h2{font-family:var(--display);font-weight:700;font-size:2.1rem;color:var(--gold);margin:6px 0 4px;line-height:1.05;}
-  .modal h2 em{font-style:italic;color:var(--dawn);}
+  .victory-title{ font-family:var(--display); font-weight:700; font-size:2.6rem; color:var(--gold);
+    letter-spacing:.05em; line-height:1; margin-bottom:8px; }
+  .overlay.on .victory-title{ animation:victoryBreathe 2.5s var(--ease) forwards; }
+  @keyframes victoryBreathe{ 0%{ letter-spacing:.3em; opacity:0; transform:scale(.92); } 100%{ letter-spacing:.05em; opacity:1; transform:scale(1); } }
   .modal p{color:var(--mist);font-size:.92rem;margin-bottom:22px;line-height:1.5;}
   .modal .time{font-family:var(--mono);font-size:1.05rem;color:var(--day);margin-bottom:20px;}
   .modal .time b{color:var(--gold);font-size:1.3rem;}
@@ -111,6 +165,7 @@
 
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;}
+    .sun{ opacity:1; top:15%; }
   }
 </style>
 </head>
@@ -144,9 +199,10 @@
 </div>
 
 <div class="overlay" id="overlay">
+  <div class="sun" aria-hidden="true"></div>
+  <div id="particles" aria-hidden="true"></div>
   <div class="modal">
-    <div class="tag">Victory</div>
-    <h2>Board <em>cleared</em></h2>
+    <div class="victory-title">Victory</div>
     <p>You cleared the turtle with perfect precision, Marine.</p>
     <div class="time">Time <b id="win-time">0:00</b></div>
     <button class="btn primary" id="btn-again">Play Again</button>
@@ -160,6 +216,14 @@
   // ===== Design constants =====
   var TILE_W = 44, TILE_H = 58, HALF_W = TILE_W/2, HALF_H = TILE_H/2, SHIFT = 5, PAD = 12;
   var STORAGE_KEY = 'bootcampfxMahjongBestTime';
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== Wildlife silhouettes (site language, pulled from index.html) =====
+  var CRITTER_SVG = {
+    rabbit: '<svg viewBox="0 0 52 48" fill="none"><path d="M20 14 C17 6 17 1 20 0 C23 1 23 8 23 14 Z" fill="#9FB0C4"/><path d="M26 14 C25 5 26 1 29 1 C31 3 30 9 29 14 Z" fill="#8B9DB4"/><path d="M18 22 C12 24 8 30 9 36 C10 43 18 46 28 46 C38 46 44 42 44 35 C44 28 38 22 30 21 Z" fill="#9FB0C4"/><circle cx="16" cy="22" r="6" fill="#9FB0C4"/><circle cx="14" cy="20.5" r="1.3" fill="#14100A"/><circle cx="45" cy="40" r="4" fill="#F3ECDC"/><path d="M12 46 L8 46 M34 46 L40 46" stroke="#9FB0C4" stroke-width="3" stroke-linecap="round"/></svg>',
+    duck: '<svg viewBox="0 0 60 44" fill="none"><path d="M14 26 C10 20 14 14 22 13 L24 8 C25 4 30 3 33 6 C36 9 35 12 32 14 L34 16 C42 17 50 22 52 28 C54 35 48 40 38 40 L22 40 C14 40 10 34 12 28 Z" fill="#E8933A"/><path d="M26 7 L14 10 L25 12 Z" fill="#F2B84B"/><circle cx="29" cy="8.5" r="1.4" fill="#14100A"/><path d="M46 22 C50 20 54 21 56 24 C53 25 49 25 46 24 Z" fill="#D07F2E"/><path d="M26 40 L26 43 M36 40 L36 43" stroke="#14100A" stroke-width="2" stroke-linecap="round"/></svg>',
+    egret: '<svg viewBox="0 0 160 90" fill="none"><path d="M62 36 C46 40 28 52 14 70 C30 62 48 52 64 42 Z" fill="#C9D4E2" opacity=".85"/><path d="M94 40 L118 46 M94 42 L117 52" stroke="#14100A" stroke-width="2.4" stroke-linecap="round"/><path d="M52 34 C60 28 78 27 92 34 C100 38 100 44 92 46 C76 50 58 46 50 40 Z" fill="#FBF7EE"/><path d="M54 36 C46 30 40 30 36 24 C33 19 36 14 41 15 C45 16 45 20 43 23 C46 27 52 29 58 33 Z" fill="#FBF7EE"/><path d="M38 17 L18 21 L37 23 Z" fill="#E8933A"/><circle cx="39.5" cy="18.5" r="1.3" fill="#14100A"/><path d="M62 34 C44 26 24 12 8 -6 C30 -2 52 10 68 28 Z" fill="#F3ECDC"/></svg>'
+  };
 
   // ===== Deck definition (144 tiles) =====
   var SYMBOLS = {
@@ -269,7 +333,9 @@
   // ===== Game state =====
   var tiles = [], selected = null, history = [];
   var startTime = null, timerId = null, elapsed = 0, started = false;
+  var combo = 0, goldenTimer = null, layersCleared = {};
 
+  var appEl = document.getElementById('app');
   var boardEl = document.getElementById('board');
   var wrapEl = document.getElementById('board-wrap');
   var tilesLeftEl = document.getElementById('tiles-left');
@@ -311,7 +377,13 @@
     if (!deal){ deal = generateLayout().map(function(p,i){ var d=generateDeck(); return { id:i, cat:d[i].cat, val:d[i].val, label:d[i].label, x:p.x, y:p.y, z:p.z }; }); }
     tiles = deal.map(function(t){ return Object.assign({}, t, { removed:false, element:null }); });
     selected = null; history = []; started = false; elapsed = 0;
+    combo = 0; layersCleared = {};
+    clearTimeout(goldenTimer); goldenTimer = null;
+    appEl.classList.remove('golden-hour', 'victory');
+    appEl.style.setProperty('--clearance', '0');
     overlayEl.classList.remove('on');
+    clearCritters();
+    var pc = document.getElementById('particles'); if (pc) pc.innerHTML = '';
     render();
   }
 
@@ -331,7 +403,6 @@
       el.style.top = py + 'px';
       el.style.zIndex = tile.z * 100 + tile.y;
       tile.element = el;
-      tile._px = px; tile._py = py;
       boardEl.appendChild(el);
       el.addEventListener('click', function(){ handleClick(tile); });
       minX = Math.min(minX, px); minY = Math.min(minY, py);
@@ -353,7 +424,7 @@
   }
 
   function updateGameState(){
-    var freeCount = 0, available = [];
+    var available = [];
     tiles.forEach(function(tile){
       if (tile.removed) return;
       var free = isTileFree(tile);
@@ -369,6 +440,8 @@
     var remaining = tiles.filter(function(t){ return !t.removed; }).length;
     tilesLeftEl.textContent = remaining;
     matchesEl.textContent = matches;
+    appEl.style.setProperty('--clearance', ((144 - remaining)/144).toFixed(4));
+    checkLayerClear();
     document.getElementById('btn-undo').disabled = history.length === 0;
     document.getElementById('btn-hint').disabled = matches === 0;
     if (remaining === 0) win();
@@ -386,6 +459,7 @@
       selected.element.classList.remove('selected');
       removePair(a, b); selected = null;
     } else {
+      combo = 0; updateGoldenHour();
       selected.element.classList.remove('selected');
       selected = tile; tile.element.classList.add('selected');
     }
@@ -393,10 +467,64 @@
 
   function removePair(t1, t2){
     t1.removed = true; t2.removed = true;
-    t1.element.style.display = 'none';
-    t2.element.style.display = 'none';
     history.push([t1, t2]);
+    combo++; updateGoldenHour();
+    if (combo >= 3){ spawnGhost(t1); spawnGhost(t2); }
+    dissolve(t1); dissolve(t2);
     updateGameState();
+  }
+
+  function dissolve(tile){
+    var el = tile.element;
+    if (!el) return;
+    if (REDUCED){ el.style.display = 'none'; return; }
+    el.classList.add('dawn-out');
+    setTimeout(function(){ if (tile.removed) el.style.display = 'none'; }, 780);
+  }
+
+  function spawnGhost(tile){
+    if (REDUCED || !tile.element) return;
+    var g = tile.element.cloneNode(true);
+    g.className = 'tile ghost';
+    boardEl.appendChild(g);
+    setTimeout(function(){ if (g.parentNode) g.parentNode.removeChild(g); }, 620);
+  }
+
+  function updateGoldenHour(){
+    if (combo >= 3){
+      appEl.classList.add('golden-hour');
+      clearTimeout(goldenTimer);
+    } else {
+      clearTimeout(goldenTimer);
+      goldenTimer = setTimeout(function(){ appEl.classList.remove('golden-hour'); }, 1500);
+    }
+  }
+
+  function checkLayerClear(){
+    for (var z=0; z<=4; z++){
+      if (layersCleared[z]) continue;
+      var hasTiles = false, anyLeft = false;
+      for (var i=0;i<tiles.length;i++){
+        if (tiles[i].z === z){ hasTiles = true; if (!tiles[i].removed){ anyLeft = true; break; } }
+      }
+      if (hasTiles && !anyLeft){ layersCleared[z] = true; if (!REDUCED) spawnCritter(); }
+    }
+  }
+
+  function spawnCritter(){
+    var kinds = ['rabbit','duck','egret'];
+    var kind = kinds[Math.floor(Math.random()*3)];
+    var c = document.createElement('div');
+    c.className = 'critter critter-' + kind;
+    c.innerHTML = CRITTER_SVG[kind];
+    c.style.top = (12 + Math.random()*48) + '%';
+    wrapEl.appendChild(c);
+    setTimeout(function(){ if (c.parentNode) c.parentNode.removeChild(c); }, 4300);
+  }
+
+  function clearCritters(){
+    var cs = wrapEl.querySelectorAll('.critter');
+    for (var i=0;i<cs.length;i++) cs[i].remove();
   }
 
   function tick(){
@@ -413,13 +541,33 @@
     winTimeEl.textContent = formatTime(t, false);
     var best = parseInt(localStorage.getItem(STORAGE_KEY)||'0',10)||0;
     if (best === 0 || t < best){ localStorage.setItem(STORAGE_KEY, String(t)); bestEl.textContent = formatTime(t, true); }
+    appEl.classList.add('victory');
     overlayEl.classList.add('on');
+    if (!REDUCED) spawnParticles();
+  }
+
+  function spawnParticles(){
+    var pc = document.getElementById('particles');
+    if (!pc) return;
+    var n = 8 + Math.floor(Math.random()*5);
+    for (var i=0;i<n;i++){
+      var p = document.createElement('span');
+      p.className = 'particle';
+      p.style.left = (8 + Math.random()*84) + '%';
+      p.style.bottom = (12 + Math.random()*30) + '%';
+      p.style.width = p.style.height = (3 + Math.random()*4) + 'px';
+      p.style.animationDelay = (Math.random()*0.9) + 's';
+      pc.appendChild(p);
+    }
   }
 
   function undo(){
     if (history.length === 0) return;
+    combo = 0; updateGoldenHour();
     var pair = history.pop();
     pair[0].removed = false; pair[1].removed = false;
+    pair[0].element.classList.remove('dawn-out');
+    pair[1].element.classList.remove('dawn-out');
     pair[0].element.style.display = 'flex';
     pair[1].element.style.display = 'flex';
     if (selected){ selected.element.classList.remove('selected'); selected = null; }
@@ -445,6 +593,7 @@
 
   function shuffleBoard(){
     if (selected){ selected.element.classList.remove('selected'); selected = null; }
+    combo = 0; updateGoldenHour();
     var alive = tiles.filter(function(t){ return !t.removed; });
     if (alive.length < 4) return;
     var data = shuffle(alive.map(function(t){ return {cat:t.cat, val:t.val, label:t.label}; }));
