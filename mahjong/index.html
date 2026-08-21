@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Boot Camp FX — Mahjong Solitaire</title>
-<meta name="description" content="Mahjong Solitaire, the Boot Camp FX way. Clear the 144-tile turtle before the sun comes up. Free to play.">
+<meta name="description" content="Mahjong Solitaire, the Boot Camp FX way. Clear all 144 tiles before the sun comes up. Free to play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -117,26 +117,45 @@
     100%{ transform:translateX(calc(100vw + 90px)); opacity:0; }
   }
 
-  /* ---- Turtle — start walk-in + persistent foraging ---- */
+  /* ---- Turtle — walk in, then slow persistent wander + forage ---- */
   .turtle{ position:absolute; bottom:6px; left:14px; z-index:1; pointer-events:none;
     width:58px; opacity:0; will-change:transform;
     animation:turtleIn 9s var(--ease) forwards; }
+  .turtle-wander{ animation:turtleWander 48s ease-in-out 9s infinite; }
   .turtle svg{ display:block; width:100%; height:auto; }
-  .turtle-body{ animation:turtleForage 5.5s ease-in-out 9s infinite; }
-  .turtle-head{ animation:headBob 4.2s ease-in-out 9s infinite; }
+  .turtle-head{ animation:headForage 7s ease-in-out infinite; }
+  .turtle-leg-front, .turtle-leg-back{ transform-box:fill-box; transform-origin:50% 8%; }
+  .turtle-leg-front{ animation:gaitA 2.6s ease-in-out infinite; }
+  .turtle-leg-back{ animation:gaitB 2.6s ease-in-out infinite; }
   @keyframes turtleIn{
     0%  { transform:translateX(-150px); opacity:0; }
     12% { opacity:1; }
     100%{ transform:translateX(0); opacity:1; }
   }
-  @keyframes turtleForage{
-    0%,100%{ transform:translateY(0); }
-    50%    { transform:translateY(-1.5px); }
+  @keyframes turtleWander{
+    0%  { transform:translateX(0); }
+    22% { transform:translateX(72px); }
+    42% { transform:translateX(20px); }
+    64% { transform:translateX(112px); }
+    86% { transform:translateX(48px); }
+    100%{ transform:translateX(0); }
   }
-  @keyframes headBob{
+  @keyframes headForage{
     0%,100%{ transform:translate(0,0); }
-    35%    { transform:translate(1.5px,-2px); }
-    70%    { transform:translate(0.5px,0.5px); }
+    28%    { transform:translate(1px,-1.5px); }
+    45%    { transform:translate(2.5px,4px); }
+    55%    { transform:translate(2.5px,4px); }
+    75%    { transform:translate(0,0); }
+  }
+  @keyframes gaitA{
+    0%,100%{ transform:rotate(0deg); }
+    25%    { transform:rotate(-13deg); }
+    75%    { transform:rotate(13deg); }
+  }
+  @keyframes gaitB{
+    0%,100%{ transform:rotate(0deg); }
+    25%    { transform:rotate(13deg); }
+    75%    { transform:rotate(-13deg); }
   }
 
   /* ---- Controls ---- */
@@ -222,19 +241,25 @@
 
   <div class="board-wrap" id="board-wrap">
     <div class="turtle" aria-hidden="true">
-      <svg viewBox="0 0 90 42" fill="none">
-        <g class="turtle-body">
-          <path d="M18 28 L8 26 L16 32 Z" fill="#9FB0C4"/>
-          <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
-          <path d="M56 28 C54 34 52 37 54 38 C58 39 62 36 62 30 Z" fill="#9FB0C4"/>
-          <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="#14291F"/>
-          <path d="M46 7 C47 16 46 24 44 30 M46 7 C49 16 50 24 53 30 M26 12 C32 16 34 22 35 29 M66 12 C60 16 58 22 57 29" stroke="#2E5A3F" stroke-width="1.6" fill="none"/>
-        </g>
-        <g class="turtle-head">
-          <path d="M72 25 C80 23 86 23 89 25 C92 27 90 30 85 30 C81 30 76 30 73 29 Z" fill="#9FB0C4"/>
-          <circle cx="86" cy="26" r="1.2" fill="#14100A"/>
-        </g>
-      </svg>
+      <div class="turtle-wander">
+        <svg viewBox="0 0 90 42" fill="none">
+          <g class="turtle-leg-back">
+            <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
+          </g>
+          <g class="turtle-leg-front">
+            <path d="M56 28 C54 34 52 37 54 38 C58 39 62 36 62 30 Z" fill="#9FB0C4"/>
+          </g>
+          <g class="turtle-shell">
+            <path d="M18 28 L8 26 L16 32 Z" fill="#9FB0C4"/>
+            <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="#14291F"/>
+            <path d="M46 7 C47 16 46 24 44 30 M46 7 C49 16 50 24 53 30 M26 12 C32 16 34 22 35 29 M66 12 C60 16 58 22 57 29" stroke="#2E5A3F" stroke-width="1.6" fill="none"/>
+          </g>
+          <g class="turtle-head">
+            <path d="M72 25 C80 23 86 23 89 25 C92 27 90 30 85 30 C81 30 76 30 73 29 Z" fill="#9FB0C4"/>
+            <circle cx="86" cy="26" r="1.2" fill="#14100A"/>
+          </g>
+        </svg>
+      </div>
     </div>
     <div id="board"></div>
   </div>
@@ -247,7 +272,7 @@
     <button class="btn primary" id="btn-restart">New Game</button>
   </footer>
 
-  <div class="foot"><a href="https://bootcampfx.com">bootcampfx.com</a> · clear the turtle before first light</div>
+  <div class="foot"><a href="https://bootcampfx.com">bootcampfx.com</a> · clear the board before first light</div>
 </div>
 
 <div class="overlay" id="overlay">
@@ -255,7 +280,7 @@
   <div id="particles" aria-hidden="true"></div>
   <div class="modal">
     <div class="victory-title">Victory</div>
-    <p>You cleared the turtle with perfect precision, Marine.</p>
+    <p>You cleared the board with perfect precision, Marine.</p>
     <div class="time">Time <b id="win-time">0:00</b></div>
     <button class="btn primary" id="btn-again">Play Again</button>
   </div>
@@ -268,7 +293,7 @@
     <ul class="rules">
       <li><b>1 · Match the pairs.</b> Tap two tiles with the same symbol to clear them. Same number, same suit. Winds and dragons match like-for-like. Any <em>flower</em> clears with any flower — any <em>season</em> with any season.</li>
       <li><b>2 · Only open tiles move.</b> A tile plays when nothing sits on top of it <em>and</em> a left or right side is open. Dimmed tiles are locked until you clear around them.</li>
-      <li><b>3 · Clear all 144.</b> Empty the whole turtle to win. Chain three matches in a row and the board glows golden.</li>
+      <li><b>3 · Clear all 144.</b> Remove every tile from the board to win. Chain three matches in a row and the board glows golden.</li>
     </ul>
     <div class="rules-tools">
       <span><b>↶</b> Undo</span>
