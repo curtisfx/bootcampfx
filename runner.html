@@ -241,7 +241,8 @@ try { if (localStorage.getItem('bootcampfxRunnerMuted') === '1'){ muted = true; 
 var STATE = 'menu'; // menu | play | dying | over
 var jumpBuf = 0;          // buffered jump requests (max 1)
 var slideHeld = false;
-var touchY0 = null, touchT0 = 0;
+var touchX0 = 0, touchY0 = null, touchT0 = 0, touchMode = null;
+var SWIPE_DIST = 40, TAP_DIST = 12, TAP_MS = 320;
 var deathT = 0;
 
 /* ---------- player ---------- */
@@ -488,20 +489,33 @@ window.addEventListener('keyup', function(e){
   if (e.code === 'ArrowDown') releaseSlide();
 });
 cv.addEventListener('pointerdown', function(e){
-  touchY0 = e.clientY; touchT0 = Date.now();
+  if (e.pointerType === 'mouse' && e.button !== 0) return;   // left button / touch only
+  try { cv.setPointerCapture(e.pointerId); } catch(err) {}
+  touchX0 = e.clientX; touchY0 = e.clientY; touchT0 = Date.now();
+  touchMode = null;
 });
 cv.addEventListener('pointermove', function(e){
-  if (touchY0 !== null && e.clientY - touchY0 > 44){ // swipe down = slide
-    pressSlide(); touchY0 = null;
+  if (touchY0 === null || touchMode !== null) return;        // not tracking, or already classified
+  var dy = e.clientY - touchY0, dx = e.clientX - touchX0;
+  if (dy > SWIPE_DIST && dy > Math.abs(dx)){                 // swipe down = slide / fast-fall
+    touchMode = 'slide';
+    pressSlide();
+  } else if (dy < -SWIPE_DIST && Math.abs(dy) > Math.abs(dx)){  // swipe up = jump
+    touchMode = 'jump';
+    pressJump();
   }
 });
 cv.addEventListener('pointerup', function(e){
-  if (touchY0 !== null && (Date.now() - touchT0) < 320) pressJump();
-  touchY0 = null;
+  if (touchY0 !== null && touchMode === null){               // undecided = candidate tap
+    var dt = Date.now() - touchT0;
+    var dx = e.clientX - touchX0, dy = e.clientY - touchY0;
+    if (dt < TAP_MS && Math.hypot(dx, dy) < TAP_DIST) pressJump();  // tap = jump
+  }
+  touchY0 = null; touchMode = null;
   releaseSlide();
 });
 cv.addEventListener('pointercancel', function(e){
-  touchY0 = null;
+  touchY0 = null; touchMode = null;
   releaseSlide();
 });
 cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
