@@ -85,6 +85,20 @@
   @keyframes hintPulse{from{box-shadow:-2px 2px 0 #C8BFB0,-3px 3px 0 #9E9484,-5px 5px 0 var(--pine),-6px 6px 10px rgba(0,0,0,.5);}
     to{box-shadow:-2px 2px 0 #C8BFB0,-3px 3px 0 #9E9484,-5px 5px 0 var(--dawn),0 0 16px rgba(232,147,58,.65);}}
 
+  /* ---- Hint fireflies ---- */
+  .firefly{ position:absolute; width:4px; height:4px; border-radius:50%;
+    background:var(--gold); pointer-events:none; opacity:0; z-index:1001;
+    box-shadow:0 0 6px rgba(242,184,75,.9), 0 0 12px rgba(232,147,58,.55);
+    animation:fireflyUp 1.7s ease-out forwards; }
+  @keyframes fireflyUp{
+    0%  { transform:translate(0,0); opacity:0; }
+    15% { opacity:1; }
+    35% { opacity:.35; }
+    55% { opacity:.9; }
+    75% { opacity:.4; }
+    100%{ transform:translate(var(--dx,0), var(--dy,-30px)); opacity:0; }
+  }
+
   /* ---- 1. Sunrise dissolve on match ---- */
   .tile.dawn-out{ pointer-events:none; z-index:1000 !important;
     animation:dawnOut .75s var(--ease) forwards; }
@@ -678,9 +692,27 @@
         if (tilesMatch(available[i], available[j])){
           available[i].element.classList.add('hinted');
           available[j].element.classList.add('hinted');
+          emitFireflies(available[i].element);
+          emitFireflies(available[j].element);
           setTimeout(clearHints, 1800);
           return;
         }
+  }
+
+  function emitFireflies(tileEl){
+    if (REDUCED || !tileEl) return;
+    for (var i=0;i<7;i++){
+      var f = document.createElement('span');
+      f.className = 'firefly';
+      f.style.left = (38 + Math.random()*24) + '%';
+      f.style.top = (42 + Math.random()*16) + '%';
+      f.style.setProperty('--dx', (Math.random()*36 - 18) + 'px');
+      f.style.setProperty('--dy', (-22 - Math.random()*18) + 'px');
+      f.style.animationDelay = (Math.random()*0.5) + 's';
+      f.style.animationDuration = (1.3 + Math.random()*0.9) + 's';
+      tileEl.appendChild(f);
+      (function(el){ setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2600); })(f);
+    }
   }
 
   function clearHints(){
