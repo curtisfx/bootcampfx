@@ -47,11 +47,18 @@
   .overlay .title em{font-style:italic;color:var(--dawn);}
   .overlay .tag{color:var(--mist);font-family:var(--mono);letter-spacing:.3em;text-transform:uppercase;
     font-size:.7rem;margin-top:12px;}
-  .controls{display:flex;flex-direction:column;gap:10px;margin-top:24px;}
-  .ctl{display:flex;justify-content:center;align-items:baseline;gap:16px;
-    font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;}
-  .ctl .lbl{color:var(--day);font-weight:600;}
-  .ctl .keys{color:var(--mist);}
+  .controls{display:flex;flex-direction:column;gap:9px;margin-top:24px;width:min(420px,86vw);}
+  .ctl{display:flex;align-items:center;gap:14px;text-align:left;
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;}
+  .ctl .dot{flex:0 0 auto;width:14px;height:14px;border-radius:50%;}
+  .ctl .dot.sq{border-radius:3px;}
+  .ctl .lbl{color:var(--gold);font-weight:600;flex:0 0 62px;}
+  .ctl .keys{color:var(--day);flex:0 0 168px;}
+  .ctl .why{color:var(--mist);letter-spacing:.06em;}
+  .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;margin-top:18px;
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);}
+  .legend b{color:var(--day);font-weight:600;}
+  .legend .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;}
   .tip{color:var(--gold);font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;
     text-transform:uppercase;margin-top:20px;}
   .overlay .scores{display:flex;gap:38px;margin:30px 0 26px;text-align:center;}
@@ -75,6 +82,17 @@
   .foot{position:fixed;bottom:8px;right:14px;color:rgba(159,176,196,.55);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;z-index:4;}
   .foot a{color:rgba(159,176,196,.55);text-decoration:none;}
   .foot a:hover{color:var(--mist);}
+  #muteBtn{position:fixed;bottom:6px;left:14px;z-index:11;cursor:pointer;border:1px solid rgba(159,176,196,.35);
+    background:rgba(15,27,44,.5);color:var(--mist);font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+    text-transform:uppercase;border-radius:8px;padding:6px 10px;transition:color .15s,border-color .15s;}
+  #muteBtn:hover{color:var(--day);border-color:var(--mist);}
+  .chips{display:flex;gap:8px;justify-content:center;margin-top:8px;min-height:20px;}
+  .chip{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);background:var(--gold);border-radius:20px;padding:3px 10px;opacity:0;transform:translateY(4px);
+    transition:opacity .15s,transform .15s;}
+  .chip.on{opacity:1;transform:translateY(0);}
+  .chip.shield{background:var(--mist);}
+  .chip.coffee{background:var(--dawn);}
 </style>
 </head>
 <body>
@@ -82,7 +100,14 @@
 
 <div class="hud">
   <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
-  <div class="mid"><div class="combo" id="hudCombo">COMBO ×0</div></div>
+  <div class="mid">
+    <div class="combo" id="hudCombo">COMBO ×0</div>
+    <div class="chips">
+      <div class="chip" id="chipStar">★ Unstoppable</div>
+      <div class="chip shield" id="chipShield">Shield</div>
+      <div class="chip coffee" id="chipCoffee">2× Points</div>
+    </div>
+  </div>
   <div class="right stat"><span>Best</span><b id="hudBest">0</b></div>
 </div>
 
@@ -90,12 +115,18 @@
 
 <div class="overlay on" id="menu">
   <div class="title">Boot Camp <em>FX</em><br>SPRINT</div>
-  <div class="tag">Run · Jump · Slide · Chain combos</div>
+  <div class="tag">The 5:20 AM sweat session — outrun the sunrise</div>
   <div class="controls">
-    <div class="ctl"><span class="lbl">Jump</span><span class="keys">Space · ↑ · Tap</span></div>
-    <div class="ctl"><span class="lbl">Slide</span><span class="keys">↓ · Swipe down</span></div>
+    <div class="ctl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Jump</span><span class="keys">Space · ↑ · Tap</span><span class="why">balls, blocks &amp; tires</span></div>
+    <div class="ctl"><span class="dot sq" style="background:var(--dawn);"></span><span class="lbl">Slide</span><span class="keys">↓ · Swipe down</span><span class="why">overhead bars</span></div>
+    <div class="ctl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Grab</span><span class="keys">run through gear</span><span class="why">power-ups below</span></div>
   </div>
-  <div class="tip">Perfect clears double your points</div>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--mist);"></span><b>Water</b> — shield (take one hit)</span>
+    <span><span class="sw" style="background:var(--gold);"></span><b>Star</b> — unstoppable 6s</span>
+    <span><span class="sw" style="background:var(--dawn);"></span><b>Coffee</b> — 2× points 8s</span>
+  </div>
+  <div class="tip">Chain clears for combos — perfect clears pay double</div>
   <button class="btn" id="startBtn">Start Sprint</button>
 </div>
 
@@ -112,6 +143,7 @@
 </div>
 
 <div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="/" onclick="event.preventDefault();history.back();">back</a></div>
+<button id="muteBtn">Sound: On</button>
 
 <script>
 (function(){
@@ -145,6 +177,65 @@ var newRecEl = document.getElementById('newRec');
 var finScoreEl = document.getElementById('finScore');
 var finComboEl = document.getElementById('finCombo');
 var finBestEl = document.getElementById('finBest');
+var chipStar = document.getElementById('chipStar');
+var chipShield = document.getElementById('chipShield');
+var chipCoffee = document.getElementById('chipCoffee');
+var muteBtn = document.getElementById('muteBtn');
+
+/* ---------- sound (synthesized, zero assets) ---------- */
+var AC = null, muted = false, noiseBuf = null;
+function ac(){
+  if (!AC){ try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ AC = null; } }
+  if (AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(f0, f1, dur, type, vol, delay){
+  var c = ac(); if (!c || muted) return;
+  var t0 = c.currentTime + (delay || 0);
+  var o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t0);
+  if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t0 + dur);
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function noise(dur, vol, delay){
+  var c = ac(); if (!c || muted) return;
+  if (!noiseBuf){
+    noiseBuf = c.createBuffer(1, c.sampleRate * 0.5, c.sampleRate);
+    var d = noiseBuf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  var t0 = c.currentTime + (delay || 0);
+  var s = c.createBufferSource(); s.buffer = noiseBuf;
+  var g = c.createGain();
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  var f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
+  s.connect(f); f.connect(g); g.connect(c.destination);
+  s.start(t0); s.stop(t0 + dur + 0.02);
+}
+var SFX = {
+  jump:    function(){ tone(280, 620, 0.14, 'square', 0.10); },
+  land:    function(){ tone(140, 70, 0.09, 'sine', 0.14); },
+  slide:   function(){ noise(0.16, 0.05); },
+  clear:   function(){ tone(660, 880, 0.09, 'sine', 0.10); },
+  perfect: function(){ tone(880, 880, 0.08, 'sine', 0.12); tone(1318, 1318, 0.12, 'sine', 0.12, 0.08); },
+  pickup:  function(){ tone(523, 523, 0.07, 'triangle', 0.13); tone(659, 659, 0.07, 'triangle', 0.13, 0.07); tone(784, 784, 0.11, 'triangle', 0.13, 0.14); },
+  star:    function(){ tone(523, 523, 0.07, 'square', 0.09); tone(659, 659, 0.07, 'square', 0.09, 0.06); tone(784, 784, 0.07, 'square', 0.09, 0.12); tone(1046, 1046, 0.16, 'square', 0.10, 0.18); },
+  hit:     function(){ noise(0.25, 0.22); tone(180, 55, 0.3, 'sawtooth', 0.16); },
+  shieldBreak: function(){ noise(0.2, 0.15); tone(420, 220, 0.18, 'square', 0.10); },
+  ramp:    function(){ tone(392, 392, 0.09, 'triangle', 0.12); tone(494, 494, 0.09, 'triangle', 0.12, 0.09); tone(587, 587, 0.16, 'triangle', 0.12, 0.18); },
+  over:    function(){ tone(392, 392, 0.16, 'sine', 0.12); tone(311, 311, 0.16, 'sine', 0.12, 0.16); tone(233, 233, 0.34, 'sine', 0.12, 0.32); }
+};
+function sfx(n){ if (SFX[n]) SFX[n](); }
+muteBtn.addEventListener('click', function(){
+  muted = !muted;
+  muteBtn.textContent = muted ? 'Sound: Off' : 'Sound: On';
+  try { localStorage.setItem('bootcampfxRunnerMuted', muted ? '1' : '0'); } catch(e){}
+});
+try { if (localStorage.getItem('bootcampfxRunnerMuted') === '1'){ muted = true; muteBtn.textContent = 'Sound: Off'; } } catch(e){}
 
 /* ---------- state ---------- */
 var STATE = 'menu'; // menu | play | dying | over
@@ -173,12 +264,14 @@ var GRAV = 2350, JUMP_V = -820, FAST_FALL_V = 1150;
 var BASE_SPEED = 250;
 var TIERS = [1, 1.35, 1.7, 2.1];
 var TIER_EVERY = 25; // seconds of play per ramp
-var objs = [], particles = [], pops = [];
+var objs = [], particles = [], pops = [], pows = [];
 var dist = 0, sinceSpawn = 0, tier = 0, gameT = 0;
 var score = 0, combo = 0, bestCombo = 0, best = 0;
 var nextGap = 0, spawnPause = 0;
 var shake = 0;
 var bannerT = 0, bannerMsg = '';
+var powTimer = 6;           // seconds until next power-up spawn
+var shieldOn = false, starT = 0, coffeeT = 0, invulnT = 0;
 
 /* ---------- site palette (sunrise tokens) ---------- */
 var C = {
@@ -190,19 +283,21 @@ var C = {
 };
 
 /* ---------- background décor (site language, non-interactive) ---------- */
-var trees = [], clouds = [], egrets = [], ducks = [], rabbits = [];
+var trees = [], clouds = [], egrets = [], ducks = [], rabbits = [], squirrels = [], fireflies = [];
 function rnd(a, b){ return a + Math.random() * (b - a); }
 function randTree(scale){
   return { x: rnd(0, W), s: scale };
 }
 function initDecor(){
-  trees = []; clouds = []; egrets = []; ducks = []; rabbits = [];
+  trees = []; clouds = []; egrets = []; ducks = []; rabbits = []; squirrels = []; fireflies = [];
   var i;
   for (i = 0; i < 14; i++) trees.push(randTree(rnd(0.45, 1.0)));
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.08, H*0.4), s: rnd(0.5, 1.1), a: rnd(0.3, 0.55) });
   for (i = 0; i < 2; i++) egrets.push({ x: rnd(W*0.2, W*1.2), y: rnd(H*0.12, H*0.3), s: rnd(0.35, 0.5), fl: rnd(0, Math.PI*2) });
   for (i = 0; i < 1; i++) ducks.push({ x: rnd(W*0.3, W), s: rnd(0.8, 1.0), w: rnd(0, Math.PI*2) });
   for (i = 0; i < 1; i++) rabbits.push({ x: rnd(W*0.4, W), s: rnd(0.75, 1.0), hp: rnd(0, Math.PI*2) });
+  for (i = 0; i < 1; i++) squirrels.push({ x: rnd(W*0.3, W), s: rnd(0.7, 0.9), hp: rnd(0, Math.PI*2) });
+  for (i = 0; i < 7; i++) fireflies.push({ x: rnd(0, W), y: rnd(H*0.3, H*0.72), ph: rnd(0, Math.PI*2), dr: rnd(0.4, 1) });
 }
 initDecor();
 
@@ -240,6 +335,22 @@ function tickDecor(dt){
     r.x -= sp * 0.82 * dt; r.hp += dt * 7;
     if (r.x < -60){ r.x = W + rnd(80, 380); }
   }
+  // squirrels — quick scamper with pauses, foreground
+  for (i = 0; i < squirrels.length; i++){
+    var sq = squirrels[i];
+    sq.hp += dt * 9;
+    var dart = (Math.sin(sq.hp * 0.35) > -0.2) ? 1 : 0.15; // dart-and-pause
+    sq.x -= sp * 0.9 * dart * dt;
+    if (sq.x < -70){ sq.x = W + rnd(120, 500); }
+  }
+  // fireflies — predawn drift + blink
+  for (i = 0; i < fireflies.length; i++){
+    var ff = fireflies[i];
+    ff.ph += dt * ff.dr * 2;
+    ff.x -= sp * 0.1 * dt + Math.sin(ff.ph * 0.6) * 12 * dt;
+    ff.y += Math.cos(ff.ph * 0.8) * 9 * dt;
+    if (ff.x < -20){ ff.x = W + rnd(0, 160); ff.y = rnd(H*0.3, H*0.72); }
+  }
 }
 
 /* ---------- storage ---------- */
@@ -258,18 +369,49 @@ function makeObstacle(){
   var roll = Math.random();
   var type;
   if (objs.length === 0) type = roll < 0.5 ? 'ball' : 'block';
-  else if (last === 'bar') type = roll < 0.6 ? 'ball' : 'block';
-  else type = roll < 0.42 ? 'ball' : (roll < 0.72 ? 'block' : 'bar');
+  else if (last === 'bar') type = roll < 0.42 ? 'ball' : (roll < 0.72 ? 'block' : (roll < 0.88 ? 'tire' : 'bounce'));
+  else type = roll < 0.32 ? 'ball' : (roll < 0.54 ? 'block' : (roll < 0.7 ? 'bar' : (roll < 0.86 ? 'tire' : 'bounce')));
   var o = { type:type, x:W + 60, passed:false, minGap:1e9, seed:Math.random()*100 };
   if (type === 'ball'){ o.w = 40; o.h = 40; }
   else if (type === 'block'){ o.w = 44; o.h = 46; }
+  else if (type === 'tire'){ o.w = 46; o.h = 58; }        // stacked tires — higher jump
+  else if (type === 'bounce'){ o.w = 38; o.h = 38; o.bph = Math.random()*Math.PI*2; } // bouncing ball — time it
   else { o.w = 110; o.h = 34; o.gap = 42; } // overhead bar: 42px clearance
   return o;
+}
+function bounceY(o){ // current lift of a bouncing ball off the ground
+  return o.type === 'bounce' ? Math.abs(Math.sin(gameT * 4.2 + o.bph)) * 86 : 0;
 }
 function rollGap(){
   var t = Math.min(gameT / 90, 1);            // density ramps over 90s
   var minG = 240 - 90 * t, maxG = 560 - 220 * t;
-  return minG + Math.random() * (maxG - minG);
+  var g = minG + Math.random() * (maxG - minG);
+  // tires and bouncing balls need a touch more runway to read
+  if (objs.length && (objs[objs.length-1].type === 'tire' || objs[objs.length-1].type === 'bounce')) g += 40;
+  return g;
+}
+
+/* ---------- power-ups ---------- */
+var POW_TYPES = ['bottle', 'star', 'coffee'];
+function makePower(){
+  var type = POW_TYPES[Math.floor(Math.random() * POW_TYPES.length)];
+  // heights: ground run / low jump / apex jump
+  var hs = [GROUND - 34, GROUND - 92, GROUND - 148];
+  return { type:type, x:W + 60, y:hs[Math.floor(Math.random() * hs.length)],
+    r:14, bob:Math.random()*Math.PI*2 };
+}
+function applyPower(p){
+  if (p.type === 'bottle'){ shieldOn = true; sfx('pickup'); popText(p.x, p.y, 'SHIELD UP', false); }
+  else if (p.type === 'star'){ starT = 6; sfx('star'); popText(p.x, p.y, 'UNSTOPPABLE', true); }
+  else { coffeeT = 8; sfx('pickup'); popText(p.x, p.y, '2× POINTS', true); }
+  burst(p.x, p.y, p.type === 'bottle' ? C.mist : (p.type === 'star' ? C.gold : C.dawn), 14);
+}
+function popText(x, y, txt, gold){
+  pops.push({ x:x, y:y - 24, t:0, life:0.9, txt:txt, perfect:gold });
+}
+function clearPowers(){
+  pows = []; shieldOn = false; starT = 0; coffeeT = 0; invulnT = 0; powTimer = 6;
+  chipStar.classList.remove('on'); chipShield.classList.remove('on'); chipCoffee.classList.remove('on');
 }
 
 /* ---------- particles / pops ---------- */
@@ -291,6 +433,8 @@ function startGame(){
   dist = 0; sinceSpawn = 0; tier = 0; gameT = 0;
   score = 0; combo = 0; bestCombo = 0; spawnPause = 0; shake = 0;
   nextGap = 520; jumpBuf = 0; deathT = 0;
+  clearPowers();
+  ac(); // unlock audio on the user's gesture
   resetPlayer();
   STATE = 'play';
   menuEl.classList.remove('on');
@@ -301,6 +445,7 @@ function startGame(){
 }
 function showGameOver(){
   STATE = 'over';
+  sfx('over');
   if (score > best){ best = Math.floor(score); saveBest();
     newRecEl.style.visibility = 'visible';
   } else newRecEl.style.visibility = 'hidden';
@@ -322,9 +467,11 @@ function pressJump(){
 function doJump(){
   player.vy = JUMP_V; player.grounded = false; player.sliding = false;
   player.fastFall = false; player.stretch = 1; player.slideT = 0;
+  sfx('jump');
 }
 function pressSlide(){
   if (STATE !== 'play') return;
+  if (!slideHeld && player.grounded) sfx('slide');
   slideHeld = true;
   if (!player.grounded && !player.fastFall){ player.fastFall = true; player.vy = Math.max(player.vy, FAST_FALL_V); }
 }
@@ -335,6 +482,7 @@ window.addEventListener('keydown', function(e){
   if (e.code === 'Space' || e.code === 'ArrowUp') pressJump();
   if (e.code === 'ArrowDown') pressSlide();
   if (e.code === 'Enter' && STATE === 'over') startGame();
+  if (e.code === 'KeyM'){ muteBtn.click(); }
 });
 window.addEventListener('keyup', function(e){
   if (e.code === 'ArrowDown') releaseSlide();
@@ -370,8 +518,8 @@ function collide(o){
     // bar bottom hangs at GROUND - gap; player is hit if his top is above it
     return (px < o.x + o.w - 4 && px + pw > o.x + 4 && pt < GROUND - o.gap);
   }
-  var pb = hitBot(), ob = GROUND - o.h;
-  return (px < o.x + o.w - 4 && px + pw > o.x + 4 && pb > ob && pt < GROUND - 2);
+  var pb = hitBot(), ob = GROUND - o.h - bounceY(o);
+  return (px < o.x + o.w - 4 && px + pw > o.x + 4 && pb > ob && pt < GROUND - bounceY(o) - 2);
 }
 
 /* ---------- update ---------- */
@@ -407,6 +555,17 @@ function update(dt){
     bannerSubEl.textContent = 'Keep the pace, Marine';
     bannerEl.classList.add('on');
     bannerT = 1.3;
+    sfx('ramp');
+  }
+
+  // power-up timers
+  if (starT > 0){ starT -= dt; if (starT <= 0){ starT = 0; chipStar.classList.remove('on'); } }
+  if (coffeeT > 0){ coffeeT -= dt; if (coffeeT <= 0){ coffeeT = 0; chipCoffee.classList.remove('on'); } }
+  if (invulnT > 0) invulnT -= dt;
+  // star trail sparkle
+  if (starT > 0 && Math.random() < 0.5){
+    particles.push({ x:player.x + rnd(0, player.w), y:player.y + rnd(0, player.h),
+      vx:-speed()*0.4, vy:rnd(-40,40), life:0.4, t:0, c:(Math.random()<0.5?C.gold:C.day), r:1.5+Math.random()*2 });
   }
 
   // player physics
@@ -417,6 +576,7 @@ function update(dt){
     if (player.y >= GROUND - player.h){
       player.y = GROUND - player.h; player.vy = 0; player.grounded = true;
       player.squash = 1; player.fastFall = false;
+      sfx('land');
       if (jumpBuf > 0){ jumpBuf = 0; doJump(); }
     }
   } else {
@@ -449,18 +609,61 @@ function update(dt){
       o.passed = true;
       combo++; bestCombo = Math.max(bestCombo, combo);
       var perfect = o.minGap < 16;
-      var pts = (25 + combo * 5) * (perfect ? 2 : 1);
+      var pts = (25 + combo * 5) * (perfect ? 2 : 1) * (coffeeT > 0 ? 2 : 1);
       score += pts;
       popScore(o, pts, perfect);
+      if (perfect) sfx('perfect'); else sfx('clear');
       continue;
     }
     // track clearance while horizontally overlapping
     if (o.x < player.x + player.w && o.x + o.w > player.x){
       var pt = hitTop(), pb = hitBot();
       if (o.type === 'bar') o.minGap = Math.min(o.minGap, (GROUND - o.gap) - pt);
-      else o.minGap = Math.min(o.minGap, pb - (GROUND - o.h));
+      else o.minGap = Math.min(o.minGap, pb - (GROUND - o.h - bounceY(o)));
     }
-    if (collide(o)){ hit(o); break; }
+    // star power: smash straight through
+    if (starT > 0 && collide(o)){
+      o.passed = true;
+      combo++; bestCombo = Math.max(bestCombo, combo);
+      var spts = (25 + combo * 5) * (coffeeT > 0 ? 2 : 1);
+      score += spts;
+      burst(o.x + o.w/2, GROUND - o.h, C.gold, 18);
+      popText(o.x + o.w/2, GROUND - o.h - 20, '+' + spts, true);
+      sfx('clear');
+      continue;
+    }
+    if (collide(o)){
+      if (shieldOn && invulnT <= 0){
+        // water bottle takes the hit — keep running
+        shieldOn = false; invulnT = 1.4; chipShield.classList.remove('on');
+        o.passed = true;
+        combo = 0; hudCombo.classList.remove('on');
+        burst(player.x + player.w/2, player.y + player.h/2, C.mist, 20);
+        popText(player.x + player.w/2, player.y - 14, 'SHIELD DOWN', false);
+        shake = 0.2; player.hitFlash = 0.8;
+        sfx('shieldBreak');
+        continue;
+      }
+      hit(o); break;
+    }
+  }
+
+  // power-up spawning + pickup
+  powTimer -= dt;
+  if (powTimer <= 0){ pows.push(makePower()); powTimer = rnd(7, 12); }
+  for (var pi = pows.length - 1; pi >= 0; pi--){
+    var pw2 = pows[pi];
+    pw2.x -= sp * dt; pw2.bob += dt * 4;
+    if (pw2.x < -40){ pows.splice(pi, 1); continue; }
+    var py2 = pw2.y + Math.sin(pw2.bob) * 6;
+    if (player.x + player.w > pw2.x - pw2.r && player.x < pw2.x + pw2.r &&
+        player.y + player.h > py2 - pw2.r && player.y < py2 + pw2.r){
+      applyPower(pw2);
+      if (pw2.type === 'bottle') chipShield.classList.add('on');
+      if (pw2.type === 'star') chipStar.classList.add('on');
+      if (pw2.type === 'coffee') chipCoffee.classList.add('on');
+      pows.splice(pi, 1);
+    }
   }
 
   // distance score
@@ -493,6 +696,7 @@ function hit(o){
   player.hitFlash = 1; shake = 0.34; deathT = 0.55;
   burst(player.x + player.w/2, player.y + player.h/2, C.gold, 22);
   combo = 0; hudCombo.classList.remove('on');
+  sfx('hit');
   STATE = 'dying';
 }
 
@@ -632,6 +836,79 @@ function drawRabbit(r){
   ctx.beginPath(); ctx.moveTo(12, 46); ctx.lineTo(8, 46); ctx.moveTo(34, 46); ctx.lineTo(40, 46); ctx.stroke();
   ctx.restore();
 }
+function drawSquirrel(s){
+  ctx.save();
+  ctx.translate(s.x, GROUND + 2); ctx.scale(s.s, s.s);
+  var hop = Math.abs(Math.sin(s.hp)) * -6;
+  ctx.translate(0, hop);
+  // big curled tail — dawn tones
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#D07F2E';
+  ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI * 2); ctx.fill();
+  // body — dawn
+  ctx.fillStyle = C.dawn;
+  poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
+  // head + ear
+  ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI * 2); ctx.fill();
+  poly([[11,16],[9,9],[13,12]]);
+  // eye — ink
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI * 2); ctx.fill();
+  // legs — ink
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(16, 46); ctx.lineTo(13, 46); ctx.moveTo(32, 46); ctx.lineTo(36, 46); ctx.stroke();
+  ctx.restore();
+}
+function drawFirefly(f){
+  var glow = 0.35 + 0.65 * Math.max(0, Math.sin(f.ph));
+  ctx.save();
+  ctx.globalAlpha = glow * 0.28;
+  ctx.fillStyle = C.gold;
+  ctx.beginPath(); ctx.arc(f.x, f.y, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = glow;
+  ctx.beginPath(); ctx.arc(f.x, f.y, 1.6, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+function drawPower(p){
+  var y = p.y + Math.sin(p.bob) * 6;
+  ctx.save();
+  ctx.translate(p.x, y);
+  if (p.type === 'bottle'){
+    // water bottle — mist body, day cap
+    ctx.fillStyle = C.mist;
+    capsule(-7, -10, 14, 22);
+    ctx.fillStyle = C.day;
+    ctx.fillRect(-4, -15, 8, 5);
+    ctx.fillStyle = 'rgba(251,247,238,0.5)';
+    ctx.fillRect(-4, -6, 8, 6);
+  } else if (p.type === 'star'){
+    // gold star — Mario energy, sunrise palette
+    var pulse = 1 + Math.sin(p.bob * 1.6) * 0.12;
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = C.gold;
+    ctx.beginPath();
+    for (var i = 0; i < 10; i++){
+      var a = -Math.PI / 2 + i * Math.PI / 5;
+      var rr = (i % 2 === 0) ? 15 : 6.5;
+      var px = Math.cos(a) * rr, py = Math.sin(a) * rr;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath(); ctx.fill();
+  } else {
+    // coffee cup — dawn body, cream sleeve + steam
+    ctx.fillStyle = C.dawn;
+    poly([[-8,-8],[8,-8],[6,12],[-6,12]]);
+    ctx.fillStyle = C.cream;
+    ctx.fillRect(-8, -4, 16, 6);
+    ctx.strokeStyle = 'rgba(251,247,238,0.6)'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    var st = Math.sin(p.bob) * 2;
+    ctx.beginPath(); ctx.moveTo(-3, -11); ctx.quadraticCurveTo(-3 + st, -15, -3, -18);
+    ctx.moveTo(3, -11); ctx.quadraticCurveTo(3 - st, -15, 3, -18); ctx.stroke();
+  }
+  ctx.restore();
+}
 
 /* ---------- drawing ---------- */
 function draw(){
@@ -649,6 +926,9 @@ function draw(){
 
   // clouds — high, faint
   for (var ci = 0; ci < clouds.length; ci++) drawCloud(clouds[ci]);
+
+  // fireflies — predawn blink
+  for (var fi = 0; fi < fireflies.length; fi++) drawFirefly(fireflies[fi]);
 
   // egrets — mid-sky
   for (var ei = 0; ei < egrets.length; ei++) drawEgret(egrets[ei]);
@@ -676,11 +956,15 @@ function draw(){
   // obstacles
   for (var k = 0; k < objs.length; k++) drawObstacle(objs[k]);
 
+  // power-ups
+  for (var pw = 0; pw < pows.length; pw++) drawPower(pows[pw]);
+
   // player
   drawPlayer();
 
-  // rabbits — foreground décor (after player so they hop in front)
+  // rabbits + squirrels — foreground décor (after player so they hop in front)
   for (var ri = 0; ri < rabbits.length; ri++) drawRabbit(rabbits[ri]);
+  for (var si = 0; si < squirrels.length; si++) drawSquirrel(squirrels[si]);
 
   // particles
   for (var i = 0; i < particles.length; i++){
@@ -706,9 +990,9 @@ function draw(){
 }
 
 function drawObstacle(o){
-  if (o.type === 'ball'){
-    // soccer ball — cream with ink pentagons, rolling on the ground
-    var br = o.w / 2, bx = o.x + br, by = GROUND - br;
+  if (o.type === 'ball' || o.type === 'bounce'){
+    // soccer ball — cream with ink pentagons; 'bounce' hops on a timer
+    var br = o.w / 2, bx = o.x + br, by = GROUND - br - bounceY(o);
     ctx.fillStyle = C.day;
     ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = C.ink;
@@ -716,6 +1000,26 @@ function drawObstacle(o){
     for (var pn = 0; pn < 5; pn++){
       var pa = -Math.PI / 2 + pn * Math.PI * 2 / 5;
       ballPent(bx + Math.cos(pa) * br * 0.72, by + Math.sin(pa) * br * 0.72, br * 0.28, pa);
+    }
+    if (o.type === 'bounce'){
+      // shadow on the ground so the hop reads
+      var lift = bounceY(o);
+      var sw2 = Math.max(0.4, 1 - lift / 200);
+      ctx.fillStyle = 'rgba(20,16,10,' + (0.22 * sw2) + ')';
+      ctx.beginPath(); ctx.ellipse(bx, GROUND + 5, br * sw2, 3.5 * sw2 + 1, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  } else if (o.type === 'tire'){
+    // stacked training tires — ink rings with dawn rim stripe
+    var tw = o.w, ty = GROUND;
+    for (var ti2 = 0; ti2 < 2; ti2++){
+      var th = o.h / 2, tyTop = ty - th;
+      ctx.fillStyle = C.ink;
+      ctx.beginPath(); ctx.ellipse(o.x + tw/2, tyTop + th/2, tw/2, th/2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C.pine;
+      ctx.beginPath(); ctx.ellipse(o.x + tw/2, tyTop + th/2, tw/2 - 9, th/2 - 9, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C.dawn;
+      ctx.fillRect(o.x + 4, tyTop + th/2 - 3, tw - 8, 5);
+      ty = tyTop + 4;
     }
   } else if (o.type === 'block'){
     // cinderblock — flat ink + dawn top stripe
@@ -751,6 +1055,18 @@ function drawPlayer(){
   ctx.scale(sx, sy);
 
   if (player.hitFlash > 0.5) ctx.globalAlpha = 0.35 + Math.sin(player.hitFlash * 40) * 0.2;
+  if (invulnT > 0 && starT <= 0) ctx.globalAlpha = 0.45 + Math.sin(gameT * 24) * 0.25;
+
+  // star aura — gold ring while unstoppable
+  if (starT > 0){
+    var ap = 0.5 + Math.sin(gameT * 10) * 0.3;
+    ctx.strokeStyle = 'rgba(242,184,75,' + ap + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, 44 + Math.sin(gameT * 6) * 4, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(251,247,238,' + ap * 0.5 + ')';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(0, 0, 52 + Math.sin(gameT * 6 + 1) * 4, 0, Math.PI * 2); ctx.stroke();
+  }
 
   var sliding = player.sliding && player.grounded;
   var hw = player.w;
