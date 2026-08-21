@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Boot Camp FX — Go at First Light</title>
+<meta name="description" content="Go, the Boot Camp FX way. Hold the hill from first light — black stone, white stone, last breath wins. Free to play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --predawn:#0F1B2C; --predawn-2:#16273D; --pine:#14291F;
+    --dawn:#E8933A; --gold:#F2B84B; --day:#FBF7EE; --day-2:#F3ECDC;
+    --ink:#14100A; --mist:#9FB0C4; --stone:#6A6255;
+    --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif; --mono:'Spline Sans Mono',monospace;
+    --ease:cubic-bezier(.22,.7,.25,1);
+  }
+  @property --clearance{ syntax:'<number>'; inherits:true; initial-value:0; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--predawn);
+    font-family:var(--body); color:var(--day);
+    -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
+    overflow:hidden;}
+  #app{--clearance:0; height:100%; display:flex; flex-direction:column; position:relative;
+    background:radial-gradient(circle at 50% 20%, var(--predawn-2), var(--predawn));
+    background:radial-gradient(circle at 50% 20%,
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn-2)),
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn)));
+    transition:--clearance 1.2s var(--ease);}
+
+  /* victory warm wash */
+  #app.victory::after{ content:''; position:absolute; inset:0; pointer-events:none; z-index:1500;
+    background:radial-gradient(circle at 50% 30%, rgba(232,147,58,.38), rgba(232,147,58,.10));
+    opacity:0; animation:victoryWarm 2s var(--ease) forwards; }
+  @keyframes victoryWarm{ from{ opacity:0; } to{ opacity:1; } }
+
+  /* ---- header / brand ---- */
+  header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;gap:12px;z-index:10;}
+  .brand{display:flex;flex-direction:column;line-height:1;}
+  .brand b{font-family:var(--display);font-weight:700;font-size:1.28rem;letter-spacing:-.02em;}
+  .brand b em{font-style:italic;color:var(--dawn);}
+  .brand span{font-family:var(--mono);font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--dawn);margin-top:3px;}
+  .hud{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .stat{display:flex;flex-direction:column;align-items:center;padding:6px 12px;
+    background:rgba(15,27,44,.55);border:1px solid rgba(159,176,196,.16);border-radius:10px;min-width:64px;}
+  .stat .lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);}
+  .stat .val{font-family:var(--display);font-weight:600;font-size:1.15rem;color:var(--gold);line-height:1.15;}
+  .stat .val.mono{font-family:var(--mono);font-size:1.05rem;font-weight:600;}
+  .stat.turn-b{outline:2px solid rgba(232,147,58,.0);transition:outline-color .3s;}
+  .stat.active{outline:2px solid var(--dawn);}
+
+  /* ---- board ---- */
+  .board-wrap{flex:1 1 auto;display:flex;align-items:center;justify-content:center;
+    min-height:0;position:relative;overflow:hidden;}
+  #boardBox{position:relative;flex:0 0 auto;z-index:2;touch-action:manipulation;cursor:pointer;}
+  #boardCv{position:absolute;inset:0;display:block;border-radius:10px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(159,176,196,.12);}
+  #stones{position:absolute;inset:0;pointer-events:none;}
+  .stone{position:absolute;border-radius:50%;will-change:transform,opacity;
+    animation:stoneIn .28s var(--ease);}
+  .stone.b{background:radial-gradient(circle at 34% 30%, #3A3E46, var(--ink) 62%);
+    box-shadow:0 2px 5px rgba(0,0,0,.55), inset 0 1px 1px rgba(251,247,238,.14);}
+  .stone.w{background:radial-gradient(circle at 34% 30%, #FFFFFF, var(--day-2) 68%);
+    box-shadow:0 2px 5px rgba(0,0,0,.5), inset 0 -1px 2px rgba(106,98,85,.28);}
+  @keyframes stoneIn{
+    0%{ transform:scale(.4); filter:brightness(2); box-shadow:0 0 18px rgba(242,184,75,.85); }
+    100%{ transform:scale(1); }
+  }
+  .stone.captured{animation:capOut .6s var(--ease) forwards;}
+  @keyframes capOut{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.15); filter:brightness(1.9) sepia(.3);
+         box-shadow:0 0 20px rgba(232,147,58,.9), 0 0 40px rgba(242,184,75,.55); }
+    100%{ transform:scale(.2) translateY(-8px); opacity:0; filter:brightness(2.2);
+         box-shadow:0 0 28px rgba(232,147,58,.9); }
+  }
+  .lastmove{position:absolute;border-radius:50%;background:var(--dawn);pointer-events:none;
+    box-shadow:0 0 8px rgba(232,147,58,.8);animation:lmPulse 1.6s ease-in-out infinite;}
+  @keyframes lmPulse{0%,100%{opacity:.95;}50%{opacity:.45;}}
+  .ghoststone{position:absolute;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .12s;}
+  .ghoststone.b{background:rgba(20,16,10,.5);}
+  .ghoststone.w{background:rgba(251,247,238,.5);}
+  #boardBox:hover .ghoststone.on, #boardBox.touch .ghoststone.on{opacity:1;}
+  .hint-ring{position:absolute;border-radius:50%;border:2px solid var(--gold);pointer-events:none;
+    box-shadow:0 0 14px rgba(242,184,75,.7);animation:hintPulse 1s ease-in-out infinite alternate;}
+  @keyframes hintPulse{from{transform:scale(.85);opacity:.95;}to{transform:scale(1.1);opacity:.5;}}
+
+  /* hint fireflies */
+  .firefly{ position:absolute; width:4px; height:4px; border-radius:50%;
+    background:var(--gold); pointer-events:none; opacity:0; z-index:1001;
+    box-shadow:0 0 6px rgba(242,184,75,.9), 0 0 12px rgba(232,147,58,.55);
+    animation:fireflyUp 1.7s ease-out forwards; }
+  @keyframes fireflyUp{
+    0%  { transform:translate(0,0); opacity:0; }
+    15% { opacity:1; }
+    35% { opacity:.35; }
+    55% { opacity:.9; }
+    75% { opacity:.4; }
+    100%{ transform:translate(var(--dx,0), var(--dy,-30px)); opacity:0; }
+  }
+
+  /* toast */
+  #toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%) translateY(8px);
+    background:rgba(15,27,44,.9);border:1px solid rgba(232,147,58,.4);color:var(--day);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;padding:9px 16px;border-radius:10px;
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:60;max-width:86vw;text-align:center;}
+  #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---- turtle mascot ---- */
+  .turtle{ position:absolute; bottom:6px; left:14px; z-index:1; pointer-events:none;
+    width:74px; opacity:.9;
+    animation:turtleIn 9s var(--ease) forwards; }
+  @keyframes turtleIn{ from{ transform:translateX(-140px);} to{ transform:translateX(0);} }
+  .turtle-wander{ animation:turtleWander 48s ease-in-out 9s infinite; }
+  @keyframes turtleWander{
+    0%{ transform:translateX(0); } 30%{ transform:translateX(46px); }
+    55%{ transform:translateX(30px); } 80%{ transform:translateX(64px); }
+    100%{ transform:translateX(0); } }
+  .turtle svg{ display:block; width:100%; height:auto; }
+  .turtle-head{ animation:headForage 7s ease-in-out infinite; transform-origin:73px 28px; }
+  @keyframes headForage{ 0%,70%,100%{ transform:rotate(0);} 78%,92%{ transform:rotate(9deg) translateY(2px);} }
+  .turtle-leg-front{ animation:legF 1.6s ease-in-out infinite; transform-origin:58px 30px; }
+  .turtle-leg-back{ animation:legB 1.6s ease-in-out infinite; transform-origin:32px 30px; }
+  @keyframes legF{ 0%,100%{ transform:rotate(6deg);} 50%{ transform:rotate(-6deg);} }
+  @keyframes legB{ 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
+
+  /* ---- footer ---- */
+  footer{flex:0 0 auto;display:flex;gap:8px;justify-content:center;padding:12px 14px 16px;flex-wrap:wrap;z-index:10;}
+  .btn{pointer-events:auto;cursor:pointer;border:1px solid rgba(159,176,196,.28);border-radius:10px;
+    padding:10px 16px;background:rgba(15,27,44,.55);color:var(--day);
+    font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    transition:border-color .16s,color .16s,transform .16s var(--ease);}
+  .btn:hover{border-color:var(--dawn);color:var(--gold);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn.primary{background:var(--dawn);border-color:var(--dawn);color:#1B1206;}
+  .btn.primary:hover{background:var(--gold);border-color:var(--gold);color:#1B1206;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .foot{position:fixed;bottom:6px;right:12px;color:rgba(159,176,196,.5);font-family:var(--mono);
+    font-size:.6rem;letter-spacing:.1em;z-index:4;}
+  .foot a{color:inherit;text-decoration:none;}
+  .foot a:hover{color:var(--mist);}
+
+  /* ---- overlays (menu / rules / result) ---- */
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(15,27,44,.8);backdrop-filter:blur(6px);z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .3s var(--ease);overflow:hidden;}
+  .overlay.on{opacity:1;pointer-events:auto;}
+  .modal{position:relative;z-index:5;max-width:min(480px,90vw);text-align:center;padding:20px;}
+  .title{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,8vw,4.2rem);
+    line-height:.98;letter-spacing:.01em;}
+  .title em{font-style:italic;color:var(--dawn);}
+  .tag{color:var(--mist);font-family:var(--mono);letter-spacing:.3em;text-transform:uppercase;
+    font-size:.68rem;margin-top:12px;}
+  .opt-row{display:flex;gap:8px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+  .opt{cursor:pointer;border:1px solid rgba(159,176,196,.3);border-radius:10px;padding:10px 16px;
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);
+    transition:all .16s var(--ease);background:transparent;}
+  .opt.sel{border-color:var(--gold);color:var(--gold);background:rgba(242,184,75,.08);}
+  .rules{text-align:left;margin:18px auto 0;max-width:420px;display:flex;flex-direction:column;gap:10px;
+    font-size:.88rem;line-height:1.5;color:var(--day-2);list-style:none;}
+  .rules b{color:var(--gold);font-weight:600;}
+  .rules em{color:var(--dawn);font-style:normal;}
+  .cta{margin-top:24px;cursor:pointer;border:0;border-radius:14px;padding:15px 42px;
+    background:var(--dawn);color:#1B1206;font-family:var(--body);font-weight:700;font-size:1rem;
+    letter-spacing:.04em;box-shadow:0 10px 30px rgba(232,147,58,.35);
+    transition:transform .16s var(--ease),background .16s var(--ease);}
+  .cta:hover{transform:translateY(-2px);background:var(--gold);}
+  .hintline{color:var(--mist);font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;
+    text-transform:uppercase;margin-top:18px;}
+
+  /* result overlay bits */
+  .sun{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--gold);
+    box-shadow:0 0 60px 20px rgba(232,147,58,.4), 0 0 120px 40px rgba(242,184,75,.15);
+    left:50%;transform:translateX(-50%);bottom:-40px;z-index:1;
+    transition:bottom 2.5s cubic-bezier(.25,1,.5,1);}
+  .overlay.on .sun{bottom:auto;top:12%;}
+  #particles{position:absolute;inset:0;pointer-events:none;z-index:2;}
+  .vp{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);
+    animation:vpUp 1.4s ease-out forwards;}
+  @keyframes vpUp{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-46px);}}
+  .v-title{font-family:var(--display);font-weight:700;font-size:clamp(2.6rem,9vw,4.6rem);color:var(--day);
+    animation:breathe 1s var(--ease) both;}
+  .v-title em{font-style:italic;color:var(--gold);}
+  @keyframes breathe{from{opacity:0;letter-spacing:.3em;}to{opacity:1;letter-spacing:.05em;}}
+  .v-sub{color:var(--mist);font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;
+    text-transform:uppercase;margin-top:10px;}
+  .v-score{display:flex;gap:36px;justify-content:center;margin:22px 0 4px;}
+  .v-score .num{font-family:var(--display);font-weight:600;font-size:2.1rem;color:var(--day);line-height:1;}
+  .v-score .num.gold{color:var(--gold);}
+  .v-score .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--mist);margin-top:6px;}
+
+  @media (max-width:560px){
+    header{padding:10px 12px;}
+    .brand b{font-size:1.05rem;}
+    .stat{min-width:56px;padding:5px 9px;}
+    footer{padding:10px 8px 14px;gap:6px;}
+    .btn{padding:9px 12px;font-size:.66rem;}
+    .turtle{width:56px;}
+    .foot{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><b>Boot Camp <em>FX</em></b><span>Go · at first light</span></div>
+    <div class="hud">
+      <div class="stat turn-b" id="statB"><span class="lbl">● Black</span><span class="val" id="capB">0</span></div>
+      <div class="stat" id="statMove"><span class="lbl">Move</span><span class="val mono" id="moveN">—</span></div>
+      <div class="stat" id="statW"><span class="lbl">○ White</span><span class="val" id="capW">0</span></div>
+    </div>
+  </header>
+
+  <div class="board-wrap">
+    <div id="boardBox">
+      <canvas id="boardCv"></canvas>
+      <div id="stones"></div>
+    </div>
+    <div class="turtle" aria-hidden="true">
+      <div class="turtle-wander">
+        <svg viewBox="0 0 90 42" fill="none">
+          <g class="turtle-leg-back">
+            <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
+          </g>
+          <g class="turtle-leg-front">
+            <path d="M56 28 C54 34 52 37 54 38 C58 39 62 36 62 30 Z" fill="#9FB0C4"/>
+          </g>
+          <g class="turtle-shell">
+            <path d="M18 28 L8 26 L16 32 Z" fill="#9FB0C4"/>
+            <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="#14291F"/>
+            <path d="M46 7 C47 16 46 24 44 30 M46 7 C49 16 50 24 53 30 M26 12 C32 16 34 22 35 29 M66 12 C60 16 58 22 57 29" stroke="#2E5A3F" stroke-width="1.6" fill="none"/>
+          </g>
+          <g class="turtle-head">
+            <path d="M72 25 C80 23 86 23 89 25 C92 27 90 30 85 30 C81 30 76 30 73 29 Z" fill="#9FB0C4"/>
+            <circle cx="86" cy="26" r="1.2" fill="#14100A"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div id="toast"></div>
+  </div>
+
+  <footer>
+    <button class="btn" id="btn-rules">? Rules</button>
+    <button class="btn" id="btn-undo">↶ Undo</button>
+    <button class="btn" id="btn-hint">✦ Hint</button>
+    <button class="btn" id="btn-pass">Pass</button>
+    <button class="btn primary" id="btn-new">New Game</button>
+  </footer>
+
+  <div class="foot"><a href="/">bootcampfx.com</a> · hold the hill before first light</div>
+</div>
+
+<div class="overlay on" id="menu">
+  <div class="modal">
+    <div class="title">Boot Camp <em>FX</em><br>GO</div>
+    <div class="tag">Black stone · White stone · Last breath wins</div>
+    <ul class="rules">
+      <li><b>1 · Surround to capture.</b> Stones live on their <em>breaths</em> — open lines beside them. Take every breath and the group comes off the hill.</li>
+      <li><b>2 · No suicides, no ko loops.</b> A point with no breath is off-limits, and you can't repeat the board you just left.</li>
+      <li><b>3 · Two passes end it.</b> When the hill is settled, both sides pass — most ground plus captures wins. White draws <em>+6.5</em> for moving second.</li>
+    </ul>
+    <div class="opt-row" id="modeRow">
+      <button class="opt sel" data-mode="bot">vs Coach Bot</button>
+      <button class="opt" data-mode="two">2 Players</button>
+    </div>
+    <div class="opt-row" id="sizeRow">
+      <button class="opt sel" data-size="9">9 × 9 · Sprint</button>
+      <button class="opt" data-size="13">13 × 13 · Endurance</button>
+    </div>
+    <button class="cta" id="btn-start">Take the Hill</button>
+    <div class="hintline">You play Black · tap a point to place</div>
+  </div>
+</div>
+
+<div class="overlay" id="rules">
+  <div class="modal">
+    <div class="title" style="font-size:clamp(1.8rem,6vw,2.6rem);">How to Play</div>
+    <ul class="rules">
+      <li><b>Breaths.</b> Every stone needs an open neighbor point. Connected stones share breaths. Zero breaths = captured.</li>
+      <li><b>Ko.</b> You may not play a move that recreates the previous board. Wait one turn.</li>
+      <li><b>Suicide.</b> You may not play where your own group would have no breath — unless it captures.</li>
+      <li><b>Ending.</b> Two passes in a row end the game. Score = your ground + your captures. White gets 6.5 komi.</li>
+    </ul>
+    <button class="cta" id="btn-rules-close">Back to the Hill</button>
+  </div>
+</div>
+
+<div class="overlay" id="result">
+  <div class="sun" aria-hidden="true"></div>
+  <div id="particles" aria-hidden="true"></div>
+  <div class="modal">
+    <div class="v-title" id="vTitle">Sun<em>rise</em></div>
+    <div class="v-sub" id="vSub">—</div>
+    <div class="v-score">
+      <div><div class="num" id="vB">0</div><div class="lab">● Black</div></div>
+      <div><div class="num gold" id="vW">0</div><div class="lab">○ White +6.5</div></div>
+    </div>
+    <button class="cta" id="btn-again">Run It Back</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var $ = function(id){ return document.getElementById(id); };
+var appEl = $('app'), boxEl = $('boardBox'), cv = $('boardCv'), ctx = cv.getContext('2d'),
+    stonesEl = $('stones'), toastEl = $('toast');
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- game state ---------- */
+var N = 9;                 // board size
+var board = [];            // 0 empty, 1 black, 2 white
+var turn = 1;
+var caps = { 1:0, 2:0 };   // stones captured BY each color
+var history = [];          // snapshots for undo
+var prevKey = null;        // simple ko
+var passes = 0;
+var gameOver = false;
+var mode = 'bot';          // 'bot' | 'two'
+var human = 1;             // human plays black vs bot
+var moveNum = 0;
+var lastMove = -1;
+var stoneEls = {};         // idx -> element
+var cell = 0, pad = 0, boardPx = 0;
+var ghostEl = null, lmEl = null;
+
+function key(b){ return b.join(''); }
+function neighbors(i){
+  var r = Math.floor(i / N), c = i % N, out = [];
+  if (r > 0) out.push(i - N);
+  if (r < N - 1) out.push(i + N);
+  if (c > 0) out.push(i - 1);
+  if (c < N - 1) out.push(i + 1);
+  return out;
+}
+function group(b, i){
+  var color = b[i], stones = [i], libs = {}, seen = {};
+  seen[i] = true;
+  var stack = [i];
+  while (stack.length){
+    var cur = stack.pop(), nb = neighbors(cur);
+    for (var k = 0; k < nb.length; k++){
+      var j = nb[k];
+      if (b[j] === 0) libs[j] = true;
+      else if (b[j] === color && !seen[j]){ seen[j] = true; stones.push(j); stack.push(j); }
+    }
+  }
+  return { stones: stones, libs: Object.keys(libs).map(Number) };
+}
+/* simulate: returns {captures:[], board} or null if illegal */
+function simulate(b, color, i){
+  if (b[i] !== 0) return null;
+  var nb = b.slice(); nb[i] = color;
+  var opp = color === 1 ? 2 : 1, captured = [];
+  var ns = neighbors(i);
+  for (var k = 0; k < ns.length; k++){
+    var j = ns[k];
+    if (nb[j] === opp){
+      var g = group(nb, j);
+      if (g.libs.length === 0){
+        for (var s = 0; s < g.stones.length; s++){
+          if (nb[g.stones[s]] !== 0){ nb[g.stones[s]] = 0; captured.push(g.stones[s]); }
+        }
+      }
+    }
+  }
+  var mine = group(nb, i);
+  if (mine.libs.length === 0) return null;           // suicide
+  return { board: nb, captures: captured, libs: mine.libs.length };
+}
+function legalMove(color, i){
+  var sim = simulate(board, color, i);
+  if (!sim) return null;
+  if (prevKey !== null && key(sim.board) === prevKey) return null;  // simple ko
+  return sim;
+}
+function legalMoves(color){
+  var out = [];
+  for (var i = 0; i < N * N; i++) if (legalMove(color, i)) out.push(i);
+  return out;
+}
+
+/* ---------- scoring (area: stones + surrounded ground) ---------- */
+function score(){
+  var terr = { 1:0, 2:0 }, seen = {};
+  for (var i = 0; i < N * N; i++){
+    if (board[i] !== 0 || seen[i]) continue;
+    var region = [i], seen2 = {}; seen2[i] = true; seen[i] = true;
+    var stack = [i], borders = { 1:false, 2:false };
+    while (stack.length){
+      var cur = stack.pop(), nb = neighbors(cur);
+      for (var k = 0; k < nb.length; k++){
+        var j = nb[k];
+        if (board[j] === 0 && !seen2[j]){ seen2[j] = true; seen[j] = true; region.push(j); stack.push(j); }
+        else if (board[j] !== 0) borders[board[j]] = true;
+      }
+    }
+    if (borders[1] && !borders[2]) terr[1] += region.length;
+    if (borders[2] && !borders[1]) terr[2] += region.length;
+  }
+  var stones = { 1:0, 2:0 };
+  for (var s = 0; s < N * N; s++) if (board[s]) stones[board[s]]++;
+  return {
+    b: stones[1] + terr[1] + caps[1],
+    w: stones[2] + terr[2] + caps[2] + 6.5
+  };
+}
+
+/* ---------- coach bot (heuristic, no library) ---------- */
+function botMove(color){
+  var moves = legalMoves(color);
+  if (!moves.length) return -1;
+  var opp = color === 1 ? 2 : 1;
+  var best = -1, bestScore = -1e9;
+  var center = (N - 1) / 2;
+  for (var m = 0; m < moves.length; m++){
+    var i = moves[m];
+    var sim = legalMove(color, i);
+    var sc = Math.random() * 2;
+    // captures pay
+    sc += sim.captures.length * 10;
+    var ns = neighbors(i);
+    var myAdj = 0, oppAdj = 0;
+    for (var k = 0; k < ns.length; k++){
+      var j = ns[k];
+      if (board[j] === color){ myAdj++;
+        // saving a group in atari
+        if (group(board, j).libs.length === 1) sc += 6;
+      } else if (board[j] === opp){ oppAdj++;
+        var gl = group(board, j).libs.length;
+        if (gl === 2 && sim.captures.length === 0) sc += 3;   // threatens atari
+        if (gl === 1) sc += 4;                                 // completes capture (counted too)
+      }
+    }
+    // don't fill own eye-ish points
+    if (oppAdj === 0 && sim.captures.length === 0 && ns.every(function(j){ return board[j] === color; })) sc -= 6;
+    // self-atari without capture is bad
+    if (sim.libs === 1 && sim.captures.length === 0) sc -= 8;
+    // early game: stay off the very edge, prefer center-ish
+    var r = Math.floor(i / N), c = i % N;
+    if (moveNum < 10 && (r === 0 || c === 0 || r === N - 1 || c === N - 1)) sc -= 2;
+    if (moveNum < 10) sc += (N - Math.abs(r - center) - Math.abs(c - center)) * 0.15;
+    // prefer playing near the action
+    if (myAdj + oppAdj > 0) sc += 1.2;
+    if (sc > bestScore){ bestScore = sc; best = i; }
+  }
+  // pass when the board is settling and nothing tactical is on the table
+  if (moveNum > N * N * 0.5 && bestScore < 4) return -1;
+  if (moves.length <= N) return -1;   // only dregs left — settle it
+  return best;
+}
+
+/* ---------- rendering ---------- */
+var DPR = Math.min(window.devicePixelRatio || 1, 2);
+function layout(){
+  var wrap = boxEl.parentElement.getBoundingClientRect();
+  var foot = document.querySelector('footer').getBoundingClientRect();
+  var avail = Math.min(wrap.width, window.innerHeight - foot.height - 90);
+  boardPx = Math.max(240, Math.floor(avail));
+  pad = Math.round(boardPx / (N + 1));
+  cell = (boardPx - pad * 2) / (N - 1);
+  boxEl.style.width = boardPx + 'px'; boxEl.style.height = boardPx + 'px';
+  cv.width = boardPx * DPR; cv.height = boardPx * DPR;
+  cv.style.width = boardPx + 'px'; cv.style.height = boardPx + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  drawBoard();
+  // reposition stones
+  for (var idx in stoneEls) placeEl(stoneEls[idx], parseInt(idx, 10));
+  if (lmEl && lastMove >= 0) placeEl(lmEl, lastMove, true);
+}
+function pt(i){
+  var r = Math.floor(i / N), c = i % N;
+  return { x: pad + c * cell, y: pad + r * cell };
+}
+function drawBoard(){
+  ctx.clearRect(0, 0, boardPx, boardPx);
+  // field — packed pine with dawn warming as the day breaks
+  var warm = Math.min(moveNum / (N * N), 1);
+  var g = ctx.createLinearGradient(0, 0, 0, boardPx);
+  g.addColorStop(0, mix('#14291F', '#E8933A', warm * 0.16));
+  g.addColorStop(1, mix('#0F1B2C', '#14291F', 0.5 + warm * 0.2));
+  ctx.fillStyle = g;
+  roundRect(0, 0, boardPx, boardPx, 10); ctx.fill();
+  // grid — day-2 lines
+  ctx.strokeStyle = 'rgba(243,236,220,0.5)'; ctx.lineWidth = 1;
+  for (var k = 0; k < N; k++){
+    var p = pad + k * cell;
+    ctx.beginPath(); ctx.moveTo(pad, p); ctx.lineTo(boardPx - pad, p); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(p, pad); ctx.lineTo(p, boardPx - pad); ctx.stroke();
+  }
+  // star points — gold
+  var stars = N === 9 ? [[2,2],[6,2],[4,4],[2,6],[6,6]] : [[3,3],[9,3],[6,6],[3,9],[9,9]];
+  ctx.fillStyle = 'rgba(242,184,75,0.75)';
+  for (var s = 0; s < stars.length; s++){
+    var p2 = pad + stars[s][0] * cell, q = pad + stars[s][1] * cell;
+    ctx.beginPath(); ctx.arc(p2, q, Math.max(2, cell * 0.07), 0, Math.PI * 2); ctx.fill();
+  }
+}
+function roundRect(x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function mix(a, b, t){
+  var pa = [parseInt(a.slice(1,3),16), parseInt(a.slice(3,5),16), parseInt(a.slice(5,7),16)];
+  var pb = [parseInt(b.slice(1,3),16), parseInt(b.slice(3,5),16), parseInt(b.slice(5,7),16)];
+  var o = [0,1,2].map(function(k){ return Math.round(pa[k] + (pb[k] - pa[k]) * t); });
+  return 'rgb(' + o[0] + ',' + o[1] + ',' + o[2] + ')';
+}
+function makeStone(i, color, animate){
+  var el = document.createElement('div');
+  el.className = 'stone ' + (color === 1 ? 'b' : 'w');
+  if (RM || !animate) el.style.animation = 'none';
+  var d = cell * 0.94;
+  el.style.width = d + 'px'; el.style.height = d + 'px';
+  placeEl(el, i);
+  stonesEl.appendChild(el);
+  stoneEls[i] = el;
+  return el;
+}
+function placeEl(el, i, isDot){
+  var p = pt(i), d = el.offsetWidth || (isDot ? cell * 0.3 : cell * 0.94);
+  el.style.left = (p.x - d / 2) + 'px';
+  el.style.top = (p.y - d / 2) + 'px';
+}
+function setLastMove(i){
+  if (lmEl){ lmEl.remove(); lmEl = null; }
+  if (i < 0) return;
+  lmEl = document.createElement('div');
+  lmEl.className = 'lastmove';
+  var d = cell * 0.3;
+  lmEl.style.width = d + 'px'; lmEl.style.height = d + 'px';
+  if (RM) lmEl.style.animation = 'none';
+  placeEl(lmEl, i, true);
+  stonesEl.appendChild(lmEl);
+}
+function renderAll(){
+  stonesEl.innerHTML = ''; stoneEls = {}; lmEl = null;
+  for (var i = 0; i < N * N; i++) if (board[i]) makeStone(i, board[i], false);
+  setLastMove(lastMove);
+  drawBoard();
+  updateHud();
+}
+function updateHud(){
+  $('capB').textContent = caps[1];
+  $('capW').textContent = caps[2];
+  $('moveN').textContent = gameOver ? '—' : moveNum;
+  $('statB').classList.toggle('active', !gameOver && turn === 1);
+  $('statW').classList.toggle('active', !gameOver && turn === 2);
+  appEl.style.setProperty('--clearance', Math.min(moveNum / (N * N), 1));
+}
+
+/* ---------- toast ---------- */
+var toastT = null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('on');
+  if (toastT) clearTimeout(toastT);
+  toastT = setTimeout(function(){ toastEl.classList.remove('on'); }, 2100);
+}
+
+/* ---------- fireflies ---------- */
+function firefliesAt(i, n){
+  if (RM) return;
+  var p = pt(i);
+  for (var k = 0; k < n; k++){
+    (function(k){
+      setTimeout(function(){
+        var f = document.createElement('div');
+        f.className = 'firefly';
+        f.style.left = (p.x + (Math.random() - .5) * cell * .5) + 'px';
+        f.style.top = (p.y + (Math.random() - .5) * cell * .5) + 'px';
+        f.style.setProperty('--dx', ((Math.random() - .5) * 60) + 'px');
+        f.style.setProperty('--dy', (-20 - Math.random() * 50) + 'px');
+        stonesEl.appendChild(f);
+        setTimeout(function(){ f.remove(); }, 1800);
+      }, k * 40);
+    })(k);
+  }
+}
+
+/* ---------- move flow ---------- */
+function snapshot(){
+  return { board: board.slice(), turn: turn, caps: { 1:caps[1], 2:caps[2] },
+    prevKey: prevKey, passes: passes, moveNum: moveNum, lastMove: lastMove };
+}
+function restore(s){
+  board = s.board.slice(); turn = s.turn; caps = { 1:s.caps[1], 2:s.caps[2] };
+  prevKey = s.prevKey; passes = s.passes; moveNum = s.moveNum; lastMove = s.lastMove;
+  renderAll();
+}
+function play(color, i, silent){
+  var sim = legalMove(color, i);
+  if (!sim){
+    if (!silent){
+      if (board[i] !== 0) toast('Occupied — pick open ground.');
+      else if (prevKey !== null && key((simulate(board, color, i) || {board:[]}).board || []) === prevKey)
+        toast('Ko — the hill must shift before you retake it.');
+      else toast('No breath there — that point is suicide.');
+    }
+    return false;
+  }
+  history.push(snapshot());
+  prevKey = key(board);
+  board = sim.board;
+  caps[color] += sim.captures.length;
+  passes = 0; moveNum++; lastMove = i;
+  makeStone(i, color, true);
+  // captures dissolve-glow, then vanish
+  for (var c = 0; c < sim.captures.length; c++){
+    (function(idx){
+      var el = stoneEls[idx];
+      if (!el) return;
+      delete stoneEls[idx];
+      if (RM){ el.remove(); }
+      else{
+        el.classList.add('captured');
+        firefliesAt(idx, 6);
+        setTimeout(function(){ el.remove(); }, 620);
+      }
+    })(sim.captures[c]);
+  }
+  if (sim.captures.length >= 3) toast('Beautiful — ' + sim.captures.length + ' stones off the hill.');
+  setLastMove(i);
+  drawBoard();
+  turn = color === 1 ? 2 : 1;
+  updateHud();
+  return true;
+}
+function afterHumanMove(){
+  if (gameOver) return;
+  if (mode === 'bot' && turn !== human){
+    setButtons(false);
+    setTimeout(function(){
+      if (gameOver) return;
+      var mv = botMove(turn);
+      if (mv < 0) doPass(true);
+      else play(turn, mv, true);
+      setButtons(true);
+    }, 480 + Math.random() * 420);
+  }
+}
+function doPass(byBot){
+  if (gameOver) return;
+  history.push(snapshot());
+  passes++; moveNum++; lastMove = -1; setLastMove(-1);
+  turn = turn === 1 ? 2 : 1;
+  updateHud();
+  if (passes >= 2){ endGame(false); return; }
+  toast(byBot ? 'Coach passes. Your move.' : (turn === 1 ? 'Black to move.' : 'White to move.'));
+  if (mode === 'bot' && !byBot && turn !== human){
+    setButtons(false);
+    setTimeout(function(){
+      if (gameOver) return;
+      var mv = botMove(turn);
+      if (mv < 0) doPass(true);
+      else play(turn, mv, true);
+      setButtons(true);
+    }, 520);
+  }
+}
+function endGame(resigned){
+  gameOver = true;
+  setButtons(true);
+  updateHud();
+  var s = score();
+  var bWin = s.b > s.w;
+  var winner = bWin ? 1 : 2;
+  var humanWon = mode === 'two' ? null : (winner === human);
+  appEl.classList.add('victory');
+  $('vTitle').innerHTML = mode === 'two'
+    ? (bWin ? 'Black <em>rises</em>' : 'White <em>rises</em>')
+    : (humanWon ? 'Sun<em>rise</em>' : 'First light, <em>Coach\'s</em>');
+  var diff = Math.abs(s.b - s.w).toFixed(1);
+  $('vSub').textContent = resigned
+    ? 'Resignation · ' + diff + ' apart'
+    : (humanWon === null ? 'Decided by ' + diff
+      : (humanWon ? 'You held the hill by ' + diff + ', Marine.' : 'Coach took the hill by ' + diff + '. Again at dawn?'));
+  $('vB').textContent = s.b;
+  $('vW').textContent = s.w.toFixed(1);
+  var ov = $('result');
+  ov.classList.add('on');
+  if (!RM){
+    var ps = $('particles'); ps.innerHTML = '';
+    for (var k = 0; k < 12; k++){
+      (function(k){
+        setTimeout(function(){
+          var p = document.createElement('div');
+          p.className = 'vp';
+          p.style.left = (20 + Math.random() * 60) + '%';
+          p.style.top = (30 + Math.random() * 40) + '%';
+          ps.appendChild(p);
+          setTimeout(function(){ p.remove(); }, 1500);
+        }, k * 90);
+      })(k);
+    }
+  }
+}
+
+/* ---------- hint ---------- */
+function hint(){
+  if (gameOver) return;
+  if (mode === 'bot' && turn !== human){ toast('Coach is thinking.'); return; }
+  var mv = botMove(turn);   // same heuristic, your color
+  if (mv < 0){ toast('Coach says: pass. The hill is settled.'); return; }
+  var ring = document.createElement('div');
+  ring.className = 'hint-ring';
+  var d = cell * 1.1;
+  ring.style.width = d + 'px'; ring.style.height = d + 'px';
+  var p = pt(mv);
+  ring.style.left = (p.x - d / 2) + 'px';
+  ring.style.top = (p.y - d / 2) + 'px';
+  if (RM) ring.style.animation = 'none';
+  stonesEl.appendChild(ring);
+  firefliesAt(mv, 14);
+  setTimeout(function(){ ring.remove(); }, 2600);
+}
+
+/* ---------- undo ---------- */
+function undo(){
+  if (gameOver){ toast('Game\'s done — run it back.'); return; }
+  if (!history.length){ toast('Nothing to undo.'); return; }
+  if (mode === 'bot'){
+    // pop until it's the human's turn again
+    var guard = 4;
+    while (history.length && guard-- > 0){
+      restore(history.pop());
+      if (turn === human) break;
+    }
+    toast('Rewound. Take it again.');
+  } else {
+    restore(history.pop());
+    toast('Undone.');
+  }
+  gameOver = false;
+  appEl.classList.remove('victory');
+  $('result').classList.remove('on');
+}
+
+/* ---------- new game ---------- */
+function newGame(){
+  board = new Array(N * N).fill(0);
+  turn = 1; caps = { 1:0, 2:0 }; history = []; prevKey = null;
+  passes = 0; gameOver = false; moveNum = 0; lastMove = -1;
+  appEl.classList.remove('victory');
+  $('result').classList.remove('on');
+  $('menu').classList.remove('on');
+  layout(); renderAll(); setButtons(true);
+  toast('Black to move. Hold the hill.');
+}
+function setButtons(on){
+  var idle = gameOver || (mode === 'bot' && turn !== human);
+  $('btn-undo').disabled = !on;
+  $('btn-hint').disabled = !on;
+  $('btn-pass').disabled = !on;
+  boxEl.style.pointerEvents = (on && !idle) ? 'auto' : (mode === 'bot' && turn !== human ? 'none' : 'auto');
+}
+
+/* ---------- input ---------- */
+function nearestPoint(x, y){
+  var c = Math.round((x - pad) / cell), r = Math.round((y - pad) / cell);
+  if (c < 0 || c >= N || r < 0 || r >= N) return -1;
+  // forgiving snap: within 45% of a cell
+  var px = pad + c * cell, py = pad + r * cell;
+  if (Math.abs(x - px) > cell * 0.45 || Math.abs(y - py) > cell * 0.45) return -1;
+  return r * N + c;
+}
+boxEl.addEventListener('pointerdown', function(e){
+  boxEl.classList.add('touch');
+  if (gameOver) return;
+  if (mode === 'bot' && turn !== human) return;
+  var rect = boxEl.getBoundingClientRect();
+  var i = nearestPoint(e.clientX - rect.left, e.clientY - rect.top);
+  if (i < 0) return;
+  if (play(turn, i, false)) afterHumanMove();
+});
+
+/* ---------- menu ---------- */
+function optRow(rowId, cb){
+  var row = $(rowId);
+  row.addEventListener('click', function(e){
+    var b = e.target.closest('.opt'); if (!b) return;
+    var kids = row.querySelectorAll('.opt');
+    for (var k = 0; k < kids.length; k++) kids[k].classList.remove('sel');
+    b.classList.add('sel');
+    cb(b);
+  });
+}
+optRow('modeRow', function(b){ mode = b.dataset.mode; });
+optRow('sizeRow', function(b){ N = parseInt(b.dataset.size, 10); });
+
+$('btn-start').addEventListener('click', newGame);
+$('btn-again').addEventListener('click', function(){
+  $('result').classList.remove('on');
+  appEl.classList.remove('victory');
+  newGame();
+});
+$('btn-new').addEventListener('click', function(){ $('menu').classList.add('on'); });
+$('btn-rules').addEventListener('click', function(){ $('rules').classList.add('on'); });
+$('btn-rules-close').addEventListener('click', function(){ $('rules').classList.remove('on'); });
+$('btn-pass').addEventListener('click', function(){
+  if (gameOver) return;
+  if (mode === 'bot' && turn !== human) return;
+  doPass(false);
+});
+$('btn-undo').addEventListener('click', undo);
+$('btn-hint').addEventListener('click', hint);
+
+window.addEventListener('resize', layout);
+window.addEventListener('keydown', function(e){
+  if (e.code === 'Enter' && $('menu').classList.contains('on')) newGame();
+});
+layout();
+})();
+</script>
+</body>
+</html>
