@@ -1559,7 +1559,7 @@ to { transform:rotate(17deg); }
 <style>
     /* Turtle, wise owl, and card owl additions */
     .proof-in > div { position:relative; }
-    .proof-turtle { position:absolute; bottom:8px; right:8px; width:40px; opacity:.9; z-index:1; pointer-events:none; }
+    .proof-turtle { position:absolute; bottom:8px; left:8px; width:60px; opacity:.9; z-index:1; pointer-events:none; }
     .proof-turtle svg { display:block; width:100%; height:auto; overflow:visible; }
     .proof-turtle .turtle-head { animation:headForage 7s ease-in-out infinite; transform-origin:73px 28px; }
     .proof-turtle .turtle-leg-front { animation:legF 1.6s ease-in-out infinite; transform-origin:58px 30px; }
@@ -1568,24 +1568,27 @@ to { transform:rotate(17deg); }
     @keyframes legF { 0%,100%{ transform:rotate(6deg);} 50%{ transform:rotate(-6deg);} }
     @keyframes legB { 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
 
-    .honest-owl { position:absolute; top:10px; right:5%; width:56px; z-index:1; pointer-events:none; }
+    .honest-owl { display:flex; gap:10px; align-items:flex-end; position:absolute; top:0; right:5%; z-index:1; pointer-events:none; }
+    .honest-tree { width:84px; animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
+    .honest-tree:nth-child(2){ animation-delay:.7s; }
+    .honest-tree:nth-child(3){ animation-delay:1.4s; }
     .honest-tree svg { display:block; width:100%; height:auto; overflow:visible; }
-    .honest-tree { animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
     @keyframes treeSwayC { 0%,100%{ transform:rotate(0);} 50%{ transform:rotate(1.2deg);} }
-    .owl-wise { position:absolute; top:0; left:50%; transform:translateX(-50%); width:44px; z-index:2; }
+    .owl-wise { position:absolute; top:0; left:50%; transform:translateX(-50%); width:66px; z-index:2; }
     .owl-wise svg, .owl-card svg { display:block; width:100%; height:auto; overflow:visible; }
     .owl-head { transform-origin:50% 62%; animation:owlTurn 5.4s ease-in-out infinite; }
     .owl-eyes { transform-origin:50% 50%; animation:owlBlink 4.2s ease-in-out infinite; }
     @keyframes owlTurn { 0%,100%{ transform:rotate(0);} 28%{ transform:rotate(6deg);} 62%{ transform:rotate(-4deg);} }
     @keyframes owlBlink { 0%,96%,100%{ transform:scaleY(1);} 98%{ transform:scaleY(0.1);} }
 
-    .owl-card { position:absolute; top:-16px; right:10px; width:32px; z-index:2; pointer-events:none; }
+    .owl-card { position:absolute; top:-16px; right:10px; width:64px; z-index:2; pointer-events:none; }
 
-    @media (max-width:680px){ .proof-turtle { width:34px; bottom:6px; right:6px; } }
+    @media (max-width:680px){ .proof-turtle { width:51px; bottom:6px; left:6px; } }
     @media (max-width:720px){
-      .honest-owl { width:48px; right:3%; top:12px; }
-      .owl-wise { width:36px; top:0; }
-      .owl-card { width:28px; top:-12px; right:8px; }
+      .honest-owl { right:3%; top:12px; gap:7px; }
+      .honest-tree { width:48px; }
+      .owl-wise { width:40px; top:0; }
+      .owl-card { width:56px; top:-12px; right:8px; }
     }
   </style>
 
@@ -1752,24 +1755,23 @@ to { transform:rotate(17deg); }
       <span class="clock">Acacia Park · Fullerton · Since 2005</span>
       <span class="next-session" id="next-session">NEXT SESSION: —</span>
       <h1 class="display">
-        <span class="lm" style="--ld:.08s"><span class="lmi">The Best Shape Of Your Life.</span></span>
-        <span class="lm" style="--ld:.22s"><span class="lmi">About $11 A Session.</span></span>
-        <span class="lm" style="--ld:.38s"><span class="lmi"><em>Outdoors In Fullerton Since 2005.</em></span></span>
+        <span class="lm" style="--ld:.08s"><span class="lmi">I Talk Fullerton People Out Of Paying Me</span></span>
+        <span class="lm" style="--ld:.22s"><span class="lmi">$2,400 A Month For A Personal Trainer</span></span>
+        <span class="lm" style="--ld:.38s"><span class="lmi"><em>(And Into An $11-A-Session Plan That Gets Them There Faster)</em></span></span>
       </h1>
-      <p class="sub reveal" style="--rd:.55s">Fifteen coached sessions a week at Acacia Park — show up as often as you want. Same coach since 2005. <strong>Your first week is free. No card, no contract, no sales script.</strong></p>
+      <p class="sub reveal" style="--rd:.55s">Fifteen coached sessions a week at Acacia Park. Same coach since 2005. <strong>Your first week is free — no card, no contract, no sales script.</strong></p>
       <p class="reveal" style="--rd:.7s;margin-top:22px">
         <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week →</a>
       </p>
-      <p class="reveal" style="--rd:.8s;margin-top:12px;font-size:.92rem;opacity:.9">Or text FREE WEEK to (657) 217-0820.</p>
+      <p class="reveal" style="--rd:.8s;margin-top:16px;font-size:.98rem;opacity:.95;max-width:660px;margin-left:auto;margin-right:auto;">Your first week free. Then $197/mo, month-to-month. If you're not in better shape after 30 days, <strong>full refund</strong>. No forms, no retention script.</p>
+      <p class="reveal" style="--rd:.9s;margin-top:12px;font-size:.92rem;opacity:.9">Or text FREE WEEK to (657) 217-0820.</p>
     </div>
 </header>
 
   <!-- ============ PROOF ============ -->
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span></div>
-      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
-      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span>
+      <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span>
         <div class="proof-turtle" aria-hidden="true"><svg viewBox="0 0 90 42" fill="none">
           <g class="turtle-leg-back">
             <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
@@ -1779,7 +1781,7 @@ to { transform:rotate(17deg); }
           </g>
           <g class="turtle-shell">
             <path d="M18 28 L8 26 L16 32 Z" fill="#9FB0C4"/>
-            <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="#14291F"/>
+            <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="var(--day)"/>
             <path d="M46 7 C47 16 46 24 44 30 M46 7 C49 16 50 24 53 30 M26 12 C32 16 34 22 35 29 M66 12 C60 16 58 22 57 29" stroke="#2E5A3F" stroke-width="1.6" fill="none"/>
           </g>
           <g class="turtle-head">
@@ -1788,7 +1790,15 @@ to { transform:rotate(17deg); }
           </g>
         </svg></div>
       </div>
+        
+        
+      
+      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
+      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span>
+      </div>
       <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span></div>
+    </div>
+    
     </div>
     <div class="wild-squirrel sq-proof" aria-hidden="true">
       <span class="sq-inner">
@@ -2111,8 +2121,6 @@ to { transform:rotate(17deg); }
           <li><strong>30-day Love It Or Leave It guarantee.</strong></li>
         </ul>
 
-        <p class="lede-kicker">The guarantee</p>
-        <p>Train thirty days. Not stronger? Not looking forward to the next session? Just not for you? Tell me. Full refund. No forms, no exit interview, no retention specialist reading a script at you.</p>
 
         <p class="lede-kicker">The catch (there's one)</p>
         <p>I cap new Unlimited members at <strong>12 a month.</strong> Small groups are the product — the day I stop capping is the day this stops working. When the spots are gone the waitlist opens, and 5:30 AM always fills first.</p>
@@ -2196,7 +2204,31 @@ to { transform:rotate(17deg); }
   <section class="honest" id="honest" aria-label="Honest filter">
     <div class="wrap" style="padding:50px 24px;">
       <div class="honest-owl" aria-hidden="true">
-      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="var(--pine)">
+        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
+      </g>
+      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
+    </svg></div>
+      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="var(--pine)">
+        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
+      </g>
+      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
+    </svg></div>
+      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g fill="var(--pine)">
         <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
         <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
