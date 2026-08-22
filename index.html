@@ -642,6 +642,7 @@
     .next-session{ display:block; font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; color:var(--gold); margin-top:14px; opacity:.9; }
     .hero h1{ font-size:clamp(3.1rem, 8.6vw, 7.2rem); margin:26px 0 24px; line-height:.98; letter-spacing:-.02em; }
     .hero h1 em{ font-style:italic; color:var(--gold); }
+    .hero h1 .lm-sub .lmi{ font-size:clamp(1.05rem, 2.9vw, 2.4rem); letter-spacing:-.01em; }
     .hero p.sub{ font-size:clamp(1rem, 1.6vw, 1.2rem); color:var(--mist); max-width:620px; margin:0 auto 38px; }
     .hero p.sub strong{ color:#fff; font-weight:600; }
     .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; align-items:center; }
@@ -1568,8 +1569,8 @@ to { transform:rotate(17deg); }
     @keyframes legF { 0%,100%{ transform:rotate(6deg);} 50%{ transform:rotate(-6deg);} }
     @keyframes legB { 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
 
-    .honest-owl { display:flex; gap:10px; align-items:flex-end; position:absolute; top:0; right:5%; z-index:1; pointer-events:none; }
-    .honest-tree { width:84px; animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
+    .honest-owl { display:flex; gap:14px; align-items:flex-end; position:absolute; top:-110px; right:4%; z-index:1; pointer-events:none; }
+    .honest-tree { width:168px; animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
     .honest-tree:nth-child(2){ animation-delay:.7s; }
     .honest-tree:nth-child(3){ animation-delay:1.4s; }
     .honest-tree svg { display:block; width:100%; height:auto; overflow:visible; }
@@ -1585,8 +1586,8 @@ to { transform:rotate(17deg); }
 
     @media (max-width:680px){ .proof-turtle { width:51px; bottom:6px; left:6px; } }
     @media (max-width:720px){
-      .honest-owl { right:3%; top:12px; gap:7px; }
-      .honest-tree { width:48px; }
+      .honest-owl { right:3%; top:-60px; gap:10px; }
+      .honest-tree { width:96px; }
       .owl-wise { width:40px; top:0; }
       .owl-card { width:56px; top:-12px; right:8px; }
     }
@@ -1757,13 +1758,12 @@ to { transform:rotate(17deg); }
       <h1 class="display">
         <span class="lm" style="--ld:.08s"><span class="lmi">I Talk Fullerton People Out Of Paying Me</span></span>
         <span class="lm" style="--ld:.22s"><span class="lmi">$2,400 A Month For A Personal Trainer</span></span>
-        <span class="lm" style="--ld:.38s"><span class="lmi"><em>(And Into An $11-A-Session Plan That Gets Them There Faster)</em></span></span>
+        <span class="lm lm-sub" style="--ld:.38s"><span class="lmi"><em>(And Into An $11-A-Session Plan That Gets Them There Faster)</em></span></span>
       </h1>
       <p class="sub reveal" style="--rd:.55s">Fifteen coached sessions a week at Acacia Park. Same coach since 2005. <strong>Your first week is free — no card, no contract, no sales script.</strong></p>
       <p class="reveal" style="--rd:.7s;margin-top:22px">
         <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week →</a>
       </p>
-      <p class="reveal" style="--rd:.8s;margin-top:16px;font-size:.98rem;opacity:.95;max-width:660px;margin-left:auto;margin-right:auto;">Your first week free. Then $197/mo, month-to-month. If you're not in better shape after 30 days, <strong>full refund</strong>. No forms, no retention script.</p>
       <p class="reveal" style="--rd:.9s;margin-top:12px;font-size:.92rem;opacity:.9">Or text FREE WEEK to (657) 217-0820.</p>
     </div>
 </header>
@@ -1772,6 +1772,13 @@ to { transform:rotate(17deg); }
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
       <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span>
+        
+      </div>
+        
+        
+      
+      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
+      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span>
         <div class="proof-turtle" aria-hidden="true"><svg viewBox="0 0 90 42" fill="none">
           <g class="turtle-leg-back">
             <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
@@ -1790,17 +1797,8 @@ to { transform:rotate(17deg); }
           </g>
         </svg></div>
       </div>
-        
-        
-      
-      <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
-      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span>
-      </div>
-      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span></div>
-    </div>
-    
-    </div>
-    <div class="wild-squirrel sq-proof" aria-hidden="true">
+      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span>
+        <div class="wild-squirrel sq-proof" aria-hidden="true">
       <span class="sq-inner">
         <svg viewBox="0 0 52 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g class="sq-tail">
@@ -1815,6 +1813,9 @@ to { transform:rotate(17deg); }
         </svg>
       </span>
     </div>
+      </div>
+    </div>
+    
   </div>
 
   <!-- ============ MARQUEE ============ -->
@@ -2121,6 +2122,9 @@ to { transform:rotate(17deg); }
           <li><strong>30-day Love It Or Leave It guarantee.</strong></li>
         </ul>
 
+        <p class="lede-kicker">The guarantee</p>
+        <p>Train thirty days. Not stronger? Not looking forward to the next session? Just not for you? Tell me. Full refund. No forms, no exit interview, no retention specialist reading a script at you.</p>
+
 
         <p class="lede-kicker">The catch (there's one)</p>
         <p>I cap new Unlimited members at <strong>12 a month.</strong> Small groups are the product — the day I stop capping is the day this stops working. When the spots are gone the waitlist opens, and 5:30 AM always fills first.</p>
@@ -2204,7 +2208,7 @@ to { transform:rotate(17deg); }
   <section class="honest" id="honest" aria-label="Honest filter">
     <div class="wrap" style="padding:50px 24px;">
       <div class="honest-owl" aria-hidden="true">
-      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="honest-tree"><svg viewBox="0 0 100 179" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g fill="var(--pine)">
         <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
         <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
@@ -2216,7 +2220,7 @@ to { transform:rotate(17deg); }
       <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
       <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
     </svg></div>
-      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="honest-tree"><svg viewBox="0 0 100 179" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g fill="var(--pine)">
         <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
         <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
@@ -2228,7 +2232,7 @@ to { transform:rotate(17deg); }
       <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
       <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
     </svg></div>
-      <div class="honest-tree"><svg viewBox="0 0 100 218" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="honest-tree"><svg viewBox="0 0 100 179" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g fill="var(--pine)">
         <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
         <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
