@@ -491,7 +491,7 @@ function launch(vx, vy){
   player.air = 0.38;
   player.squash = 1.18;
   ball = {
-    x: player.x + 10, y: player.y - 108, vx: vx, vy: vy, r: 11.5,
+    x: player.x + 10, y: player.y - 128, vx: vx, vy: vy, r: 11.5,
     touchedRim: false, touchedBoard: false, wasAbove: false, scored: false, spin: 0,
     squash: 1, pending: null
   };
@@ -873,28 +873,63 @@ function drawPlayer(){
   var lift = player.air > 0 ? Math.sin((player.air / 0.38) * Math.PI) * 16 : 0;
   ctx.save(); ctx.translate(x, y - lift);
   ctx.scale(2 - player.squash, player.squash);
-  ctx.fillStyle = C.ink;
   var crouch = shooting ? 0 : Math.sin(player.phase) * 1.5;
   ctx.translate(0, crouch);
-  capsule(-13, -34, 9, 34);
-  capsule(5, -34, 9, 34);
-  capsule(-13, -64, 26, 34);
-  ctx.beginPath(); ctx.arc(1, -74, 8, 0, Math.PI*2); ctx.fill();
+
+  // stance: left slightly back, right slightly forward
+  var lHip = -10, rHip = 8;
+  var lFoot = shooting ? -11 : -16;
+  var rFoot = shooting ? 10 : 14;
+
+  // feet
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.ellipse(lFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(rFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
+
+  // calves
+  capsule(lFoot, -28, 8, 26);
+  capsule(rFoot, -28, 8, 26);
+
+  // thighs
+  capsule(lHip, -52, 10, 28);
+  capsule(rHip, -52, 10, 28);
+
+  // shorts / hips
+  ctx.fillStyle = C.ink;
+  capsule(-14, -64, 28, 16);
+
+  // jersey torso — narrower waist, wider chest
+  ctx.fillStyle = C.dawn;
+  capsule(-12, -96, 24, 36);
+  ctx.fillStyle = C.day;
+  ctx.fillRect(-2, -90, 4, 22); // stripe so it reads as a kit, not a blob
+
+  // neck + head
+  ctx.fillStyle = '#C4A07A';
+  capsule(-3, -108, 6, 12);
+  ctx.beginPath(); ctx.arc(0, -118, 11, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(-4, -120, 1.6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(4, -120, 1.6, 0, Math.PI*2); ctx.fill();
+
+  // arms
+  ctx.fillStyle = '#C4A07A';
   if (shooting){
-    ctx.save(); ctx.translate(6, -60); ctx.rotate(-1.18); capsule(-3, -26, 7, 26); ctx.restore();
-    ctx.save(); ctx.translate(-6, -60); ctx.rotate(-0.9); capsule(-3, -24, 7, 24); ctx.restore();
+    ctx.save(); ctx.translate(8, -88); ctx.rotate(-1.18); capsule(-3, -28, 7, 28); ctx.restore();
+    ctx.save(); ctx.translate(-8, -88); ctx.rotate(-0.92); capsule(-3, -26, 7, 26); ctx.restore();
   } else {
-    ctx.save(); ctx.translate(7, -58); ctx.rotate(0.5); capsule(-3, 0, 7, 20); ctx.restore();
-    ctx.save(); ctx.translate(-7, -58); ctx.rotate(-0.5); capsule(-3, 0, 7, 20); ctx.restore();
+    ctx.save(); ctx.translate(10, -86); ctx.rotate(0.42); capsule(-3, 0, 7, 24); ctx.restore();
+    ctx.save(); ctx.translate(-10, -86); ctx.rotate(-0.42); capsule(-3, 0, 7, 24); ctx.restore();
     if (resolved && STATE === 'play'){
       ctx.fillStyle = C.dawn;
-      ctx.beginPath(); ctx.arc(0, -44, 11, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, -58, 11, 0, Math.PI*2); ctx.fill();
       ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.arc(0, -44, 11, 0, Math.PI*2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-11, -44); ctx.lineTo(11, -44);
-      ctx.moveTo(0, -55); ctx.lineTo(0, -33); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, -58, 11, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-11, -58); ctx.lineTo(11, -58);
+      ctx.moveTo(0, -69); ctx.lineTo(0, -47); ctx.stroke();
     }
   }
+
   ctx.restore();
   ctx.fillStyle = 'rgba(20,16,10,0.18)';
   ctx.beginPath(); ctx.ellipse(x, GROUND + 5, 26 - lift * 0.4, 4, 0, 0, Math.PI*2); ctx.fill();
@@ -969,7 +1004,7 @@ function drawAim(){
   var sp = Math.sqrt(vx*vx + vy*vy), max = 1980;
   if (sp > max){ vx *= max/sp; vy *= max/sp; }
   if (vy > -280) vy = -280;
-  var x = player.x + 10, y = player.y - 108, t = 0;
+  var x = player.x + 10, y = player.y - 128, t = 0;
   ctx.fillStyle = C.gold;
   for (var i = 0; i < 18; i++){
     t += 0.065;
