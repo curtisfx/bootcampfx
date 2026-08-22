@@ -654,9 +654,9 @@
     /* Soaring egret — crosses the pre-dawn sky on a loop */
     .egret{ position:absolute; top:0; left:0; z-index:2; pointer-events:none; animation:egretFly 34s linear 2s infinite; animation-fill-mode:backwards; will-change:transform; width:200px; height:180px; display:flex; align-items:center; justify-content:center; }
     .egret-bob{ animation:egretBob 4.6s ease-in-out infinite; }
-    .egret svg{ width:150px; height:auto; filter:drop-shadow(0 2px 6px rgba(15,27,44,.35)); transform:scaleX(-1); overflow:visible; }
-    .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.05s ease-in-out infinite alternate; }
-    .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.05s ease-in-out infinite alternate-reverse; }
+    .egret svg{ width:150px; height:auto; filter:drop-shadow(0 1px 3px rgba(15,27,44,.22)); transform:scaleX(-1); overflow:visible; }
+    .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.26s linear infinite; }
+    .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.26s linear infinite; }
     @keyframes egretFly{
       0%   { transform:translate(-18vw, calc(17vh + 12px - 75px)) rotate(0deg); opacity:0; }
       4%   { opacity:1; }
@@ -667,8 +667,28 @@
       100% { transform:translate(118vw, calc(10vh + 12px - 75px)) rotate(0deg); opacity:0; }
     }
     @keyframes egretBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
-    @keyframes wingFlapT{ from{ transform:rotate(16deg); } to{ transform:rotate(-24deg); } }
-    @keyframes wingFlapB{ from{ transform:rotate(-18deg); } to{ transform:rotate(20deg); } }
+    @keyframes wingFlapT{
+      0%    { transform:rotate(0deg); }
+      12.5% { transform:rotate(8.5deg); }
+      25%   { transform:rotate(12deg); }
+      37.5% { transform:rotate(8.5deg); }
+      50%   { transform:rotate(0deg); }
+      62.5% { transform:rotate(-8.5deg); }
+      75%   { transform:rotate(-12deg); }
+      87.5% { transform:rotate(-8.5deg); }
+      100%  { transform:rotate(0deg); }
+    }
+    @keyframes wingFlapB{
+      0%    { transform:rotate(0deg); }
+      12.5% { transform:rotate(-8.5deg); }
+      25%   { transform:rotate(-12deg); }
+      37.5% { transform:rotate(-8.5deg); }
+      50%   { transform:rotate(0deg); }
+      62.5% { transform:rotate(8.5deg); }
+      75%   { transform:rotate(12deg); }
+      87.5% { transform:rotate(8.5deg); }
+      100%  { transform:rotate(0deg); }
+    }
 
     /* Waddling ducks — along the grass line, one trailing the other */
     .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; animation-play-state:paused; }
@@ -741,7 +761,7 @@
       animation-play-state:paused;
       pointer-events:none;
       will-change:transform, opacity;
-      color:rgba(255,255,255,0.62);
+      color:rgba(159,176,196,0.5);
     }
     .cloud-drift.early {
       opacity:var(--early-opacity, 0.66);
@@ -756,7 +776,7 @@
     .outside .cloud-drift,
     .freeweek .cloud-drift { color:rgba(20,16,10,0.06); }
     .cloud-drift svg { display:block; width:100%; height:auto; overflow:visible; }
-    .cloud-drift ellipse { fill:currentColor; }
+    .cloud-drift circle { fill:currentColor; }
     .live .cloud-drift:not(.early) { animation-play-state:running; }
     .live .cloud-drift.early { animation-play-state:running; }
     @keyframes cloudDrift {
@@ -1658,35 +1678,35 @@ to { transform:rotate(17deg); }
     <!-- Clouds — grouped, varied, organic -->
     <div class="cloud-drift early" aria-hidden="true" style="--size:260px;--top:7%;--delay:0s;--duration:68s;--start:22vw;">
       <svg viewBox="0 0 200 80">
-        <ellipse cx="100" cy="48" rx="82" ry="26"/>
-        <ellipse cx="64" cy="38" rx="46" ry="32"/>
-        <ellipse cx="138" cy="34" rx="52" ry="36"/>
-        <ellipse cx="26" cy="48" rx="22" ry="14"/>
-        <ellipse cx="178" cy="46" rx="20" ry="15"/>
+        <circle cx="100" cy="50" r="26"/>
+        <circle cx="48" cy="56" r="20"/>
+        <circle cx="152" cy="54" r="22"/>
+        <circle cx="14" cy="62" r="14"/>
+        <circle cx="186" cy="60" r="14"/>
       </svg>
     </div>
     <div class="cloud-drift early" aria-hidden="true" style="--size:160px;--top:18%;--delay:0s;--duration:58s;--start:64vw;">
       <svg viewBox="0 0 200 80">
-        <ellipse cx="102" cy="50" rx="74" ry="22"/>
-        <ellipse cx="58" cy="40" rx="40" ry="28"/>
-        <ellipse cx="146" cy="42" rx="40" ry="26"/>
-        <ellipse cx="168" cy="52" rx="18" ry="12"/>
+        <circle cx="102" cy="48" r="24"/>
+        <circle cx="58" cy="54" r="18"/>
+        <circle cx="146" cy="52" r="20"/>
+        <circle cx="172" cy="60" r="12"/>
       </svg>
     </div>
     <div class="cloud-drift" aria-hidden="true" style="--size:340px;--top:4%;--delay:38s;--duration:78s;">
       <svg viewBox="0 0 240 100">
-        <ellipse cx="120" cy="58" rx="96" ry="34"/>
-        <ellipse cx="68" cy="46" rx="56" ry="42"/>
-        <ellipse cx="172" cy="44" rx="62" ry="44"/>
-        <ellipse cx="28" cy="58" rx="26" ry="18"/>
-        <ellipse cx="214" cy="56" rx="24" ry="18"/>
+        <circle cx="120" cy="58" r="34"/>
+        <circle cx="68" cy="66" r="26"/>
+        <circle cx="172" cy="64" r="28"/>
+        <circle cx="26" cy="74" r="18"/>
+        <circle cx="214" cy="72" r="20"/>
       </svg>
     </div>
     <div class="cloud-drift" aria-hidden="true" style="--size:120px;--top:24%;--delay:50s;--duration:52s;">
       <svg viewBox="0 0 200 80">
-        <ellipse cx="100" cy="50" rx="60" ry="18"/>
-        <ellipse cx="58" cy="44" rx="34" ry="22"/>
-        <ellipse cx="140" cy="44" rx="34" ry="22"/>
+        <circle cx="100" cy="52" r="22"/>
+        <circle cx="58" cy="58" r="16"/>
+        <circle cx="140" cy="56" r="18"/>
       </svg>
     </div>
 
