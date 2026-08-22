@@ -230,7 +230,7 @@ function initDecor(){
   var i;
   for (i = 0; i < 12; i++) trees.push({ x: rnd(0, W), s: rnd(0.4, 0.9) });
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.34), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
-  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false };
+  egret = { x: W + 200, y: H * 0.2, s: 0.42, fl: 0, active: false };
   squirrel = { x: W * 0.5, hp: 0 };
 }
 function tickDecor(dt){
@@ -242,10 +242,10 @@ function tickDecor(dt){
     if (cl.x > W + 160){ cl.x = -rnd(0,120) - 80; }
   }
   if (egret){
-    if (!egret.active && Math.random() < dt * 0.04){ egret.active = true; egret.x = -180; egret.y = rnd(H*0.1, H*0.3); }
+    if (!egret.active && Math.random() < dt * 0.04){ egret.active = true; egret.x = W + 180; egret.y = rnd(H*0.1, H*0.3); }
     if (egret.active){
-      egret.x += 90 * dt; egret.fl += dt * 5;
-      if (egret.x > W + 200) egret.active = false;
+      egret.x -= 90 * dt; egret.fl += dt * 5;
+      if (egret.x < -200) egret.active = false;
     }
   }
   if (squirrel) squirrel.hp += dt * 6;
