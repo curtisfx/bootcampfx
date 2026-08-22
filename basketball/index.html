@@ -1038,10 +1038,6 @@ function draw(){
   ctx.fillRect(0, GROUND, W, H - GROUND);
   ctx.fillStyle = 'rgba(232,147,58,0.55)';
   ctx.fillRect(0, GROUND, W, 3);
-  ctx.strokeStyle = 'rgba(243,236,220,0.16)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(hoop.x, GROUND, 118, Math.PI, Math.PI * 2, false); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(hoop.x - 62, GROUND + 2); ctx.lineTo(hoop.x - 62, GROUND + 50);
-  ctx.moveTo(hoop.x + 62, GROUND + 2); ctx.lineTo(hoop.x + 62, GROUND + 50); ctx.stroke();
 
   for (var fi = 0; fi < fireflies.length; fi++){
     var ff = fireflies[fi];
