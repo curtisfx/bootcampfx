@@ -881,8 +881,10 @@ function drawPlayer(){
   var lFoot = shooting ? -11 : -16;
   var rFoot = shooting ? 10 : 14;
 
-  // feet
+  // plain ink silhouette — matches the homepage figures
   ctx.fillStyle = C.ink;
+
+  // feet
   ctx.beginPath(); ctx.ellipse(lFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.ellipse(rFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
 
@@ -895,25 +897,16 @@ function drawPlayer(){
   capsule(rHip, -52, 10, 28);
 
   // shorts / hips
-  ctx.fillStyle = C.ink;
   capsule(-14, -64, 28, 16);
 
-  // jersey torso — narrower waist, wider chest
-  ctx.fillStyle = C.dawn;
+  // torso
   capsule(-12, -96, 24, 36);
-  ctx.fillStyle = C.day;
-  ctx.fillRect(-2, -90, 4, 22); // stripe so it reads as a kit, not a blob
 
   // neck + head
-  ctx.fillStyle = '#C4A07A';
   capsule(-3, -108, 6, 12);
   ctx.beginPath(); ctx.arc(0, -118, 11, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = C.ink;
-  ctx.beginPath(); ctx.arc(-4, -120, 1.6, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(4, -120, 1.6, 0, Math.PI*2); ctx.fill();
 
   // arms
-  ctx.fillStyle = '#C4A07A';
   if (shooting){
     ctx.save(); ctx.translate(8, -88); ctx.rotate(-1.18); capsule(-3, -28, 7, 28); ctx.restore();
     ctx.save(); ctx.translate(-8, -88); ctx.rotate(-0.92); capsule(-3, -26, 7, 26); ctx.restore();
@@ -921,6 +914,7 @@ function drawPlayer(){
     ctx.save(); ctx.translate(10, -86); ctx.rotate(0.42); capsule(-3, 0, 7, 24); ctx.restore();
     ctx.save(); ctx.translate(-10, -86); ctx.rotate(-0.42); capsule(-3, 0, 7, 24); ctx.restore();
     if (resolved && STATE === 'play'){
+      // held basketball stays dawn — it's the ball
       ctx.fillStyle = C.dawn;
       ctx.beginPath(); ctx.arc(0, -58, 11, 0, Math.PI*2); ctx.fill();
       ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
