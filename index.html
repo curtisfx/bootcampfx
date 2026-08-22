@@ -1363,13 +1363,20 @@
     .live .wild-squirrel .sq-inner,
     .live .wild-squirrel .sq-tail { animation-play-state:running; }
     .sq-proof { right:4%; bottom:8px; width:38px; }
-    .sq-proof .sq-inner { animation:sqScamperEnter 8s var(--ease) .8s forwards, sqBob 2.8s ease-in-out 8.8s infinite; }
-    .sq-proof .sq-tail { animation:sqTailFlick 3.4s ease-in-out 1.2s infinite; }
-    @keyframes sqScamperEnter {
-      0% { transform:translateX(150%) translateY(0); opacity:0; }
-      10% { opacity:1; }
-      45% { transform:translateX(0) translateY(-10px); }
-      60% { transform:translateX(0) translateY(0); }
+    .sq-proof .sq-inner { animation:sqDartEnter 7.5s var(--ease) .4s both, sqBob 2.8s ease-in-out 7.9s infinite; animation-play-state:paused; }
+    .sq-proof .sq-tail { animation:sqTailFlick 3.4s ease-in-out 1.2s infinite; animation-play-state:paused; }
+    @keyframes sqDartEnter {
+      0%   { transform:translateX(140%) translateY(0); opacity:0; }
+      6%   { opacity:1; }
+      14%  { transform:translateX(95%) translateY(-8px); }
+      20%  { transform:translateX(102%) translateY(0); }
+      30%  { transform:translateX(60%) translateY(-12px); }
+      36%  { transform:translateX(66%) translateY(0); }
+      46%  { transform:translateX(30%) translateY(-9px); }
+      52%  { transform:translateX(35%) translateY(0); }
+      62%  { transform:translateX(10%) translateY(-14px); }
+      70%  { transform:translateX(14%) translateY(0); }
+      82%  { transform:translateX(2%) translateY(-6px); }
       100% { transform:translateX(0) translateY(0); opacity:1; }
     }
     @keyframes sqBob {
@@ -1452,7 +1459,7 @@ to { transform:rotate(17deg); }
 
     .heron .hr-stalk {
       transform-origin: 50% 88%;
-      animation: heronBob 3s ease-in-out 2s infinite alternate;
+      animation: heronBob 1.9s ease-in-out 2s infinite alternate;
       animation-play-state: paused;
     }
     .live .heron .hr-stalk { animation-play-state: running; }
@@ -1510,14 +1517,20 @@ to { transform:rotate(17deg); }
     }
 
     @keyframes heronWalkFront {
-      0% { transform: rotate(0deg) translateY(0); }
-      50% { transform: rotate(14deg) translateY(-2px); }
+      0%   { transform: rotate(0deg) translateY(0); }
+      18%  { transform: rotate(6deg) translateY(-3px); }
+      38%  { transform: rotate(20deg) translateY(-5px); }
+      58%  { transform: rotate(8deg) translateY(-2px); }
+      75%  { transform: rotate(-6deg) translateY(0); }
       100% { transform: rotate(0deg) translateY(0); }
     }
 
     @keyframes heronWalkRear {
-      0% { transform: rotate(0deg) translateY(0); }
-      50% { transform: rotate(-14deg) translateY(-2px); }
+      0%   { transform: rotate(0deg) translateY(0); }
+      18%  { transform: rotate(-6deg) translateY(-3px); }
+      38%  { transform: rotate(-20deg) translateY(-5px); }
+      58%  { transform: rotate(-8deg) translateY(-2px); }
+      75%  { transform: rotate(6deg) translateY(0); }
       100% { transform: rotate(0deg) translateY(0); }
     }
 
@@ -1580,7 +1593,8 @@ to { transform:rotate(17deg); }
 <style>
     /* Turtle, wise owl, and card owl additions */
     .proof-in > div { position:relative; }
-    .proof-turtle { position:absolute; bottom:8px; left:8px; width:60px; opacity:.9; z-index:1; pointer-events:none; }
+    .proof-turtle { position:absolute; bottom:8px; left:8px; width:60px; opacity:.9; z-index:1; pointer-events:none; animation:turtleWalkIn 9s var(--ease) .2s both; animation-play-state:paused; }
+    .live .proof-turtle { animation-play-state:running; }
     .proof-turtle svg { display:block; width:100%; height:auto; overflow:visible; }
     .proof-turtle .turtle-head { animation:headForage 7s ease-in-out infinite; transform-origin:73px 28px; }
     .proof-turtle .turtle-leg-front { animation:legF 1.6s ease-in-out infinite; transform-origin:58px 30px; }
@@ -1588,6 +1602,14 @@ to { transform:rotate(17deg); }
     @keyframes headForage { 0%,70%,100%{ transform:rotate(0);} 78%,92%{ transform:rotate(9deg) translateY(2px);} }
     @keyframes legF { 0%,100%{ transform:rotate(6deg);} 50%{ transform:rotate(-6deg);} }
     @keyframes legB { 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
+    @keyframes turtleWalkIn {
+      0%   { transform:translateX(-70vw) translateY(0); opacity:0; }
+      5%   { opacity:1; }
+      30%  { transform:translateX(-40vw) translateY(-2px); }
+      55%  { transform:translateX(-18vw) translateY(0); }
+      80%  { transform:translateX(-4vw) translateY(-1px); }
+      100% { transform:translateX(0) translateY(0); opacity:.9; }
+    }
 
     .honest-owl { display:flex; gap:14px; align-items:flex-end; position:absolute; top:-110px; right:4%; z-index:1; pointer-events:none; margin-bottom:12px; }
     .honest-tree { width:100px; animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
@@ -1604,12 +1626,20 @@ to { transform:rotate(17deg); }
 
     .owl-card { position:absolute; top:-16px; right:10px; width:64px; z-index:2; pointer-events:none; }
 
+    .members-owl { display:flex; gap:12px; align-items:flex-end; position:absolute; bottom:6px; left:4%; z-index:1; pointer-events:none; }
+    .members-owl .honest-tree { width:80px; }
+    .members-owl .owl-ground { width:44px; }
+    .members-owl .owl-ground svg { display:block; width:100%; height:auto; overflow:visible; }
+
     @media (max-width:680px){ .proof-turtle { width:51px; bottom:6px; left:6px; } }
     @media (max-width:920px){
       .honest-owl { right:3%; top:-90px; gap:10px; }
       .honest-tree { width:80px; }
       .owl-wise { width:40px; top:0; }
       .owl-card { width:56px; top:-12px; right:8px; }
+      .members-owl { left:2%; bottom:4px; gap:8px; }
+      .members-owl .honest-tree { width:55px; }
+      .members-owl .owl-ground { width:34px; }
     }
   </style>
 
@@ -2218,9 +2248,53 @@ to { transform:rotate(17deg); }
       </div>
       <p class="m-more reveal">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener">Read all 30+ five-star reviews on Google →</a></p>
 
-    <!-- Members trees -->
-    
-    
+    <!-- Members trees + ground owl -->
+    <div class="members-owl" aria-hidden="true">
+      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="var(--pine)">
+        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
+      </g>
+      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
+    </svg></div>
+      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="var(--pine)">
+        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
+      </g>
+      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
+    </svg></div>
+      <div class="owl owl-ground"><svg viewBox="0 0 64 88" fill="none">
+      <path d="M4 78 L60 78" stroke="#6B5B4F" stroke-width="3.5" stroke-linecap="round"/>
+      <g class="owl-head">
+        <ellipse cx="32" cy="54" rx="18" ry="24" fill="#9FB0C4"/>
+        <circle cx="32" cy="30" r="17" fill="#9FB0C4"/>
+        <path d="M19 17 L14 3 L22 15 Z" fill="#9FB0C4"/>
+        <path d="M45 17 L50 3 L42 15 Z" fill="#9FB0C4"/>
+        <g class="owl-eyes">
+          <circle cx="25" cy="28" r="6" fill="#F3ECDC"/>
+          <circle cx="39" cy="28" r="6" fill="#F3ECDC"/>
+          <circle cx="25" cy="28" r="2.2" fill="#14100A"/>
+          <circle cx="39" cy="28" r="2.2" fill="#14100A"/>
+        </g>
+        <path d="M32 33 L28 40 L32 38 L36 40 Z" fill="var(--dawn)"/>
+        <path d="M16 40 C12 50 12 62 18 66 L18 44 Z" fill="#7A8A9A"/>
+        <path d="M48 40 C52 50 52 62 46 66 L46 44 Z" fill="#7A8A9A"/>
+        <path d="M24 74 L24 80 M22 74 L22 80 M26 74 L26 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M40 74 L40 80 M38 74 L38 80 M42 74 L42 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+    </svg></div>
+    </div>
     </div>
   </section>
 
@@ -2330,7 +2404,7 @@ to { transform:rotate(17deg); }
         <h2 class="display">Your first week is <em>free.</em></h2>
         <p>No credit card, no contract, no sales script — there's nothing to reverse because there's nothing to charge. Come train with us for a week: meet the crew, feel the coaching, see the park at sunrise. If it's not for you, you've lost nothing but a few early mornings. If it is, you'll wonder why you waited. <span class="hl-in">Same offer for 21 years, because the sessions do the selling.</span></p>
         <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a>
-        <p class="fw-fine">Prefer a form? <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">Use the free week form</a> · or text FREE WEEK to (657) 217-0820.</p>
+
       </div>
 
     <!-- Freeweek rabbit -->
