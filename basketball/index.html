@@ -262,7 +262,12 @@ var lastKind = '—';
 
 var player = { x: 0, y: 0 };
 var OWL_CX = 35;          /* canvas x-offset of owl body center from player.x (viewBox 32 × scale 1.1) */
-var OWL_LAUNCH_Y = 42;    /* ball launches from just above the owl's body (canvas y above GROUND) */
+var OWL_LAUNCH_Y = 65;    /* ball rest + launch: one full ball diameter (2×r=23) below the old 42 */
+var OWL_HIT_R = 55;       /* generous drag hit radius around owl body center */
+var owlDrag = null;       /* { offX, offY } active drag offset */
+var owlAir = false;       /* airborne after mid-air release */
+var owlFlapT = 0;         /* wing flap phase accumulator */
+var owlVy = 0;            /* airborne descent velocity */
 function placePlayer(){
   if (!player.x) player.x = Math.max(70, W * 0.22);
   player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
@@ -305,7 +310,7 @@ function initDecor(){
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
   egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1 };
-  squirrel = { x: W * 0.48, hp: 0 };
+  squirrel = { x: W * 0.74, hp: 0 };
 }
 
 function tickDecor(dt){
@@ -330,7 +335,7 @@ function tickDecor(dt){
       if ((egret.dir > 0 && egret.x > W + 200) || (egret.dir < 0 && egret.x < -200)) egret.active = false;
     }
   }
-  if (squirrel) squirrel.hp += dt * 6;
+  if (squirrel) squirrel.hp += dt * 2.2;
   for (i = 0; i < fireflies.length; i++){
     var f = fireflies[i];
     f.p += dt * f.s;
@@ -460,12 +465,26 @@ muteBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(
 var swipe = null;
 function onDown(x, y){
   if (STATE === 'over'){ startGame(); return; }
-  if (STATE !== 'play' || !resolved) return;
+  if (STATE !== 'play') return;
+  // generous hit area on the owl → drag mode (reposition only, never shoots)
+  var cx = player.x + OWL_CX, cy = player.y - 40;
+  var hx = x - cx, hy = y - cy;
+  if (hx*hx + hy*hy <= OWL_HIT_R * OWL_HIT_R){
+    owlDrag = { offX: player.x - x, offY: player.y - y };
+    return;
+  }
+  if (!resolved) return;
   if (ball && ball.returning) return;
   swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false };
   sfx('flick');
 }
 function onMove(x, y){
+  if (owlDrag){
+    var nx = x + owlDrag.offX, ny = y + owlDrag.offY;
+    player.x = Math.max(56, Math.min(hoop.x - 90, nx));
+    player.y = Math.max(H * 0.12, Math.min(GROUND, ny));
+    return;
+  }
   if (!swipe) return;
   swipe.x = x; swipe.y = y;
   var dx = x - swipe.x0, dy = y - swipe.y0;
@@ -475,6 +494,16 @@ function onMove(x, y){
   }
 }
 function onUp(){
+  if (owlDrag){
+    owlDrag = null;
+    // released above the ground plane → airborne state: wings extend + gentle flap
+    if (player.y < GROUND - 10){
+      owlAir = true;
+      owlFlapT = 0;
+      owlVy = 0;
+    }
+    return; // drag never shoots
+  }
   if (!swipe) return;
   var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
   var dt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
@@ -729,6 +758,7 @@ function startGame(){
   makes = 0; swishes = 0; banks = 0; rims = 0;
   particles = []; pops = []; ball = null; trail = [];
   resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
+  owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; swipe = null;
   lastKind = '—';
   appEl.classList.remove('golden');
   appEl.style.setProperty('--clearance', 0);
@@ -804,6 +834,20 @@ function update(dt){
   tickParticles(dt);
   hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
 
+  // airborne owl: wings flap, slow descent to ground, then resume loiter
+  if (owlAir){
+    owlFlapT += dt;
+    owlVy += 140 * dt;
+    if (owlVy > 120) owlVy = 120;
+    player.y = Math.min(GROUND, player.y + owlVy * dt);
+    if (player.y >= GROUND){
+      player.y = GROUND;
+      owlAir = false;
+      owlVy = 0;
+      dust(player.x + OWL_CX, GROUND);
+    }
+  }
+
   var spd = 220;
   if (STATE === 'play' && resolved){
     if (keys.a) player.x -= spd * dt;
@@ -863,14 +907,23 @@ function drawEgret(e){
   p([[54,36],[46,30],[40,30],[36,24],[33,19],[36,14],[41,15],[45,16],[45,20],[43,23],[46,27],[52,29],[58,33]]);
   ctx.fillStyle = C.dawn; p([[38,17],[18,21],[37,23]]);
   ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(39.5, 18.5, 1.3, 0, Math.PI*2); ctx.fill();
+  // Wings perpendicular to the horizontal body — matches the homepage egret:
+  // wing-t above (62,34 → up to y≈-16), wing-b below (62,36 → down to y≈84),
+  // each rotating around its own shoulder joint (opposite signs = true flap).
   ctx.fillStyle = C.day2;
   ctx.save(); ctx.translate(62, 34); ctx.rotate(-flap * Math.PI / 180); ctx.translate(-62, -34);
-  p([[62,34],[44,26],[24,12],[8,-6],[30,-2],[52,10],[68,28]]);
-  ctx.restore(); ctx.restore();
+  p([[62,34],[50,22],[52,4],[62,-16],[72,-8],[82,6],[80,30]]);
+  ctx.restore();
+  ctx.fillStyle = '#C9D4E2'; ctx.globalAlpha = 0.85;
+  ctx.save(); ctx.translate(62, 36); ctx.rotate(flap * Math.PI / 180); ctx.translate(-62, -36);
+  p([[62,36],[50,46],[52,64],[62,84],[72,76],[82,62],[80,38]]);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+  ctx.restore();
 }
 function drawSquirrel(s){
   ctx.save(); ctx.translate(s.x, GROUND + 2); ctx.scale(0.8, 0.8);
-  var hop = Math.abs(Math.sin(s.hp)) * -5; ctx.translate(0, hop);
+  var hop = Math.abs(Math.sin(s.hp)) * -2; ctx.translate(0, hop);
   ctx.fillStyle = C.dawn; ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#D07F2E'; ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = C.dawn;
@@ -941,6 +994,21 @@ function drawOwl(){
   ctx.fillStyle = C.dawn;
   poly([[32,29],[28,36],[32,34],[36,36]]);
 
+  // wings — same paths as homepage owl (left M16.., right M48..). Independently animated.
+  // Grounded: subtle idle rock. Airborne: extended outward + slow gentle flap.
+  var flap = owlAir ? Math.sin(owlFlapT * 2.4) * 16 : Math.sin(now * 1.3) * 2.4;
+  ctx.fillStyle = '#7A8A9A';
+  // left wing
+  ctx.save();
+  ctx.translate(16, 36); ctx.rotate(-flap * Math.PI / 180); ctx.translate(-16, -36);
+  ctx.beginPath(); ctx.moveTo(16, 36); ctx.bezierCurveTo(12, 46, 12, 58, 18, 62); ctx.lineTo(18, 40); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  // right wing
+  ctx.save();
+  ctx.translate(48, 36); ctx.rotate(flap * Math.PI / 180); ctx.translate(-48, -36);
+  ctx.beginPath(); ctx.moveTo(48, 36); ctx.bezierCurveTo(52, 46, 52, 58, 46, 62); ctx.lineTo(46, 40); ctx.closePath(); ctx.fill();
+  ctx.restore();
+
   // feet (dawn strokes) — no arms, per brief
   ctx.strokeStyle = C.dawn; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
   ctx.beginPath();
@@ -964,9 +1032,12 @@ function drawOwl(){
     ctx.moveTo(bx, by - 11); ctx.lineTo(bx, by + 11); ctx.stroke();
   }
 
-  // ground shadow
-  ctx.fillStyle = 'rgba(20,16,10,0.18)';
-  ctx.beginPath(); ctx.ellipse(x, GROUND + 5, 26, 4, 0, 0, Math.PI*2); ctx.fill();
+  // ground shadow — stays on the ground plane; fades as the owl rises
+  var alt = Math.max(0, GROUND - player.y);
+  var shAlpha = Math.max(0.05, 0.18 * (1 - alt / (GROUND * 0.5)));
+  var shScale = Math.max(0.4, 1 - alt / (GROUND * 0.8));
+  ctx.fillStyle = 'rgba(20,16,10,' + shAlpha.toFixed(3) + ')';
+  ctx.beginPath(); ctx.ellipse(player.x + OWL_CX, GROUND + 5, 26 * shScale, 4 * shScale, 0, 0, Math.PI*2); ctx.fill();
 }
 function drawHoop(){
   var rimY = hoop.y + hoop.flex * 0.2;
