@@ -1087,38 +1087,90 @@ function drawPlayer(){
   }
 
   var sliding = player.sliding && player.grounded;
-  var hw = player.w;
-  ctx.fillStyle = C.ink;
+  var ph = Math.sin(player.runPhase) * 25;                    // run leg swing ±25°
+  var phB = Math.sin(player.runPhase + Math.PI) * 25;
+  var tailBob = Math.sin(player.runPhase + Math.PI / 2) * 3; // tail bob, π/2 off the legs
 
   if (sliding){
-    // compact slide silhouette — all-black capsule body
-    capsule(-hw / 2 - 8, 2, hw + 12, 12);      // torso low
-    ctx.beginPath(); ctx.arc(hw / 2 + 2, 4, 7, 0, Math.PI * 2); ctx.fill();  // head forward
-    capsule(-hw / 2 - 10, 10, hw + 8, 7);       // legs extended
+    // SLIDE — flattened body + tail along the ground, head forward and low (≤ old profile)
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.ellipse(-30, 21, 14, 9, 0, 0, Math.PI * 2); ctx.fill();   // tail flat behind
+    ctx.beginPath(); ctx.ellipse(-4, 19, 20, 9, 0, 0, Math.PI * 2); ctx.fill();    // body low
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.ellipse(0, 21, 12, 5, 0, 0, Math.PI * 2); ctx.fill();     // belly
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(22, 15, 9, 0, Math.PI * 2); ctx.fill();               // head forward low
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.moveTo(17, 9); ctx.lineTo(15, 1); ctx.lineTo(21, 6); ctx.closePath(); ctx.fill();  // back ear
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.moveTo(24, 8); ctx.lineTo(24, 0); ctx.lineTo(29, 7); ctx.closePath(); ctx.fill();  // front ear
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.arc(25, 13, 3.6, 0, Math.PI * 2); ctx.fill();             // eye white
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); ctx.arc(26.4, 13, 2, 0, Math.PI * 2); ctx.fill();             // pupil
+    ctx.beginPath(); ctx.arc(31, 18, 1.5, 0, Math.PI * 2); ctx.fill();             // nose
+    ctx.save(); ctx.translate(10, 22); ctx.rotate(-15 * Math.PI / 180); capsule(-3, 0, 6, 7); ctx.restore(); // leg swept forward
+  } else if (player.grounded){
+    // RUN — tail curled high behind, body leaning forward, head up
+    ctx.save();
+    ctx.translate(0, tailBob);
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(-26, -17, 17, 0, Math.PI * 2); ctx.fill();            // tail outer
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.arc(-29, -21, 11, 0, Math.PI * 2); ctx.fill();            // tail core
+    ctx.fillStyle = C.gold;
+    ctx.beginPath(); ctx.arc(-25, -18, 5, 0, Math.PI * 2); ctx.fill();             // tail glint
+    ctx.restore();
+    ctx.save();
+    ctx.translate(2, 3); ctx.rotate(14 * Math.PI / 180);
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.ellipse(0, 0, 15, 13, 0, 0, Math.PI * 2); ctx.fill();     // body
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.ellipse(5, 4, 8, 7, 0, 0, Math.PI * 2); ctx.fill();       // belly
+    ctx.restore();
+    ctx.fillStyle = C.ink;
+    ctx.save(); ctx.translate(-2, 15); ctx.rotate(ph * Math.PI / 180); capsule(-4, 0, 8, 14); ctx.restore();
+    ctx.save(); ctx.translate(6, 15); ctx.rotate(phB * Math.PI / 180); capsule(-4, 0, 8, 14); ctx.restore();
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(16, -13, 10, 0, Math.PI * 2); ctx.fill();             // head
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.moveTo(11, -20); ctx.lineTo(9, -29); ctx.lineTo(15, -23); ctx.closePath(); ctx.fill(); // back ear
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.moveTo(18, -21); ctx.lineTo(18, -30); ctx.lineTo(23, -22); ctx.closePath(); ctx.fill(); // front ear
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.arc(19, -15, 4, 0, Math.PI * 2); ctx.fill();              // eye white
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); ctx.arc(20.5, -15, 2.2, 0, Math.PI * 2); ctx.fill();          // pupil
+    ctx.beginPath(); ctx.arc(26.5, -9, 1.6, 0, Math.PI * 2); ctx.fill();           // nose
   } else {
-    // upright runner — all-black, no face, capsule limbs (site jacker language)
-    var ph = Math.sin(player.runPhase) * 9;
-    var phB = Math.sin(player.runPhase + Math.PI) * 9;
-    var torsoY = -20, torsoH = 28;
-    var hipY = torsoY + torsoH - 3, shoY = torsoY + 4;
-
-    if (player.grounded){
-      // run cycle
-      ctx.save(); ctx.translate(-4, hipY); ctx.rotate(ph * Math.PI / 180 * 1.6); capsule(-4, 0, 8, 20); ctx.restore();
-      ctx.save(); ctx.translate(4, hipY); ctx.rotate(phB * Math.PI / 180 * 1.6); capsule(-4, 0, 8, 20); ctx.restore();
-      capsule(-hw / 2 + 4, torsoY, hw - 8, torsoH);   // torso
-      ctx.save(); ctx.translate(-6, shoY); ctx.rotate(phB * Math.PI / 180 * 1.1); capsule(-3, 0, 6, 17); ctx.restore();
-      ctx.save(); ctx.translate(6, shoY); ctx.rotate(ph * Math.PI / 180 * 1.1); capsule(-3, 0, 6, 17); ctx.restore();
-    } else {
-      // airborne — legs tucked, arms driving
-      ctx.save(); ctx.translate(-4, hipY); ctx.rotate(-38 * Math.PI / 180); capsule(-4, 0, 8, 18); ctx.restore();
-      ctx.save(); ctx.translate(4, hipY); ctx.rotate(22 * Math.PI / 180); capsule(-4, 0, 8, 18); ctx.restore();
-      capsule(-hw / 2 + 4, torsoY, hw - 8, torsoH);   // torso
-      ctx.save(); ctx.translate(-6, shoY); ctx.rotate(30 * Math.PI / 180); capsule(-3, 0, 6, 16); ctx.restore();
-      ctx.save(); ctx.translate(6, shoY); ctx.rotate(-24 * Math.PI / 180); capsule(-3, 0, 6, 16); ctx.restore();
-    }
-    // head — all-black, no face
-    ctx.beginPath(); ctx.arc(1, torsoY - 10, 8, 0, Math.PI * 2); ctx.fill();
+    // JUMP — tail streaming up-back, body stretched, legs tucked
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(-24, -1, 16, 0, Math.PI * 2); ctx.fill();             // tail outer
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.arc(-30, 5, 10, 0, Math.PI * 2); ctx.fill();              // tail core
+    ctx.fillStyle = C.gold;
+    ctx.beginPath(); ctx.arc(-24, 0, 5, 0, Math.PI * 2); ctx.fill();               // tail glint
+    ctx.save();
+    ctx.translate(4, 5); ctx.rotate(-25 * Math.PI / 180);
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.ellipse(0, 0, 12, 15, 0, 0, Math.PI * 2); ctx.fill();     // body stretched
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.ellipse(5, 4, 6.5, 8, 0, 0, Math.PI * 2); ctx.fill();     // belly
+    ctx.restore();
+    ctx.fillStyle = C.ink;
+    ctx.save(); ctx.translate(0, 17); ctx.rotate(-38 * Math.PI / 180); capsule(-3, 0, 6, 12); ctx.restore(); // legs tucked
+    ctx.save(); ctx.translate(8, 17); ctx.rotate(20 * Math.PI / 180); capsule(-3, 0, 6, 12); ctx.restore();
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(17, -13, 10, 0, Math.PI * 2); ctx.fill();             // head
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.moveTo(12, -20); ctx.lineTo(10, -29); ctx.lineTo(16, -23); ctx.closePath(); ctx.fill(); // back ear
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.moveTo(19, -21); ctx.lineTo(19, -30); ctx.lineTo(24, -22); ctx.closePath(); ctx.fill(); // front ear
+    ctx.fillStyle = C.cream;
+    ctx.beginPath(); ctx.arc(20, -15, 4, 0, Math.PI * 2); ctx.fill();              // eye white
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); ctx.arc(21.5, -15, 2.2, 0, Math.PI * 2); ctx.fill();          // pupil
+    ctx.beginPath(); ctx.arc(27.5, -9, 1.6, 0, Math.PI * 2); ctx.fill();           // nose
   }
 
   ctx.restore();
