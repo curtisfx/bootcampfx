@@ -276,7 +276,7 @@ function placePlayer(){
   player.y = GROUND;
 }
 
-var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 55, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
+var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 72, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
 function placeHoop(){
   hoop.baseY = Math.round(H * 0.33);
   hoop.x = Math.min(W - 78, W * 0.76);
@@ -295,7 +295,7 @@ function buildNet(){
       var rt = r / (rows - 1);
       var x = rl + (rr - rl) * t;
       x = x + (0.5 - t) * 10 * rt;
-      var y = hoop.y + 4 + rt * 30;
+      var y = hoop.y + 4 + rt * 39;
       strand.push({ x:x, y:y, ox:x, oy:y, vx:0, vy:0 });
     }
     net.push(strand);
@@ -1058,7 +1058,7 @@ function drawHoop(){
   var rl = hoop.x - hoop.rimW / 2, rr = hoop.x + hoop.rimW / 2;
   var bx = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2 + hoop.boardWob;
   ctx.fillStyle = C.pine;
-  ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, GROUND - rimY + hoop.boardH);
+  ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, Math.round((GROUND - rimY + hoop.boardH) * 0.7));
   ctx.fillStyle = C.day;
   ctx.fillRect(bx - hoop.boardW / 2, rimY - hoop.boardH, hoop.boardW, hoop.boardH);
   ctx.strokeStyle = C.dawn; ctx.lineWidth = 2;
