@@ -260,7 +260,9 @@ var keys = { a:false, d:false };
 var muted = false;
 var lastKind = '—';
 
-var player = { x: 0, y: 0, phase: 0, shootT: 0, air: 0, squash: 1 };
+var player = { x: 0, y: 0 };
+var OWL_CX = 35;          /* canvas x-offset of owl body center from player.x (viewBox 32 × scale 1.1) */
+var OWL_LAUNCH_Y = 42;    /* ball launches from just above the owl's body (canvas y above GROUND) */
 function placePlayer(){
   if (!player.x) player.x = Math.max(70, W * 0.22);
   player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
@@ -459,6 +461,7 @@ var swipe = null;
 function onDown(x, y){
   if (STATE === 'over'){ startGame(); return; }
   if (STATE !== 'play' || !resolved) return;
+  if (ball && ball.returning) return;
   swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false };
   sfx('flick');
 }
@@ -477,6 +480,7 @@ function onUp(){
   var dt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
   swipe = null;
   if (STATE !== 'play' || !resolved) return;
+  if (ball && ball.returning) return;
   if (dy > -22) return;
   var vx = (dx / dt) * 0.92;
   var vy = (dy / dt) * 0.92;
@@ -487,13 +491,10 @@ function onUp(){
 }
 function launch(vx, vy){
   resolved = false;
-  player.shootT = 0.48;
-  player.air = 0.38;
-  player.squash = 1.18;
   ball = {
-    x: player.x + 10, y: player.y - 128, vx: vx, vy: vy, r: 11.5,
+    x: player.x + OWL_CX, y: player.y - OWL_LAUNCH_Y, vx: vx, vy: vy, r: 11.5,
     touchedRim: false, touchedBoard: false, wasAbove: false, scored: false, spin: 0,
-    squash: 1, pending: null
+    squash: 1, pending: null, returning: false
   };
   trail = [];
   sfx('release');
@@ -553,13 +554,20 @@ function resolveShot(made, kind){
   lastPlayEl.innerHTML = 'Last <b>' + lastKind + '</b>';
   renderPips();
   hudShot.textContent = 'Shot ' + (SHOTS - shotsLeft) + ' / ' + SHOTS;
-  ball = null; trail = [];
+  startReturn();
   if (shotsLeft <= 0){
     if (makes === 10){ score += 5; lastPlayEl.innerHTML = 'Last <b>PERFECT +5</b>'; banner('PERFECT DRILL', 'Ten for ten'); }
     setTimeout(showOver, 720);
   } else {
     newWind();
   }
+}
+
+function startReturn(){
+  if (!ball) return;
+  ball.returning = true;
+  ball.vx = 0; ball.vy = 0;
+  trail = [];
 }
 
 function banner(big, sub){
@@ -611,6 +619,21 @@ function tickParticles(dt){
 
 function tickBall(dt){
   if (!ball) return;
+  if (ball.returning){
+    var tx = player.x + OWL_CX, ty = player.y - OWL_LAUNCH_Y;
+    var dx = tx - ball.x, dy = ty - ball.y;
+    var d = Math.sqrt(dx*dx + dy*dy);
+    if (d < 7){ ball = null; trail = []; return; }
+    // magnetic exponential approach — starts fast, decelerates, never overshoots
+    var k = 1 - Math.exp(-10 * dt);
+    ball.x += dx * k;
+    ball.y += dy * k;
+    ball.spin += dt * 10;
+    trail.push({ x: ball.x, y: ball.y, t: 0 });
+    if (trail.length > 16) trail.shift();
+    for (var ti = 0; ti < trail.length; ti++) trail[ti].t += dt;
+    return;
+  }
   ball.vy += GRAV * dt;
   ball.vx += wind * dt;
   ball.x += ball.vx * dt;
@@ -667,7 +690,7 @@ function tickBall(dt){
   }
   if (ball.x < -80 || ball.x > W + 80 || ball.y > H + 80){
     if (!ball.scored){ resolveShot(false, 'miss'); return; }
-    ball = null; trail = [];
+    startReturn();
   }
 }
 
@@ -779,14 +802,6 @@ function update(dt){
   }
   tickDecor(dt);
   tickParticles(dt);
-  player.phase += dt * 8;
-  if (player.shootT > 0) player.shootT -= dt;
-  if (player.air > 0){
-    player.air -= dt;
-    player.squash += (0.86 - player.squash) * (1 - Math.exp(-14 * dt));
-  } else {
-    player.squash += (1 - player.squash) * (1 - Math.exp(-12 * dt));
-  }
   hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
 
   var spd = 220;
@@ -867,66 +882,91 @@ function drawSquirrel(s){
   ctx.beginPath(); ctx.moveTo(16, 46); ctx.lineTo(13, 46); ctx.moveTo(32, 46); ctx.lineTo(36, 46); ctx.stroke();
   ctx.restore();
 }
-function drawPlayer(){
-  var x = player.x, y = player.y;
-  var shooting = player.shootT > 0;
-  var lift = player.air > 0 ? Math.sin((player.air / 0.38) * Math.PI) * 16 : 0;
-  ctx.save(); ctx.translate(x, y - lift);
-  ctx.scale(2 - player.squash, player.squash);
-  var crouch = shooting ? 0 : Math.sin(player.phase) * 1.5;
-  ctx.translate(0, crouch);
-
-  // stance: left slightly back, right slightly forward
-  var lHip = -10, rHip = 8;
-  var lFoot = shooting ? -11 : -16;
-  var rFoot = shooting ? 10 : 14;
-
-  // plain ink silhouette — matches the homepage figures
-  ctx.fillStyle = C.ink;
-
-  // feet
-  ctx.beginPath(); ctx.ellipse(lFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(rFoot + 4, -3, 9, 3.2, 0, 0, Math.PI*2); ctx.fill();
-
-  // calves
-  capsule(lFoot, -28, 8, 26);
-  capsule(rFoot, -28, 8, 26);
-
-  // thighs
-  capsule(lHip, -52, 10, 28);
-  capsule(rHip, -52, 10, 28);
-
-  // shorts / hips
-  capsule(-14, -64, 28, 16);
-
-  // torso
-  capsule(-12, -96, 24, 36);
-
-  // neck + head
-  capsule(-3, -108, 6, 12);
-  ctx.beginPath(); ctx.arc(0, -118, 11, 0, Math.PI*2); ctx.fill();
-
-  // arms
-  if (shooting){
-    ctx.save(); ctx.translate(8, -88); ctx.rotate(-1.18); capsule(-3, -28, 7, 28); ctx.restore();
-    ctx.save(); ctx.translate(-8, -88); ctx.rotate(-0.92); capsule(-3, -26, 7, 26); ctx.restore();
-  } else {
-    ctx.save(); ctx.translate(10, -86); ctx.rotate(0.42); capsule(-3, 0, 7, 24); ctx.restore();
-    ctx.save(); ctx.translate(-10, -86); ctx.rotate(-0.42); capsule(-3, 0, 7, 24); ctx.restore();
-    if (resolved && STATE === 'play'){
-      // held basketball stays dawn — it's the ball
-      ctx.fillStyle = C.dawn;
-      ctx.beginPath(); ctx.arc(0, -58, 11, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.arc(0, -58, 11, 0, Math.PI*2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-11, -58); ctx.lineTo(11, -58);
-      ctx.moveTo(0, -69); ctx.lineTo(0, -47); ctx.stroke();
+function easeIO(u){ return u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u+2, 2) / 2; }
+function owlAnim(now, dur, keys){
+  var t = (now % dur) / dur;
+  for (var i = 0; i < keys.length - 1; i++){
+    var a = keys[i], b = keys[i+1];
+    if (t >= a[0] && t <= b[0]){
+      var seg = (b[0] - a[0]) || 1;
+      var u = easeIO((t - a[0]) / seg);
+      return a[1] + (b[1] - a[1]) * u;
     }
   }
+  return keys[keys.length-1][1];
+}
+function drawOwl(){
+  var x = player.x, y = player.y;
+  var now = performance.now() / 1000;
 
+  // Copied loiter set from homepage Unlimited-membership owl:
+  // .owl-head → owlTurn 5.4s ease-in-out (sway), origin 50% 62% of head group
+  // .owl-eyes → owlBlink 4.2s ease-in-out (scaleY blink), origin 50% 50% of eyes
+  var sway = owlAnim(now, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
+  var blink = owlAnim(now, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(1.1, 1.1);
+  ctx.translate(0, -76);            // feet at GROUND (viewBox feet y≈76)
+
+  // whole-owl sway — same pivot as CSS transform-origin 50% 62%
+  ctx.translate(32, 47);
+  ctx.rotate(sway * Math.PI / 180);
+  ctx.translate(-32, -47);
+
+  // body
+  ctx.fillStyle = C.mist;           // #9FB0C4
+  ctx.beginPath(); ctx.ellipse(32, 50, 18, 24, 0, 0, Math.PI*2); ctx.fill();
+  // ear tufts
+  poly([[19,14],[14,0],[22,12]]);
+  poly([[45,14],[50,0],[42,12]]);
+  // head
+  ctx.beginPath(); ctx.arc(32, 26, 17, 0, Math.PI*2); ctx.fill();
+
+  // eyes — blink pivot 50% 50% of the eyes group (≈32,24)
+  ctx.save();
+  ctx.translate(32, 24);
+  ctx.scale(1, blink);
+  ctx.translate(-32, -24);
+  ctx.fillStyle = C.day2;           // #F3ECDC
+  ctx.beginPath(); ctx.arc(25, 24, 6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(39, 24, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(25, 24, 2.2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(39, 24, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.restore();
+
+  // beak
+  ctx.fillStyle = C.dawn;
+  poly([[32,29],[28,36],[32,34],[36,36]]);
+
+  // feet (dawn strokes) — no arms, per brief
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(24,70); ctx.lineTo(24,76);
+  ctx.moveTo(22,70); ctx.lineTo(22,76);
+  ctx.moveTo(26,70); ctx.lineTo(26,76);
+  ctx.moveTo(40,70); ctx.lineTo(40,76);
+  ctx.moveTo(38,70); ctx.lineTo(38,76);
+  ctx.moveTo(42,70); ctx.lineTo(42,76);
+  ctx.stroke();
+  ctx.restore();
+
+  // held ball — idle only, at the owl's launch point
+  if (resolved && STATE === 'play' && !ball){
+    var bx = x + OWL_CX, by = y - OWL_LAUNCH_Y;
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx - 11, by); ctx.lineTo(bx + 11, by);
+    ctx.moveTo(bx, by - 11); ctx.lineTo(bx, by + 11); ctx.stroke();
+  }
+
+  // ground shadow
   ctx.fillStyle = 'rgba(20,16,10,0.18)';
-  ctx.beginPath(); ctx.ellipse(x, GROUND + 5, 26 - lift * 0.4, 4, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x, GROUND + 5, 26, 4, 0, 0, Math.PI*2); ctx.fill();
 }
 function drawHoop(){
   var rimY = hoop.y + hoop.flex * 0.2;
@@ -998,7 +1038,7 @@ function drawAim(){
   var sp = Math.sqrt(vx*vx + vy*vy), max = 1980;
   if (sp > max){ vx *= max/sp; vy *= max/sp; }
   if (vy > -280) vy = -280;
-  var x = player.x + 10, y = player.y - 128, t = 0;
+  var x = player.x + OWL_CX, y = player.y - OWL_LAUNCH_Y, t = 0;
   ctx.fillStyle = C.gold;
   for (var i = 0; i < 18; i++){
     t += 0.065;
@@ -1079,7 +1119,7 @@ function draw(){
 
   if (squirrel) drawSquirrel(squirrel);
   drawHoop();
-  drawPlayer();
+  drawOwl();
   drawAim();
   drawBall();
 
