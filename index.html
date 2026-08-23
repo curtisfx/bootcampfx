@@ -1001,6 +1001,23 @@
     .why .wn{ font-family:var(--mono); font-size:.68rem; letter-spacing:.22em; color:var(--cream); opacity:.9; display:block; margin-bottom:14px; }
     .why h3{ font-family:var(--display); font-weight:600; font-size:1.45rem; margin-bottom:10px; letter-spacing:-.01em; }
     .why p{ font-size:.99rem; color:rgba(255,255,255,.94); }
+
+    /* Light rain in the 03 — CLIMATE card (drizzle: thin, slow, slanted, behind text) */
+    .why.why-rain{ overflow:hidden; }
+    .why-rain .rain-layer{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+    .why-rain .wn, .why-rain h3, .why-rain p{ position:relative; z-index:1; }
+    .why-rain .rain-layer .rd{
+      position:absolute; top:0; left:0; width:1px; background:#FBF7EE; opacity:.3;
+      animation:rain-fall var(--dl,1.2s) linear var(--dly,0s) infinite;
+    }
+    .why-rain .rain-layer .rd.w2{ width:1.5px; }
+    @keyframes rain-fall{
+      from{ transform:rotate(12deg) translateY(-40px); opacity:0; }
+      8%{ opacity:1; }
+      92%{ opacity:1; }
+      to{ transform:rotate(12deg) translateY(calc(var(--card-h,400px) + 40px)); opacity:0; }
+    }
+    @media (max-width:600px){ .why-rain .rain-layer .rd.extra{ display:none; } }
     .m-more .rabbit-reviews {
       display: inline-block;
       width: 38px;
@@ -1431,6 +1448,7 @@
       .proof-turtle, .proof-turtle * { animation:none !important; }
       .honest-owl, .honest-tree, .owl, .owl-head, .owl-eyes, .owl-card, .owl-wise svg, .owl-ground svg { animation:none !important; }
       .owl-head, .owl-eyes { transform:none !important; }
+      .why-rain .rain-layer{ display:none; }
     }}
   </style>
   <style>
@@ -1925,7 +1943,27 @@ to { transform:rotate(17deg); }
           <h3>A crew, not a crowd</h3>
           <p>Sessions stay small enough that your absence gets noticed — kindly, but noticed. No keycard gym can sell you that at any price. That's the accountability that kills the start-over cycle.</p>
         </div>
-        <div class="why reveal" style="--rd:.2s">
+        <div class="why reveal why-rain" style="--rd:.2s">
+          <div class="rain-layer" aria-hidden="true">
+            <span class="rd" style="left:5%;height:11px;--dl:1.3s;--dly:-.4s"></span>
+            <span class="rd w2" style="left:13%;height:9px;--dl:1.0s;--dly:-1.1s"></span>
+            <span class="rd" style="left:21%;height:13px;--dl:1.5s;--dly:-.2s"></span>
+            <span class="rd" style="left:29%;height:8px;--dl:1.1s;--dly:-.9s"></span>
+            <span class="rd" style="left:37%;height:12px;--dl:1.4s;--dly:-.6s"></span>
+            <span class="rd w2" style="left:45%;height:10px;--dl:.9s;--dly:-1.4s"></span>
+            <span class="rd" style="left:53%;height:14px;--dl:1.6s;--dly:-.3s"></span>
+            <span class="rd" style="left:61%;height:9px;--dl:1.2s;--dly:-1.0s"></span>
+            <span class="rd" style="left:69%;height:11px;--dl:1.1s;--dly:-.7s"></span>
+            <span class="rd extra" style="left:8%;height:13px;--dl:1.4s;--dly:-.8s"></span>
+            <span class="rd extra w2" style="left:17%;height:10px;--dl:1.2s;--dly:-.1s"></span>
+            <span class="rd extra" style="left:26%;height:14px;--dl:1.5s;--dly:-1.2s"></span>
+            <span class="rd extra" style="left:34%;height:8px;--dl:.9s;--dly:-.5s"></span>
+            <span class="rd extra w2" style="left:42%;height:12px;--dl:1.3s;--dly:-1.5s"></span>
+            <span class="rd extra" style="left:50%;height:9px;--dl:1.0s;--dly:-.2s"></span>
+            <span class="rd extra" style="left:58%;height:11px;--dl:1.6s;--dly:-1.3s"></span>
+            <span class="rd extra" style="left:66%;height:10px;--dl:1.1s;--dly:-.9s"></span>
+            <span class="rd extra" style="left:74%;height:13px;--dl:1.4s;--dly:-.4s"></span>
+          </div>
           <span class="wn">03 — CLIMATE</span>
           <h3>Weather is our advantage</h3>
           <p>This is Fullerton. We train outside year-round. On the rare rough day, Curtis adjusts the plan and texts the group. Twenty-one years in the same park — while franchise studios open and close around us.</p>
@@ -2823,6 +2861,17 @@ to { transform:rotate(17deg); }
     })();
 
     document.getElementById('yr').textContent = new Date().getFullYear();
+  </script>
+  <script>
+    /* Rain in the 03 — CLIMATE card: set the drop travel distance to the card height once */
+    (function(){
+      var rl = document.querySelector('.why-rain .rain-layer');
+      if (!rl) return;
+      function setH(){ rl.style.setProperty('--card-h', rl.parentElement.offsetHeight + 'px'); }
+      setH();
+      if ('ResizeObserver' in window){ new ResizeObserver(setH).observe(rl.parentElement); }
+      else { window.addEventListener('resize', setH); }
+    })();
   </script>
 </body>
 </html>
