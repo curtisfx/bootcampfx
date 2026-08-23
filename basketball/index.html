@@ -262,7 +262,7 @@ var lastKind = '—';
 
 var player = { x: 0, y: 0 };
 var OWL_CX = 35;          /* canvas x-offset of owl body center from player.x (viewBox 32 × scale 1.1) */
-var OWL_LAUNCH_Y = 65;    /* ball rest + launch: one full ball diameter (2×r=23) below the old 42 */
+var OWL_LAUNCH_Y = 23;    /* ball rest + launch: belly level (owl local y≈55), clearly below head/beak */
 var OWL_HIT_R = 55;       /* generous drag hit radius around owl body center */
 var owlDrag = null;       /* { offX, offY } active drag offset */
 var owlAir = false;       /* airborne after mid-air release */
@@ -901,7 +901,6 @@ function drawEgret(e){
   var flap = Math.sin(e.fl) * 12;
   function p(pts){ poly(pts); }
   ctx.fillStyle = C.day;
-  p([[62,36],[46,40],[28,52],[14,70],[30,62],[48,52],[64,42]]);
   p([[94,40],[118,46],[94,42],[117,52]]);
   p([[52,34],[60,28],[78,27],[92,34],[100,38],[100,44],[92,46],[76,50],[58,46],[50,40]]);
   p([[54,36],[46,30],[40,30],[36,24],[33,19],[36,14],[41,15],[45,16],[45,20],[43,23],[46,27],[52,29],[58,33]]);
