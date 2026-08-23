@@ -586,8 +586,8 @@
     .jackers .j-coyote svg { display:block; width:100%; height:auto; overflow:visible; }
     .jackers .j-coyote .cy-body { transform-origin:50% 92%; animation:cySway 3.8s ease-in-out infinite; }
     .jackers .j-coyote .cy-tail { transform-origin:8px 36px; animation:cyWag 2.2s ease-in-out infinite; }
-    .jackers .j-coyote .cy-head { transform-origin:50px 22px; animation:cyHead 5.6s ease-in-out infinite; }
-    .jackers .j-coyote .cy-ear  { transform-origin:46px 16px; animation:cyEar 6.8s ease-in-out infinite; }
+    .jackers .j-coyote .cy-head { transform-origin:36px 22px; animation:cyHead 5.6s ease-in-out infinite; }
+    .jackers .j-coyote .cy-ear  { transform-origin:36px 11px; animation:cyEar 6.8s ease-in-out infinite; }
     @keyframes cySway { 0%,100%{ transform:rotate(-1.2deg);} 50%{ transform:rotate(1.4deg);} }
     @keyframes cyWag  { 0%,100%{ transform:rotate(-7deg);} 50%{ transform:rotate(9deg);} }
     @keyframes cyHead { 0%,76%,100%{ transform:rotate(0);} 84%{ transform:rotate(8deg);} 92%{ transform:rotate(-2deg);} }
@@ -1834,18 +1834,22 @@ to { transform:rotate(17deg); }
     <ellipse cx="36" cy="50" rx="24" ry="3" fill="currentColor" opacity=".12"/>
     <g class="cy-body">
       <path class="cy-tail" d="M14 34 C8 30 4 32 4 38 C4 42 8 44 12 42 C15 40 16 37 14 34 Z" fill="currentColor"/>
-      <rect x="16" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <rect x="23" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <ellipse cx="32" cy="32" rx="14" ry="10" fill="currentColor"/>
-      <rect x="38" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <rect x="44" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <rect x="20" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <rect x="27" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <ellipse cx="36" cy="32" rx="15" ry="11" fill="currentColor"/>
+      <rect x="34" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <rect x="41" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
       <g class="cy-head">
-        <path class="cy-ear" d="M46 16 L42 4 L50 12 Z" fill="currentColor"/>
-        <path d="M54 14 L58 3 L57 15 Z" fill="currentColor"/>
-        <circle cx="50" cy="22" r="8" fill="currentColor"/>
-        <path d="M56 20 L67 24 L56 28 Z" fill="currentColor"/>
-        <circle cx="52" cy="21" r="1.4" fill="#F3ECDC"/>
-        <circle cx="52.6" cy="21.2" r=".7" fill="#14100A"/>
+        <g class="cy-ear">
+          <path d="M25 13 L21 -4 L33 10 Z" fill="currentColor"/>
+          <path d="M47 13 L51 -4 L39 10 Z" fill="currentColor"/>
+        </g>
+        <circle cx="36" cy="22" r="13" fill="currentColor"/>
+        <circle cx="30" cy="22" r="3.8" fill="#F3ECDC"/>
+        <circle cx="42" cy="22" r="3.8" fill="#F3ECDC"/>
+        <circle cx="30" cy="22" r="1.4" fill="#14100A"/>
+        <circle cx="42" cy="22" r="1.4" fill="#14100A"/>
+        <path d="M34 28 L38 28 L36 30.5 Z" fill="var(--dawn)"/>
       </g>
     </g>
   </svg>
