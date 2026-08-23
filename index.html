@@ -581,13 +581,13 @@
     .jackers .j-coyote {
       position:relative; flex:0 0 auto; align-self:flex-end;
       pointer-events:none; z-index:1; color:var(--ink);
-      width:56px; margin:0 2px;
+      width:150px; margin:0 2px;
     }
     .jackers .j-coyote svg { display:block; width:100%; height:auto; overflow:visible; }
-    .jackers .j-coyote .cy-body { transform-origin:50% 92%; animation:cySway 3.8s ease-in-out infinite; }
-    .jackers .j-coyote .cy-tail { transform-origin:8px 36px; animation:cyWag 2.2s ease-in-out infinite; }
-    .jackers .j-coyote .cy-head { transform-origin:36px 22px; animation:cyHead 5.6s ease-in-out infinite; }
-    .jackers .j-coyote .cy-ear  { transform-origin:36px 11px; animation:cyEar 6.8s ease-in-out infinite; }
+    .jackers .j-coyote .cy-body { transform-origin:132px 155px; animation:cySway 3.8s ease-in-out infinite; }
+    .jackers .j-coyote .cy-tail { transform-origin:74px 108px; animation:cyWag 2.2s ease-in-out infinite; }
+    .jackers .j-coyote .cy-head { transform-origin:162px 96px; animation:cyHead 5.6s ease-in-out infinite; }
+    .jackers .j-coyote .cy-ear  { transform-origin:200px 60px; animation:cyEar 6.8s ease-in-out infinite; }
     @keyframes cySway { 0%,100%{ transform:rotate(-1.2deg);} 50%{ transform:rotate(1.4deg);} }
     @keyframes cyWag  { 0%,100%{ transform:rotate(-7deg);} 50%{ transform:rotate(9deg);} }
     @keyframes cyHead { 0%,76%,100%{ transform:rotate(0);} 84%{ transform:rotate(8deg);} 92%{ transform:rotate(-2deg);} }
@@ -822,7 +822,7 @@
       .jackers{ min-height:340px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
       .jackers .j-tree.t2{ width:78px; }
-      .jackers .j-coyote{ width:44px; }
+      .jackers .j-coyote{ width:56px; }
       .jackers .jacker.a{ margin-left:14px; }
       .jackers .jacker.b{ margin-right:0; }
       .jacker .j-body{ bottom:4px; }
@@ -1830,26 +1830,23 @@ to { transform:rotate(17deg); }
   <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
 </svg></div>
 <div class="j-coyote" aria-hidden="true">
-  <svg viewBox="0 0 72 54" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <ellipse cx="36" cy="50" rx="24" ry="3" fill="currentColor" opacity=".12"/>
+  <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="132" cy="169" rx="118" ry="4" fill="currentColor" opacity=".12"/>
     <g class="cy-body">
-      <path class="cy-tail" d="M14 34 C8 30 4 32 4 38 C4 42 8 44 12 42 C15 40 16 37 14 34 Z" fill="currentColor"/>
-      <rect x="20" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <rect x="27" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <ellipse cx="36" cy="32" rx="15" ry="11" fill="currentColor"/>
-      <rect x="34" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
-      <rect x="41" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <g class="cy-tail">
+        <path d="M 74 106 C 56 104, 36 110, 24 124 C 16 133, 14 144, 20 150 C 27 157, 40 154, 52 144 C 62 136, 72 126, 78 116 Z" fill="#6E5F49"/>
+      </g>
+      <path d="M 74 100 C 84 88, 102 82, 122 82 C 144 82, 162 86, 172 92 C 182 96, 186 102, 184 110 C 182 118, 172 122, 162 122 L 158 156 L 164 166 L 158 166 L 152 158 L 150 124 L 138 126 L 140 158 L 134 166 L 128 166 L 130 156 L 128 124 C 112 126, 98 126, 92 122 L 94 158 L 88 166 L 82 166 L 84 156 L 82 120 C 74 114, 70 106, 74 100 Z" fill="#9C8B70"/>
+      <path d="M 80 98 C 92 88, 108 84, 126 84 C 146 84, 160 88, 170 93 C 156 97, 132 97, 112 97 C 98 97, 88 98, 80 98 Z" fill="#6E5F49"/>
       <g class="cy-head">
+        <path d="M 160 92 C 168 78, 180 68, 194 66 C 206 64, 214 70, 220 76 L 240 88 C 246 91, 248 95, 246 98 C 243 101, 236 101, 228 99 L 204 94 C 196 100, 186 106, 176 108 C 166 110, 156 102, 160 92 Z" fill="#9C8B70"/>
         <g class="cy-ear">
-          <path d="M25 13 L21 -4 L33 10 Z" fill="currentColor"/>
-          <path d="M47 13 L51 -4 L39 10 Z" fill="currentColor"/>
+          <path d="M 192 66 L 186 40 L 206 58 Z" fill="#6E5F49"/>
+          <path d="M 208 62 L 208 36 L 224 56 Z" fill="#9C8B70"/>
         </g>
-        <circle cx="36" cy="22" r="13" fill="currentColor"/>
-        <circle cx="30" cy="22" r="3.8" fill="#F3ECDC"/>
-        <circle cx="42" cy="22" r="3.8" fill="#F3ECDC"/>
-        <circle cx="30" cy="22" r="1.4" fill="#14100A"/>
-        <circle cx="42" cy="22" r="1.4" fill="#14100A"/>
-        <path d="M34 28 L38 28 L36 30.5 Z" fill="var(--dawn)"/>
+        <circle cx="216" cy="78" r="11" fill="#F3ECDC"/>
+        <circle cx="216" cy="78" r="3.8" fill="#14100A"/>
+        <circle cx="246" cy="94" r="3.5" fill="#D97B3F"/>
       </g>
     </g>
   </svg>
