@@ -577,6 +577,22 @@
       50% { transform:rotate(-1.6deg); }
     }
 
+    /* Coyote — cute, flat ink silhouette between the trees */
+    .jackers .j-coyote {
+      position:relative; flex:0 0 auto; align-self:flex-end;
+      pointer-events:none; z-index:1; color:var(--ink);
+      width:56px; margin:0 2px;
+    }
+    .jackers .j-coyote svg { display:block; width:100%; height:auto; overflow:visible; }
+    .jackers .j-coyote .cy-body { transform-origin:50% 92%; animation:cySway 3.8s ease-in-out infinite; }
+    .jackers .j-coyote .cy-tail { transform-origin:8px 36px; animation:cyWag 2.2s ease-in-out infinite; }
+    .jackers .j-coyote .cy-head { transform-origin:50px 22px; animation:cyHead 5.6s ease-in-out infinite; }
+    .jackers .j-coyote .cy-ear  { transform-origin:46px 16px; animation:cyEar 6.8s ease-in-out infinite; }
+    @keyframes cySway { 0%,100%{ transform:rotate(-1.2deg);} 50%{ transform:rotate(1.4deg);} }
+    @keyframes cyWag  { 0%,100%{ transform:rotate(-7deg);} 50%{ transform:rotate(9deg);} }
+    @keyframes cyHead { 0%,76%,100%{ transform:rotate(0);} 84%{ transform:rotate(8deg);} 92%{ transform:rotate(-2deg);} }
+    @keyframes cyEar  { 0%,84%,100%{ transform:rotate(0);} 90%{ transform:rotate(-10deg);} 95%{ transform:rotate(0);} }
+
     /* ============ TIME RAIL ============ */
     .rail{ position:fixed; left:26px; top:50%; transform:translateY(-50%); z-index:90; display:flex; flex-direction:column; gap:20px; mix-blend-mode:difference; }
     .rail a{ display:flex; align-items:center; gap:11px; text-decoration:none; font-family:var(--mono); font-weight:600; font-size:.6rem; letter-spacing:.2em; color:#fff; opacity:.42; transition:opacity .3s var(--ease); }
@@ -806,6 +822,7 @@
       .jackers{ min-height:340px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
       .jackers .j-tree.t2{ width:78px; }
+      .jackers .j-coyote{ width:44px; }
       .jackers .jacker.a{ margin-left:14px; }
       .jackers .jacker.b{ margin-right:0; }
       .jacker .j-body{ bottom:4px; }
@@ -928,6 +945,10 @@
 
     /* ============ THE STANDARD ============ */
     .standard{ background:var(--day); }
+    @media (max-width:640px){
+      .outside{ padding-bottom:0; }
+      .standard{ padding-top:20px; }
+    }
     .std-grid{ display:grid; grid-template-columns:1fr 1.15fr; gap:70px; align-items:start; }
     @media (max-width:880px){ .std-grid{ grid-template-columns:1fr; gap:40px; } }
     .std-sticky{ position:sticky; top:110px; }
@@ -1255,7 +1276,7 @@
       .btn-dawn::after{ display:none; }
       .mq-track{ animation:none; }
       .grain{ display:none; }
-      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope, .cloud-drift, .cloud-drift > *, .wild-squirrel, .wild-squirrel .sq-inner, .wild-squirrel .sq-tail{ animation:none !important; }
+      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .j-coyote, .cy-body, .cy-tail, .cy-head, .cy-ear, .ropers, .roper, .r-hop, .r-rope, .cloud-drift, .cloud-drift > *, .wild-squirrel, .wild-squirrel .sq-inner, .wild-squirrel .sq-tail{ animation:none !important; }
       .cloud-drift, .cloud-drift.early, .cloud-drift > *{ animation:none !important; transform:none !important; opacity:0.5 !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
@@ -1279,7 +1300,7 @@
       .sq-proof { opacity:.8; transform:none !important; }
       .sq-proof .sq-inner, .sq-proof .sq-tail { transform:none !important; }
       .proof-turtle, .proof-turtle * { animation:none !important; }
-      .honest-owl, .honest-tree, .owl, .owl-head, .owl-eyes, .owl-card { animation:none !important; }
+      .honest-owl, .honest-tree, .owl, .owl-head, .owl-eyes, .owl-card, .owl-wise svg, .owl-ground svg { animation:none !important; }
       .owl-head, .owl-eyes { transform:none !important; }
     }}
   </style>
@@ -1426,159 +1447,6 @@ to { transform:rotate(17deg); }
      
     }
   </style>
-  <style>
-    /* ============ HERON (A11) · wading, striking, alive ============ */
-    .heron {
-      position: absolute;
-      bottom: 18px;
-      left: 5%;
-      z-index: 1;
-      opacity: 0;
-      color: var(--stone);
-      animation: heronStalk 20s var(--ease) 2s forwards;
-      animation-play-state: paused;
-      will-change: transform, opacity;
-      pointer-events: none;
-    }
-    .live .heron { animation-play-state: running; }
-
-    .heron svg {
-      display: block;
-      width: 88px;
-      height: auto;
-      overflow: visible;
-    }
-
-    .heron .hr-shadow {
-      position: absolute;
-      bottom: -2px;
-      left: 15%;
-      width: 70%;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(20, 16, 10, 0.15);
-      filter: blur(1px);
-      z-index: -1;
-    }
-
-    .heron .hr-stalk {
-      transform-origin: 50% 88%;
-      animation: heronBob 1.9s ease-in-out 2s infinite alternate;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-stalk { animation-play-state: running; }
-
-    .heron .hr-body { transform-origin: 45px 55px; }
-
-    .heron .hr-leg.front {
-      transform-origin: 50% 4px;
-      animation: heronWalkFront 0.95s ease-in-out 2s 21 forwards;
-      animation-play-state: paused;
-    }
-    .heron .hr-leg.rear {
-      transform-origin: 50% 4px;
-      animation: heronWalkRear 0.95s ease-in-out 2.47s 21 forwards;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-leg { animation-play-state: running; }
-
-    .heron .hr-neck {
-      transform-origin: 40px 30px;
-      animation: heronNeckStrike 6.8s ease-in-out 2s infinite;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-neck { animation-play-state: running; }
-
-    .heron .hr-head {
-      transform-origin: 50px 8px;
-      animation: heronHeadTwitch 6.8s ease-in-out 2s infinite;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-head { animation-play-state: running; }
-
-    .heron .hr-tail {
-      transform-origin: 34px 50px;
-      animation: heronTailFlick 4.2s ease-in-out 2s infinite;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-tail { animation-play-state: running; }
-
-    .heron .hr-eye {
-      animation: heronBlink 5.5s ease-in-out 2s infinite;
-      animation-play-state: paused;
-    }
-    .live .heron .hr-eye { animation-play-state: running; }
-
-    @keyframes heronStalk {
-      0% { transform: translateX(-14vw); opacity: 0; }
-      6% { opacity: 1; }
-      100% { transform: translateX(22vw); opacity: 1; }
-    }
-
-    @keyframes heronBob {
-      0% { transform: rotate(-0.5deg) translateY(0); }
-      100% { transform: rotate(0.5deg) translateY(-1px); }
-    }
-
-    @keyframes heronWalkFront {
-      0%   { transform: rotate(0deg) translateY(0); }
-      18%  { transform: rotate(6deg) translateY(-3px); }
-      38%  { transform: rotate(20deg) translateY(-5px); }
-      58%  { transform: rotate(8deg) translateY(-2px); }
-      75%  { transform: rotate(-6deg) translateY(0); }
-      100% { transform: rotate(0deg) translateY(0); }
-    }
-
-    @keyframes heronWalkRear {
-      0%   { transform: rotate(0deg) translateY(0); }
-      18%  { transform: rotate(-6deg) translateY(-3px); }
-      38%  { transform: rotate(-20deg) translateY(-5px); }
-      58%  { transform: rotate(-8deg) translateY(-2px); }
-      75%  { transform: rotate(6deg) translateY(0); }
-      100% { transform: rotate(0deg) translateY(0); }
-    }
-
-    @keyframes heronNeckStrike {
-      0%, 48%, 86%, 100% { transform: rotate(0deg); }
-      56% { transform: rotate(-34deg) translateY(5px); }
-      62% { transform: rotate(-26deg) translateY(2px); }
-      68% { transform: rotate(-34deg) translateY(5px); }
-      76% { transform: rotate(-18deg); }
-    }
-
-    @keyframes heronHeadTwitch {
-      0%, 48%, 86%, 100% { transform: rotate(0deg); }
-      56% { transform: rotate(-40deg); }
-      62% { transform: rotate(-28deg); }
-      68% { transform: rotate(-40deg); }
-      76% { transform: rotate(-22deg); }
-    }
-
-    @keyframes heronTailFlick {
-      0%, 90%, 100% { transform: rotate(0deg); }
-      92% { transform: rotate(-4deg); }
-      96% { transform: rotate(2deg); }
-    }
-
-    @keyframes heronBlink {
-      0%, 94%, 100% { transform: scaleY(1); }
-      96% { transform: scaleY(0.1); }
-      98% { transform: scaleY(1); }
-    }
-
-    @media (max-width: 640px) {
-      .heron svg { width: 65px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .heron, .heron .hr-stalk, .heron .hr-leg, .heron .hr-neck, .heron .hr-head, .heron .hr-tail, .heron .hr-eye {
-        animation: none !important;
-        transform: none !important;
-        opacity: 0.85 !important;
-      }
-    }
-  </style>
-
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -1627,6 +1495,20 @@ to { transform:rotate(17deg); }
     .owl-eyes { transform-origin:50% 50%; animation:owlBlink 4.2s ease-in-out infinite; }
     @keyframes owlTurn { 0%,100%{ transform:rotate(0);} 28%{ transform:rotate(6deg);} 62%{ transform:rotate(-4deg);} }
     @keyframes owlBlink { 0%,96%,100%{ transform:scaleY(1);} 98%{ transform:scaleY(0.1);} }
+
+    /* Personality pass — two owls, not clones. Owl A (perched): alert. Owl B (ground): chill. */
+    .owl-wise .owl-head  { animation:owlTurnA 4.6s ease-in-out infinite; }
+    .owl-wise .owl-eyes  { animation:owlBlinkA 3.2s ease-in-out infinite; }
+    .owl-ground .owl-head{ animation:owlTurnB 7.8s ease-in-out 1.4s infinite; }
+    .owl-ground .owl-eyes{ animation:owlBlinkB 4.7s ease-in-out 2.2s infinite; }
+    .owl-wise svg   { animation:owlSwayA 6.4s ease-in-out infinite; transform-origin:50% 92%; }
+    .owl-ground svg { animation:owlSwayB 9.2s ease-in-out 2.6s infinite; transform-origin:50% 92%; }
+    @keyframes owlTurnA { 0%,100%{ transform:rotate(0);} 30%{ transform:rotate(7deg);} 64%{ transform:rotate(-5deg);} }
+    @keyframes owlTurnB { 0%,100%{ transform:rotate(0);} 34%{ transform:rotate(-4deg);} 68%{ transform:rotate(3deg);} }
+    @keyframes owlBlinkA { 0%,93%,100%{ transform:scaleY(1);} 96%{ transform:scaleY(0.1);} }
+    @keyframes owlBlinkB { 0%,90%,100%{ transform:scaleY(1);} 94%{ transform:scaleY(0.1);} }
+    @keyframes owlSwayA { 0%,100%{ transform:rotate(-1deg);} 50%{ transform:rotate(1.2deg);} }
+    @keyframes owlSwayB { 0%,100%{ transform:rotate(1deg);} 50%{ transform:rotate(-1.4deg);} }
 
     .owl-card { position:absolute; top:-16px; right:10px; width:64px; z-index:2; pointer-events:none; }
 
@@ -1924,34 +1806,6 @@ to { transform:rotate(17deg); }
 
     <!-- Outside trees (different shapes) -->
 
-    <!-- Wading heron -->
-    <div class="heron" aria-hidden="true">
-      <div class="hr-shadow"></div>
-      <div class="hr-stalk">
-        <svg viewBox="0 0 100 120" style="overflow:visible;">
-          <g class="hr-tail">
-            <path d="M33 50 L18 42 L20 58 Z" fill="currentColor" opacity=".85"/>
-          </g>
-          <g class="hr-body">
-            <ellipse cx="45" cy="55" rx="12" ry="22" fill="currentColor"/>
-          </g>
-          <g class="hr-leg front">
-            <rect x="40.5" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
-          </g>
-          <g class="hr-leg rear">
-            <rect x="47" y="75" width="2.5" height="38" rx="1.25" fill="currentColor"/>
-          </g>
-          <g class="hr-neck">
-            <path d="M44 38 C42 32 40 24 44 18 C46 14 48 13 50 14" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-          </g>
-          <g class="hr-head">
-            <ellipse cx="50" cy="8" rx="6" ry="4" fill="currentColor"/>
-            <path d="M54 8 L70 8 L54 9.5 Z" fill="currentColor"/>
-            <circle class="hr-eye" cx="48" cy="7" r="1" fill="#14100A"/>
-          </g>
-        </svg>
-      </div>
-    </div>
   </section>
 
   <!-- ============ THE STANDARD · 8:00 AM ============ -->
@@ -1975,6 +1829,27 @@ to { transform:rotate(17deg); }
   <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
   <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
 </svg></div>
+<div class="j-coyote" aria-hidden="true">
+  <svg viewBox="0 0 72 54" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="36" cy="50" rx="24" ry="3" fill="currentColor" opacity=".12"/>
+    <g class="cy-body">
+      <path class="cy-tail" d="M14 34 C8 30 4 32 4 38 C4 42 8 44 12 42 C15 40 16 37 14 34 Z" fill="currentColor"/>
+      <rect x="16" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <rect x="23" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <ellipse cx="32" cy="32" rx="14" ry="10" fill="currentColor"/>
+      <rect x="38" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <rect x="44" y="36" width="5" height="14" rx="2.5" fill="currentColor"/>
+      <g class="cy-head">
+        <path class="cy-ear" d="M46 16 L42 4 L50 12 Z" fill="currentColor"/>
+        <path d="M54 14 L58 3 L57 15 Z" fill="currentColor"/>
+        <circle cx="50" cy="22" r="8" fill="currentColor"/>
+        <path d="M56 20 L67 24 L56 28 Z" fill="currentColor"/>
+        <circle cx="52" cy="21" r="1.4" fill="#F3ECDC"/>
+        <circle cx="52.6" cy="21.2" r=".7" fill="#14100A"/>
+      </g>
+    </g>
+  </svg>
+</div>
       <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
     <!-- top tight, slight right bias -->
@@ -2281,19 +2156,20 @@ to { transform:rotate(17deg); }
       <div class="owl owl-ground"><svg viewBox="0 0 64 88" fill="none">
       <path d="M4 78 L60 78" stroke="#6B5B4F" stroke-width="3.5" stroke-linecap="round"/>
       <g class="owl-head">
-        <ellipse cx="32" cy="54" rx="18" ry="24" fill="#9FB0C4"/>
-        <circle cx="32" cy="30" r="17" fill="#9FB0C4"/>
-        <path d="M19 17 L14 3 L22 15 Z" fill="#9FB0C4"/>
-        <path d="M45 17 L50 3 L42 15 Z" fill="#9FB0C4"/>
+        <ellipse cx="32" cy="54" rx="18" ry="24" fill="#A8927E"/>
+        <ellipse cx="32" cy="63" rx="10" ry="12" fill="#EFE0C4"/>
+        <circle cx="32" cy="30" r="17" fill="#A8927E"/>
+        <path d="M19 17 L14 3 L22 15 Z" fill="#A8927E"/>
+        <path d="M45 17 L50 3 L42 15 Z" fill="#A8927E"/>
         <g class="owl-eyes">
-          <circle cx="25" cy="28" r="6" fill="#F3ECDC"/>
-          <circle cx="39" cy="28" r="6" fill="#F3ECDC"/>
+          <circle cx="25" cy="28" r="6" fill="#F2E3BE"/>
+          <circle cx="39" cy="28" r="6" fill="#F2E3BE"/>
           <circle cx="25" cy="28" r="2.2" fill="#14100A"/>
           <circle cx="39" cy="28" r="2.2" fill="#14100A"/>
         </g>
         <path d="M32 33 L28 40 L32 38 L36 40 Z" fill="var(--dawn)"/>
-        <path d="M16 40 C12 50 12 62 18 66 L18 44 Z" fill="#7A8A9A"/>
-        <path d="M48 40 C52 50 52 62 46 66 L46 44 Z" fill="#7A8A9A"/>
+        <path d="M16 40 C12 50 12 62 18 66 L18 44 Z" fill="#8A7A64"/>
+        <path d="M48 40 C52 50 52 62 46 66 L46 44 Z" fill="#8A7A64"/>
         <path d="M24 74 L24 80 M22 74 L22 80 M26 74 L26 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
         <path d="M40 74 L40 80 M38 74 L38 80 M42 74 L42 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
       </g>
