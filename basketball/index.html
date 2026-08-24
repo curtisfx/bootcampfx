@@ -68,6 +68,11 @@
   .pip.on{background:var(--dawn);}
   .pip.last{outline:1px solid var(--gold);outline-offset:2px;}
   .pips .pip-count{font-family:var(--mono);font-size:.85rem;font-weight:600;letter-spacing:.12em;color:var(--gold);line-height:12px;padding-left:3px;}
+.tally{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;pointer-events:none;max-width:74vw;flex-wrap:wrap;justify-content:center;}
+.tally .tlbl{font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);}
+.tally .tmarks{display:flex;flex-wrap:wrap;gap:6px;color:var(--gold);align-items:flex-end;}
+.tally .tgrp{display:inline-block;line-height:0;}
+.tally .tcount{font-family:var(--display);font-weight:600;font-size:1.15rem;color:var(--gold);line-height:1;}
 
   .overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
     justify-content:center;background:rgba(15,27,44,.82);backdrop-filter:blur(8px);
@@ -162,6 +167,7 @@
 <div class="banner" id="banner"><div class="big" id="bannerBig"></div><div class="sub" id="bannerSub"></div></div>
 <div class="box" id="lastPlay">Last —</div>
 <div class="pips" id="pips"></div>
+<div class="tally" id="tally"><span class="tlbl">Makes</span><span class="tmarks" id="tmarks"></span><span class="tcount" id="tcount">0</span></div>
 
 <div class="overlay on" id="menu">
   <div class="modal">
@@ -234,6 +240,9 @@ var newRecEl = document.getElementById('newRec');
 var appEl = document.getElementById('app');
 var lastPlayEl = document.getElementById('lastPlay');
 var pipsEl = document.getElementById('pips');
+var tallyEl = document.getElementById('tally');
+var tmarksEl = document.getElementById('tmarks');
+var tcountEl = document.getElementById('tcount');
 var windNeedle = document.getElementById('windNeedle');
 var windLbl = document.getElementById('windLbl');
 var muteBtn = document.getElementById('muteBtn');
@@ -242,7 +251,8 @@ var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce
 var C = {
   predawn:'#0F1B2C', predawn2:'#16273D', skyHi:'#2C3A50',
   pine:'#14291F', ink:'#14100A', dawn:'#E8933A', gold:'#F2B84B',
-  day:'#FBF7EE', day2:'#F3ECDC', mist:'#9FB0C4', stone:'#6A6255'
+  day:'#FBF7EE', day2:'#F3ECDC', mist:'#9FB0C4', stone:'#6A6255',
+  steel:'#8A97A6'
 };
 
 var STATE = 'menu';
@@ -251,6 +261,7 @@ var SHOTS = 50;
 var score = 0, displayScore = 0, streak = 0, bestStreak = 0, best = 0, shotsLeft = SHOTS;
 var onFire = false;
 var makes = 0, swishes = 0, banks = 0, rims = 0;
+var skyT = 0; var SKY_SPEED = 7; var DAY_LOOP = 120;
 var wind = 0;
 var bannerT = 0;
 var particles = [], pops = [], gusts = [], fireflies = [];
@@ -545,6 +556,7 @@ function resolveShot(made, kind){
   var pts = 0;
   if (made){
     makes++;
+    renderTally();
     var swish = kind === 'swish';
     var bank = kind === 'bank';
     if (swish) swishes++;
@@ -766,6 +778,32 @@ function renderPips(){
   }
 }
 
+function lerpColor(c1, c2, t){
+  var a = parseInt(c1.slice(1), 16), b = parseInt(c2.slice(1), 16);
+  var ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255;
+  var br=(b>>16)&255, bg=(b>>8)&255, bb=b&255;
+  return 'rgb(' + Math.round(ar+(br-ar)*t) + ',' + Math.round(ag+(bg-ag)*t) + ',' + Math.round(ab+(bb-ab)*t) + ')';
+}
+function tallySVG(n){
+  var s = '<svg width="24" height="20" viewBox="0 0 24 20">';
+  var xs = [4, 9, 14, 19];
+  for (var i = 0; i < Math.min(n, 4); i++){
+    s += '<line x1="' + xs[i] + '" y1="2.5" x2="' + xs[i] + '" y2="17.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>';
+  }
+  if (n >= 5){
+    s += '<line x1="3" y1="15.5" x2="21" y2="4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>';
+  }
+  s += '</svg>';
+  return s;
+}
+function renderTally(){
+  var g = Math.floor(makes / 5), r = makes % 5, h = '';
+  for (var i = 0; i < g; i++) h += '<span class="tgrp">' + tallySVG(5) + '</span>';
+  if (r > 0) h += '<span class="tgrp">' + tallySVG(r) + '</span>';
+  tmarksEl.innerHTML = h;
+  tcountEl.textContent = makes;
+}
+
 function startGame(){
   unlockAudio();
   score = 0; displayScore = 0; streak = 0; bestStreak = 0; shotsLeft = SHOTS;
@@ -785,6 +823,7 @@ function startGame(){
   hudShot.textContent = 'Shot 0 / ' + SHOTS;
   STATE = 'play';
   renderPips();
+  renderTally();
   newWind();
   banner('FIRST LIGHT', SHOTS + ' balls. Make them count.');
 }
@@ -835,6 +874,7 @@ function showOver(){
 }
 
 function update(dt){
+  skyT += dt * SKY_SPEED;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
   punch = Math.max(0, punch - dt * 0.9);
@@ -1048,7 +1088,7 @@ function drawHoop(){
   var rimY = hoop.y + hoop.flex * 0.2;
   var rl = hoop.x - hoop.rimW / 2, rr = hoop.x + hoop.rimW / 2;
   var bx = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2 + hoop.boardWob;
-  ctx.fillStyle = C.pine;
+  ctx.fillStyle = C.steel;
   ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, GROUND - rimY + hoop.boardH);
   ctx.fillStyle = C.day;
   ctx.fillRect(bx - hoop.boardW / 2, rimY - hoop.boardH, hoop.boardW, hoop.boardH);
@@ -1213,11 +1253,13 @@ function draw(){
   ctx.scale(z, z);
   ctx.translate(-W/2 + shx, -H/2 + shy + camY);
 
+  var dayF = 0.5 - 0.5 * Math.cos(skyT * Math.PI * 2 / DAY_LOOP);
+  var rise = dayF;
   var sky = ctx.createLinearGradient(0, 0, 0, H);
-  var rise = parseFloat(getComputedStyle(appEl).getPropertyValue('--clearance')) || 0;
-  sky.addColorStop(0, C.predawn);
-  sky.addColorStop(0.55, C.predawn2);
-  sky.addColorStop(1, C.skyHi);
+  var skyStops = [[0, C.predawn, C.skyHi], [0.30, C.predawn, '#6E5A54'], [0.68, C.predawn2, C.dawn], [0.88, C.skyHi, C.gold], [1, C.skyHi, C.day]];
+  for (var si = 0; si < skyStops.length; si++){
+    sky.addColorStop(skyStops[si][0], lerpColor(skyStops[si][1], skyStops[si][2], dayF));
+  }
   ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
 
   ctx.fillStyle = C.gold;
