@@ -848,7 +848,7 @@ function showOver(){
   document.getElementById('finScore').textContent = score;
   document.getElementById('finStreak').textContent = bestStreak;
   document.getElementById('finBest').textContent = best;
-  document.getElementById('finMakes').textContent = makes + '/10';
+  document.getElementById('finMakes').textContent = makes + '/' + SHOTS;
   document.getElementById('finSwish').textContent = swishes;
   document.getElementById('finBank').textContent = banks;
   document.getElementById('finAcc').textContent = Math.round(makes / SHOTS * 100) + '%';
