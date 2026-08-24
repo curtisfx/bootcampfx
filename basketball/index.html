@@ -68,7 +68,7 @@
   .pip.on{background:var(--dawn);}
   .pip.last{outline:1px solid var(--gold);outline-offset:2px;}
   .pips .pip-count{font-family:var(--mono);font-size:.85rem;font-weight:600;letter-spacing:.12em;color:var(--gold);line-height:12px;padding-left:3px;}
-.tally{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;pointer-events:none;max-width:74vw;flex-wrap:wrap;justify-content:center;}
+.tally{position:fixed;left:14px;bottom:84px;z-index:5;display:flex;align-items:center;gap:8px;pointer-events:none;max-width:80vw;flex-wrap:wrap;}
 .tally .tlbl{font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);}
 .tally .tmarks{display:flex;flex-wrap:wrap;gap:6px;color:var(--gold);align-items:flex-end;}
 .tally .tgrp{display:inline-block;line-height:0;}
@@ -261,7 +261,7 @@ var SHOTS = 50;
 var score = 0, displayScore = 0, streak = 0, bestStreak = 0, best = 0, shotsLeft = SHOTS;
 var onFire = false;
 var makes = 0, swishes = 0, banks = 0, rims = 0;
-var skyT = 0; var SKY_SPEED = 7; var DAY_LOOP = 120;
+var skyT = 0; var SKY_SPEED = 7; var DAY_LOOP = 600;
 var wind = 0;
 var bannerT = 0;
 var particles = [], pops = [], gusts = [], fireflies = [];
@@ -1270,7 +1270,7 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  var sunY = GROUND + 40 - rise * (GROUND * 0.42);
+  var sunY = GROUND + 40 - rise * (GROUND + 100);
   var sg = ctx.createRadialGradient(W*0.5, sunY, 8, W*0.5, sunY, 90);
   sg.addColorStop(0, 'rgba(242,184,75,0.85)');
   sg.addColorStop(1, 'rgba(232,147,58,0)');
