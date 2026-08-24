@@ -1067,12 +1067,18 @@ function drawOwl(){
   // held ball — idle only, at the owl's launch point
   if (resolved && STATE === 'play' && !ball){
     var bx = x + OWL_CX, by = y - OWL_LAUNCH_Y;
+    var r = 11;
     ctx.fillStyle = C.dawn;
-    ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(bx - 11, by); ctx.lineTo(bx + 11, by);
-    ctx.moveTo(bx, by - 11); ctx.lineTo(bx, by + 11); ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI*2); ctx.stroke();
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0);
+    ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke();
+    ctx.beginPath(); ctx.arc(-r * 1.5, 0, r * 1.2, -0.6, 0.6); ctx.stroke();
+    ctx.beginPath(); ctx.arc(r * 1.5, 0, r * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+    ctx.restore();
   }
 
   // ground shadow — stays on the ground plane; fades as the owl rises
