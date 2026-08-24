@@ -276,9 +276,9 @@ function placePlayer(){
   player.y = GROUND;
 }
 
-var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 72, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
+var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 120, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
 function placeHoop(){
-  hoop.baseY = Math.round(H * 0.33);
+  hoop.baseY = Math.round(H * 0.36);
   hoop.x = Math.min(W - 78, W * 0.76);
   hoop.y = hoop.baseY;
 }
@@ -849,18 +849,9 @@ function update(dt){
   tickParticles(dt);
   hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
 
-  // airborne owl: wings flap, slow descent to ground, then resume loiter
+  // airborne owl: hover in place, wings flap, stays put until dragged again
   if (owlAir){
     owlFlapT += dt;
-    owlVy += 140 * dt;
-    if (owlVy > 120) owlVy = 120;
-    player.y = Math.min(GROUND, player.y + owlVy * dt);
-    if (player.y >= GROUND){
-      player.y = GROUND;
-      owlAir = false;
-      owlVy = 0;
-      dust(player.x + OWL_CX, GROUND);
-    }
   }
 
   var spd = 220;
@@ -1009,8 +1000,8 @@ function drawOwl(){
   poly([[32,29],[28,36],[32,34],[36,36]]);
 
   // wings — same paths as homepage owl (left M16.., right M48..). Independently animated.
-  // Grounded: subtle idle rock. Airborne: extended outward + slow gentle flap.
-  var flap = owlAir ? Math.sin(owlFlapT * 2.4) * 16 : Math.sin(now * 1.3) * 2.4;
+  // Grounded: subtle idle rock. Airborne: hover — wings flap to hold position.
+  var flap = owlAir ? Math.sin(owlFlapT * 7) * 22 : Math.sin(now * 1.3) * 2.4;
   ctx.fillStyle = '#7A8A9A';
   // left wing
   ctx.save();
@@ -1058,7 +1049,7 @@ function drawHoop(){
   var rl = hoop.x - hoop.rimW / 2, rr = hoop.x + hoop.rimW / 2;
   var bx = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2 + hoop.boardWob;
   ctx.fillStyle = C.pine;
-  ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, Math.round((GROUND - rimY + hoop.boardH) * 0.7));
+  ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, GROUND - rimY + hoop.boardH);
   ctx.fillStyle = C.day;
   ctx.fillRect(bx - hoop.boardW / 2, rimY - hoop.boardH, hoop.boardW, hoop.boardH);
   ctx.strokeStyle = C.dawn; ctx.lineWidth = 2;
