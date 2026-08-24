@@ -52,7 +52,7 @@
     backdrop-filter:blur(8px);}
   .iconbtn:hover{border-color:var(--dawn);color:var(--gold);}
 
-  .banner{position:fixed;top:30%;left:0;right:0;text-align:center;pointer-events:none;
+  .banner{position:fixed;top:calc(30% + 200px);left:0;right:0;text-align:center;pointer-events:none;
     opacity:0;transform:scale(.85);transition:opacity .2s,transform .2s;z-index:6;}
   .banner.on{opacity:1;transform:scale(1);}
   .banner .big{font-family:var(--display);font-weight:700;font-size:clamp(2rem,7vw,4rem);
