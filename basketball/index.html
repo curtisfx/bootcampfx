@@ -261,7 +261,6 @@ var SHOTS = 50;
 var score = 0, displayScore = 0, streak = 0, bestStreak = 0, best = 0, shotsLeft = SHOTS;
 var onFire = false;
 var makes = 0, swishes = 0, banks = 0, rims = 0;
-var skyT = 0; var SKY_SPEED = 7; var DAY_LOOP = 600;
 var wind = 0;
 var bannerT = 0;
 var particles = [], pops = [], gusts = [], fireflies = [];
@@ -874,7 +873,6 @@ function showOver(){
 }
 
 function update(dt){
-  skyT += dt * SKY_SPEED;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
   punch = Math.max(0, punch - dt * 0.9);
@@ -967,7 +965,7 @@ function drawEgret(e){
   ctx.restore();
 }
 function drawSquirrel(s){
-  ctx.save(); ctx.translate(s.x, GROUND + 2); ctx.scale(0.8, 0.8);
+  ctx.save(); ctx.translate(s.x, GROUND + 22); ctx.scale(0.8, 0.8);
   var hop = Math.abs(Math.sin(s.hp)) * -2; ctx.translate(0, hop);
   ctx.fillStyle = C.dawn; ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#D07F2E'; ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
@@ -1215,28 +1213,6 @@ function drawBall(){
   ctx.beginPath(); ctx.arc(ball.r * 1.5, 0, ball.r * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
   ctx.restore();
 }
-function drawAim(){
-  if (!swipe) return;
-  var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
-  if (dy > -20) return;
-  var dtg = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
-  var vx = (dx / dtg) * 0.92, vy = (dy / dtg) * 0.92;
-  var sp = Math.sqrt(vx*vx + vy*vy), max = 1980;
-  if (sp > max){ vx *= max/sp; vy *= max/sp; }
-  if (vy > -280) vy = -280;
-  var x = player.x + OWL_CX, y = player.y - OWL_LAUNCH_Y, t = 0;
-  ctx.fillStyle = C.gold;
-  for (var i = 0; i < 18; i++){
-    t += 0.065;
-    var px = x + vx * t + 0.5 * wind * t * t;
-    var py = y + vy * t + 0.5 * GRAV * t * t;
-    if (py > GROUND) break;
-    ctx.globalAlpha = 0.72 * (1 - i / 18);
-    ctx.beginPath(); ctx.arc(px, py, 3.1, 0, Math.PI*2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
 function draw(){
   ctx.clearRect(0, 0, W, H);
   var sh = trauma * trauma;
@@ -1253,12 +1229,11 @@ function draw(){
   ctx.scale(z, z);
   ctx.translate(-W/2 + shx, -H/2 + shy + camY);
 
-  var dayF = 0.5 - 0.5 * Math.cos(skyT * Math.PI * 2 / DAY_LOOP);
-  var rise = dayF;
+  var rise = parseFloat(getComputedStyle(appEl).getPropertyValue('--clearance')) || 0;
   var sky = ctx.createLinearGradient(0, 0, 0, H);
   var skyStops = [[0, C.predawn, C.skyHi], [0.30, C.predawn, '#6E5A54'], [0.68, C.predawn2, C.dawn], [0.88, C.skyHi, C.gold], [1, C.skyHi, C.day]];
   for (var si = 0; si < skyStops.length; si++){
-    sky.addColorStop(skyStops[si][0], lerpColor(skyStops[si][1], skyStops[si][2], dayF));
+    sky.addColorStop(skyStops[si][0], lerpColor(skyStops[si][1], skyStops[si][2], rise));
   }
   ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
 
@@ -1270,7 +1245,7 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  var sunY = GROUND + 40 - rise * (GROUND + 100);
+  var sunY = GROUND + 40 - rise * (GROUND + 40 - H * 0.5);
   var sg = ctx.createRadialGradient(W*0.5, sunY, 8, W*0.5, sunY, 90);
   sg.addColorStop(0, 'rgba(242,184,75,0.85)');
   sg.addColorStop(1, 'rgba(232,147,58,0)');
@@ -1308,7 +1283,6 @@ function draw(){
   if (squirrel) drawSquirrel(squirrel);
   drawHoop();
   drawOwl();
-  drawAim();
   drawBall();
 
   for (var i = 0; i < particles.length; i++){
