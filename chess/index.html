@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Boot Camp FX — Chess</title>
-<meta name="description" content="Boot Camp FX chess — park animals at first light. Tap to move. Play a friend or a shallow opponent.">
+<meta name="description" content="Boot Camp FX chess — turtle, frog, coyote, rabbit, squirrel, owl. Tap to move.">
 <meta name="theme-color" content="#0F1B2C">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,52 +22,34 @@
     font-family:var(--body);color:var(--day);
     -webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
   #board{display:block;width:100vw;height:100vh;}
-
-  .hud{position:fixed;top:14px;left:50%;transform:translateX(-50%);text-align:center;z-index:5;pointer-events:none;
-    background:rgba(15,27,44,.42);border:1px solid rgba(138,151,166,.35);backdrop-filter:blur(10px);
-    border-radius:14px;padding:9px 22px 10px;color:var(--day);text-shadow:0 2px 8px rgba(15,27,44,.5);}
-  .hud .brand{font-family:var(--display);font-weight:600;font-size:clamp(1.05rem,2.4vw,1.45rem);line-height:1.12;letter-spacing:.01em;}
+  .hud{position:fixed;top:10px;left:50%;transform:translateX(-50%);text-align:center;z-index:5;pointer-events:none;
+    background:rgba(15,27,44,.48);border:1px solid rgba(138,151,166,.35);backdrop-filter:blur(10px);
+    border-radius:14px;padding:8px 18px 9px;color:var(--day);}
+  .hud .brand{font-family:var(--display);font-weight:600;font-size:clamp(1.05rem,2.4vw,1.4rem);line-height:1.12;}
   .hud .brand em{font-style:italic;color:var(--gold);}
   .hud .brand .sep{color:var(--mist);font-weight:400;padding:0 4px;}
-  .hud .tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mist);margin-top:3px;}
-  .foot{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
-    font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(251,247,238,.62);
-    text-shadow:0 1px 6px rgba(15,27,44,.6);white-space:nowrap;}
-  .bar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:8px;align-items:center;
-    pointer-events:auto;}
+  .hud .tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);margin-top:3px;}
+  .bar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:8px;align-items:center;}
   .bar button,.bar .stat{
-    font-family:var(--body);font-weight:700;font-size:.86rem;border:0;border-radius:14px;padding:10px 16px;cursor:pointer;
-    transition:transform .16s var(--ease), background .16s var(--ease);}
+    font-family:var(--body);font-weight:700;font-size:.86rem;border:0;border-radius:14px;padding:10px 16px;cursor:pointer;}
   .bar button{background:var(--dawn);color:#1B1206;}
-  .bar button:hover{transform:translateY(-2px);background:var(--gold);}
   .bar button.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);font-weight:600;}
   .bar .stat{background:rgba(15,27,44,.55);color:var(--day);border:1px solid rgba(138,151,166,.35);
-    font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;min-width:140px;text-align:center;}
-
-  @media (max-width:520px){
-    .hud{padding:8px 14px 9px;border-radius:12px;}
-    .hud .tag{letter-spacing:.18em;}
-    .foot{font-size:.52rem;letter-spacing:.16em;}
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none !important;transition:none !important;}
-  }
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;min-width:132px;text-align:center;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
 </style>
 </head>
 <body>
 <canvas id="board"></canvas>
-
 <div class="hud">
   <div class="brand">Boot Camp <em>FX</em><span class="sep">·</span>Chess</div>
   <div class="tag" id="hudTag">Ink to move</div>
 </div>
-<div class="foot">first light over the board · 86&nbsp;s dawn loop</div>
 <div class="bar">
   <button type="button" id="btnNew">New game</button>
   <button type="button" class="ghost" id="btnMode">vs AI</button>
   <div class="stat" id="hudStat">your move</div>
 </div>
-
 <script>
 (function(){
 "use strict";
@@ -78,27 +60,25 @@ var DPR = Math.min(window.devicePixelRatio || 1, 2);
 var W = 0, H = 0;
 var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- palette ---------- */
 var C = {
   predawn:'#0F1B2C', predawn2:'#16273D', pine:'#14291F',
   dawn:'#E8933A', gold:'#F2B84B', day:'#FBF7EE', day2:'#F3ECDC',
   ink:'#14100A', mist:'#9FB0C4', stone:'#6A6255',
-  lineDay:'#E4DAC6', steel:'#8A97A6',
-  skyHi:'#2C3A50'
+  lineDay:'#E4DAC6', steel:'#8A97A6', skyHi:'#2C3A50',
+  toad:'#6E7E33', toadDark:'#55632A', cream:'#F3ECDC'
 };
 
-/* ---------- time-driven sky (independent of any game action) ---------- */
-var DAY_LOOP = 86;               /* full loop, wall-clock seconds */
-var skyT = 0;                    /* accumulates real time */
+var DAY_LOOP = 86;
+var skyT = 0;
 function dayF(){ return 0.5 - 0.5 * Math.cos(skyT * 2 * Math.PI / DAY_LOOP); }
 
-/* ---------- geometry ---------- */
 var sq = 0, bx = 0, by = 0, board = 0;
 function layout(){
-  sq = Math.max(16, Math.floor(Math.min(W, H) * 0.58 / 8));
-  board = sq * 8;
+  var reserved = 118;
+  board = Math.max(200, Math.min(W - 8, H - reserved));
+  sq = board / 8;
   bx = Math.round((W - board) / 2);
-  by = Math.round((H - board) / 2);
+  by = Math.round(58 + (H - reserved - board) / 2);
 }
 function resize(){
   W = window.innerWidth; H = window.innerHeight;
@@ -109,7 +89,6 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
-/* ---------- helpers ---------- */
 function rnd(a, b){ return a + Math.random() * (b - a); }
 function lerpColor(c1, c2, t){
   var a = parseInt(c1.slice(1), 16), b = parseInt(c2.slice(1), 16);
@@ -136,22 +115,24 @@ function poly(pts){
   for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
   ctx.closePath(); ctx.fill();
 }
-function capsule(x, y, w, h){
-  var r = w / 2;
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arc(x + r, y + r, r, -Math.PI/2, Math.PI/2, true);
-  ctx.lineTo(x + r, y + h - r);
-  ctx.arc(x + r, y + h - r, r, Math.PI/2, -Math.PI/2, true);
-  ctx.closePath(); ctx.fill();
+
+/* ---------- cute face (runner language) ---------- */
+function face(x, y, r, inkPupil){
+  ctx.fillStyle = C.day;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(x + r * 0.08, y + r * 0.06, r * (inkPupil || 0.38), 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day;
+  ctx.beginPath(); ctx.arc(x - r * 0.28, y - r * 0.32, r * 0.18, 0, Math.PI * 2); ctx.fill();
 }
 
-/* ---------- starting position ----------
-   Rank 0 (bottom) = White back rank, rank 1 = White pawns,
-   rank 6 = Black pawns, rank 7 = Black back rank.
-   White team is drawn in ink, Black team in stone.
-   All species are authored FACING LEFT; the black side is
-   flipped with ctx.scale(-1,1) so it faces the opponent.      */
+function tint(hex, side){
+  if (side === 'w') return hex;
+  var n = parseInt(hex.slice(1), 16);
+  var r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+  return 'rgb(' + Math.round(r*0.55) + ',' + Math.round(g*0.55) + ',' + Math.round(b*0.55) + ')';
+}
+
 var BACK = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
 var pieces = [];
 var nextId = 1;
@@ -159,324 +140,248 @@ function resetPieces(){
   pieces = [];
   nextId = 1;
   for (var f = 0; f < 8; f++){
-    pieces.push({ id:nextId++, file:f, rank:1, type:'pawn',  side:'w', ph:(f*0.9 + 1.7) % 6.283, moved:false });
-    pieces.push({ id:nextId++, file:f, rank:6, type:'pawn',  side:'b', ph:(f*1.3 + 0.4) % 6.283, moved:false });
-    pieces.push({ id:nextId++, file:f, rank:0, type:BACK[f], side:'w', ph:(f*0.6 + 2.2) % 6.283, moved:false });
-    pieces.push({ id:nextId++, file:f, rank:7, type:BACK[f], side:'b', ph:(f*1.1 + 4.1) % 6.283, moved:false });
+    pieces.push({ id:nextId++, file:f, rank:1, type:'pawn',  side:'w', ph:(f*0.9 + 1.7) % 6.283, moved:false, dir:1 });
+    pieces.push({ id:nextId++, file:f, rank:6, type:'pawn',  side:'b', ph:(f*1.3 + 0.4) % 6.283, moved:false, dir:1 });
+    pieces.push({ id:nextId++, file:f, rank:0, type:BACK[f], side:'w', ph:(f*0.6 + 2.2) % 6.283, moved:false, dir:1 });
+    pieces.push({ id:nextId++, file:f, rank:7, type:BACK[f], side:'b', ph:(f*1.1 + 4.1) % 6.283, moved:false, dir:1 });
   }
 }
 resetPieces();
 
-function sideColor(side){ return side === 'w' ? C.ink : C.stone; }
-function eyeColor(side){ return side === 'w' ? C.day2 : C.ink; }
-
-/* Height/mass descends stag → owl → fox/beaver → rabbit → squirrel,
-   so a rank reads from the outline even at ~40px squares. */
-function scaleFor(type, sq){
-  switch(type){
-    case 'king':   return sq * 0.92 / 76;
-    case 'queen':  return sq * 0.80 / 76;
-    case 'rook':   return sq * 0.58 / 42;
-    case 'bishop': return sq * 0.60 / 42;
-    case 'knight': return sq * 0.50 / 46;
-    case 'pawn':   return sq * 0.40 / 27;
-  }
-  return sq * 0.5 / 40;
-}
-var SHADOW_W = { king:0.52, queen:0.56, rook:0.62, bishop:0.52, knight:0.46, pawn:0.40 };
-
-function drawShadow(p, cx, baseY){
-  var w = SHADOW_W[p.type] * sq;
-  ctx.fillStyle = 'rgba(20,16,10,0.28)';
-  ctx.beginPath();
-  ctx.ellipse(cx, baseY + sq * 0.02, w / 2, Math.max(2, w * 0.10), 0, 0, Math.PI * 2);
-  ctx.fill();
+/* Scale so tallest (king) fills ~88% of a square. Local units: feet at y=0, head negative. */
+function scaleFor(type){
+  var h = { king:76, queen:46, rook:46, knight:48, bishop:36, pawn:38 }[type] || 50;
+  var fill = { king:0.92, queen:0.82, rook:0.74, knight:0.74, bishop:0.70, pawn:0.56 }[type] || 0.7;
+  return (sq * fill) / h;
 }
 
-/* ---------- King = Stag (antler crown, tallest, slow sway ±1.2°) ---------- */
-function drawStag(ctx, t, side){
-  var main = sideColor(side), eye = eyeColor(side);
-  var sway = Math.sin(t * 0.7) * 1.2;
+/* ---------- King = Owl. SVG 64×84, feet at y=76. Plant feet, do NOT invert. ---------- */
+function drawOwl(t, side){
+  var sway = RM ? 0 : anim(t, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
+  var blink = RM ? 1 : anim(t, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
   ctx.save();
-  ctx.translate(0, -30); ctx.rotate(sway * Math.PI / 180); ctx.translate(0, 30);
-  // legs
-  ctx.fillStyle = main;
-  capsule(-7, -20, 2.6, 20);
-  capsule(-2, -20, 2.6, 20);
-  capsule(7, -20, 2.6, 20);
-  capsule(12, -20, 2.6, 20);
-  // body (slight slope toward the rear)
-  ctx.beginPath(); ctx.ellipse(1, -34, 16, 11.5, -0.09, 0, Math.PI * 2); ctx.fill();
-  // neck + head
-  poly([[-9,-42],[-15,-50],[-7,-52],[-1,-43]]);
-  ctx.beginPath(); ctx.ellipse(-15, -55, 6.5, 5.5, -0.12, 0, Math.PI * 2); ctx.fill();
-  // muzzle + ear
-  ctx.beginPath(); ctx.ellipse(-22, -53.5, 3.4, 2.6, 0, 0, Math.PI * 2); ctx.fill();
-  poly([[-12,-59],[-10,-64],[-8,-58]]);
-  // tail tuft
-  poly([[17,-36],[21,-39],[19,-34]]);
-  // antler crown
-  ctx.strokeStyle = main; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-14, -59);
-  ctx.quadraticCurveTo(-19, -64, -23, -68);
-  ctx.moveTo(-18, -62.5); ctx.quadraticCurveTo(-22, -63.5, -25, -65);
-  ctx.moveTo(-23, -68); ctx.quadraticCurveTo(-26, -70, -28, -73);
-  ctx.moveTo(-14, -59);
-  ctx.quadraticCurveTo(-10, -66, -12, -71);
-  ctx.moveTo(-11, -64); ctx.quadraticCurveTo(-7, -66, -5, -68);
-  ctx.stroke();
-  // eye
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-17, -55, 1.2, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-}
-
-/* ---------- Queen = Owl (shipped homepage/basketball owl; mist body;
-   blink 4.2s [[0,1],[.96,1],[.98,.1],[1,1]], sway 5.4s
-   [[0,0],[.28,6],[.62,-4],[1,0]]). Front-facing, so the black-side
-   mirror is a no-op — faithful to the shipped art. ---------- */
-function drawOwl(ctx, t, side){
-  var main = sideColor(side);
-  var sway = anim(t, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
-  var blink = anim(t, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
-  ctx.save();
-  // pivot (0,29) ≈ CSS 50% 62% of the 64×84 box (feet at y 76 → 76-47=29)
-  ctx.translate(0, 29); ctx.rotate(sway * Math.PI / 180); ctx.translate(0, -29);
-  // body
-  ctx.fillStyle = C.mist;
-  ctx.beginPath(); ctx.ellipse(0, 26, 18, 24, 0, 0, Math.PI * 2); ctx.fill();
-  // ear tufts
-  poly([[-13,62],[-18,76],[-10,64]]);
-  poly([[13,62],[18,76],[10,64]]);
-  // head
-  ctx.beginPath(); ctx.arc(0, 50, 17, 0, Math.PI * 2); ctx.fill();
-  // wings (idle rock, per basketball)
-  var flap = Math.sin(t * 1.3) * 2.4;
+  ctx.translate(-32, -76);
+  ctx.translate(32, 50);
+  ctx.rotate(sway * Math.PI / 180);
+  ctx.translate(-32, -50);
+  ctx.fillStyle = tint(C.mist, side);
+  ctx.beginPath(); ctx.ellipse(32, 50, 18, 24, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(32, 26, 17, 0, Math.PI * 2); ctx.fill();
+  poly([[19,14],[14,0],[22,12]]);
+  poly([[45,14],[50,0],[42,12]]);
+  var flap = RM ? 0 : Math.sin(t * 1.3) * 2.4;
   ctx.fillStyle = '#7A8A9A';
-  ctx.save(); ctx.translate(-16, 40); ctx.rotate(-flap * Math.PI / 180); ctx.translate(16, -40);
-  ctx.beginPath(); ctx.moveTo(-16, 40); ctx.bezierCurveTo(-20, 30, -20, 18, -14, 14); ctx.lineTo(-14, 36); ctx.closePath(); ctx.fill();
+  ctx.save(); ctx.translate(16, 36); ctx.rotate(-flap * Math.PI / 180); ctx.translate(-16, -36);
+  ctx.beginPath(); ctx.moveTo(16, 36); ctx.bezierCurveTo(12, 46, 12, 58, 18, 62); ctx.lineTo(18, 40); ctx.closePath(); ctx.fill();
   ctx.restore();
-  ctx.save(); ctx.translate(16, 40); ctx.rotate(flap * Math.PI / 180); ctx.translate(-16, -40);
-  ctx.beginPath(); ctx.moveTo(16, 40); ctx.bezierCurveTo(20, 30, 20, 18, 14, 14); ctx.lineTo(14, 36); ctx.closePath(); ctx.fill();
+  ctx.save(); ctx.translate(48, 36); ctx.rotate(flap * Math.PI / 180); ctx.translate(-48, -36);
+  ctx.beginPath(); ctx.moveTo(48, 36); ctx.bezierCurveTo(52, 46, 52, 58, 46, 62); ctx.lineTo(46, 40); ctx.closePath(); ctx.fill();
   ctx.restore();
-  // eyes — blink pivot 50% 50% of the eyes group
   ctx.save();
-  ctx.translate(0, 52); ctx.scale(1, blink); ctx.translate(0, -52);
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.arc(-7, 52, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(7, 52, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.translate(32, 24); ctx.scale(1, blink); ctx.translate(-32, -24);
+  face(25, 24, 6.4); face(39, 24, 6.4);
+  ctx.restore();
+  ctx.fillStyle = C.dawn;
+  poly([[32,29],[28,36],[32,34],[36,36]]);
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(24,70); ctx.lineTo(24,76);
+  ctx.moveTo(22,70); ctx.lineTo(22,76);
+  ctx.moveTo(26,70); ctx.lineTo(26,76);
+  ctx.moveTo(40,70); ctx.lineTo(40,76);
+  ctx.moveTo(38,70); ctx.lineTo(38,76);
+  ctx.moveTo(42,70); ctx.lineTo(42,76);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------- Queen = Squirrel. Runner 52×48, feet y=46. Dawn body. ---------- */
+function drawSquirrel(t, side){
+  var flick = RM ? 0 : Math.sin(t * 2.2) * 4;
+  ctx.save();
+  ctx.translate(-26, -46);
+  ctx.fillStyle = tint(C.dawn, side);
+  ctx.save();
+  ctx.translate(38, 18); ctx.rotate(flick * Math.PI / 180); ctx.translate(-38, -18);
+  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = tint('#D07F2E', side);
+  ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = tint(C.dawn, side);
+  poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
+  ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI * 2); ctx.fill();
+  poly([[11,16],[9,9],[13,12]]);
+  face(12.4, 19.2, 3.4);
   ctx.fillStyle = C.ink;
-  ctx.beginPath(); ctx.arc(-7, 52, 2.2, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(7, 52, 2.2, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-  // beak (side color — dawn/gold are state colors, never piece fills)
-  ctx.fillStyle = main;
-  poly([[0,47],[-4,40],[0,42],[4,40]]);
-  // feet
-  ctx.strokeStyle = main; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-8,6); ctx.lineTo(-8,0);
-  ctx.moveTo(-10,6); ctx.lineTo(-10,0);
-  ctx.moveTo(-6,6); ctx.lineTo(-6,0);
-  ctx.moveTo(8,6); ctx.lineTo(8,0);
-  ctx.moveTo(6,6); ctx.lineTo(6,0);
-  ctx.moveTo(10,6); ctx.lineTo(10,0);
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(9.2, 22.2, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(16,46); ctx.lineTo(13,46); ctx.moveTo(32,46); ctx.lineTo(36,46); ctx.stroke();
   ctx.restore();
 }
 
-/* ---------- Rook = Beaver (broad mass, flat tail, sway 6–7s) ---------- */
-function drawBeaver(ctx, t, side){
-  var main = sideColor(side), eye = eyeColor(side);
-  var sway = Math.sin(t * 2 * Math.PI / 6.5) * 3;
+/* ---------- Rook = Rabbit. Homepage 52×48. Stone (owl already owns mist). ---------- */
+function drawRabbit(t, side){
+  var twitch = RM ? 0 : anim(t, 2.6, [[0,0],[0.88,0],[0.92,-8],[0.96,4],[1,0]]);
   ctx.save();
-  ctx.translate(0, -18); ctx.rotate(sway * Math.PI / 180); ctx.translate(0, 18);
-  // flat tail (behind)
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.ellipse(16, -9, 13, 4.5, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(243,236,220,0.55)'; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(8, -10.5); ctx.lineTo(14, -9.5);
-  ctx.moveTo(12, -8); ctx.lineTo(18, -7);
-  ctx.moveTo(18, -11.5); ctx.lineTo(23, -10);
-  ctx.stroke();
-  // body mass
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.ellipse(-2, -24, 17, 12, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = 'rgba(243,236,220,0.30)';
-  ctx.beginPath(); ctx.ellipse(-4, -21, 12, 8, 0, 0, Math.PI * 2); ctx.fill();
-  // head
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.arc(-15, -32, 8.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(-24, -30, 4.5, 3.5, 0, 0, Math.PI * 2); ctx.fill();
-  // nose + teeth
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-28, -30, 1.3, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = C.day2;
-  ctx.fillRect(-26.5, -26.5, 1.7, 3.2);
-  ctx.fillRect(-24.3, -26.5, 1.7, 3.2);
-  // ear + eye
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.arc(-15, -39, 2.8, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-18, -33, 1.3, 0, Math.PI * 2); ctx.fill();
-  // stubby legs
-  ctx.fillStyle = main;
-  capsule(-12, -8, 3, 8);
-  capsule(-2, -8, 3, 8);
-  capsule(8, -8, 3.4, 8);
-  ctx.restore();
-}
-
-/* ---------- Bishop = Fox (low, long tail curve) ---------- */
-function drawFox(ctx, t, side){
-  var main = sideColor(side), eye = eyeColor(side);
-  var tw = Math.sin(t * 1.6) * 4;
-  // long tail curve (behind, waves slowly)
-  ctx.fillStyle = main;
+  ctx.translate(-26, -46);
+  ctx.fillStyle = tint(C.stone, side);
   ctx.save();
-  ctx.translate(10, -16); ctx.rotate(tw * Math.PI / 180); ctx.translate(-10, 16);
-  ctx.beginPath();
-  ctx.moveTo(8, -18);
-  ctx.quadraticCurveTo(24, -32, 33, -12);
-  ctx.quadraticCurveTo(29, -4, 18, -8);
-  ctx.quadraticCurveTo(12, -8, 8, -18);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.ellipse(30, -14, 3.2, 2.6, -0.5, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-  // legs
-  ctx.fillStyle = main;
-  capsule(-10, -10, 2.2, 10);
-  capsule(-2, -10, 2.2, 10);
-  capsule(6, -10, 2.2, 10);
-  capsule(12, -10, 2.2, 10);
-  // low body
-  ctx.beginPath(); ctx.ellipse(-4, -24, 14, 8.5, -0.04, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = 'rgba(243,236,220,0.45)';
-  ctx.beginPath(); ctx.ellipse(-11, -25, 5.5, 4, 0, 0, Math.PI * 2); ctx.fill();
-  // head wedge (pointed snout left) + ears
-  ctx.fillStyle = main;
-  poly([[-28,-24],[-16,-31],[-10,-22]]);
-  poly([[-13,-34],[-9,-30],[-7,-37]]);
-  poly([[-18,-32],[-14,-29],[-13,-36]]);
-  // eye
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-18, -26, 1.15, 0, Math.PI * 2); ctx.fill();
-}
-
-/* ---------- Knight = Rabbit (shipped homepage rabbit; earTwitch +
-   wrHop 0→-12→0, staggered per piece) ---------- */
-function drawRabbit(ctx, t, side){
-  var main = sideColor(side), eye = eyeColor(side);
-  var hop = anim(t, 2.5, [[0,0],[0.45,-12],[0.55,0],[1,0]]);
-  var twitch = anim(t, 2.6, [[0,0],[0.88,0],[0.92,-9],[0.96,5],[1,0]]);
-  ctx.save();
-  ctx.translate(0, hop);
-  // body
-  ctx.fillStyle = main;
-  ctx.beginPath();
-  ctx.moveTo(-8, 24); ctx.bezierCurveTo(-14, 22, -18, 16, -17, 10);
-  ctx.bezierCurveTo(-16, 3, -8, 0, 2, 0);
-  ctx.bezierCurveTo(12, 0, 18, -4, 18, -11);
-  ctx.bezierCurveTo(18, -18, 12, -24, 4, -25);
-  ctx.closePath(); ctx.fill();
-  // head
-  ctx.beginPath(); ctx.arc(-10, 24, 6, 0, Math.PI * 2); ctx.fill();
-  // ears — twitch pivot 50% 16% of the 52×48 box (→ local 0,38.3)
-  ctx.save();
-  ctx.translate(0, 38.3); ctx.rotate(twitch * Math.PI / 180); ctx.translate(0, -38.3);
-  ctx.fillStyle = main;
-  ctx.beginPath();
-  ctx.moveTo(-6, 32); ctx.bezierCurveTo(-9, 40, -9, 45, -6, 46);
-  ctx.bezierCurveTo(-3, 45, -3, 38, -3, 32);
-  ctx.closePath(); ctx.fill();
+  ctx.translate(23, 14); ctx.rotate(twitch * Math.PI / 180); ctx.translate(-23, -14);
+  poly([[20,14],[17,6],[17,1],[20,0],[23,1],[23,8],[23,14]]);
   ctx.globalAlpha = 0.75;
-  ctx.beginPath();
-  ctx.moveTo(0, 32); ctx.bezierCurveTo(-1, 41, 0, 45, 3, 45);
-  ctx.bezierCurveTo(5, 43, 4, 37, 3, 32);
-  ctx.closePath(); ctx.fill();
+  poly([[26,14],[25,5],[26,1],[29,1],[31,3],[30,9],[29,14]]);
   ctx.globalAlpha = 1;
   ctx.restore();
-  // eye (faces left)
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-12, 25.5, 1.3, 0, Math.PI * 2); ctx.fill();
-  // tail
+  poly([[18,22],[12,24],[8,30],[9,36],[10,43],[18,46],[28,46],[38,46],[44,42],[44,35],[44,28],[38,22],[30,21]]);
+  ctx.beginPath(); ctx.arc(16, 22, 6, 0, Math.PI * 2); ctx.fill();
+  face(14.2, 20.2, 3.6);
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.ellipse(12.2, 23.6, 1.4, 1.0, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.arc(19, 6, 4, 0, Math.PI * 2); ctx.fill();
-  // feet
-  ctx.strokeStyle = main; ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-14, 0); ctx.lineTo(-18, 0);
-  ctx.moveTo(8, 0); ctx.lineTo(14, 0);
-  ctx.stroke();
+  ctx.fillRect(12.4, 24.6, 1.2, 2.2);
+  ctx.fillRect(14.0, 24.6, 1.2, 2.2);
+  ctx.fillStyle = C.cream;
+  ctx.beginPath(); ctx.arc(45, 40, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(12,46); ctx.lineTo(8,46); ctx.moveTo(34,46); ctx.lineTo(40,46); ctx.stroke();
   ctx.restore();
 }
 
-/* ---------- Pawn = Squirrel (small, big tail arc, micro-darts) ---------- */
-function drawSquirrel(ctx, t, side){
-  var main = sideColor(side), eye = eyeColor(side);
-  var dartY = Math.sin(t * 9) * 1.3;
-  var dartX = Math.sin(t * 5.3) * 0.9;
-  var flick = Math.sin(t * 2.2) * 5;
+/* ---------- Knight = Coyote. Homepage 320×200, faces right — flip to face left. ---------- */
+function drawCoyote(t, side){
+  var sway = RM ? 0 : Math.sin(t * 0.9) * 1.3;
   ctx.save();
-  ctx.translate(dartX, dartY);
-  // big tail arc (behind)
-  ctx.save();
-  ctx.translate(10, -14); ctx.rotate(flick * Math.PI / 180); ctx.translate(-10, 14);
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.arc(13, -13, 12, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.arc(16.5, -8.5, 7.5, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-  // feet
-  ctx.strokeStyle = main; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.scale(-1, 1);
+  ctx.scale(0.36, 0.36);
+  ctx.translate(-160, -166);
+  ctx.translate(132, 120);
+  ctx.rotate(sway * Math.PI / 180);
+  ctx.translate(-132, -120);
+  ctx.fillStyle = tint('#8F8068', side);
+  ctx.beginPath(); roundRect(73, 122, 10, 44, 3); ctx.fill();
+  ctx.beginPath(); roundRect(127, 126, 10, 40, 3); ctx.fill();
+  ctx.fillStyle = tint('#9C8B70', side);
   ctx.beginPath();
-  ctx.moveTo(-12, 0); ctx.lineTo(-15, 0);
-  ctx.moveTo(6, 0); ctx.lineTo(9, 0);
+  ctx.moveTo(74,100); ctx.bezierCurveTo(84,88,102,82,122,82); ctx.bezierCurveTo(144,82,162,86,172,92);
+  ctx.bezierCurveTo(182,96,186,102,184,110); ctx.bezierCurveTo(182,118,172,122,162,122);
+  ctx.bezierCurveTo(150,126,140,126,128,126); ctx.bezierCurveTo(112,126,98,126,92,122);
+  ctx.bezierCurveTo(84,118,76,110,74,100); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = tint('#6E5F49', side);
+  ctx.beginPath();
+  ctx.moveTo(80,98); ctx.bezierCurveTo(92,88,108,84,126,84); ctx.bezierCurveTo(146,84,160,88,170,93);
+  ctx.bezierCurveTo(156,97,132,97,112,97); ctx.bezierCurveTo(98,97,88,98,80,98); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = tint('#9C8B70', side);
+  ctx.beginPath(); roundRect(83, 124, 10, 42, 3); ctx.fill();
+  ctx.beginPath(); roundRect(149, 124, 10, 42, 3); ctx.fill();
+  ctx.fillStyle = tint('#6E5F49', side);
+  ctx.beginPath();
+  ctx.moveTo(74,106); ctx.bezierCurveTo(56,104,36,110,24,124); ctx.bezierCurveTo(16,133,14,144,20,150);
+  ctx.bezierCurveTo(27,157,40,154,52,144); ctx.bezierCurveTo(62,136,72,126,78,116); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(28, 148, 3.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = tint('#9C8B70', side);
+  ctx.beginPath();
+  ctx.moveTo(160,92); ctx.bezierCurveTo(168,78,180,68,194,66); ctx.bezierCurveTo(206,64,214,70,220,76);
+  ctx.lineTo(240,88); ctx.bezierCurveTo(246,91,248,95,246,98); ctx.bezierCurveTo(243,101,236,101,228,99);
+  ctx.lineTo(204,94); ctx.bezierCurveTo(196,100,186,106,176,108); ctx.bezierCurveTo(166,110,156,102,160,92);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = tint('#6E5F49', side);
+  poly([[192,66],[186,40],[206,58]]);
+  ctx.fillStyle = C.dawn;
+  poly([[208,62],[208,36],[224,56]]);
+  face(216, 78, 8.5, 0.34);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(246, 94, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function roundRect(x, y, w, h, r){
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+/* ---------- Bishop = Frog. Runner toad, front-facing, big gold-language eyes now cute. ---------- */
+function drawFrog(t, side){
+  var bob = RM ? 0 : Math.sin(t * 2.1) * 1.1;
+  ctx.save();
+  ctx.translate(0, bob);
+  ctx.fillStyle = tint(C.toad, side);
+  ctx.beginPath(); ctx.ellipse(0, -16, 22, 15, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = tint(C.toadDark, side);
+  ctx.beginPath(); ctx.ellipse(-16, -8, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(16, -8, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.cream;
+  ctx.beginPath(); ctx.ellipse(0, -10, 12, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = tint(C.toad, side);
+  ctx.beginPath(); ctx.arc(-9, -28, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(9, -28, 8, 0, Math.PI * 2); ctx.fill();
+  face(-9, -29, 5.2); face(9, -29, 5.2);
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(0, -12, 4, 0.15, Math.PI - 0.15); ctx.stroke();
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(-22,0); ctx.moveTo(18,0); ctx.lineTo(22,0); ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------- Pawn = Turtle. Homepage 90×42, head on the right — flip to face left. ---------- */
+function drawTurtle(t, side){
+  var nod = RM ? 0 : Math.sin(t * 1.4) * 1.2;
+  ctx.save();
+  ctx.scale(-1, 1);
+  ctx.translate(-45, -38);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath();
+  ctx.moveTo(30,28); ctx.bezierCurveTo(28,34,26,37,28,38); ctx.bezierCurveTo(32,39,36,36,36,30); ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(56,28); ctx.bezierCurveTo(54,34,52,37,54,38); ctx.bezierCurveTo(58,39,62,36,62,30); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = tint(C.pine, side);
+  poly([[18,28],[8,26],[16,32]]);
+  ctx.fillStyle = tint('#2E5A3F', side);
+  ctx.beginPath();
+  ctx.moveTo(72,30); ctx.bezierCurveTo(76,16,62,7,46,7); ctx.bezierCurveTo(30,7,16,16,20,30);
+  ctx.bezierCurveTo(34,32,58,32,72,30); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(46,7); ctx.quadraticCurveTo(46.5,16,44,30);
+  ctx.moveTo(46,7); ctx.quadraticCurveTo(49.5,16,53,30);
+  ctx.moveTo(26,12); ctx.quadraticCurveTo(32,16,35,29);
+  ctx.moveTo(66,12); ctx.quadraticCurveTo(60,16,57,29);
   ctx.stroke();
-  // body + head
-  ctx.fillStyle = main;
-  ctx.beginPath(); ctx.ellipse(-2, -15, 10, 7.5, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(-10, -21, 6, 0, Math.PI * 2); ctx.fill();
-  poly([[-14,-25],[-15,-30],[-11,-26]]);
-  // eye
-  ctx.fillStyle = eye;
-  ctx.beginPath(); ctx.arc(-12, -22, 1, 0, Math.PI * 2); ctx.fill();
+  ctx.save();
+  ctx.translate(73, 28); ctx.rotate(nod * Math.PI / 180); ctx.translate(-73, -28);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath();
+  ctx.moveTo(72,25); ctx.bezierCurveTo(80,23,86,23,89,25); ctx.bezierCurveTo(92,27,90,30,85,30);
+  ctx.bezierCurveTo(81,30,76,30,73,29); ctx.closePath(); ctx.fill();
+  face(85.5, 26.2, 3.3);
+  ctx.restore();
   ctx.restore();
 }
 
 var DRAW = {
-  king: drawStag, queen: drawOwl, rook: drawBeaver,
-  bishop: drawFox, knight: drawRabbit, pawn: drawSquirrel
+  king: drawOwl, queen: drawSquirrel, rook: drawRabbit,
+  knight: drawCoyote, bishop: drawFrog, pawn: drawTurtle
 };
 
-function drawPiece(p, cx, baseY, t){
-  var k = scaleFor(p.type, sq);
+function drawShadow(cx, baseY, type){
+  var w = ({ king:0.50, queen:0.52, rook:0.46, knight:0.54, bishop:0.50, pawn:0.48 }[type] || 0.46) * sq;
+  ctx.fillStyle = 'rgba(20,16,10,0.18)';
+  ctx.beginPath();
+  ctx.ellipse(cx, baseY + 1, w / 2, Math.max(2.2, w * 0.11), 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawPieceAt(p, cx, baseY, t, extraScale){
+  var k = scaleFor(p.type) * (extraScale || 1);
   ctx.save();
   ctx.translate(cx, baseY);
-  ctx.scale(k, k);
-  if (p.side === 'b') ctx.scale(-1, 1);   /* black faces the opponent */
-  DRAW[p.type](ctx, t + p.ph, p.side);
+  ctx.scale((p.dir || 1) * k, k);
+  DRAW[p.type](t + (p.ph || 0), p.side);
   ctx.restore();
 }
-
-/* ---------- scene ---------- */
-var clouds = [], stars = [];
-function initScene(){
-  clouds = []; stars = [];
-  for (var i = 0; i < 5; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.05, H*0.30), s: rnd(0.5, 1.1), a: rnd(0.18, 0.4), v: rnd(6, 16) });
-  for (var j = 0; j < 46; j++) stars.push({ x: rnd(0, W), y: rnd(0, H*0.35), a: rnd(0.2, 0.6), p: rnd(0, 6.3) });
-}
-function drawCloud(c){
-  ctx.globalAlpha = c.a; ctx.fillStyle = C.mist;
-  ctx.beginPath(); ctx.arc(c.x, c.y, 18*c.s, 0, Math.PI*2);
-  ctx.arc(c.x+22*c.s, c.y+4, 14*c.s, 0, Math.PI*2);
-  ctx.arc(c.x-18*c.s, c.y+6, 12*c.s, 0, Math.PI*2); ctx.fill();
-  ctx.globalAlpha = 1;
-}
-
 
 /* ---------- game state ---------- */
 var VAL = { pawn:100, knight:320, bishop:330, rook:500, queen:900, king:20000 };
@@ -489,16 +394,47 @@ var vsAI = true;
 var STATE = 'play';
 var departing = [];
 var flashes = [];
+var hop = null;
 var aiWait = 0;
+var STORE = 'bootcampfxChessV3';
 var hudTag = document.getElementById('hudTag');
 var hudStat = document.getElementById('hudStat');
 var btnMode = document.getElementById('btnMode');
+
+var ac = null;
+function unlockAudio(){
+  if (!ac){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) ac = new AC();
+  }
+  if (ac && ac.state === 'suspended') ac.resume();
+}
+function sfx(kind){
+  if (RM || !ac) return;
+  var t0 = ac.currentTime;
+  var o = ac.createOscillator();
+  var g = ac.createGain();
+  o.connect(g); g.connect(ac.destination);
+  if (kind === 'move'){
+    o.type = 'triangle'; o.frequency.setValueAtTime(520, t0); o.frequency.exponentialRampToValueAtTime(280, t0 + 0.06);
+    g.gain.setValueAtTime(0.08, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.07);
+    o.start(t0); o.stop(t0 + 0.08);
+  } else if (kind === 'capture'){
+    o.type = 'square'; o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(70, t0 + 0.12);
+    g.gain.setValueAtTime(0.07, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
+    o.start(t0); o.stop(t0 + 0.15);
+  } else if (kind === 'check'){
+    o.type = 'sine'; o.frequency.setValueAtTime(660, t0); o.frequency.setValueAtTime(880, t0 + 0.08);
+    g.gain.setValueAtTime(0.07, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+    o.start(t0); o.stop(t0 + 0.24);
+  }
+}
 
 function copyList(list){
   var o = [];
   for (var i = 0; i < list.length; i++){
     var p = list[i];
-    o.push({ id:p.id, file:p.file, rank:p.rank, type:p.type, side:p.side, ph:p.ph, moved:p.moved });
+    o.push({ id:p.id, file:p.file, rank:p.rank, type:p.type, side:p.side, ph:p.ph, moved:p.moved, dir:p.dir });
   }
   return o;
 }
@@ -593,13 +529,14 @@ function applyMove(list, m, liveEp, liveCastle){
     for (i = 0; i < nxt.length; i++) if (nxt[i].id === m.pid) p = nxt[i];
   }
   var fromF = p.file, fromR = p.rank;
+  p.dir = (m.f > fromF) ? -1 : (m.f < fromF) ? 1 : (p.dir || 1);
   p.file = m.f; p.rank = m.r; p.moved = true;
   if (m.promote) p.type = 'queen';
   if (m.castle === 'K'){
-    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 7){ nxt[i].file = 5; nxt[i].moved = true; }
+    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 7){ nxt[i].file = 5; nxt[i].moved = true; nxt[i].dir = 1; }
   }
   if (m.castle === 'Q'){
-    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 0){ nxt[i].file = 3; nxt[i].moved = true; }
+    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 0){ nxt[i].file = 3; nxt[i].moved = true; nxt[i].dir = -1; }
   }
   var newEp = null;
   if (p.type === 'pawn' && Math.abs(m.r - fromR) === 2) newEp = { f:fromF, r:(fromR + m.r) / 2 };
@@ -615,7 +552,6 @@ function applyMove(list, m, liveEp, liveCastle){
     if (p.side === 'b' && fromF === 0 && fromR === 7) cst.bQ = false;
   }
   if (m.capture){
-    /* captured rook on its home square kills that castle right */
     if (m.f === 7 && m.r === 0) cst.wK = false;
     if (m.f === 0 && m.r === 0) cst.wQ = false;
     if (m.f === 7 && m.r === 7) cst.bK = false;
@@ -687,42 +623,64 @@ function findPiece(id){
   return null;
 }
 
-function hopOff(p){
-  var cx = bx + (p.file + 0.5) * sq;
-  var cy = by + (p.rank + 0.5) * sq + sq * 0.5 - 1;
-  var toward = p.file < 4 ? -1 : 1;
+function fadeOut(p){
   departing.push({
-    type:p.type, side:p.side, ph:p.ph,
-    x:cx, y:cy, vx: toward * (180 + rnd(40, 90)), vy: -220,
-    a:1, life: RM ? 0.01 : 0.7
+    type:p.type, side:p.side, ph:p.ph, dir:p.dir || 1,
+    file:p.file, rank:p.rank, a:1, s:1, life: RM ? 0.01 : 0.28
   });
 }
 
+function persist(){
+  try {
+    localStorage.setItem(STORE, JSON.stringify({
+      pieces: pieces, turn:turn, ep:ep, castle:castle, vsAI:vsAI, STATE:STATE, nextId:nextId
+    }));
+  } catch (e) {}
+}
+function restore(){
+  try {
+    var raw = localStorage.getItem(STORE);
+    if (!raw) return false;
+    var d = JSON.parse(raw);
+    if (!d || !d.pieces || !d.pieces.length) return false;
+    pieces = d.pieces; turn = d.turn; ep = d.ep; castle = d.castle;
+    vsAI = !!d.vsAI; STATE = d.STATE || 'play'; nextId = d.nextId || 40;
+    btnMode.textContent = vsAI ? 'vs AI' : '2 player';
+    return true;
+  } catch (e) { return false; }
+}
+
 function doMove(m){
-  if (STATE !== 'play') return;
+  if (STATE !== 'play' || hop) return;
   var p = findPiece(m.pid);
   if (!p) return;
-  var cap = null;
-  if (m.capture) cap = findPiece(m.capture);
-  if (cap) hopOff(cap);
-  flashes.push({ f:m.f, r:m.r, t:0.35 });
+  var fromF = p.file, fromR = p.rank;
+  var cap = m.capture ? findPiece(m.capture) : null;
+  if (cap) fadeOut(cap);
+  flashes.push({ f:m.f, r:m.r, t:0.28 });
   var sim = applyMove(pieces, m, ep, castle);
   pieces = sim.list;
   ep = sim.ep;
   castle = sim.castle;
+  var mover = findPiece(m.pid);
+  if (mover && !RM){
+    hop = { id:m.pid, f0:fromF, r0:fromR, f1:m.f, r1:m.r, t:0, dur:0.16 };
+  }
   selected = null;
   legal = [];
   turn = enemy(turn);
+  sfx(cap ? 'capture' : 'move');
   var moves = legalMoves(turn);
   if (!moves.length){
     STATE = 'over';
     if (inCheck(turn, pieces)) setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' is mated');
     else setStatus('stalemate');
   } else {
-    if (inCheck(turn, pieces)) setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' in check');
+    if (inCheck(turn, pieces)){ setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' in check'); sfx('check'); }
     else setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' to move');
-    if (vsAI && turn === 'b' && STATE === 'play') aiWait = RM ? 0.05 : 0.38;
+    if (vsAI && turn === 'b' && STATE === 'play') aiWait = RM ? 0.05 : 0.42;
   }
+  persist();
 }
 
 function setStatus(s){
@@ -765,9 +723,7 @@ function aiPick(){
 }
 
 function sqFromEvent(e){
-  var rect = cv.getBoundingClientRect();
-  var x = (e.clientX - rect.left);
-  var y = (e.clientY - rect.top);
+  var x = e.clientX, y = e.clientY;
   var f = Math.floor((x - bx) / sq);
   var r = Math.floor((y - by) / sq);
   if (!onBoard(f, r)) return null;
@@ -775,7 +731,8 @@ function sqFromEvent(e){
 }
 
 function onPointer(e){
-  if (e.target && e.target.closest && e.target.closest('.bar')) return;
+  unlockAudio();
+  if (hop) hop = null;
   if (STATE !== 'play') return;
   if (vsAI && turn === 'b') return;
   var sqp = sqFromEvent(e);
@@ -806,18 +763,34 @@ function newGame(){
   STATE = 'play';
   departing = [];
   flashes = [];
+  hop = null;
   aiWait = 0;
   setStatus('Ink to move');
+  persist();
 }
 
-document.getElementById('btnNew').addEventListener('click', function(e){ e.stopPropagation(); newGame(); });
+document.getElementById('btnNew').addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); newGame(); });
 btnMode.addEventListener('click', function(e){
-  e.stopPropagation();
+  e.stopPropagation(); unlockAudio();
   vsAI = !vsAI;
   btnMode.textContent = vsAI ? 'vs AI' : '2 player';
   newGame();
 });
 cv.addEventListener('pointerdown', onPointer);
+
+var clouds = [], stars = [];
+function initScene(){
+  clouds = []; stars = [];
+  for (var i = 0; i < 5; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.05, H*0.28), s: rnd(0.5, 1.1), a: rnd(0.12, 0.28), v: rnd(4, 12) });
+  for (var j = 0; j < 40; j++) stars.push({ x: rnd(0, W), y: rnd(0, H*0.32), a: rnd(0.15, 0.45), p: rnd(0, 6.3) });
+}
+function drawCloud(c){
+  ctx.globalAlpha = c.a; ctx.fillStyle = C.mist;
+  ctx.beginPath(); ctx.arc(c.x, c.y, 18*c.s, 0, Math.PI*2);
+  ctx.arc(c.x+22*c.s, c.y+4, 14*c.s, 0, Math.PI*2);
+  ctx.arc(c.x-18*c.s, c.y+6, 12*c.s, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+}
 
 function update(dt){
   if (!RM){
@@ -825,23 +798,26 @@ function update(dt){
     for (var i = 0; i < clouds.length; i++){
       var c = clouds[i];
       c.x -= c.v * dt;
-      if (c.x < -160){ c.x = W + rnd(0, 120); c.y = rnd(H*0.05, H*0.30); }
+      if (c.x < -160){ c.x = W + rnd(0, 120); c.y = rnd(H*0.05, H*0.28); }
     }
+  }
+  if (hop){
+    hop.t += dt;
+    if (hop.t >= hop.dur) hop = null;
   }
   for (var d = departing.length - 1; d >= 0; d--){
     var g = departing[d];
     g.life -= dt;
-    g.x += g.vx * dt;
-    g.vy += 780 * dt;
-    g.y += g.vy * dt;
-    g.a = Math.max(0, g.life / 0.7);
+    var u = Math.max(0, g.life / 0.28);
+    g.a = u;
+    g.s = 0.35 + 0.65 * u;
     if (g.life <= 0) departing.splice(d, 1);
   }
   for (var f = flashes.length - 1; f >= 0; f--){
     flashes[f].t -= dt;
     if (flashes[f].t <= 0) flashes.splice(f, 1);
   }
-  if (aiWait > 0){
+  if (aiWait > 0 && !hop){
     aiWait -= dt;
     if (aiWait <= 0 && STATE === 'play' && vsAI && turn === 'b'){
       var pick = aiPick();
@@ -851,81 +827,46 @@ function update(dt){
 }
 
 function drawSky(){
-  var f = RM ? 0.55 : dayF();
-  /* 5-stop lerp matching basketball: NIGHT predawn… → DAY skyHi/#6E5A54/dawn/gold/day */
+  var f = RM ? 0.45 : dayF();
   var g = ctx.createLinearGradient(0, 0, 0, H);
   var stops = [[0, C.predawn, C.skyHi], [0.30, C.predawn, '#6E5A54'], [0.68, C.predawn2, C.dawn], [0.88, C.skyHi, C.gold], [1, C.skyHi, C.day]];
   for (var si = 0; si < stops.length; si++){
-    g.addColorStop(stops[si][0], lerpColor(stops[si][1], stops[si][2], f));
+    g.addColorStop(stops[si][0], lerpColor(stops[si][1], stops[si][2], f * 0.55));
   }
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-
-  /* stars — fade with daylight, twinkle unless reduced motion */
   var now = performance.now() / 1000;
   ctx.fillStyle = C.gold;
   for (var i = 0; i < stars.length; i++){
     var st = stars[i];
-    var tw = RM ? 0.5 : (0.45 + 0.55 * Math.abs(Math.sin(now / 900 + st.p)));
+    var tw = RM ? 0.4 : (0.4 + 0.5 * Math.abs(Math.sin(now / 900 + st.p)));
     ctx.globalAlpha = st.a * tw * (1 - f * 0.75);
     ctx.beginPath(); ctx.arc(st.x, st.y, 1.1, 0, Math.PI * 2); ctx.fill();
   }
   ctx.globalAlpha = 1;
-
-  /* sun — rises from below the frame, exits the frame at peak (f = 1) */
-  var sunY = H + 60 - f * (H + 180);
-  var sg = ctx.createRadialGradient(W*0.5, sunY, 8, W*0.5, sunY, 90);
-  sg.addColorStop(0, 'rgba(242,184,75,0.85)');
+  var sunY = H + 40 - f * (H + 140);
+  var sg = ctx.createRadialGradient(W*0.5, sunY, 8, W*0.5, sunY, 80);
+  sg.addColorStop(0, 'rgba(242,184,75,0.35)');
   sg.addColorStop(1, 'rgba(232,147,58,0)');
   ctx.fillStyle = sg;
-  ctx.beginPath(); ctx.arc(W*0.5, sunY, 90, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = C.gold;
-  ctx.beginPath(); ctx.arc(W*0.5, sunY, 22 + f * 10, 0, Math.PI * 2); ctx.fill();
-
-  /* drifting clouds */
+  ctx.beginPath(); ctx.arc(W*0.5, sunY, 80, 0, Math.PI * 2); ctx.fill();
   for (var ci = 0; ci < clouds.length; ci++) drawCloud(clouds[ci]);
+}
 
-  /* pine strip + first-light horizon line */
-  var strip = Math.max(10, Math.round(H * 0.045));
-  ctx.fillStyle = C.pine;
-  ctx.fillRect(0, H - strip, W, strip);
-  ctx.fillStyle = 'rgba(232,147,58,' + (0.2 + 0.35 * f).toFixed(3) + ')';
-  ctx.fillRect(0, H - strip, W, 2.5);
+function cellXY(f, r){
+  return { x: bx + (f + 0.5) * sq, y: by + (r + 1) * sq - 3 };
 }
 
 function drawBoard(){
-  /* outer frame */
-  ctx.fillStyle = C.day;
-  ctx.fillRect(bx - 4, by - 4, board + 8, board + 8);
-  /* light squares */
-  ctx.fillRect(bx, by, board, board);
-  /* dark squares = C.day2 */
   ctx.fillStyle = C.day2;
+  ctx.fillRect(bx - 5, by - 5, board + 10, board + 10);
   for (var r = 0; r < 8; r++){
     for (var f = 0; f < 8; f++){
-      if ((f + r) % 2 === 1) ctx.fillRect(bx + f*sq, by + r*sq, sq, sq);
+      ctx.fillStyle = ((f + r) % 2 === 1) ? C.pine : C.day2;
+      ctx.fillRect(bx + f*sq, by + r*sq, sq + 0.5, sq + 0.5);
     }
   }
-  /* grid + border in lineDay / steel */
-  ctx.strokeStyle = C.lineDay; ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (var i = 1; i < 8; i++){
-    ctx.moveTo(bx + i*sq, by); ctx.lineTo(bx + i*sq, by + board);
-    ctx.moveTo(bx, by + i*sq); ctx.lineTo(bx + board, by + i*sq);
-  }
-  ctx.stroke();
-  ctx.strokeStyle = C.steel; ctx.lineWidth = 2;
-  ctx.strokeRect(bx - 4.5, by - 4.5, board + 9, board + 9);
-}
-
-function drawPieces(){
-  var t = RM ? 0 : performance.now() / 1000;
-  for (var i = 0; i < pieces.length; i++){
-    var p = pieces[i];
-    var cx = bx + (p.file + 0.5) * sq;
-    var baseY = by + (p.rank + 0.5) * sq + sq * 0.5 - 1;
-    drawShadow(p, cx, baseY);
-    drawPiece(p, cx, baseY, t);
-  }
+  ctx.strokeStyle = 'rgba(20,16,10,0.28)'; ctx.lineWidth = 2;
+  ctx.strokeRect(bx - 3, by - 3, board + 6, board + 6);
 }
 
 function drawMarks(){
@@ -935,7 +876,7 @@ function drawMarks(){
   }
   for (var i = 0; i < flashes.length; i++){
     var fl = flashes[i];
-    ctx.fillStyle = 'rgba(232,147,58,' + (0.55 * (fl.t / 0.35)).toFixed(3) + ')';
+    ctx.fillStyle = 'rgba(232,147,58,' + (0.5 * (fl.t / 0.28)).toFixed(3) + ')';
     ctx.fillRect(bx + fl.f * sq, by + fl.r * sq, sq, sq);
   }
   for (var j = 0; j < legal.length; j++){
@@ -944,30 +885,57 @@ function drawMarks(){
     var cy = by + (m.r + 0.5) * sq;
     if (m.capture || m.ep){
       ctx.strokeStyle = C.gold; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(cx, cy, sq * 0.38, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, sq * 0.36, 0, Math.PI * 2); ctx.stroke();
     } else {
       ctx.fillStyle = C.gold;
-      ctx.beginPath(); ctx.arc(cx, cy, Math.max(4, sq * 0.12), 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, Math.max(4, sq * 0.11), 0, Math.PI * 2); ctx.fill();
     }
   }
 }
-function drawDeparting(){
+
+function drawPieces(){
   var t = RM ? 0 : performance.now() / 1000;
-  for (var i = 0; i < departing.length; i++){
-    var g = departing[i];
+  var hopId = hop ? hop.id : -1;
+  for (var i = 0; i < pieces.length; i++){
+    var p = pieces[i];
+    if (p.id === hopId) continue;
+    var pos = cellXY(p.file, p.rank);
+    drawShadow(pos.x, pos.y, p.type);
+    drawPieceAt(p, pos.x, pos.y, t, 1);
+  }
+  if (hop){
+    var p2 = findPiece(hop.id);
+    if (p2){
+      var u = Math.min(1, hop.t / hop.dur);
+      var e = easeIO(u);
+      var x = bx + (hop.f0 + (hop.f1 - hop.f0) * e + 0.5) * sq;
+      var y = by + (hop.r0 + (hop.r1 - hop.r0) * e + 1) * sq - 3;
+      var lift = Math.sin(u * Math.PI) * sq * 0.28;
+      var settle = 0;
+      if (u > 0.82){
+        var s = (u - 0.82) / 0.18;
+        settle = Math.sin(s * Math.PI) * 2.6;
+      }
+      drawShadow(x, y, p2.type);
+      drawPieceAt(p2, x, y - lift + settle, t, 1);
+    }
+  }
+  for (var d = 0; d < departing.length; d++){
+    var g = departing[d];
+    var pos2 = cellXY(g.file, g.rank);
     ctx.save();
     ctx.globalAlpha = g.a;
-    drawPiece(g, g.x, g.y, t);
+    drawPieceAt(g, pos2.x, pos2.y, t, g.s);
     ctx.restore();
   }
 }
+
 function draw(){
   ctx.clearRect(0, 0, W, H);
   drawSky();
   drawBoard();
   drawMarks();
   drawPieces();
-  drawDeparting();
 }
 
 var last = performance.now();
@@ -981,7 +949,8 @@ function frame(now){
 
 resize();
 initScene();
-setStatus('Ink to move');
+if (!restore()) setStatus('Ink to move');
+else setStatus(STATE === 'over' ? hudTag.textContent : ((turn === 'w' ? 'Ink' : 'Stone') + ' to move'));
 requestAnimationFrame(frame);
 })();
 </script>
