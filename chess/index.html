@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Boot Camp FX — Chess · Visual Board</title>
-<meta name="description" content="Boot Camp FX chess — a visual board at first light. Starting position, six woodland species, one dawn loop. No rules yet.">
+<title>Boot Camp FX — Chess</title>
+<meta name="description" content="Boot Camp FX chess — park animals at first light. Tap to move. Play a friend or a shallow opponent.">
 <meta name="theme-color" content="#0F1B2C">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,9 +30,19 @@
   .hud .brand em{font-style:italic;color:var(--gold);}
   .hud .brand .sep{color:var(--mist);font-weight:400;padding:0 4px;}
   .hud .tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mist);margin-top:3px;}
-  .foot{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
+  .foot{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
     font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(251,247,238,.62);
     text-shadow:0 1px 6px rgba(15,27,44,.6);white-space:nowrap;}
+  .bar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:8px;align-items:center;
+    pointer-events:auto;}
+  .bar button,.bar .stat{
+    font-family:var(--body);font-weight:700;font-size:.86rem;border:0;border-radius:14px;padding:10px 16px;cursor:pointer;
+    transition:transform .16s var(--ease), background .16s var(--ease);}
+  .bar button{background:var(--dawn);color:#1B1206;}
+  .bar button:hover{transform:translateY(-2px);background:var(--gold);}
+  .bar button.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);font-weight:600;}
+  .bar .stat{background:rgba(15,27,44,.55);color:var(--day);border:1px solid rgba(138,151,166,.35);
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;min-width:140px;text-align:center;}
 
   @media (max-width:520px){
     .hud{padding:8px 14px 9px;border-radius:12px;}
@@ -49,9 +59,14 @@
 
 <div class="hud">
   <div class="brand">Boot Camp <em>FX</em><span class="sep">·</span>Chess</div>
-  <div class="tag">Visual Only — Starting Position</div>
+  <div class="tag" id="hudTag">Ink to move</div>
 </div>
 <div class="foot">first light over the board · 86&nbsp;s dawn loop</div>
+<div class="bar">
+  <button type="button" id="btnNew">New game</button>
+  <button type="button" class="ghost" id="btnMode">vs AI</button>
+  <div class="stat" id="hudStat">your move</div>
+</div>
 
 <script>
 (function(){
@@ -139,14 +154,18 @@ function capsule(x, y, w, h){
    flipped with ctx.scale(-1,1) so it faces the opponent.      */
 var BACK = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
 var pieces = [];
-(function build(){
+var nextId = 1;
+function resetPieces(){
+  pieces = [];
+  nextId = 1;
   for (var f = 0; f < 8; f++){
-    pieces.push({ file:f, rank:1, type:'pawn',   side:'w', ph:(f*0.9 + 1.7) % 6.283 });
-    pieces.push({ file:f, rank:6, type:'pawn',   side:'b', ph:(f*1.3 + 0.4) % 6.283 });
-    pieces.push({ file:f, rank:0, type:BACK[f],  side:'w', ph:(f*0.6 + 2.2) % 6.283 });
-    pieces.push({ file:f, rank:7, type:BACK[f],  side:'b', ph:(f*1.1 + 4.1) % 6.283 });
+    pieces.push({ id:nextId++, file:f, rank:1, type:'pawn',  side:'w', ph:(f*0.9 + 1.7) % 6.283, moved:false });
+    pieces.push({ id:nextId++, file:f, rank:6, type:'pawn',  side:'b', ph:(f*1.3 + 0.4) % 6.283, moved:false });
+    pieces.push({ id:nextId++, file:f, rank:0, type:BACK[f], side:'w', ph:(f*0.6 + 2.2) % 6.283, moved:false });
+    pieces.push({ id:nextId++, file:f, rank:7, type:BACK[f], side:'b', ph:(f*1.1 + 4.1) % 6.283, moved:false });
   }
-})();
+}
+resetPieces();
 
 function sideColor(side){ return side === 'w' ? C.ink : C.stone; }
 function eyeColor(side){ return side === 'w' ? C.day2 : C.ink; }
@@ -458,13 +477,376 @@ function drawCloud(c){
   ctx.globalAlpha = 1;
 }
 
+
+/* ---------- game state ---------- */
+var VAL = { pawn:100, knight:320, bishop:330, rook:500, queen:900, king:20000 };
+var turn = 'w';
+var selected = null;
+var legal = [];
+var ep = null;
+var castle = { wK:true, wQ:true, bK:true, bQ:true };
+var vsAI = true;
+var STATE = 'play';
+var departing = [];
+var flashes = [];
+var aiWait = 0;
+var hudTag = document.getElementById('hudTag');
+var hudStat = document.getElementById('hudStat');
+var btnMode = document.getElementById('btnMode');
+
+function copyList(list){
+  var o = [];
+  for (var i = 0; i < list.length; i++){
+    var p = list[i];
+    o.push({ id:p.id, file:p.file, rank:p.rank, type:p.type, side:p.side, ph:p.ph, moved:p.moved });
+  }
+  return o;
+}
+function occ(f, r, list){
+  for (var i = 0; i < list.length; i++) if (list[i].file === f && list[i].rank === r) return list[i];
+  return null;
+}
+function onBoard(f, r){ return f >= 0 && f < 8 && r >= 0 && r < 8; }
+function enemy(side){ return side === 'w' ? 'b' : 'w'; }
+function mv(p, f, r, extra){
+  var m = { pid:p.id, f:f, r:r, capture:null, castle:null, ep:false, promote:false };
+  if (extra) for (var k in extra) m[k] = extra[k];
+  return m;
+}
+
+function genPseudo(side, list, asAttack){
+  var out = [];
+  for (var i = 0; i < list.length; i++){
+    var p = list[i];
+    if (p.side !== side) continue;
+    if (p.type === 'pawn'){
+      var dir = p.side === 'w' ? 1 : -1;
+      var start = p.side === 'w' ? 1 : 6;
+      var df;
+      if (asAttack){
+        for (df = -1; df <= 1; df += 2){
+          if (onBoard(p.file + df, p.rank + dir)) out.push(mv(p, p.file + df, p.rank + dir));
+        }
+      } else {
+        var f1 = p.file, r1 = p.rank + dir;
+        if (onBoard(f1, r1) && !occ(f1, r1, list)){
+          out.push(mv(p, f1, r1, { promote: r1 === 0 || r1 === 7 }));
+          var r2 = p.rank + dir * 2;
+          if (p.rank === start && !occ(f1, r2, list)) out.push(mv(p, f1, r2));
+        }
+        for (df = -1; df <= 1; df += 2){
+          var cf = p.file + df, cr = p.rank + dir;
+          if (!onBoard(cf, cr)) continue;
+          var o = occ(cf, cr, list);
+          if (o && o.side !== p.side) out.push(mv(p, cf, cr, { capture:o.id, promote: cr === 0 || cr === 7 }));
+          if (ep && ep.f === cf && ep.r === cr){
+            var vic = occ(cf, p.rank, list);
+            if (vic && vic.side !== p.side && vic.type === 'pawn')
+              out.push(mv(p, cf, cr, { capture:vic.id, ep:true }));
+          }
+        }
+      }
+    } else if (p.type === 'knight'){
+      var N = [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+      for (var n = 0; n < 8; n++){
+        var nf = p.file + N[n][0], nr = p.rank + N[n][1];
+        if (!onBoard(nf, nr)) continue;
+        var no = occ(nf, nr, list);
+        if (!no || no.side !== p.side) out.push(mv(p, nf, nr, no ? { capture:no.id } : null));
+      }
+    } else if (p.type === 'bishop' || p.type === 'rook' || p.type === 'queen'){
+      var D = [];
+      if (p.type !== 'rook') D.push([1,1],[1,-1],[-1,-1],[-1,1]);
+      if (p.type !== 'bishop') D.push([1,0],[-1,0],[0,1],[0,-1]);
+      for (var d = 0; d < D.length; d++){
+        var f = p.file, r = p.rank;
+        for (;;){
+          f += D[d][0]; r += D[d][1];
+          if (!onBoard(f, r)) break;
+          var so = occ(f, r, list);
+          if (!so) out.push(mv(p, f, r));
+          else { if (so.side !== p.side) out.push(mv(p, f, r, { capture:so.id })); break; }
+        }
+      }
+    } else if (p.type === 'king'){
+      for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++){
+        if (!dx && !dy) continue;
+        var kf = p.file + dx, kr = p.rank + dy;
+        if (!onBoard(kf, kr)) continue;
+        var ko = occ(kf, kr, list);
+        if (!ko || ko.side !== p.side) out.push(mv(p, kf, kr, ko ? { capture:ko.id } : null));
+      }
+    }
+  }
+  return out;
+}
+
+function applyMove(list, m, liveEp, liveCastle){
+  var nxt = copyList(list);
+  var p = null, i;
+  for (i = 0; i < nxt.length; i++) if (nxt[i].id === m.pid) p = nxt[i];
+  if (!p) return { list:nxt, ep:null, castle:liveCastle };
+  if (m.capture){
+    var keep = [];
+    for (i = 0; i < nxt.length; i++) if (nxt[i].id !== m.capture) keep.push(nxt[i]);
+    nxt = keep;
+    for (i = 0; i < nxt.length; i++) if (nxt[i].id === m.pid) p = nxt[i];
+  }
+  var fromF = p.file, fromR = p.rank;
+  p.file = m.f; p.rank = m.r; p.moved = true;
+  if (m.promote) p.type = 'queen';
+  if (m.castle === 'K'){
+    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 7){ nxt[i].file = 5; nxt[i].moved = true; }
+  }
+  if (m.castle === 'Q'){
+    for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 0){ nxt[i].file = 3; nxt[i].moved = true; }
+  }
+  var newEp = null;
+  if (p.type === 'pawn' && Math.abs(m.r - fromR) === 2) newEp = { f:fromF, r:(fromR + m.r) / 2 };
+  var cst = { wK:liveCastle.wK, wQ:liveCastle.wQ, bK:liveCastle.bK, bQ:liveCastle.bQ };
+  if (p.type === 'king'){
+    if (p.side === 'w'){ cst.wK = false; cst.wQ = false; }
+    else { cst.bK = false; cst.bQ = false; }
+  }
+  if (p.type === 'rook'){
+    if (p.side === 'w' && fromF === 7 && fromR === 0) cst.wK = false;
+    if (p.side === 'w' && fromF === 0 && fromR === 0) cst.wQ = false;
+    if (p.side === 'b' && fromF === 7 && fromR === 7) cst.bK = false;
+    if (p.side === 'b' && fromF === 0 && fromR === 7) cst.bQ = false;
+  }
+  if (m.capture){
+    /* captured rook on its home square kills that castle right */
+    if (m.f === 7 && m.r === 0) cst.wK = false;
+    if (m.f === 0 && m.r === 0) cst.wQ = false;
+    if (m.f === 7 && m.r === 7) cst.bK = false;
+    if (m.f === 0 && m.r === 7) cst.bQ = false;
+  }
+  return { list:nxt, ep:newEp, castle:cst };
+}
+
+function kingOf(side, list){
+  for (var i = 0; i < list.length; i++) if (list[i].type === 'king' && list[i].side === side) return list[i];
+  return null;
+}
+function inCheck(side, list){
+  var k = kingOf(side, list);
+  if (!k) return true;
+  var atk = genPseudo(enemy(side), list, true);
+  for (var i = 0; i < atk.length; i++) if (atk[i].f === k.file && atk[i].r === k.rank) return true;
+  return false;
+}
+
+function addCastles(side, list, out){
+  var k = kingOf(side, list);
+  if (!k || k.moved) return;
+  var rank = side === 'w' ? 0 : 7;
+  if (k.file !== 4 || k.rank !== rank) return;
+  if (inCheck(side, list)) return;
+  var rightsK = side === 'w' ? castle.wK : castle.bK;
+  var rightsQ = side === 'w' ? castle.wQ : castle.bQ;
+  var them = enemy(side);
+  if (rightsK && !occ(5, rank, list) && !occ(6, rank, list)){
+    var rookH = occ(7, rank, list);
+    if (rookH && rookH.type === 'rook' && rookH.side === side && !rookH.moved){
+      var ok = true;
+      var atk = genPseudo(them, list, true);
+      for (var i = 0; i < atk.length; i++) if ((atk[i].f === 5 || atk[i].f === 6) && atk[i].r === rank) ok = false;
+      if (ok) out.push(mv(k, 6, rank, { castle:'K' }));
+    }
+  }
+  if (rightsQ && !occ(3, rank, list) && !occ(2, rank, list) && !occ(1, rank, list)){
+    var rookA = occ(0, rank, list);
+    if (rookA && rookA.type === 'rook' && rookA.side === side && !rookA.moved){
+      var ok2 = true;
+      var atk2 = genPseudo(them, list, true);
+      for (var j = 0; j < atk2.length; j++) if ((atk2[j].f === 3 || atk2[j].f === 2) && atk2[j].r === rank) ok2 = false;
+      if (ok2) out.push(mv(k, 2, rank, { castle:'Q' }));
+    }
+  }
+}
+
+function legalMoves(side, list, liveEp, liveCastle){
+  list = list || pieces;
+  liveEp = liveEp === undefined ? ep : liveEp;
+  liveCastle = liveCastle || castle;
+  var savedEp = ep, savedC = castle;
+  ep = liveEp; castle = liveCastle;
+  var raw = genPseudo(side, list, false);
+  addCastles(side, list, raw);
+  var out = [];
+  for (var i = 0; i < raw.length; i++){
+    var sim = applyMove(list, raw[i], liveEp, liveCastle);
+    if (!inCheck(side, sim.list)) out.push(raw[i]);
+  }
+  ep = savedEp; castle = savedC;
+  return out;
+}
+
+function findPiece(id){
+  for (var i = 0; i < pieces.length; i++) if (pieces[i].id === id) return pieces[i];
+  return null;
+}
+
+function hopOff(p){
+  var cx = bx + (p.file + 0.5) * sq;
+  var cy = by + (p.rank + 0.5) * sq + sq * 0.5 - 1;
+  var toward = p.file < 4 ? -1 : 1;
+  departing.push({
+    type:p.type, side:p.side, ph:p.ph,
+    x:cx, y:cy, vx: toward * (180 + rnd(40, 90)), vy: -220,
+    a:1, life: RM ? 0.01 : 0.7
+  });
+}
+
+function doMove(m){
+  if (STATE !== 'play') return;
+  var p = findPiece(m.pid);
+  if (!p) return;
+  var cap = null;
+  if (m.capture) cap = findPiece(m.capture);
+  if (cap) hopOff(cap);
+  flashes.push({ f:m.f, r:m.r, t:0.35 });
+  var sim = applyMove(pieces, m, ep, castle);
+  pieces = sim.list;
+  ep = sim.ep;
+  castle = sim.castle;
+  selected = null;
+  legal = [];
+  turn = enemy(turn);
+  var moves = legalMoves(turn);
+  if (!moves.length){
+    STATE = 'over';
+    if (inCheck(turn, pieces)) setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' is mated');
+    else setStatus('stalemate');
+  } else {
+    if (inCheck(turn, pieces)) setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' in check');
+    else setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' to move');
+    if (vsAI && turn === 'b' && STATE === 'play') aiWait = RM ? 0.05 : 0.38;
+  }
+}
+
+function setStatus(s){
+  if (hudTag) hudTag.textContent = s;
+  if (hudStat) hudStat.textContent = STATE === 'over' ? s : (vsAI ? (turn === 'w' ? 'your move' : 'thinking') : s);
+}
+
+function scoreMove(m){
+  var s = 0;
+  if (m.capture){
+    var c = findPiece(m.capture);
+    if (c) s += VAL[c.type] || 0;
+  }
+  if (m.promote) s += 800;
+  s += (4 - Math.abs(m.f - 3.5)) * 4 + (4 - Math.abs(m.r - 3.5)) * 2;
+  var sim = applyMove(pieces, m, ep, castle);
+  if (inCheck(enemy(turn), sim.list)) s += 40;
+  var replies = legalMoves(enemy(turn), sim.list, sim.ep, sim.castle);
+  var hang = 0;
+  for (var i = 0; i < replies.length; i++){
+    if (replies[i].capture === m.pid){
+      var me = findPiece(m.pid);
+      hang = Math.max(hang, VAL[me.type] || 0);
+    }
+  }
+  s -= hang * 0.9;
+  return s;
+}
+
+function aiPick(){
+  var moves = legalMoves('b');
+  if (!moves.length) return null;
+  var best = -1e9, pool = [];
+  for (var i = 0; i < moves.length; i++){
+    var sc = scoreMove(moves[i]);
+    if (sc > best + 8){ best = sc; pool = [moves[i]]; }
+    else if (Math.abs(sc - best) <= 8) pool.push(moves[i]);
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function sqFromEvent(e){
+  var rect = cv.getBoundingClientRect();
+  var x = (e.clientX - rect.left);
+  var y = (e.clientY - rect.top);
+  var f = Math.floor((x - bx) / sq);
+  var r = Math.floor((y - by) / sq);
+  if (!onBoard(f, r)) return null;
+  return { f:f, r:r };
+}
+
+function onPointer(e){
+  if (e.target && e.target.closest && e.target.closest('.bar')) return;
+  if (STATE !== 'play') return;
+  if (vsAI && turn === 'b') return;
+  var sqp = sqFromEvent(e);
+  if (!sqp){ selected = null; legal = []; return; }
+  if (selected){
+    for (var i = 0; i < legal.length; i++){
+      if (legal[i].f === sqp.f && legal[i].r === sqp.r){ doMove(legal[i]); return; }
+    }
+  }
+  var p = occ(sqp.f, sqp.r, pieces);
+  if (p && p.side === turn){
+    selected = p;
+    var all = legalMoves(turn);
+    legal = [];
+    for (var j = 0; j < all.length; j++) if (all[j].pid === p.id) legal.push(all[j]);
+  } else {
+    selected = null; legal = [];
+  }
+}
+
+function newGame(){
+  resetPieces();
+  turn = 'w';
+  selected = null;
+  legal = [];
+  ep = null;
+  castle = { wK:true, wQ:true, bK:true, bQ:true };
+  STATE = 'play';
+  departing = [];
+  flashes = [];
+  aiWait = 0;
+  setStatus('Ink to move');
+}
+
+document.getElementById('btnNew').addEventListener('click', function(e){ e.stopPropagation(); newGame(); });
+btnMode.addEventListener('click', function(e){
+  e.stopPropagation();
+  vsAI = !vsAI;
+  btnMode.textContent = vsAI ? 'vs AI' : '2 player';
+  newGame();
+});
+cv.addEventListener('pointerdown', onPointer);
+
 function update(dt){
-  if (RM) return;                       /* reduced motion: sky holds at dawn */
-  skyT += dt;
-  for (var i = 0; i < clouds.length; i++){
-    var c = clouds[i];
-    c.x -= c.v * dt;
-    if (c.x < -160){ c.x = W + rnd(0, 120); c.y = rnd(H*0.05, H*0.30); }
+  if (!RM){
+    skyT += dt;
+    for (var i = 0; i < clouds.length; i++){
+      var c = clouds[i];
+      c.x -= c.v * dt;
+      if (c.x < -160){ c.x = W + rnd(0, 120); c.y = rnd(H*0.05, H*0.30); }
+    }
+  }
+  for (var d = departing.length - 1; d >= 0; d--){
+    var g = departing[d];
+    g.life -= dt;
+    g.x += g.vx * dt;
+    g.vy += 780 * dt;
+    g.y += g.vy * dt;
+    g.a = Math.max(0, g.life / 0.7);
+    if (g.life <= 0) departing.splice(d, 1);
+  }
+  for (var f = flashes.length - 1; f >= 0; f--){
+    flashes[f].t -= dt;
+    if (flashes[f].t <= 0) flashes.splice(f, 1);
+  }
+  if (aiWait > 0){
+    aiWait -= dt;
+    if (aiWait <= 0 && STATE === 'play' && vsAI && turn === 'b'){
+      var pick = aiPick();
+      if (pick) doMove(pick);
+    }
   }
 }
 
@@ -546,11 +928,46 @@ function drawPieces(){
   }
 }
 
+function drawMarks(){
+  if (selected){
+    ctx.fillStyle = 'rgba(232,147,58,0.38)';
+    ctx.fillRect(bx + selected.file * sq, by + selected.rank * sq, sq, sq);
+  }
+  for (var i = 0; i < flashes.length; i++){
+    var fl = flashes[i];
+    ctx.fillStyle = 'rgba(232,147,58,' + (0.55 * (fl.t / 0.35)).toFixed(3) + ')';
+    ctx.fillRect(bx + fl.f * sq, by + fl.r * sq, sq, sq);
+  }
+  for (var j = 0; j < legal.length; j++){
+    var m = legal[j];
+    var cx = bx + (m.f + 0.5) * sq;
+    var cy = by + (m.r + 0.5) * sq;
+    if (m.capture || m.ep){
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(cx, cy, sq * 0.38, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(cx, cy, Math.max(4, sq * 0.12), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+}
+function drawDeparting(){
+  var t = RM ? 0 : performance.now() / 1000;
+  for (var i = 0; i < departing.length; i++){
+    var g = departing[i];
+    ctx.save();
+    ctx.globalAlpha = g.a;
+    drawPiece(g, g.x, g.y, t);
+    ctx.restore();
+  }
+}
 function draw(){
   ctx.clearRect(0, 0, W, H);
   drawSky();
   drawBoard();
+  drawMarks();
   drawPieces();
+  drawDeparting();
 }
 
 var last = performance.now();
@@ -564,6 +981,7 @@ function frame(now){
 
 resize();
 initScene();
+setStatus('Ink to move');
 requestAnimationFrame(frame);
 })();
 </script>
