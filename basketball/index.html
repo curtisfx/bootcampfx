@@ -322,7 +322,7 @@ function setTut(step){
   clearTimeout(tutTimer);
   if (!step){ tutEl.classList.remove('on'); return; }
   tutTitleEl.textContent = step === 1 ? 'Flick up to shoot' : 'Drag the owl to find the angle';
-  tutSubEl.textContent = step === 1 ? 'speed = power' : 'A / D or drag sideways';
+  tutSubEl.textContent = step === 1 ? 'speed = power' : 'A / D or drag — even up. He can fly.';
   tutNextBtn.textContent = step === 1 ? 'Next' : 'Got it';
   tutNextBtn.setAttribute('aria-label', step === 1 ? 'Next tutorial step' : 'Finish tutorial');
   tutEl.classList.add('on');
@@ -345,7 +345,9 @@ function drawTutorial(){
     var dy = (1-e)*(1-e)*ey + 2*(1-e)*e*my + e*e*ty;
     var ax = 2*(1-e)*(mx-ex) + 2*e*(tx-mx), ay = 2*(1-e)*(my-ey) + 2*e*(ty-my);
     var ang = Math.atan2(ay, ax) * 180 / Math.PI;
+    s += '<defs><path id="tutArc" d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '"/></defs>';
     s += '<path d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '" fill="none" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
+    s += '<text font-family="\'Spline Sans Mono\', monospace" font-size="11" letter-spacing="3" fill="#F2B84B" opacity="0.95"><textPath href="#tutArc" startOffset="50%" text-anchor="middle">FLICK UP</textPath></text>';
     s += '<g transform="translate(' + tx + ' ' + ty + ') rotate(' + ang.toFixed(1) + ')"><path d="M0 0 L-15 -7 L-10 0 L-15 7 Z" fill="#F2B84B" opacity="' + (e > 0.92 ? 0.95 : 0.3) + '"/></g>';
     s += '<circle cx="' + ex + '" cy="' + ey + '" r="' + (11 + 6 * Math.sin(Math.min(t, 1) * Math.PI)).toFixed(1) + '" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.4"/>';
     s += '<g' + anim + ' style="animation:tutTap .45s ease-in-out infinite;transform-box:fill-box;transform-origin:center;" opacity="' + (0.35 + 0.65 * e).toFixed(2) + '">'
@@ -354,26 +356,32 @@ function drawTutorial(){
     tutCard.style.left = Math.max(120, Math.min(W - 120, (ex + tx) / 2)) + 'px';
     tutCard.style.top = Math.max(78, Math.min(H - 112, my - 42)) + 'px';
   } else {
-    var cyc = RM ? 0.42 : (tutT % 2.6) / 2.6;    /* hold → slide left → slide right → release */
-    var off = 0, fade = 0;
-    if (cyc < 0.15) off = 0;
-    else if (cyc < 0.4){ var u1 = (cyc - 0.15) / 0.25; u1 = u1*u1*(3-2*u1); off = -30 * u1; }
-    else if (cyc < 0.7){ var u2 = (cyc - 0.4) / 0.3; u2 = u2*u2*(3-2*u2); off = -30 + 60 * u2; }
-    else if (cyc < 0.82){ var u3 = (cyc - 0.7) / 0.12; u3 = u3*u3*(3-2*u3); off = 30 * (1 - u3); }
-    else fade = (cyc - 0.82) / 0.18;
+    var cyc = RM ? 0 : (tutT % 3.2) / 3.2;       /* hold → left → right → center → up → release */
+    var ox = 0, oy = 0, fade = 0, u;
+    if (cyc < 0.12){}
+    else if (cyc < 0.32){ u = (cyc - 0.12) / 0.20; u = u*u*(3-2*u); ox = -30 * u; }
+    else if (cyc < 0.55){ u = (cyc - 0.32) / 0.23; u = u*u*(3-2*u); ox = -30 + 60 * u; }
+    else if (cyc < 0.66){ u = (cyc - 0.55) / 0.11; u = u*u*(3-2*u); ox = 30 * (1 - u); }
+    else if (cyc < 0.86){ u = (cyc - 0.66) / 0.20; u = u*u*(3-2*u); oy = -46 * u; }
+    else { oy = -46; fade = (cyc - 0.86) / 0.14; }
     var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
     var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
+    var uy0 = cy2 - 56, uy1 = Math.max(20, cy2 - 130);
     s += '<line x1="' + lx + '" y1="' + cy2 + '" x2="' + rx + '" y2="' + cy2 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
     s += '<path d="M' + lx + ' ' + cy2 + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="0.85"/>';
     s += '<path d="M' + rx + ' ' + cy2 + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="0.85"/>';
-    var hvx = cx2 + off, hvy = cy2 - 26;
+    s += '<line x1="' + cx2 + '" y1="' + uy0 + '" x2="' + cx2 + '" y2="' + uy1 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
+    s += '<path d="M' + cx2 + ' ' + uy1 + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="0.85"/>';
+    s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
+    s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
+    var hvx = cx2 + ox, hvy = cy2 - 26 + oy;
     var hop = RM ? 0.95 : Math.max(0, 0.95 - fade * 1.2);
     s += '<g opacity="' + hop.toFixed(2) + '">'
        + '<g transform="translate(' + hvx.toFixed(1) + ' ' + hvy.toFixed(1) + ') rotate(-20)">'
        + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>'
        + '<circle cx="' + hvx.toFixed(1) + '" cy="' + hvy.toFixed(1) + '" r="30" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.35"/></g>';
-    tutCard.style.left = Math.max(120, Math.min(W - 120, cx2)) + 'px';
-    tutCard.style.top = Math.max(78, Math.min(H - 112, cy2 - 128)) + 'px';
+    tutCard.style.left = Math.max(120, Math.min(W - 120, W / 2)) + 'px';
+    tutCard.style.top = '96px';
   }
   tutSvg.innerHTML = s;
 }
