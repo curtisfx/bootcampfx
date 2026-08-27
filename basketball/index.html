@@ -308,7 +308,6 @@ var lastKind = '—';
 var owlReact = { brickT: 0, blinkOnce: false };
 var fireflyPulseT = 0;
 var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
-var rabbit = { x: 0, y: 0, hp: 0, frozen: false };
 
 /* ---------- tutorial coach (two-step, runs at every drill start) ---------- */
 var tutorialStep = 0;      /* 0=off, 1=shoot gesture, 2=drag the owl */
@@ -405,7 +404,7 @@ function drawTutorial(){
     var cardH = 108;
     var hudSafe = 86, floorSafe = 132;
     var hoopSafeX = hoop.x - 52;
-    var tcx = owlCx, tcy = owlCy - 78;
+    var tcx = owlCx, tcy = uy1 - 10 - cardH / 2;
     tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
     tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
     if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
@@ -467,7 +466,7 @@ function initDecor(){
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.32), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
-  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0 };
+  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0, missTally: 0 };
   squirrel = { x: W * 0.74, hp: 0, homeX: W * 0.74, mode: 'idle', modeT: 0, dashX: W * 0.74 };
   var bestI = 0, bestD = 1e9;
   for (i = 0; i < trees.length; i++){
@@ -478,10 +477,6 @@ function initDecor(){
   jay.x = trees[bestI].x;
   jay.y = GROUND - 86 * trees[bestI].s - 6;
   jay.cawT = 0;
-  rabbit.x = Math.max(28, W * 0.08);
-  rabbit.y = GROUND;
-  rabbit.hp = 0;
-  rabbit.frozen = false;
 }
 
 function tickDecor(dt){
@@ -493,9 +488,8 @@ function tickDecor(dt){
     if (cl.x > W + 160) cl.x = -rnd(0,120) - 80;
   }
   if (egret){
-    var postX = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2 + 6;
-    var perchX = postX + 2;
-    var perchY = hoop.y - hoop.boardH + 10;
+    var perchX = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2;
+    var perchY = hoop.y - hoop.boardH - 84 * egret.s + 4;
     var circX = perchX, circY = perchY - 36;
     if (egret.phase === 'enter'){
       var edx = circX - egret.x, edy = circY - egret.y;
@@ -555,10 +549,6 @@ function tickDecor(dt){
   }
   if (jay.cawT > 0) jay.cawT = Math.max(0, jay.cawT - dt);
   if (trees.length && trees[jay.treeI]){ jay.x = trees[jay.treeI].x; jay.y = GROUND - 86 * trees[jay.treeI].s - 6; }
-  rabbit.x = Math.max(28, W * 0.08);
-  rabbit.y = GROUND;
-  if (player.y < GROUND - 10){ rabbit.frozen = true; }
-  else { rabbit.frozen = false; if (!RM) rabbit.hp += dt * 2.4; }
   if (fireflyPulseT > 0){
     fireflyPulseT -= dt;
     var fk = 1 - Math.exp(-8 * dt);
@@ -776,14 +766,14 @@ function egretEnter(){
   if (!egret) return;
   if (RM){
     egret.phase = 'perch'; egret.active = true; egret.dir = -1;
-    egret.fl = 0; egret.theta = 0; egret.lap = 1;
+    egret.fl = 0; egret.theta = 0; egret.lap = 1; egret.missTally = 0;
     return;
   }
   egret.phase = 'enter'; egret.active = true;
   egret.dir = Math.random() < 0.5 ? 1 : -1;
   egret.x = egret.dir > 0 ? -180 : W + 180;
   egret.y = rnd(H * 0.1, H * 0.3);
-  egret.fl = 0; egret.theta = 0; egret.lap = 0;
+  egret.fl = 0; egret.theta = 0; egret.lap = 0; egret.missTally = 0;
 }
 function maybeEgretEnter(){
   if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play' && tutorialStep === 0){
@@ -804,8 +794,12 @@ function wildlifeOnShot(made, kind, prevStreak){
     squirrel.mode = 'cover'; squirrel.modeT = 0.80;
     owlReact.brickT = 0.55;
     if (egret && (egret.phase === 'circle' || egret.phase === 'perch')){
-      if (RM){ egret.phase = 'hidden'; egret.active = false; }
-      else egret.phase = 'exit';
+      egret.missTally = (egret.missTally || 0) + 1;
+      if (egret.missTally >= 3){
+        egret.missTally = 0;
+        if (RM){ egret.phase = 'hidden'; egret.active = false; }
+        else egret.phase = 'exit';
+      }
     }
     if (prevStreak >= 3){ sfx('caw'); jay.cawT = 0.28; }
   }
@@ -1082,9 +1076,8 @@ function startGame(){
   lastKind = '—';
   owlReact.brickT = 0; owlReact.blinkOnce = false;
   squirrel.mode = 'idle'; squirrel.modeT = 0; squirrel.homeX = squirrel.x;
-  egret.phase = 'hidden'; egret.active = false;
+  egret.phase = 'hidden'; egret.active = false; egret.missTally = 0;
   jay.cawT = 0;
-  rabbit.frozen = false;
   fireflyPulseT = 0;
   appEl.classList.remove('onfire');
   appEl.style.setProperty('--clearance', 0);
@@ -1294,23 +1287,25 @@ function drawSquirrel(s){
   ctx.fillStyle = C.dawn;
   poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
 
-  // head (left) — chatters on dash
+  // head (left) — chatters on dash; big cute eye like the runner's squirrel
   ctx.save();
-  ctx.translate(14, 21);
+  ctx.translate(14, 20);
   ctx.rotate(headAng * Math.PI / 180);
-  ctx.translate(-14, -21);
-  ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI*2); ctx.fill();
-  poly([[11,16],[9,9],[13,12]]);
+  ctx.translate(-14, -20);
+  ctx.beginPath(); ctx.arc(14, 20, 8.5, 0, Math.PI*2); ctx.fill();
+  poly([[11,15],[9,8],[13,11]]);
   ctx.restore();
 
-  // face
+  // face — big cute eye (light sclera + dark pupil), reads like the owl
   if (m === 'cover'){
     ctx.fillStyle = C.ink;
-    ctx.beginPath(); ctx.arc(12, 20, 2.3, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(18, 21, 2.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(12, 19, 2.6, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(18, 20, 2.6, 0, Math.PI*2); ctx.fill();
   } else {
+    ctx.fillStyle = C.day2;
+    ctx.beginPath(); ctx.arc(13, 19, 3.4, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = C.ink;
-    ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(13.8, 19, 2, 0, Math.PI*2); ctx.fill();
   }
 
   if (m === 'swish' && !RM){
@@ -1337,18 +1332,6 @@ function drawJay(j){
   ctx.beginPath(); ctx.arc(7, -3, 3.6, 0, Math.PI*2); ctx.fill();
   var gap = (!RM && j.cawT > 0) ? 2 : 0;
   ctx.beginPath(); ctx.moveTo(10, -3); ctx.lineTo(15, -2); ctx.lineTo(10, -2 + gap); ctx.closePath(); ctx.fill();
-  ctx.restore();
-}
-function drawRabbit(r){
-  ctx.save();
-  ctx.translate(r.x, r.y);
-  if (!RM) ctx.translate(0, -Math.abs(Math.sin(r.hp)) * 3);
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.ellipse(0, -9, 9, 7, 0, 0, Math.PI*2); ctx.fill();
-  poly([[1,-15],[3,-24],[6,-15]]);
-  poly([[6,-15],[9,-20],[11,-14]]);
-  ctx.fillStyle = C.ink;
-  ctx.beginPath(); ctx.arc(5, -10, 1.2, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 }
 function easeIO(u){ return u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u+2, 2) / 2; }
@@ -1679,7 +1662,6 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  drawRabbit(rabbit);
   if (squirrel) drawSquirrel(squirrel);
   drawHoop();
   if (egret && egret.active && egret.phase === 'perch') drawEgret(egret);
