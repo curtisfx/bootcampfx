@@ -304,6 +304,12 @@ var keys = { a:false, d:false };
 var muted = false;
 var lastKind = '—';
 
+/* ---------- wildlife reaction state (Boot Camp FX) ---------- */
+var owlReact = { brickT: 0, blinkOnce: false };
+var fireflyPulseT = 0;
+var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
+var rabbit = { x: 0, y: 0, hp: 0, frozen: false };
+
 /* ---------- tutorial coach (two-step, runs at every drill start) ---------- */
 var tutorialStep = 0;      /* 0=off, 1=shoot gesture, 2=drag the owl */
 var tutT = 0;              /* seconds elapsed in current step */
@@ -353,8 +359,21 @@ function drawTutorial(){
     s += '<g' + anim + ' style="animation:tutTap .45s ease-in-out infinite;transform-box:fill-box;transform-origin:center;" opacity="' + (0.35 + 0.65 * e).toFixed(2) + '">'
        + '<circle cx="' + dx.toFixed(1) + '" cy="' + dy.toFixed(1) + '" r="11" fill="rgba(242,184,75,.28)" stroke="#F2B84B" stroke-width="2"/>'
        + '<circle cx="' + dx.toFixed(1) + '" cy="' + dy.toFixed(1) + '" r="4" fill="#FBF7EE"/></g>';
-    tutCard.style.left = Math.max(120, Math.min(W - 120, (ex + tx) / 2)) + 'px';
-    tutCard.style.top = Math.max(78, Math.min(H - 112, my - 42)) + 'px';
+    var owlCx = player.x + OWL_CX;
+    var owlCy = player.y - 70;
+    var cardW = Math.min(340, W * 0.80);
+    var cardH = 108;
+    var hudSafe = 86, floorSafe = 132;
+    var hoopSafeX = hoop.x - 52;
+    var tcx = owlCx, tcy = owlCy - 78;
+    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
+    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
+    if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
+      tcx = Math.min(tcx, hoopSafeX - cardW/2);
+      tcx = Math.max(cardW/2 + 8, tcx);
+    }
+    tutCard.style.left = tcx + 'px';
+    tutCard.style.top = tcy + 'px';
   } else {
     var cyc = RM ? 0 : (tutT % 3.2) / 3.2;       /* hold → left → right → center → up → release */
     var ox = 0, oy = 0, fade = 0, u;
@@ -380,8 +399,21 @@ function drawTutorial(){
        + '<g transform="translate(' + hvx.toFixed(1) + ' ' + hvy.toFixed(1) + ') rotate(-20)">'
        + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>'
        + '<circle cx="' + hvx.toFixed(1) + '" cy="' + hvy.toFixed(1) + '" r="30" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.35"/></g>';
-    tutCard.style.left = Math.max(120, Math.min(W - 120, W / 2)) + 'px';
-    tutCard.style.top = '96px';
+    var owlCx = player.x + OWL_CX;
+    var owlCy = player.y - 70;
+    var cardW = Math.min(340, W * 0.80);
+    var cardH = 108;
+    var hudSafe = 86, floorSafe = 132;
+    var hoopSafeX = hoop.x - 52;
+    var tcx = owlCx, tcy = owlCy - 78;
+    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
+    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
+    if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
+      tcx = Math.min(tcx, hoopSafeX - cardW/2);
+      tcx = Math.max(cardW/2 + 8, tcx);
+    }
+    tutCard.style.left = tcx + 'px';
+    tutCard.style.top = tcy + 'px';
   }
   tutSvg.innerHTML = s;
 }
@@ -435,8 +467,21 @@ function initDecor(){
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.32), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
-  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1 };
-  squirrel = { x: W * 0.74, hp: 0 };
+  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0 };
+  squirrel = { x: W * 0.74, hp: 0, homeX: W * 0.74, mode: 'idle', modeT: 0, dashX: W * 0.74 };
+  var bestI = 0, bestD = 1e9;
+  for (i = 0; i < trees.length; i++){
+    var dd = Math.abs(trees[i].x - W * 0.18);
+    if (dd < bestD){ bestD = dd; bestI = i; }
+  }
+  jay.treeI = bestI;
+  jay.x = trees[bestI].x;
+  jay.y = GROUND - 86 * trees[bestI].s - 6;
+  jay.cawT = 0;
+  rabbit.x = Math.max(28, W * 0.08);
+  rabbit.y = GROUND;
+  rabbit.hp = 0;
+  rabbit.frozen = false;
 }
 
 function tickDecor(dt){
@@ -448,25 +493,87 @@ function tickDecor(dt){
     if (cl.x > W + 160) cl.x = -rnd(0,120) - 80;
   }
   if (egret){
-    if (!egret.active && Math.random() < dt * 0.045){
-      egret.active = true;
-      egret.dir = Math.random() < 0.5 ? 1 : -1;
-      egret.x = egret.dir > 0 ? -180 : W + 180;
-      egret.y = rnd(H*0.1, H*0.3);
-      egret.fl = 0;
-    }
-    if (egret.active){
-      egret.x += 90 * dt * egret.dir;
+    var postX = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2 + 6;
+    var perchX = postX + 2;
+    var perchY = hoop.y - hoop.boardH + 10;
+    var circX = perchX, circY = perchY - 36;
+    if (egret.phase === 'enter'){
+      var edx = circX - egret.x, edy = circY - egret.y;
+      var ed = Math.sqrt(edx * edx + edy * edy);
+      if (ed < 18){
+        egret.phase = 'circle';
+        egret.theta = Math.atan2(egret.y - circY, egret.x - circX);
+        egret.lap = 0;
+      } else {
+        var esp = 90 * dt;
+        egret.x += (edx / ed) * esp;
+        egret.y += (edy / ed) * esp;
+        egret.fl += dt * 5;
+      }
+    } else if (egret.phase === 'circle'){
+      egret.theta += dt * 1.15;
+      egret.lap += (dt * 1.15) / (Math.PI * 2);
+      egret.x = circX + Math.cos(egret.theta) * 36;
+      egret.y = circY + Math.sin(egret.theta) * 36;
       egret.fl += dt * 5;
-      if ((egret.dir > 0 && egret.x > W + 200) || (egret.dir < 0 && egret.x < -200)) egret.active = false;
+      if (egret.lap >= 1) egret.phase = 'perch';
+    } else if (egret.phase === 'perch'){
+      egret.x = perchX;
+      egret.y = perchY;
+      egret.fl = 0;
+      egret.dir = -1;
+    } else if (egret.phase === 'exit'){
+      egret.x += 110 * dt * egret.dir;
+      egret.y -= 20 * dt;
+      egret.fl += dt * 5;
+      if (egret.x < -200 || egret.x > W + 200){ egret.phase = 'hidden'; egret.active = false; }
     }
   }
-  if (squirrel) squirrel.hp += dt * 2.2;
-  for (i = 0; i < fireflies.length; i++){
-    var f = fireflies[i];
-    f.p += dt * f.s;
-    f.x += Math.sin(f.p * 1.4) * 12 * dt;
-    f.y += Math.cos(f.p * 0.9) * 8 * dt;
+  if (squirrel){
+    if (squirrel.mode === 'idle'){
+      squirrel.homeX = W * 0.74;
+      squirrel.x = squirrel.homeX;
+      if (!RM) squirrel.hp += dt * 2.2;
+    } else {
+      if (squirrel.mode === 'dash'){
+        var rimX = hoop.x - 18;
+        var e = 1.10 - squirrel.modeT;
+        if (RM){ squirrel.dashX = squirrel.homeX; }
+        else if (e < 0.35){ squirrel.dashX = squirrel.homeX + (rimX - squirrel.homeX) * easeIO(e / 0.35); }
+        else if (e < 0.75){ squirrel.dashX = rimX; }
+        else { squirrel.dashX = rimX + (squirrel.homeX - rimX) * easeIO((e - 0.75) / 0.35); }
+      } else if (squirrel.mode === 'cover' && Math.abs(squirrel.x - squirrel.homeX) > 0.5){
+        if (squirrel.modeT <= 0.25) squirrel.x += (squirrel.homeX - squirrel.x) * (1 - Math.exp(-10 * dt));
+      }
+      squirrel.modeT = Math.max(0, squirrel.modeT - dt);
+      if (squirrel.modeT === 0){
+        squirrel.mode = 'idle';
+        squirrel.x = squirrel.homeX;
+        squirrel.dashX = squirrel.homeX;
+      }
+    }
+  }
+  if (jay.cawT > 0) jay.cawT = Math.max(0, jay.cawT - dt);
+  if (trees.length && trees[jay.treeI]){ jay.x = trees[jay.treeI].x; jay.y = GROUND - 86 * trees[jay.treeI].s - 6; }
+  rabbit.x = Math.max(28, W * 0.08);
+  rabbit.y = GROUND;
+  if (player.y < GROUND - 10){ rabbit.frozen = true; }
+  else { rabbit.frozen = false; if (!RM) rabbit.hp += dt * 2.4; }
+  if (fireflyPulseT > 0){
+    fireflyPulseT -= dt;
+    var fk = 1 - Math.exp(-8 * dt);
+    for (i = 0; i < fireflies.length; i++){
+      var pf = fireflies[i];
+      pf.x += (hoop.x - pf.x) * fk;
+      pf.y += (hoop.y + 8 - pf.y) * fk;
+    }
+  } else if (!RM){
+    for (i = 0; i < fireflies.length; i++){
+      var f = fireflies[i];
+      f.p += dt * f.s;
+      f.x += Math.sin(f.p * 1.4) * 12 * dt;
+      f.y += Math.cos(f.p * 0.9) * 8 * dt;
+    }
   }
   if (Math.abs(wind) > 30 && Math.random() < dt * 3){
     gusts.push({ x: wind > 0 ? -40 : W + 40, y: rnd(H*0.2, GROUND - 60), t: 0, life: rnd(0.7, 1.3) });
@@ -581,6 +688,7 @@ function sfx(kind){
   else if (kind === 'miss'){ tone(92, 0.22, 'sine', 0.12, 0.45); noise(0.12, 0.05, 180); }
   else if (kind === 'hot'){ tone(392, 0.14, 'sine', 0.08); tone(494, 0.2, 'sine', 0.08); tone(587, 0.28, 'triangle', 0.1); }
   else if (kind === 'record'){ tone(523, 0.12, 'sine', 0.1); setTimeout(function(){ tone(659, 0.12, 'sine', 0.1); }, 90); setTimeout(function(){ tone(784, 0.28, 'triangle', 0.12); }, 180); }
+  else if (kind === 'caw'){ tone(1480 * r, 0.07, 'square', 0.05, 1.15); tone(980 * r, 0.11, 'triangle', 0.06, 0.85); noise(0.09, 0.04, 1400, 0.35); }
 }
 document.addEventListener('pointerdown', unlockAudio, { once:true });
 document.addEventListener('keydown', unlockAudio, { once:true });
@@ -664,9 +772,50 @@ function hotBonus(){
   return 0;
 }
 
+function egretEnter(){
+  if (!egret) return;
+  if (RM){
+    egret.phase = 'perch'; egret.active = true; egret.dir = -1;
+    egret.fl = 0; egret.theta = 0; egret.lap = 1;
+    return;
+  }
+  egret.phase = 'enter'; egret.active = true;
+  egret.dir = Math.random() < 0.5 ? 1 : -1;
+  egret.x = egret.dir > 0 ? -180 : W + 180;
+  egret.y = rnd(H * 0.1, H * 0.3);
+  egret.fl = 0; egret.theta = 0; egret.lap = 0;
+}
+function maybeEgretEnter(){
+  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play' && tutorialStep === 0){
+    egretEnter();
+  }
+}
+function wildlifeOnShot(made, kind, prevStreak){
+  if (made){
+    if (kind === 'swish'){
+      squirrel.mode = 'swish'; squirrel.modeT = 0.85;
+      if (!RM) fireflyPulseT = 0.55;
+    } else {
+      squirrel.mode = 'sit'; squirrel.modeT = 0.70;
+    }
+    if (streak >= 5){ squirrel.mode = 'dash'; squirrel.modeT = 1.10; squirrel.dashX = squirrel.x; }
+  } else {
+    if (squirrel.mode === 'dash') squirrel.x = squirrel.dashX;
+    squirrel.mode = 'cover'; squirrel.modeT = 0.80;
+    owlReact.brickT = 0.55;
+    if (egret && (egret.phase === 'circle' || egret.phase === 'perch')){
+      if (RM){ egret.phase = 'hidden'; egret.active = false; }
+      else egret.phase = 'exit';
+    }
+    if (prevStreak >= 3){ sfx('caw'); jay.cawT = 0.28; }
+  }
+  maybeEgretEnter();
+}
+
 function resolveShot(made, kind){
   if (resolved && !ball) return;
   resolved = true;
+  var prevStreak = streak;
   shotsLeft--;
   appEl.style.setProperty('--clearance', (SHOTS - shotsLeft) / SHOTS);
   var pts = 0;
@@ -712,6 +861,7 @@ function resolveShot(made, kind){
     sfx('miss');
     trauma = Math.min(1, trauma + 0.12);
   }
+  if (STATE === 'play' && tutorialStep === 0) wildlifeOnShot(made, kind, prevStreak);
   lastPlayEl.innerHTML = 'Last <b>' + lastKind + '</b>';
   renderPips();
   hudShot.textContent = 'Shot ' + (SHOTS - shotsLeft) + ' / ' + SHOTS;
@@ -749,6 +899,7 @@ function newWind(){
   if (Math.abs(wind) > 90) banner('WIND UP', wind > 0 ? 'gusting right' : 'gusting left');
   hoop.drift = (shotsLeft <= 5) ? rnd(-28, 28) : 0;
   setWindUI();
+  maybeEgretEnter();
 }
 
 function burst(x, y, color, n){
@@ -929,6 +1080,12 @@ function startGame(){
   resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
   owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; swipe = null;
   lastKind = '—';
+  owlReact.brickT = 0; owlReact.blinkOnce = false;
+  squirrel.mode = 'idle'; squirrel.modeT = 0; squirrel.homeX = squirrel.x;
+  egret.phase = 'hidden'; egret.active = false;
+  jay.cawT = 0;
+  rabbit.frozen = false;
+  fireflyPulseT = 0;
   appEl.classList.remove('onfire');
   appEl.style.setProperty('--clearance', 0);
   menuEl.classList.remove('on');
@@ -992,6 +1149,7 @@ function showOver(){
 }
 
 function update(dt){
+  if (owlReact.brickT > 0) owlReact.brickT = Math.max(0, owlReact.brickT - dt);
   if (tutorialStep > 0) tutT += dt;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
@@ -1085,17 +1243,112 @@ function drawEgret(e){
   ctx.restore();
 }
 function drawSquirrel(s){
-  ctx.save(); ctx.translate(s.x, GROUND + 22); ctx.scale(0.8, 0.8);
-  var hop = Math.abs(Math.sin(s.hp)) * -2; ctx.translate(0, hop);
-  ctx.fillStyle = C.dawn; ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#D07F2E'; ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
+  var m = s.mode || 'idle';
+  var px = (m === 'dash') ? s.dashX : s.x;
+  ctx.save();
+  ctx.translate(px, GROUND + 22);
+  ctx.scale(0.8, 0.8);
+
+  var t = 0;
+  if (m === 'sit') t = 1 - s.modeT / 0.70;
+  else if (m === 'swish') t = 1 - s.modeT / 0.85;
+  else if (m === 'cover') t = 1 - s.modeT / 0.80;
+  else if (m === 'dash') t = 1 - s.modeT / 1.10;
+
+  var lift = 0;
+  if (m === 'sit') lift = -6;
+  else if (m === 'swish') lift = -10;
+  if (m === 'swish' && !RM){
+    if (t >= 0.15 && t < 0.25) lift += -6 * Math.sin((t - 0.15) / 0.10 * Math.PI);
+    if (t >= 0.45 && t < 0.55) lift += -6 * Math.sin((t - 0.45) / 0.10 * Math.PI);
+  }
+  ctx.translate(0, lift);
+
+  if (m === 'idle' && !RM) ctx.translate(0, Math.abs(Math.sin(s.hp)) * -2);
+
+  var tailAng = 0;
+  if (m === 'sit' && !RM) tailAng = Math.sin(t * Math.PI * 4) * 14;
+
+  var headAng = 0;
+  if (m === 'dash' && !RM){
+    var ce = 1.10 - s.modeT;
+    for (var ck = 0; ck < 3; ck++){
+      var tt = 0.35 + ck * 0.08;
+      var dd = ce - tt;
+      if (dd >= 0 && dd < 0.05) headAng = Math.sin(dd / 0.05 * Math.PI) * 10;
+    }
+  }
+
+  // bushy tail (raised, right side) — flicks on sit
+  ctx.save();
+  ctx.translate(38, 18);
+  ctx.rotate(tailAng * Math.PI / 180);
+  ctx.translate(-38, -18);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#D07F2E';
+  ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // body
   ctx.fillStyle = C.dawn;
   poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
+
+  // head (left) — chatters on dash
+  ctx.save();
+  ctx.translate(14, 21);
+  ctx.rotate(headAng * Math.PI / 180);
+  ctx.translate(-14, -21);
   ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI*2); ctx.fill();
   poly([[11,16],[9,9],[13,12]]);
-  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // face
+  if (m === 'cover'){
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); ctx.arc(12, 20, 2.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(18, 21, 2.3, 0, Math.PI*2); ctx.fill();
+  } else {
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI*2); ctx.fill();
+  }
+
+  if (m === 'swish' && !RM){
+    var clap = Math.sin(t * Math.PI * 6);
+    ctx.fillStyle = '#D07F2E';
+    ctx.beginPath(); ctx.arc(16 - clap * 2, 28, 2.6, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(24 + clap * 2, 28, 2.6, 0, Math.PI*2); ctx.fill();
+  }
+
+  // feet
   ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(16, 46); ctx.lineTo(13, 46); ctx.moveTo(32, 46); ctx.lineTo(36, 46); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(16, 46); ctx.lineTo(13, 46);
+  ctx.moveTo(32, 46); ctx.lineTo(36, 46);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawJay(j){
+  ctx.save();
+  ctx.translate(j.x, j.y);
+  ctx.fillStyle = '#2A3340';
+  ctx.beginPath(); ctx.ellipse(0, 0, 8, 5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-7, -1); ctx.lineTo(-16, -2); ctx.lineTo(-16, 1); ctx.lineTo(-7, 2); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.arc(7, -3, 3.6, 0, Math.PI*2); ctx.fill();
+  var gap = (!RM && j.cawT > 0) ? 2 : 0;
+  ctx.beginPath(); ctx.moveTo(10, -3); ctx.lineTo(15, -2); ctx.lineTo(10, -2 + gap); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function drawRabbit(r){
+  ctx.save();
+  ctx.translate(r.x, r.y);
+  if (!RM) ctx.translate(0, -Math.abs(Math.sin(r.hp)) * 3);
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.ellipse(0, -9, 9, 7, 0, 0, Math.PI*2); ctx.fill();
+  poly([[1,-15],[3,-24],[6,-15]]);
+  poly([[6,-15],[9,-20],[11,-14]]);
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(5, -10, 1.2, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 }
 function easeIO(u){ return u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u+2, 2) / 2; }
@@ -1120,6 +1373,8 @@ function drawOwl(){
   // .owl-eyes → owlBlink 4.2s ease-in-out (scaleY blink), origin 50% 50% of eyes
   var sway = owlAnim(now, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
   var blink = owlAnim(now, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
+  if (!RM && owlReact.brickT > 0.28) blink = 0.12;
+  var dip = (!RM && owlReact.brickT > 0) ? -8 * Math.sin(Math.PI * (1 - owlReact.brickT / 0.55)) : 0;
 
   ctx.save();
   ctx.translate(x, y);
@@ -1137,7 +1392,11 @@ function drawOwl(){
   // ear tufts
   poly([[19,14],[14,0],[22,12]]);
   poly([[45,14],[50,0],[42,12]]);
-  // head
+  // head group — dip rotates head only (not body / feet / ball)
+  ctx.save();
+  ctx.translate(32, 26);
+  ctx.rotate(dip * Math.PI / 180);
+  ctx.translate(-32, -26);
   ctx.beginPath(); ctx.arc(32, 26, 17, 0, Math.PI*2); ctx.fill();
 
   // eyes — blink pivot 50% 50% of the eyes group (≈32,24)
@@ -1148,7 +1407,7 @@ function drawOwl(){
   ctx.fillStyle = C.day2;           // #F3ECDC
   ctx.beginPath(); ctx.arc(25, 24, 6, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.arc(39, 24, 6, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = C.ink;
+  ctx.fillStyle = (streak >= 3) ? C.gold : C.ink;
   ctx.beginPath(); ctx.arc(25, 24, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.arc(39, 24, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.restore();
@@ -1156,10 +1415,19 @@ function drawOwl(){
   // beak
   ctx.fillStyle = C.dawn;
   poly([[32,29],[28,36],[32,34],[36,36]]);
+  ctx.restore();
 
   // wings — same paths as homepage owl (left M16.., right M48..). Independently animated.
   // Grounded: subtle idle rock. Airborne: hover — wings flap to hold position.
-  var flap = owlAir ? Math.sin(owlFlapT * 7) * 22 : Math.sin(now * 1.3) * 2.4;
+  var flap;
+  if (owlAir){
+    var flapT = (streak >= 3) ? owlFlapT * 1.6 : owlFlapT;
+    flap = Math.sin(flapT * 7) * 22;
+  } else if (streak >= 3){
+    flap = Math.sin(now * 3.4) * 5.0;
+  } else {
+    flap = Math.sin(now * 1.3) * 2.4;
+  }
   ctx.fillStyle = '#7A8A9A';
   // left wing
   ctx.save();
@@ -1380,7 +1648,7 @@ function draw(){
   ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(W*0.5, sunY, 22 + rise * 10, 0, Math.PI*2); ctx.fill();
 
   for (var ci = 0; ci < clouds.length; ci++) drawCloud(clouds[ci]);
-  if (egret && egret.active) drawEgret(egret);
+  if (egret && egret.active && egret.phase !== 'perch') drawEgret(egret);
 
   ctx.strokeStyle = 'rgba(159,176,196,0.35)'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
   for (var gi = 0; gi < gusts.length; gi++){
@@ -1392,23 +1660,29 @@ function draw(){
   ctx.globalAlpha = 1;
 
   for (var ti = 0; ti < trees.length; ti++) drawTree(trees[ti]);
+  drawJay(jay);
 
   ctx.fillStyle = C.pine;
   ctx.fillRect(0, GROUND, W, H - GROUND);
   ctx.fillStyle = 'rgba(232,147,58,0.55)';
   ctx.fillRect(0, GROUND, W, 3);
 
+  var density = Math.max(0, 1 - rise);
+  var visibleN = Math.round(fireflies.length * density);
   for (var fi = 0; fi < fireflies.length; fi++){
+    if (fi >= visibleN) break;
     var ff = fireflies[fi];
-    var fa = 0.15 + 0.55 * (0.5 + 0.5 * Math.sin(ff.p * 3));
+    var fa = (0.15 + 0.55 * (0.5 + 0.5 * Math.sin(ff.p * 3))) * density;
     ctx.globalAlpha = fa;
     ctx.fillStyle = C.gold;
     ctx.beginPath(); ctx.arc(ff.x, ff.y, 1.6, 0, Math.PI*2); ctx.fill();
   }
   ctx.globalAlpha = 1;
 
+  drawRabbit(rabbit);
   if (squirrel) drawSquirrel(squirrel);
   drawHoop();
+  if (egret && egret.active && egret.phase === 'perch') drawEgret(egret);
   drawOwl();
   drawBall();
 
