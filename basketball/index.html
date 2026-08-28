@@ -195,22 +195,6 @@
 <div class="pips" id="pips"></div>
 <div class="tally" id="tally"><span class="tlbl">Makes</span><span class="tmarks" id="tmarks"></span><span class="tcount" id="tcount">0</span></div>
 
-<div class="overlay on" id="menu">
-  <div class="modal">
-    <div class="title">Acacia Park<br>SHOOTOUT</div>
-    <div class="tag">Fifty shots · One hoop · Sunrise on the line</div>
-    <div class="rules">
-      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Flick</span><span class="keys">Swipe up from the gold zone</span><span class="why">speed = power</span></div>
-      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Fly</span><span class="keys">Drag the owl — even into the air</span><span class="why">turbulence + wind push him</span></div>
-      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Swish</span><span class="keys">Nothing but net</span><span class="why">3 pts</span></div>
-      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Make</span><span class="keys">Rim or bank</span><span class="why">2 pts</span></div>
-      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Stall</span><span class="keys">Hold the ball 7 s and the squirrel steals it</span><span class="why">score resets</span></div>
-    </div>
-    <div class="tip">Three in a row sets the ball on fire — every make pays bonus · 50-for-50 earns +5</div>
-    <button class="btn" id="startBtn" style="margin-top:22px;">Start the Game</button>
-  </div>
-</div>
-
 <div class="overlay" id="over">
   <div class="sun" aria-hidden="true"></div>
   <div id="particles" aria-hidden="true"></div>
@@ -275,7 +259,6 @@ var hudShot = document.getElementById('hudShot');
 var bannerEl = document.getElementById('banner');
 var bannerBigEl = document.getElementById('bannerBig');
 var bannerSubEl = document.getElementById('bannerSub');
-var menuEl = document.getElementById('menu');
 var overEl = document.getElementById('over');
 var newRecEl = document.getElementById('newRec');
 var appEl = document.getElementById('app');
@@ -339,7 +322,7 @@ var guideShots = 0;      /* session shot counter — "FLICK"/"DRAG" labels show 
 var frameDt = 0.016;     /* latest frame dt, set in frame(); drives the fade lerp */
 /* Shoot zone — lower third, center half of the screen. Shot flicks only count from here,
    and the shooting guide lives here permanently (never tracks the owl or the hoop). */
-function shootZone(){ return { x0: W * 0.25, x1: W * 0.75, y0: H * 0.66, y1: H * 0.97 }; }
+function shootZone(){ return { x0: W * 0.30, x1: W * 0.70, y0: H * 0.66, y1: H * 0.97 }; }
 /* Flick lane — vertical guide rising from the zone baseline; tilts into the wind. */
 function guideLane(){
   var windComp = Math.abs(wind) > 40;
@@ -1345,7 +1328,6 @@ function startGame(){
   fireflyPulseT = 0;
   appEl.classList.remove('onfire');
   appEl.style.setProperty('--clearance', 0);
-  menuEl.classList.remove('on');
   overEl.classList.remove('on');
   newRecEl.style.visibility = 'hidden';
   hudScore.textContent = '0'; hudStreak.classList.remove('on');
@@ -2231,7 +2213,6 @@ window.addEventListener('keyup', function(e){
   if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.d = false;
 });
 
-document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('againBtn').addEventListener('click', startGame);
 tutNextBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); advanceTut(); });
 tutSkipBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); setTut(0); });
@@ -2243,6 +2224,7 @@ resize();
 initDecor();
 loadBest();
 renderPips();
+startGame();
 requestAnimationFrame(frame);
 })();
 </script>
