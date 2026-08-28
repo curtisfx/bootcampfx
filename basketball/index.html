@@ -332,7 +332,16 @@ var guideSvg = document.getElementById('guideSvg');
 var guideA = 0;          /* guide group opacity — fades in/out ~0.3s */
 var guideShots = 0;      /* session shot counter — "FLICK"/"DRAG" labels show while < 10 */
 var frameDt = 0.016;     /* latest frame dt, set in frame(); drives the fade lerp */
-var GUIDE_WK = 0.28;     /* wind compensation: max wind (~195) shifts the target ~1 rim width (54px) */
+/* Shoot zone — lower third, center half of the screen. Shot flicks only count from here,
+   and the shooting guide lives here permanently (never tracks the owl or the hoop). */
+function shootZone(){ return { x0: W * 0.25, x1: W * 0.75, y0: H * 0.66, y1: H * 0.97 }; }
+/* Flick lane — vertical guide rising from the zone baseline; tilts into the wind. */
+function guideLane(){
+  var windComp = Math.abs(wind) > 40;
+  var tilt = windComp ? Math.max(-30, Math.min(30, -wind * 0.15)) : 0;
+  return { bx: W / 2, by: H * 0.88, tx: W / 2 + tilt, ty: H * 0.55,
+           windComp: windComp, wt: windComp ? Math.min(1, Math.abs(wind) / 195) : 0 };
+}
 function mixHex(a, b, t){
   var pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
   var r = Math.round(((pa >> 16) & 255) * (1 - t) + ((pb >> 16) & 255) * t);
@@ -442,7 +451,7 @@ function drawTutorial(){
 function drawGuide(){
   var vis = STATE === 'play' && tutorialStep === 0 && shotsLeft > 0
          && !(squirrel && squirrel.stealing)
-         && (swipe || owlDrag || (resolved && !ball));
+         && ((swipe && swipe.zoned) || owlDrag || (resolved && !ball));
   if (squirrel && squirrel.stealing) guideA = 0;          /* steal cuts the guide instantly */
   else guideA += ((vis ? 1 : 0) - guideA) * (1 - Math.exp(-8 * frameDt));
   if (guideA < 0.01){ if (guideSvg.innerHTML) guideSvg.innerHTML = ''; return; }
@@ -450,8 +459,8 @@ function drawGuide(){
   var o = guideA, s = '';
   var now = performance.now() / 1000;
 
-  if (swipe){
-    /* live aim vector — in this game the ball leaves in the flick direction (flick up = ball up) */
+  if (swipe && swipe.zoned){
+    /* live power meter — in this game the ball leaves in the flick direction (flick up = ball up) */
     var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
     var sdt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
     var vx = (dx / sdt) * 0.92, vy = (dy / sdt) * 0.92;
@@ -459,22 +468,26 @@ function drawGuide(){
     if (sp > vmax){ vx *= vmax / sp; vy *= vmax / sp; sp = vmax; }
     var power = Math.min(1, sp / vmax);
     var live = dy <= -22;   /* onUp only launches upward flicks past this gate */
+    /* power meter — fills the flick lane from the baseline up, in the shoot zone */
+    var L = guideLane();
+    var laneDx = L.tx - L.bx, laneDy = L.ty - L.by;
+    var laneLen = Math.sqrt(laneDx * laneDx + laneDy * laneDy);
+    var lux = laneDx / laneLen, luy = laneDy / laneLen;
+    s += guideLaneSVG(L, o);
+    var fill = live ? power : power * 0.5;
+    var fCol = live ? mixHex('#F2B84B', '#E8933A', power) : '#9FB0C4';
+    var fOp = (live ? 0.9 : 0.35) * o;
+    if (fill > 0.01){
+      s += '<line x1="' + L.bx.toFixed(1) + '" y1="' + L.by.toFixed(1)
+         + '" x2="' + (L.bx + lux * laneLen * fill).toFixed(1) + '" y2="' + (L.by + luy * laneLen * fill).toFixed(1)
+         + '" stroke="' + fCol + '" stroke-width="' + (3 + power * 3).toFixed(2)
+         + '" stroke-linecap="round" opacity="' + fOp.toFixed(2) + '"/>';
+    }
+    /* finger line — the actual gesture, inside the zone */
     s += '<line x1="' + swipe.x0.toFixed(1) + '" y1="' + swipe.y0.toFixed(1)
        + '" x2="' + swipe.x.toFixed(1) + '" y2="' + swipe.y.toFixed(1)
        + '" stroke="' + mixHex('#F2B84B', '#E8933A', power) + '" stroke-width="' + (2.5 + power * 1.5).toFixed(2)
        + '" stroke-linecap="round" opacity="' + (0.85 * o).toFixed(2) + '"/>';
-    /* projected-flick line from the owl's actual launch point — where the ball will go */
-    var px = player.x + OWL_CX, py = player.y - OWL_LAUNCH_Y;
-    var ang = Math.atan2(vy, vx) * 180 / Math.PI;
-    var len = 70 + power * 150;
-    var ux = sp > 0 ? vx / sp : 0, uy = sp > 0 ? vy / sp : 0;
-    var ex2 = px + ux * len, ey2 = py + uy * len;
-    var po = (live ? 0.4 : 0.12) * o;
-    s += '<line x1="' + px.toFixed(1) + '" y1="' + py.toFixed(1)
-       + '" x2="' + ex2.toFixed(1) + '" y2="' + ey2.toFixed(1)
-       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="6 6" opacity="' + po.toFixed(2) + '"/>';
-    s += '<g transform="translate(' + ex2.toFixed(1) + ' ' + ey2.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')">'
-       + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#9FB0C4" opacity="' + po.toFixed(2) + '"/></g>';
   } else if (owlDrag){
     /* drag guide — tutorial step-2 language at furniture opacity, no hand icon */
     var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
@@ -492,38 +505,57 @@ function drawGuide(){
       s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '">FLY</text>';
     }
   } else {
-    /* ambient aim arc — ball rest point to rim, recalculated every frame so it tracks the owl */
-    var ex = player.x + OWL_CX, ey = player.y - OWL_LAUNCH_Y;
-    var tx = hoop.x - 34, ty = hoop.y - 16;
-    var windComp = Math.abs(wind) > 40;
-    var wt = windComp ? Math.min(1, Math.abs(wind) / 195) : 0;
-    if (windComp) tx -= wind * GUIDE_WK;   /* aim INTO the wind — ball.vx += wind*dt drifts it downwind */
-    var mx = (ex + tx) / 2, my = Math.min(ey, ty) - 130;
-    var baseO = onFire ? 0.45 : 0.30;
-    var arcCol = windComp ? mixHex('#9FB0C4', '#E8933A', wt) : '#9FB0C4';
-    s += '<defs><path id="guideArc" d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '"/></defs>';
-    s += '<path d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '" fill="none" stroke="' + arcCol
-       + '" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (baseO * o).toFixed(2) + '"/>';
-    var ax = 2 * (tx - mx), ay = 2 * (ty - my);
-    var aang = Math.atan2(ay, ax) * 180 / Math.PI;
-    s += '<g transform="translate(' + tx + ' ' + ty + ') rotate(' + aang.toFixed(1) + ')">'
-       + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '"/></g>';
+    /* ambient zone guide — fixed in the shoot zone; never tracks the owl or the hoop */
+    var z = shootZone();
+    var L = guideLane();
+    var boost = onFire ? 1.5 : 1;
+    /* zone floor — the strip you flick from */
+    s += '<line x1="' + z.x0.toFixed(1) + '" y1="' + L.by.toFixed(1) + '" x2="' + z.x1.toFixed(1) + '" y2="' + L.by.toFixed(1)
+       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.28 * boost * o).toFixed(2) + '"/>';
+    /* zone outline — barely-there affordance */
+    s += '<rect x="' + z.x0.toFixed(1) + '" y="' + z.y0.toFixed(1) + '" width="' + (z.x1 - z.x0).toFixed(1) + '" height="' + (z.y1 - z.y0).toFixed(1)
+       + '" rx="14" fill="none" stroke="#9FB0C4" stroke-width="1" opacity="' + (0.10 * o).toFixed(2) + '"/>';
+    /* flick lane + ticks + arrowhead */
+    s += guideLaneSVG(L, o);
+    /* traveling dot loops up the lane like a real flick (accelerating) */
     if (!RM){
-      var dur = onFire ? 2.0 : 2.6;
+      var dur = onFire ? 1.7 : 2.2;
       var cyc = (now % dur) / dur;
-      var e = cyc * cyc * (3 - 2 * cyc);
-      var ddx = (1-e)*(1-e)*ex + 2*(1-e)*e*mx + e*e*tx;
-      var ddy = (1-e)*(1-e)*ey + 2*(1-e)*e*my + e*e*ty;
-      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="8" fill="rgba(242,184,75,.2)" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.6 * o).toFixed(2) + '"/>'
-         + '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="3" fill="#FBF7EE" opacity="' + (0.6 * o).toFixed(2) + '"/>';
+      var e = 1 - (1 - cyc) * (1 - cyc);          /* ease-out — starts fast like a flick */
+      var ddx = L.bx + (L.tx - L.bx) * e, ddy = L.by + (L.ty - L.by) * e;
+      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="7" fill="rgba(242,184,75,.2)" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>'
+         + '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="3" fill="#FBF7EE" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>';
     }
-    var rr = RM ? 11 : 11 + 4 * Math.sin(now * 2.2);
-    s += '<circle cx="' + ex + '" cy="' + ey + '" r="' + rr.toFixed(1) + '" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.25 * o).toFixed(2) + '"/>';
     if (guideShots < 10){
-      s += '<text font-family="\'Spline Sans Mono\', monospace" font-size="9" letter-spacing="3" fill="#F2B84B" opacity="' + (0.55 * o).toFixed(2) + '"><textPath href="#guideArc" startOffset="50%" text-anchor="middle">FLICK</textPath></text>';
+      s += '<text x="' + (W / 2).toFixed(1) + '" y="' + (L.by + 26).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="9" letter-spacing="3" fill="#F2B84B" opacity="' + (0.55 * o).toFixed(2) + '" text-anchor="middle">FLICK UP</text>';
     }
   }
   guideSvg.innerHTML = s;
+}
+
+/* Shared lane drawing — dashed wind-tilted lane, power ticks, gold arrowhead.
+   Used by both the ambient zone guide and the live power meter. */
+function guideLaneSVG(L, o){
+  var boost = onFire ? 1.5 : 1;
+  var col = L.windComp ? mixHex('#9FB0C4', '#E8933A', L.wt) : '#9FB0C4';
+  var s = '<line x1="' + L.bx.toFixed(1) + '" y1="' + L.by.toFixed(1) + '" x2="' + L.tx.toFixed(1) + '" y2="' + L.ty.toFixed(1)
+     + '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * boost * o).toFixed(2) + '"/>';
+  /* power ticks at 33% / 66% / 100% — perpendicular marks across the lane */
+  var dx = L.tx - L.bx, dy = L.ty - L.by;
+  var len = Math.sqrt(dx * dx + dy * dy);
+  var pxn = -dy / len, pyn = dx / len;            /* lane normal */
+  for (var i = 1; i <= 3; i++){
+    var f = i / 3, cxp = L.bx + dx * f, cyp = L.by + dy * f, hw = i === 3 ? 9 : 6;
+    s += '<line x1="' + (cxp - pxn * hw).toFixed(1) + '" y1="' + (cyp - pyn * hw).toFixed(1)
+       + '" x2="' + (cxp + pxn * hw).toFixed(1) + '" y2="' + (cyp + pyn * hw).toFixed(1)
+       + '" stroke="' + col + '" stroke-width="1.5" opacity="' + (0.35 * o).toFixed(2) + '"/>';
+  }
+  /* gold arrowhead at the top of the lane, aligned to the lane direction */
+  var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+  s += '<g transform="translate(' + L.tx.toFixed(1) + ' ' + L.ty.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')">'
+     + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#F2B84B" opacity="' + (0.5 * boost * o).toFixed(2) + '"/></g>';
+  s += '<text x="' + (L.tx + 16).toFixed(1) + '" y="' + (L.ty + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="' + col + '" opacity="' + (0.45 * o).toFixed(2) + '">MAX</text>';
+  return s;
 }
 
 var player = { x: 0, y: 0 };
@@ -885,8 +917,10 @@ function onDown(x, y){
   }
   if (!resolved) return;
   if (ball && ball.returning) return;
-  swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false };
-  sfx('flick');
+  var z = shootZone();
+  var zoned = x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1;  /* shots only start in the shoot zone */
+  swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false, zoned:zoned };
+  if (zoned) sfx('flick');
 }
 function onMove(x, y){
   if (tutorialStep > 0) return;
@@ -919,7 +953,9 @@ function onUp(){
   if (!swipe) return;
   var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
   var dt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
+  var zoned = swipe.zoned;
   swipe = null;
+  if (!zoned) return;   /* outside the shoot zone — reposition gesture only, never a shot */
   if (STATE !== 'play' || !resolved) return;
   if (ball && ball.returning) return;
   if (dy > -22) return;
