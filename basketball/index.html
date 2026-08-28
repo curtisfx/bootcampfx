@@ -115,27 +115,7 @@
     margin-top:18px;text-align:center;line-height:1.9;}
   .hint b{color:var(--day);}
 
-  /* ---------- tutorial coach ---------- */
-  .tut{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .28s var(--ease);}
-  .tut.on{opacity:1;pointer-events:auto;}
-  .tut svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
   #guideSvg{position:fixed;inset:0;z-index:8;width:100%;height:100%;pointer-events:none;overflow:visible;}
-  .tut .tcard{position:absolute;transform:translate(-50%,-50%);text-align:center;
-    background:rgba(15,27,44,.72);border:1px solid rgba(242,184,75,.28);border-radius:14px;
-    padding:10px 16px;backdrop-filter:blur(6px);max-width:min(340px,80vw);
-    box-shadow:0 8px 28px rgba(0,0,0,.35);}
-  .tut .tl1{font-family:var(--display);font-weight:600;font-size:1.12rem;color:var(--day);line-height:1.15;}
-  .tut .tl2{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:5px;}
-  .tut .tbtnrow{display:flex;gap:8px;justify-content:center;margin-top:10px;}
-  .tut .tbtn{pointer-events:auto;cursor:pointer;border-radius:10px;padding:7px 18px;
-    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
-    border:1px solid rgba(159,176,196,.3);background:rgba(15,27,44,.5);color:var(--mist);}
-  .tut .tbtn:hover{border-color:var(--dawn);color:var(--gold);}
-  .tut .tbtn.primary{background:var(--dawn);border-color:var(--dawn);color:#1B1206;font-weight:700;}
-  .tut .tbtn.primary:hover{background:var(--gold);color:#1B1206;}
-  @keyframes tutTap{0%,18%{transform:scale(1);}50%{transform:scale(.7);}82%,100%{transform:scale(1);}}
-  @media (prefers-reduced-motion: reduce){ .tut .anim{animation:none !important;} }
-
   .sun{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--gold);
     box-shadow:0 0 60px 20px rgba(232,147,58,.4), 0 0 120px 40px rgba(242,184,75,.15);
     left:50%;transform:translateX(-50%);bottom:-40px;z-index:1;
@@ -228,19 +208,6 @@
 </div>
 
 <svg id="guideSvg" aria-hidden="true"></svg>
-
-<div class="tut" id="tut" role="dialog" aria-live="polite" aria-label="Tutorial">
-  <svg id="tutSvg" aria-hidden="true"></svg>
-  <div class="tcard" id="tutCard">
-    <div class="tl1" id="tutTitle"></div>
-    <div class="tl2" id="tutSub"></div>
-    <div class="tbtnrow">
-      <button type="button" class="tbtn" id="tutSkip" aria-label="Skip tutorial">Skip</button>
-      <button type="button" class="tbtn primary" id="tutNext">Next</button>
-    </div>
-  </div>
-</div>
-
 <div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="https://bootcampfx.com">bootcampfx.com</a></div>
 </div>
 
@@ -314,19 +281,6 @@ var owlKnock = 0;         /* owl knockdown timer after a skyjack crash */
 var fireflyPulseT = 0;
 var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
 
-/* ---------- tutorial coach (two-step, runs at every drill start) ---------- */
-var tutorialStep = 0;      /* 0=off, 1=shoot gesture, 2=drag the owl */
-var tutT = 0;              /* seconds elapsed in current step */
-var tutTimer = null;
-var TUT_DUR = 5;           /* auto-advance fallback (s) */
-var tutEl = document.getElementById('tut');
-var tutSvg = document.getElementById('tutSvg');
-var tutCard = document.getElementById('tutCard');
-var tutTitleEl = document.getElementById('tutTitle');
-var tutSubEl = document.getElementById('tutSub');
-var tutNextBtn = document.getElementById('tutNext');
-var tutSkipBtn = document.getElementById('tutSkip');
-var tutR = 0;              /* ball launch-point radius, synced in drawTutorial */
 /* ---------- perpetual aim guide ---------- */
 var guideSvg = document.getElementById('guideSvg');
 var guideA = 0;          /* guide group opacity — fades in/out ~0.3s */
@@ -349,107 +303,11 @@ function mixHex(a, b, t){
   var bl = Math.round((pa & 255) * (1 - t) + (pb & 255) * t);
   return 'rgb(' + r + ',' + g + ',' + bl + ')';
 }
-function setTut(step){
-  tutorialStep = step; tutT = 0;
-  clearTimeout(tutTimer);
-  if (!step){ tutEl.classList.remove('on'); return; }
-  tutTitleEl.textContent = step === 1 ? 'Flick up to shoot' : 'Drag the owl to find the angle';
-  tutSubEl.textContent = step === 1 ? 'speed = power' : 'A / D or drag — even up. He can fly.';
-  tutNextBtn.textContent = step === 1 ? 'Next' : 'Got it';
-  tutNextBtn.setAttribute('aria-label', step === 1 ? 'Next tutorial step' : 'Finish tutorial');
-  tutEl.classList.add('on');
-  tutTimer = setTimeout(advanceTut, TUT_DUR * 1000);
-}
-function advanceTut(){ setTut(tutorialStep === 1 ? 2 : 0); }
-function drawTutorial(){
-  if (!tutorialStep || STATE !== 'play' || !player.x || !player.y){ tutSvg.innerHTML = ''; return; }
-  var g = tutR + 13;
-  var xs = (W/2 - g) / (W/2), ys = (H/2 - g) / (H/2);
-  var anim = RM ? '' : ' class="anim"';
-  var s = '';
-  if (tutorialStep === 1){
-    var t = RM ? 1 : (tutT % 1.6) / 1.6;         /* one gesture sweep ≈1.6s, holds at the end */
-    var e = Math.min(1, t / 0.82);
-    var ex = player.x + OWL_CX, ey = player.y - OWL_LAUNCH_Y;
-    var tx = hoop.x - 34, ty = hoop.y - 16;
-    var mx = (ex + tx) / 2, my = Math.min(ey, ty) - 130;
-    var dx = (1-e)*(1-e)*ex + 2*(1-e)*e*mx + e*e*tx;
-    var dy = (1-e)*(1-e)*ey + 2*(1-e)*e*my + e*e*ty;
-    var ax = 2*(1-e)*(mx-ex) + 2*e*(tx-mx), ay = 2*(1-e)*(my-ey) + 2*e*(ty-my);
-    var ang = Math.atan2(ay, ax) * 180 / Math.PI;
-    s += '<defs><path id="tutArc" d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '"/></defs>';
-    s += '<path d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '" fill="none" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
-    s += '<text font-family="\'Spline Sans Mono\', monospace" font-size="11" letter-spacing="3" fill="#F2B84B" opacity="0.95"><textPath href="#tutArc" startOffset="50%" text-anchor="middle">FLICK UP</textPath></text>';
-    s += '<g transform="translate(' + tx + ' ' + ty + ') rotate(' + ang.toFixed(1) + ')"><path d="M0 0 L-15 -7 L-10 0 L-15 7 Z" fill="#F2B84B" opacity="' + (e > 0.92 ? 0.95 : 0.3) + '"/></g>';
-    s += '<circle cx="' + ex + '" cy="' + ey + '" r="' + (11 + 6 * Math.sin(Math.min(t, 1) * Math.PI)).toFixed(1) + '" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.4"/>';
-    s += '<g' + anim + ' style="animation:tutTap .45s ease-in-out infinite;transform-box:fill-box;transform-origin:center;" opacity="' + (0.35 + 0.65 * e).toFixed(2) + '">'
-       + '<circle cx="' + dx.toFixed(1) + '" cy="' + dy.toFixed(1) + '" r="11" fill="rgba(242,184,75,.28)" stroke="#F2B84B" stroke-width="2"/>'
-       + '<circle cx="' + dx.toFixed(1) + '" cy="' + dy.toFixed(1) + '" r="4" fill="#FBF7EE"/></g>';
-    var owlCx = player.x + OWL_CX;
-    var owlCy = player.y - 70;
-    var cardW = Math.min(340, W * 0.80);
-    var cardH = 108;
-    var hudSafe = 86, floorSafe = 132;
-    var hoopSafeX = hoop.x - 52;
-    var tcx = owlCx, tcy = owlCy - 78;
-    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
-    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
-    if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
-      tcx = Math.min(tcx, hoopSafeX - cardW/2);
-      tcx = Math.max(cardW/2 + 8, tcx);
-    }
-    tutCard.style.left = tcx + 'px';
-    tutCard.style.top = tcy + 'px';
-  } else {
-    var cyc = RM ? 0 : (tutT % 3.2) / 3.2;       /* hold → left → right → center → up → release */
-    var ox = 0, oy = 0, fade = 0, u;
-    if (cyc < 0.12){}
-    else if (cyc < 0.32){ u = (cyc - 0.12) / 0.20; u = u*u*(3-2*u); ox = -30 * u; }
-    else if (cyc < 0.55){ u = (cyc - 0.32) / 0.23; u = u*u*(3-2*u); ox = -30 + 60 * u; }
-    else if (cyc < 0.66){ u = (cyc - 0.55) / 0.11; u = u*u*(3-2*u); ox = 30 * (1 - u); }
-    else if (cyc < 0.86){ u = (cyc - 0.66) / 0.20; u = u*u*(3-2*u); oy = -46 * u; }
-    else { oy = -46; fade = (cyc - 0.86) / 0.14; }
-    var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
-    var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
-    var uy0 = cy2 - 56, uy1 = Math.max(20, cy2 - 130);
-    s += '<line x1="' + lx + '" y1="' + cy2 + '" x2="' + rx + '" y2="' + cy2 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
-    s += '<path d="M' + lx + ' ' + cy2 + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="0.85"/>';
-    s += '<path d="M' + rx + ' ' + cy2 + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="0.85"/>';
-    s += '<line x1="' + cx2 + '" y1="' + uy0 + '" x2="' + cx2 + '" y2="' + uy1 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
-    s += '<path d="M' + cx2 + ' ' + uy1 + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="0.85"/>';
-    s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
-    s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
-    var hvx = cx2 + ox, hvy = cy2 - 26 + oy;
-    var hop = RM ? 0.95 : Math.max(0, 0.95 - fade * 1.2);
-    s += '<g opacity="' + hop.toFixed(2) + '">'
-       + '<g transform="translate(' + hvx.toFixed(1) + ' ' + hvy.toFixed(1) + ') rotate(-20)">'
-       + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>'
-       + '<circle cx="' + hvx.toFixed(1) + '" cy="' + hvy.toFixed(1) + '" r="30" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.35"/></g>';
-    var owlCx = player.x + OWL_CX;
-    var owlCy = player.y - 70;
-    var cardW = Math.min(340, W * 0.80);
-    var cardH = 108;
-    var hudSafe = 86, floorSafe = 132;
-    var hoopSafeX = hoop.x - 52;
-    var tcx = owlCx, tcy = uy1 - 10 - cardH / 2;
-    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
-    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
-    if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
-      tcx = Math.min(tcx, hoopSafeX - cardW/2);
-      tcx = Math.max(cardW/2 + 8, tcx);
-    }
-    tutCard.style.left = tcx + 'px';
-    tutCard.style.top = tcy + 'px';
-  }
-  tutSvg.innerHTML = s;
-}
-
 /* Perpetual aim guide — the tutorial's step-1 arc promoted to quiet furniture.
    Three modes: aim arc (player's turn), live aim vector (finger down), drag lines (owl held).
-   Renders into #guideSvg (its own fullscreen SVG — #tutSvg lives inside the .tut overlay,
-   which is opacity:0 whenever the tutorial card is hidden). */
+   Renders into #guideSvg (its own fullscreen SVG). */
 function drawGuide(){
-  var vis = STATE === 'play' && tutorialStep === 0 && shotsLeft > 0
+  var vis = STATE === 'play' && shotsLeft > 0
          && !(squirrel && squirrel.stealing)
          && ((swipe && swipe.zoned) || owlDrag || (resolved && !ball));
   if (squirrel && squirrel.stealing) guideA = 0;          /* steal cuts the guide instantly */
@@ -914,7 +772,6 @@ muteBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(
 /* ---------- shooting ---------- */
 var swipe = null;
 function onDown(x, y){
-  if (tutorialStep > 0){ advanceTut(); return; }
   if (STATE === 'over'){ startGame(); return; }
   if (STATE !== 'play') return;
   // generous hit area on the owl → drag mode (reposition only, never shoots)
@@ -934,7 +791,6 @@ function onDown(x, y){
   if (zoned) sfx('flick');
 }
 function onMove(x, y){
-  if (tutorialStep > 0) return;
   if (owlDrag){
     var nx = x + owlDrag.offX, ny = y + owlDrag.offY;
     player.x = Math.max(56, Math.min(hoop.x - 90, nx));
@@ -950,7 +806,6 @@ function onMove(x, y){
   }
 }
 function onUp(){
-  if (tutorialStep > 0) return;
   if (owlDrag){
     owlDrag = null;
     // released above the ground plane → airborne state: wings extend + gentle flap
@@ -1020,7 +875,7 @@ function egretEnter(){
   egret.fl = 0; egret.theta = 0; egret.lap = 0; egret.missTally = 0;
 }
 function maybeEgretEnter(){
-  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play' && tutorialStep === 0){
+  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play'){
     egretEnter();
   }
 }
@@ -1051,7 +906,7 @@ function wildlifeOnShot(made, kind, prevStreak){
 }
 
 function startSteal(){
-  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
+  if (!squirrel || STATE !== 'play' || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
   squirrel.stealing = true;
   squirrel.stealWarn = false;
   holdT = 0;
@@ -1107,7 +962,7 @@ function resolveShot(made, kind){
   resolved = true;
   var prevStreak = streak;
   shotsLeft--;
-  appEl.style.setProperty('--clearance', (SHOTS - shotsLeft) / SHOTS);
+  appEl.style.setProperty('--clearance', ((SHOTS - shotsLeft) / SHOTS) * 0.5);
   var pts = 0;
   if (made){
     makes++;
@@ -1151,7 +1006,7 @@ function resolveShot(made, kind){
     sfx('miss');
     trauma = Math.min(1, trauma + 0.12);
   }
-  if (STATE === 'play' && tutorialStep === 0) wildlifeOnShot(made, kind, prevStreak);
+  if (STATE === 'play') wildlifeOnShot(made, kind, prevStreak);
   lastPlayEl.innerHTML = 'Last <b>' + lastKind + '</b>';
   renderPips();
   hudShot.textContent = 'Shot ' + (SHOTS - shotsLeft) + ' / ' + SHOTS;
@@ -1386,7 +1241,6 @@ function startGame(){
   lastPlayEl.innerHTML = 'Last —';
   hudShot.textContent = 'Shot 0 / ' + SHOTS;
   STATE = 'play';
-  setTut(1);
   renderPips();
   renderTally();
   newWind();
@@ -1403,7 +1257,6 @@ function gradeCopy(s){
 
 function showOver(){
   STATE = 'over';
-  setTut(0);
   career.games++;
   career.points += score;
   career.makes += makes;
@@ -1441,7 +1294,6 @@ function showOver(){
 
 function update(dt){
   if (owlReact.brickT > 0) owlReact.brickT = Math.max(0, owlReact.brickT - dt);
-  if (tutorialStep > 0) tutT += dt;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
   punch = Math.max(0, punch - dt * 0.9);
@@ -1487,7 +1339,7 @@ function update(dt){
   }
 
   // ball-steal stall clock (7s hold rule) — resets on shot or drag start
-  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
+  var holding = STATE === 'play' && resolved && !ball && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
   if (holding && !owlDrag){
     holdT += dt;
     if (holdT >= 7){ startSteal(); }
@@ -1991,7 +1843,6 @@ function drawOwl(){
     ctx.beginPath(); ctx.arc(-r * 1.5, 0, r * 1.2, -0.6, 0.6); ctx.stroke();
     ctx.beginPath(); ctx.arc(r * 1.5, 0, r * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
     ctx.restore();
-    tutR = r;
   }
 
   // ground shadow — stays on the ground plane; fades as the owl rises
@@ -2232,8 +2083,7 @@ function draw(){
   }
   ctx.globalAlpha = 1;
   ctx.restore();
-  if (tutorialStep) drawTutorial();
-  else drawGuide();
+  drawGuide();
 }
 
 var last = performance.now();
@@ -2252,7 +2102,6 @@ cv.addEventListener('pointerup', onUp);
 cv.addEventListener('pointercancel', function(){ swipe = null; });
 cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 window.addEventListener('keydown', function(e){
-  if (e.code === 'Escape' && tutorialStep > 0){ setTut(0); return; }
   if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.a = true;
   if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.d = true;
   if (e.code === 'KeyM'){ unlockAudio(); setMute(!muted); }
@@ -2268,12 +2117,6 @@ window.addEventListener('keyup', function(e){
 
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('againBtn').addEventListener('click', startGame);
-tutNextBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); advanceTut(); });
-tutSkipBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); setTut(0); });
-tutEl.addEventListener('pointerdown', function(e){
-  if (e.target.closest('.tbtn')) return;
-  unlockAudio(); advanceTut();
-});
 resize();
 initDecor();
 loadBest();
