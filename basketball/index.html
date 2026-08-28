@@ -119,6 +119,7 @@
   .tut{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .28s var(--ease);}
   .tut.on{opacity:1;pointer-events:auto;}
   .tut svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  #guideSvg{position:fixed;inset:0;z-index:8;width:100%;height:100%;pointer-events:none;overflow:visible;}
   .tut .tcard{position:absolute;transform:translate(-50%,-50%);text-align:center;
     background:rgba(15,27,44,.72);border:1px solid rgba(242,184,75,.28);border-radius:14px;
     padding:10px 16px;backdrop-filter:blur(6px);max-width:min(340px,80vw);
@@ -226,6 +227,8 @@
   </div>
 </div>
 
+<svg id="guideSvg" aria-hidden="true"></svg>
+
 <div class="tut" id="tut" role="dialog" aria-live="polite" aria-label="Tutorial">
   <svg id="tutSvg" aria-hidden="true"></svg>
   <div class="tcard" id="tutCard">
@@ -324,6 +327,19 @@ var tutSubEl = document.getElementById('tutSub');
 var tutNextBtn = document.getElementById('tutNext');
 var tutSkipBtn = document.getElementById('tutSkip');
 var tutR = 0;              /* ball launch-point radius, synced in drawTutorial */
+/* ---------- perpetual aim guide ---------- */
+var guideSvg = document.getElementById('guideSvg');
+var guideA = 0;          /* guide group opacity — fades in/out ~0.3s */
+var guideShots = 0;      /* session shot counter — "FLICK"/"DRAG" labels show while < 10 */
+var frameDt = 0.016;     /* latest frame dt, set in frame(); drives the fade lerp */
+var GUIDE_WK = 0.28;     /* wind compensation: max wind (~195) shifts the target ~1 rim width (54px) */
+function mixHex(a, b, t){
+  var pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  var r = Math.round(((pa >> 16) & 255) * (1 - t) + ((pb >> 16) & 255) * t);
+  var g = Math.round(((pa >> 8) & 255) * (1 - t) + ((pb >> 8) & 255) * t);
+  var bl = Math.round((pa & 255) * (1 - t) + (pb & 255) * t);
+  return 'rgb(' + r + ',' + g + ',' + bl + ')';
+}
 function setTut(step){
   tutorialStep = step; tutT = 0;
   clearTimeout(tutTimer);
@@ -417,6 +433,97 @@ function drawTutorial(){
     tutCard.style.top = tcy + 'px';
   }
   tutSvg.innerHTML = s;
+}
+
+/* Perpetual aim guide — the tutorial's step-1 arc promoted to quiet furniture.
+   Three modes: aim arc (player's turn), live aim vector (finger down), drag lines (owl held).
+   Renders into #guideSvg (its own fullscreen SVG — #tutSvg lives inside the .tut overlay,
+   which is opacity:0 whenever the tutorial card is hidden). */
+function drawGuide(){
+  var vis = STATE === 'play' && tutorialStep === 0 && shotsLeft > 0
+         && !(squirrel && squirrel.stealing)
+         && (swipe || owlDrag || (resolved && !ball));
+  if (squirrel && squirrel.stealing) guideA = 0;          /* steal cuts the guide instantly */
+  else guideA += ((vis ? 1 : 0) - guideA) * (1 - Math.exp(-8 * frameDt));
+  if (guideA < 0.01){ if (guideSvg.innerHTML) guideSvg.innerHTML = ''; return; }
+
+  var o = guideA, s = '';
+  var now = performance.now() / 1000;
+
+  if (swipe){
+    /* live aim vector — in this game the ball leaves in the flick direction (flick up = ball up) */
+    var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
+    var sdt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
+    var vx = (dx / sdt) * 0.92, vy = (dy / sdt) * 0.92;
+    var sp = Math.sqrt(vx * vx + vy * vy), vmax = 1980;
+    if (sp > vmax){ vx *= vmax / sp; vy *= vmax / sp; sp = vmax; }
+    var power = Math.min(1, sp / vmax);
+    var live = dy <= -22;   /* onUp only launches upward flicks past this gate */
+    s += '<line x1="' + swipe.x0.toFixed(1) + '" y1="' + swipe.y0.toFixed(1)
+       + '" x2="' + swipe.x.toFixed(1) + '" y2="' + swipe.y.toFixed(1)
+       + '" stroke="' + mixHex('#F2B84B', '#E8933A', power) + '" stroke-width="' + (2.5 + power * 1.5).toFixed(2)
+       + '" stroke-linecap="round" opacity="' + (0.85 * o).toFixed(2) + '"/>';
+    /* projected-flick line from the owl's actual launch point — where the ball will go */
+    var px = player.x + OWL_CX, py = player.y - OWL_LAUNCH_Y;
+    var ang = Math.atan2(vy, vx) * 180 / Math.PI;
+    var len = 70 + power * 150;
+    var ux = sp > 0 ? vx / sp : 0, uy = sp > 0 ? vy / sp : 0;
+    var ex2 = px + ux * len, ey2 = py + uy * len;
+    var po = (live ? 0.4 : 0.12) * o;
+    s += '<line x1="' + px.toFixed(1) + '" y1="' + py.toFixed(1)
+       + '" x2="' + ex2.toFixed(1) + '" y2="' + ey2.toFixed(1)
+       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="6 6" opacity="' + po.toFixed(2) + '"/>';
+    s += '<g transform="translate(' + ex2.toFixed(1) + ' ' + ey2.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')">'
+       + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#9FB0C4" opacity="' + po.toFixed(2) + '"/></g>';
+  } else if (owlDrag){
+    /* drag guide — tutorial step-2 language at furniture opacity, no hand icon */
+    var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
+    var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
+    var uy0 = cy2 - 56, uy1 = Math.max(96, cy2 - 130);   /* clamp below the top HUD */
+    s += '<line x1="' + lx + '" y1="' + cy2.toFixed(1) + '" x2="' + rx + '" y2="' + cy2.toFixed(1)
+       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * o).toFixed(2) + '"/>';
+    s += '<path d="M' + lx + ' ' + cy2.toFixed(1) + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
+    s += '<path d="M' + rx + ' ' + cy2.toFixed(1) + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
+    s += '<line x1="' + cx2 + '" y1="' + uy0.toFixed(1) + '" x2="' + cx2 + '" y2="' + uy1.toFixed(1)
+       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * o).toFixed(2) + '"/>';
+    s += '<path d="M' + cx2 + ' ' + uy1.toFixed(1) + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
+    if (guideShots < 10){
+      s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '" text-anchor="middle">DRAG</text>';
+      s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '">FLY</text>';
+    }
+  } else {
+    /* ambient aim arc — ball rest point to rim, recalculated every frame so it tracks the owl */
+    var ex = player.x + OWL_CX, ey = player.y - OWL_LAUNCH_Y;
+    var tx = hoop.x - 34, ty = hoop.y - 16;
+    var windComp = Math.abs(wind) > 40;
+    var wt = windComp ? Math.min(1, Math.abs(wind) / 195) : 0;
+    if (windComp) tx -= wind * GUIDE_WK;   /* aim INTO the wind — ball.vx += wind*dt drifts it downwind */
+    var mx = (ex + tx) / 2, my = Math.min(ey, ty) - 130;
+    var baseO = onFire ? 0.45 : 0.30;
+    var arcCol = windComp ? mixHex('#9FB0C4', '#E8933A', wt) : '#9FB0C4';
+    s += '<defs><path id="guideArc" d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '"/></defs>';
+    s += '<path d="M' + ex + ' ' + ey + ' Q' + mx + ' ' + my + ' ' + tx + ' ' + ty + '" fill="none" stroke="' + arcCol
+       + '" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (baseO * o).toFixed(2) + '"/>';
+    var ax = 2 * (tx - mx), ay = 2 * (ty - my);
+    var aang = Math.atan2(ay, ax) * 180 / Math.PI;
+    s += '<g transform="translate(' + tx + ' ' + ty + ') rotate(' + aang.toFixed(1) + ')">'
+       + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '"/></g>';
+    if (!RM){
+      var dur = onFire ? 2.0 : 2.6;
+      var cyc = (now % dur) / dur;
+      var e = cyc * cyc * (3 - 2 * cyc);
+      var ddx = (1-e)*(1-e)*ex + 2*(1-e)*e*mx + e*e*tx;
+      var ddy = (1-e)*(1-e)*ey + 2*(1-e)*e*my + e*e*ty;
+      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="8" fill="rgba(242,184,75,.2)" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.6 * o).toFixed(2) + '"/>'
+         + '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="3" fill="#FBF7EE" opacity="' + (0.6 * o).toFixed(2) + '"/>';
+    }
+    var rr = RM ? 11 : 11 + 4 * Math.sin(now * 2.2);
+    s += '<circle cx="' + ex + '" cy="' + ey + '" r="' + rr.toFixed(1) + '" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.25 * o).toFixed(2) + '"/>';
+    if (guideShots < 10){
+      s += '<text font-family="\'Spline Sans Mono\', monospace" font-size="9" letter-spacing="3" fill="#F2B84B" opacity="' + (0.55 * o).toFixed(2) + '"><textPath href="#guideArc" startOffset="50%" text-anchor="middle">FLICK</textPath></text>';
+    }
+  }
+  guideSvg.innerHTML = s;
 }
 
 var player = { x: 0, y: 0 };
@@ -826,6 +933,7 @@ function onUp(){
 function launch(vx, vy){
   resolved = false;
   holdT = 0;
+  guideShots++;
   if (squirrel){
     squirrel.stealing = false;
     squirrel.stealWarn = false;
@@ -1992,13 +2100,15 @@ function draw(){
   }
   ctx.globalAlpha = 1;
   ctx.restore();
-  drawTutorial();
+  if (tutorialStep) drawTutorial();
+  else drawGuide();
 }
 
 var last = performance.now();
 function frame(now){
   var dt = Math.min((now - last) / 1000, 0.05);
   last = now;
+  frameDt = dt;
   update(dt);
   draw();
   requestAnimationFrame(frame);
