@@ -517,14 +517,19 @@ function drawGuide(){
        + '" rx="14" fill="none" stroke="#9FB0C4" stroke-width="1" opacity="' + (0.10 * o).toFixed(2) + '"/>';
     /* flick lane + ticks + arrowhead */
     s += guideLaneSVG(L, o);
-    /* traveling dot loops up the lane like a real flick (accelerating) */
+    /* traveling dot + tutorial hand loop up the lane like a real flick (accelerating) —
+       the fingertip rides the lane so it's clear where the finger goes and how fast it moves */
     if (!RM){
       var dur = onFire ? 1.7 : 2.2;
       var cyc = (now % dur) / dur;
       var e = 1 - (1 - cyc) * (1 - cyc);          /* ease-out — starts fast like a flick */
       var ddx = L.bx + (L.tx - L.bx) * e, ddy = L.by + (L.ty - L.by) * e;
-      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="7" fill="rgba(242,184,75,.2)" stroke="#F2B84B" stroke-width="1.5" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>'
+      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="11" fill="rgba(242,184,75,.28)" stroke="#F2B84B" stroke-width="2" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>'
          + '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="3" fill="#FBF7EE" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>';
+      /* copy of the tutorial's finger hand, fingertip on the lane, tilted into the flick direction */
+      var hang = Math.atan2(L.ty - L.by, L.tx - L.bx) * 180 / Math.PI + 70;
+      s += '<g transform="translate(' + ddx.toFixed(1) + ' ' + ddy.toFixed(1) + ') rotate(' + hang.toFixed(1) + ')" opacity="' + (0.9 * boost * o).toFixed(2) + '">'
+         + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>';
     }
     if (guideShots < 10){
       s += '<text x="' + (W / 2).toFixed(1) + '" y="' + (L.by + 26).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="9" letter-spacing="3" fill="#F2B84B" opacity="' + (0.55 * o).toFixed(2) + '" text-anchor="middle">FLICK UP</text>';
@@ -1829,13 +1834,17 @@ function drawSquirrel(s){
     ctx.beginPath(); ctx.arc(22, 27, 2.2, 0, Math.PI*2); ctx.fill();
   }
 
-  // stolen ball tucked under the arm during the escape
+  // stolen ball tucked under the arm — full basketball seams, same detail as the game ball
   if (s.holdingBall){
+    var sbr = 6;
     ctx.fillStyle = C.dawn;
-    ctx.beginPath(); ctx.arc(26, 32, 5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(26, 32, sbr, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.arc(26, 32, 5, 0, Math.PI*2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(21, 32); ctx.lineTo(31, 32); ctx.moveTo(26, 27); ctx.lineTo(26, 37); ctx.stroke();
+    ctx.beginPath(); ctx.arc(26, 32, sbr, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(26 - sbr, 32); ctx.lineTo(26 + sbr, 32);
+    ctx.moveTo(26, 32 - sbr); ctx.lineTo(26, 32 + sbr); ctx.stroke();
+    ctx.beginPath(); ctx.arc(26 - sbr * 1.5, 32, sbr * 1.2, -0.6, 0.6); ctx.stroke();
+    ctx.beginPath(); ctx.arc(26 + sbr * 1.5, 32, sbr * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
   }
 
   ctx.restore();   // close pitch frame
