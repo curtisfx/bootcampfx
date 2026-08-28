@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Boot Camp FX — First Light Shootout</title>
-<meta name="description" content="Basketball, the Boot Camp FX way. Fifty balls, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.">
+<title>Acacia Park Shootout — fifty shots, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.</title>
+<meta name="description" content="Acacia Park Shootout — fifty shots, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -115,7 +115,25 @@
     margin-top:18px;text-align:center;line-height:1.9;}
   .hint b{color:var(--day);}
 
+  /* ---------- drag tutorial (single-step, runs at every drill start) ---------- */
+  .tut{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .28s var(--ease);}
+  .tut.on{opacity:1;pointer-events:auto;}
+  .tut svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
   #guideSvg{position:fixed;inset:0;z-index:8;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .tut .tcard{position:absolute;transform:translate(-50%,-50%);text-align:center;
+    background:rgba(15,27,44,.72);border:1px solid rgba(242,184,75,.28);border-radius:14px;
+    padding:10px 16px;backdrop-filter:blur(6px);max-width:min(340px,80vw);
+    box-shadow:0 8px 28px rgba(0,0,0,.35);}
+  .tut .tl1{font-family:var(--display);font-weight:600;font-size:1.12rem;color:var(--day);line-height:1.15;}
+  .tut .tl2{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:5px;}
+  .tut .tbtnrow{display:flex;gap:8px;justify-content:center;margin-top:10px;}
+  .tut .tbtn{pointer-events:auto;cursor:pointer;border-radius:10px;padding:7px 18px;
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid rgba(159,176,196,.3);background:rgba(15,27,44,.5);color:var(--mist);}
+  .tut .tbtn:hover{border-color:var(--dawn);color:var(--gold);}
+  .tut .tbtn.primary{background:var(--dawn);border-color:var(--dawn);color:#1B1206;font-weight:700;}
+  .tut .tbtn.primary:hover{background:var(--gold);color:#1B1206;}
+
   .sun{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--gold);
     box-shadow:0 0 60px 20px rgba(232,147,58,.4), 0 0 120px 40px rgba(242,184,75,.15);
     left:50%;transform:translateX(-50%);bottom:-40px;z-index:1;
@@ -139,6 +157,13 @@
     .hud .stat b{font-size:1.28rem;}
     .breakdown{grid-template-columns:repeat(4,1fr);}
     .iconbtn{width:36px;height:36px;}
+  }
+  @media (max-height:600px){
+    .overlay .title{font-size:clamp(1.7rem,7vw,2.6rem);}
+    .rules{gap:5px;margin-top:14px;}
+    .rl{font-size:.68rem;letter-spacing:.08em;}
+    .tip{margin-top:12px;font-size:.64rem;}
+    .btn{margin-top:14px !important;padding:12px 32px;}
   }
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;}
@@ -172,16 +197,17 @@
 
 <div class="overlay on" id="menu">
   <div class="modal">
-    <div class="title">Boot Camp <em>FX</em><br>SHOOTOUT</div>
-    <div class="tag">Fifty balls · One hoop · First light</div>
+    <div class="title">Acacia Park<br>SHOOTOUT</div>
+    <div class="tag">Fifty shots · One hoop · Sunrise on the line</div>
     <div class="rules">
-      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Flick</span><span class="keys">Swipe up at the hoop</span><span class="why">speed = power</span></div>
-      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Swish</span><span class="keys">Nothing but net</span><span class="why">+3</span></div>
-      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Make</span><span class="keys">Rim or bank</span><span class="why">+2</span></div>
-      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Shift</span><span class="keys">A / D or drag sideways</span><span class="why">find the angle</span></div>
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Flick</span><span class="keys">Swipe up from the gold zone</span><span class="why">speed = power</span></div>
+      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Fly</span><span class="keys">Drag the owl — even into the air</span><span class="why">turbulence + wind push him</span></div>
+      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Swish</span><span class="keys">Nothing but net</span><span class="why">3 pts</span></div>
+      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Make</span><span class="keys">Rim or bank</span><span class="why">2 pts</span></div>
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Stall</span><span class="keys">Hold the ball 7 s and the squirrel steals it</span><span class="why">score resets</span></div>
     </div>
-    <div class="tip">Chain three and the ball catches fire · hot bonus after that</div>
-    <button class="btn" id="startBtn" style="margin-top:22px;">Start the Drill</button>
+    <div class="tip">Three in a row sets the ball on fire — every make pays bonus · 50-for-50 earns +5</div>
+    <button class="btn" id="startBtn" style="margin-top:22px;">Start the Game</button>
   </div>
 </div>
 
@@ -208,6 +234,19 @@
 </div>
 
 <svg id="guideSvg" aria-hidden="true"></svg>
+
+<div class="tut" id="tut" role="dialog" aria-live="polite" aria-label="Tutorial">
+  <svg id="tutSvg" aria-hidden="true"></svg>
+  <div class="tcard" id="tutCard">
+    <div class="tl1" id="tutTitle"></div>
+    <div class="tl2" id="tutSub"></div>
+    <div class="tbtnrow">
+      <button type="button" class="tbtn" id="tutSkip" aria-label="Skip tutorial">Skip</button>
+      <button type="button" class="tbtn primary" id="tutNext">Got it</button>
+    </div>
+  </div>
+</div>
+
 <div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="https://bootcampfx.com">bootcampfx.com</a></div>
 </div>
 
@@ -281,6 +320,18 @@ var owlKnock = 0;         /* owl knockdown timer after a skyjack crash */
 var fireflyPulseT = 0;
 var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
 
+/* ---------- drag tutorial (single-step, runs at every drill start) ---------- */
+var tutorialStep = 0;      /* 0=off, 1=drag the owl */
+var tutT = 0;              /* seconds elapsed in current step */
+var tutTimer = null;
+var TUT_DUR = 5;           /* auto-advance fallback (s) */
+var tutEl = document.getElementById('tut');
+var tutSvg = document.getElementById('tutSvg');
+var tutCard = document.getElementById('tutCard');
+var tutTitleEl = document.getElementById('tutTitle');
+var tutSubEl = document.getElementById('tutSub');
+var tutNextBtn = document.getElementById('tutNext');
+var tutSkipBtn = document.getElementById('tutSkip');
 /* ---------- perpetual aim guide ---------- */
 var guideSvg = document.getElementById('guideSvg');
 var guideA = 0;          /* guide group opacity — fades in/out ~0.3s */
@@ -303,11 +354,68 @@ function mixHex(a, b, t){
   var bl = Math.round((pa & 255) * (1 - t) + (pb & 255) * t);
   return 'rgb(' + r + ',' + g + ',' + bl + ')';
 }
+function setTut(step){
+  tutorialStep = step; tutT = 0;
+  clearTimeout(tutTimer);
+  if (!step){ tutEl.classList.remove('on'); return; }
+  tutTitleEl.textContent = 'Drag the owl to find the angle';
+  tutSubEl.textContent = 'A / D or drag — even up. He can fly.';
+  tutNextBtn.textContent = 'Got it';
+  tutNextBtn.setAttribute('aria-label', 'Finish tutorial');
+  tutEl.classList.add('on');
+  tutTimer = setTimeout(advanceTut, TUT_DUR * 1000);
+}
+function advanceTut(){ setTut(0); }
+function drawTutorial(){
+  if (!tutorialStep || STATE !== 'play' || !player.x || !player.y){ tutSvg.innerHTML = ''; return; }
+  var cyc = RM ? 0 : (tutT % 3.2) / 3.2;       /* hold → left → right → center → up → release */
+  var ox = 0, oy = 0, fade = 0, u;
+  if (cyc < 0.12){}
+  else if (cyc < 0.32){ u = (cyc - 0.12) / 0.20; u = u*u*(3-2*u); ox = -30 * u; }
+  else if (cyc < 0.55){ u = (cyc - 0.32) / 0.23; u = u*u*(3-2*u); ox = -30 + 60 * u; }
+  else if (cyc < 0.66){ u = (cyc - 0.55) / 0.11; u = u*u*(3-2*u); ox = 30 * (1 - u); }
+  else if (cyc < 0.86){ u = (cyc - 0.66) / 0.20; u = u*u*(3-2*u); oy = -46 * u; }
+  else { oy = -46; fade = (cyc - 0.86) / 0.14; }
+  var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
+  var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
+  var uy0 = cy2 - 56, uy1 = Math.max(20, cy2 - 130);
+  var s = '';
+  s += '<line x1="' + lx + '" y1="' + cy2 + '" x2="' + rx + '" y2="' + cy2 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
+  s += '<path d="M' + lx + ' ' + cy2 + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="0.85"/>';
+  s += '<path d="M' + rx + ' ' + cy2 + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="0.85"/>';
+  s += '<line x1="' + cx2 + '" y1="' + uy0 + '" x2="' + cx2 + '" y2="' + uy1 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
+  s += '<path d="M' + cx2 + ' ' + uy1 + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="0.85"/>';
+  s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
+  s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
+  var hvx = cx2 + ox, hvy = cy2 - 26 + oy;
+  var hop = RM ? 0.95 : Math.max(0, 0.95 - fade * 1.2);
+  s += '<g opacity="' + hop.toFixed(2) + '">'
+     + '<g transform="translate(' + hvx.toFixed(1) + ' ' + hvy.toFixed(1) + ') rotate(-20)">'
+     + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>'
+     + '<circle cx="' + hvx.toFixed(1) + '" cy="' + hvy.toFixed(1) + '" r="30" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.35"/></g>';
+  var owlCx = player.x + OWL_CX;
+  var owlCy = player.y - 70;
+  var cardW = Math.min(340, W * 0.80);
+  var cardH = 108;
+  var hudSafe = 86, floorSafe = 132;
+  var hoopSafeX = hoop.x - 52;
+  var tcx = owlCx, tcy = uy1 - 10 - cardH / 2;
+  tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
+  tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
+  if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
+    tcx = Math.min(tcx, hoopSafeX - cardW/2);
+    tcx = Math.max(cardW/2 + 8, tcx);
+  }
+  tutCard.style.left = tcx + 'px';
+  tutCard.style.top = tcy + 'px';
+  tutSvg.innerHTML = s;
+}
+
 /* Perpetual aim guide — the tutorial's step-1 arc promoted to quiet furniture.
    Three modes: aim arc (player's turn), live aim vector (finger down), drag lines (owl held).
    Renders into #guideSvg (its own fullscreen SVG). */
 function drawGuide(){
-  var vis = STATE === 'play' && shotsLeft > 0
+  var vis = STATE === 'play' && tutorialStep === 0 && shotsLeft > 0
          && !(squirrel && squirrel.stealing)
          && ((swipe && swipe.zoned) || owlDrag || (resolved && !ball));
   if (squirrel && squirrel.stealing) guideA = 0;          /* steal cuts the guide instantly */
@@ -772,6 +880,7 @@ muteBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(
 /* ---------- shooting ---------- */
 var swipe = null;
 function onDown(x, y){
+  if (tutorialStep > 0){ advanceTut(); return; }
   if (STATE === 'over'){ startGame(); return; }
   if (STATE !== 'play') return;
   // generous hit area on the owl → drag mode (reposition only, never shoots)
@@ -791,6 +900,7 @@ function onDown(x, y){
   if (zoned) sfx('flick');
 }
 function onMove(x, y){
+  if (tutorialStep > 0) return;
   if (owlDrag){
     var nx = x + owlDrag.offX, ny = y + owlDrag.offY;
     player.x = Math.max(56, Math.min(hoop.x - 90, nx));
@@ -806,6 +916,7 @@ function onMove(x, y){
   }
 }
 function onUp(){
+  if (tutorialStep > 0) return;
   if (owlDrag){
     owlDrag = null;
     // released above the ground plane → airborne state: wings extend + gentle flap
@@ -875,7 +986,7 @@ function egretEnter(){
   egret.fl = 0; egret.theta = 0; egret.lap = 0; egret.missTally = 0;
 }
 function maybeEgretEnter(){
-  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play'){
+  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play' && tutorialStep === 0){
     egretEnter();
   }
 }
@@ -906,7 +1017,7 @@ function wildlifeOnShot(made, kind, prevStreak){
 }
 
 function startSteal(){
-  if (!squirrel || STATE !== 'play' || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
+  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
   squirrel.stealing = true;
   squirrel.stealWarn = false;
   holdT = 0;
@@ -1006,7 +1117,7 @@ function resolveShot(made, kind){
     sfx('miss');
     trauma = Math.min(1, trauma + 0.12);
   }
-  if (STATE === 'play') wildlifeOnShot(made, kind, prevStreak);
+  if (STATE === 'play' && tutorialStep === 0) wildlifeOnShot(made, kind, prevStreak);
   lastPlayEl.innerHTML = 'Last <b>' + lastKind + '</b>';
   renderPips();
   hudShot.textContent = 'Shot ' + (SHOTS - shotsLeft) + ' / ' + SHOTS;
@@ -1241,6 +1352,7 @@ function startGame(){
   lastPlayEl.innerHTML = 'Last —';
   hudShot.textContent = 'Shot 0 / ' + SHOTS;
   STATE = 'play';
+  setTut(1);
   renderPips();
   renderTally();
   newWind();
@@ -1257,6 +1369,7 @@ function gradeCopy(s){
 
 function showOver(){
   STATE = 'over';
+  setTut(0);
   career.games++;
   career.points += score;
   career.makes += makes;
@@ -1294,6 +1407,7 @@ function showOver(){
 
 function update(dt){
   if (owlReact.brickT > 0) owlReact.brickT = Math.max(0, owlReact.brickT - dt);
+  if (tutorialStep > 0) tutT += dt;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
   punch = Math.max(0, punch - dt * 0.9);
@@ -1339,7 +1453,7 @@ function update(dt){
   }
 
   // ball-steal stall clock (7s hold rule) — resets on shot or drag start
-  var holding = STATE === 'play' && resolved && !ball && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
+  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
   if (holding && !owlDrag){
     holdT += dt;
     if (holdT >= 7){ startSteal(); }
@@ -2083,7 +2197,8 @@ function draw(){
   }
   ctx.globalAlpha = 1;
   ctx.restore();
-  drawGuide();
+  if (tutorialStep) drawTutorial();
+  else drawGuide();
 }
 
 var last = performance.now();
@@ -2102,6 +2217,7 @@ cv.addEventListener('pointerup', onUp);
 cv.addEventListener('pointercancel', function(){ swipe = null; });
 cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 window.addEventListener('keydown', function(e){
+  if (e.code === 'Escape' && tutorialStep > 0){ setTut(0); return; }
   if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.a = true;
   if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.d = true;
   if (e.code === 'KeyM'){ unlockAudio(); setMute(!muted); }
@@ -2117,6 +2233,12 @@ window.addEventListener('keyup', function(e){
 
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('againBtn').addEventListener('click', startGame);
+tutNextBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); advanceTut(); });
+tutSkipBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); setTut(0); });
+tutEl.addEventListener('pointerdown', function(e){
+  if (e.target.closest('.tbtn')) return;
+  unlockAudio(); advanceTut();
+});
 resize();
 initDecor();
 loadBest();
