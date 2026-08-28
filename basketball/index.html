@@ -1529,11 +1529,16 @@ function drawParkSign(x, s){
   ctx.beginPath(); ctx.moveTo(-106, -146); ctx.lineTo(106, -146); ctx.moveTo(-106, -124); ctx.lineTo(106, -124); ctx.stroke();
   ctx.strokeStyle = '#5C4128'; ctx.lineWidth = 2;  // top edge highlight
   ctx.beginPath(); ctx.moveTo(-106, -166); ctx.lineTo(106, -166); ctx.stroke();
-  // routed letters
+  // routed letters — shrink-to-fit inside the board (max width 188, board spans ±106)
   ctx.fillStyle = C.gold;
-  ctx.font = '700 34px "Instrument Sans", sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '3px';
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
+  var fs = 34;
+  ctx.font = '700 ' + fs + 'px "Instrument Sans", sans-serif';
+  while (fs > 16 && ctx.measureText('ACACIA PARK').width > 188){
+    fs -= 1;
+    ctx.font = '700 ' + fs + 'px "Instrument Sans", sans-serif';
+  }
   ctx.fillText('ACACIA PARK', 0, -134);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
   // lower board with the hours placard
