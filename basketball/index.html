@@ -1561,6 +1561,7 @@ function drawSquirrel(s){
   // head (left) — chatters on dash; big cute eye; two ears
   ctx.save();
   ctx.translate(14, 20); ctx.rotate(headAng * Math.PI / 180); ctx.translate(-14, -20);
+  ctx.fillStyle = C.dawn;
   ctx.beginPath(); ctx.arc(14, 20, 8.5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#D07F2E';
   poly([[16,14],[17,7],[20,12]]);          // back ear (darker, behind)
