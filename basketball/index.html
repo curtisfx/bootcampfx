@@ -467,7 +467,7 @@ function initDecor(){
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
   egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0, missTally: 0, pitch: 0 };
-  squirrel = { x: W * 0.70, hp: 0, homeX: W * 0.70, mode: 'idle', modeT: 0, dashX: W * 0.70 };
+  squirrel = { x: W * 0.70, hp: 0, homeX: W * 0.70, mode: 'idle', modeT: 0, dashX: W * 0.70, wanderT: rnd(4, 8), targetX: W * 0.70, facing: -1 };
   var bestI = 0, bestD = 1e9;
   for (i = 0; i < trees.length; i++){
     var dd = Math.abs(trees[i].x - W * 0.18);
@@ -538,13 +538,27 @@ function tickDecor(dt){
   }
   if (squirrel){
     if (squirrel.mode === 'idle'){
-      squirrel.homeX = W * 0.70;
-      squirrel.x = squirrel.homeX;
+      if (STATE === 'play' && !RM){
+        // slow court wander — right half, clear of the owl's lane and the hoop
+        squirrel.wanderT -= dt;
+        if (squirrel.wanderT <= 0){
+          squirrel.wanderT = rnd(4, 8);
+          squirrel.targetX = rnd(W * 0.45, Math.min(W * 0.88, hoop.x - 30));
+        }
+        squirrel.x += (squirrel.targetX - squirrel.x) * (1 - Math.exp(-1.2 * dt));
+        squirrel.facing = Math.abs(squirrel.targetX - squirrel.x) > 2 ? (squirrel.targetX > squirrel.x ? 1 : -1) : -1;
+      } else {
+        squirrel.x = squirrel.homeX;
+        squirrel.facing = -1;
+      }
+      squirrel.homeX = squirrel.x;
       if (!RM) squirrel.hp += dt * 2.2;
     } else {
       if (squirrel.mode === 'dash'){
         var rimX = hoop.x - 34;
         var e = 1.10 - squirrel.modeT;
+        var dashDir = (rimX >= squirrel.homeX) ? 1 : -1;
+        if (!RM) squirrel.facing = (e < 0.75) ? dashDir : -dashDir;
         if (RM){ squirrel.dashX = squirrel.homeX; }
         else if (e < 0.35){ squirrel.dashX = squirrel.homeX + (rimX - squirrel.homeX) * easeIO(e / 0.35); }
         else if (e < 0.75){ squirrel.dashX = rimX; }
@@ -1319,7 +1333,8 @@ function drawSquirrel(s){
   var px = (m === 'dash') ? s.dashX : s.x;
   ctx.save();
   ctx.translate(px, GROUND - 46 * 1.6 + 2);
-  ctx.scale(1.6, 1.6);
+  var fx = (s.facing === 1) ? -1 : 1;   // face travel direction; default faces left (toward the owl)
+  ctx.scale(fx * 1.6, 1.6);
 
   var t = 0;
   if (m === 'sit') t = 1 - s.modeT / 0.70;
@@ -1342,7 +1357,7 @@ function drawSquirrel(s){
   if (m === 'cover' && !RM){
     var ct = 1 - s.modeT / 0.80;
     var crouch = Math.max(0, Math.sin(Math.min(1, ct * 3.5) * Math.PI)) * 0.14;
-    var shake = Math.sin(ct * 14 * Math.PI) * Math.max(0, 1 - ct * 3) * 1.2;
+    var shake = Math.sin(ct * 5 * Math.PI) * Math.max(0, 1 - ct * 2.5) * 0.8;
     ctx.translate(shake, 0);
     ctx.scale(1, 1 - crouch);
   }
@@ -1362,9 +1377,9 @@ function drawSquirrel(s){
   if (m === 'dash' && !RM){
     var ce = 1.10 - s.modeT;
     if (ce < 0.35) bodyLean = 15; else if (ce > 0.75) bodyLean = -15;
-    for (var ck = 0; ck < 3; ck++){
+    for (var ck = 0; ck < 2; ck++){
       var tt = 0.35 + ck * 0.08, dd = ce - tt;
-      if (dd >= 0 && dd < 0.05) headAng = Math.sin(dd / 0.05 * Math.PI) * 10;
+      if (dd >= 0 && dd < 0.08) headAng = Math.sin(dd / 0.08 * Math.PI) * 6;
     }
   }
 
@@ -1375,26 +1390,36 @@ function drawSquirrel(s){
 
   // bushy tail (right) — streams back on dash, curls on sit-up, sways idle
   var tailAng = tailSway;
-  if (m === 'sit' && !RM) tailAng += Math.sin(t * Math.PI * 4) * 7;
+  if (m === 'sit' && !RM) tailAng += Math.sin(t * Math.PI * 4) * 5;
   if (m === 'dash' && !RM) tailAng = -55;
   if (sitUp > 0) tailAng += sitUp * 18;
+  var tailBob = (!RM) ? Math.sin(s.hp * 1.5) * 2.5 : 0;
   ctx.save();
-  ctx.translate(38, 18); ctx.rotate(tailAng * Math.PI / 180); ctx.translate(-38, -18);
-  ctx.fillStyle = C.dawn;
-  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
+  ctx.translate(38, 18); ctx.rotate(tailAng * Math.PI / 180); ctx.translate(0, tailBob); ctx.translate(-38, -18);
   ctx.fillStyle = '#D07F2E';
-  ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();      // dark base
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(40, 14, 8.5, 0, Math.PI*2); ctx.fill();     // orange mid
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.arc(42, 10, 5.5, 0, Math.PI*2); ctx.fill();     // cream tip
   ctx.restore();
 
   // body
   ctx.fillStyle = C.dawn;
   poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
 
-  // head (left) — chatters on dash; big cute eye
+  // cream belly patch on the chest-underside
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.ellipse(20, 36, 8, 9, -0.25, 0, Math.PI*2); ctx.fill();
+
+  // head (left) — chatters on dash; big cute eye; two ears
   ctx.save();
   ctx.translate(14, 20); ctx.rotate(headAng * Math.PI / 180); ctx.translate(-14, -20);
   ctx.beginPath(); ctx.arc(14, 20, 8.5, 0, Math.PI*2); ctx.fill();
-  poly([[11,15],[9,8],[13,11]]);
+  ctx.fillStyle = '#D07F2E';
+  poly([[16,14],[17,7],[20,12]]);          // back ear (darker, behind)
+  ctx.fillStyle = C.dawn;
+  poly([[11,15],[9,8],[13,11]]);           // front ear
   ctx.restore();
 
   // face — big cute eye, pupil toward the snout (left)
@@ -1416,6 +1441,10 @@ function drawSquirrel(s){
     }
   }
 
+  // black dot nose at the snout tip
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(6.5, 21.5, 1.4, 0, Math.PI*2); ctx.fill();
+
   // paws — overhead on swish, tucked on sit
   if (m === 'swish' && !RM){
     ctx.fillStyle = '#D07F2E';
@@ -1433,7 +1462,7 @@ function drawSquirrel(s){
   ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
   ctx.beginPath();
   if (m === 'dash' && !RM){
-    var sc = Math.sin((1.10 - s.modeT) * 20) * 3;
+    var sc = Math.sin((1.10 - s.modeT) * 12) * 2;
     ctx.moveTo(16, 46); ctx.lineTo(13 + sc, 46);
     ctx.moveTo(32, 46); ctx.lineTo(36 - sc, 46);
   } else {
