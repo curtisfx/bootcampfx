@@ -306,6 +306,8 @@ var lastKind = '—';
 
 /* ---------- wildlife reaction state (Boot Camp FX) ---------- */
 var owlReact = { brickT: 0, blinkOnce: false };
+var holdT = 0;            /* ball-hold clock — 7s stall triggers the squirrel steal */
+var owlKnock = 0;         /* owl knockdown timer after a skyjack crash */
 var fireflyPulseT = 0;
 var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
 
@@ -570,12 +572,53 @@ function tickDecor(dt){
         } else {
           squirrel.x = squirrel.homeX;
         }
+      } else if (squirrel.mode === 'steal'){
+        var so = squirrel.stealOwlX;
+        var se = 1.6 - squirrel.modeT;
+        if (se < 0.5){
+          squirrel.x = squirrel.stealFromX + (so - squirrel.stealFromX) * easeIO(se / 0.5);
+          squirrel.facing = (so >= squirrel.stealFromX) ? 1 : -1;
+        } else if (se < 0.7){
+          squirrel.x = so;
+          if (!squirrel.holdingBall){ squirrel.holdingBall = true; doStealPenalty(false); }
+        } else {
+          squirrel.x += 620 * dt;
+          squirrel.facing = 1;
+        }
+      } else if (squirrel.mode === 'skyjack'){
+        var so2 = player.x + OWL_CX;
+        var se2 = 1.4 - squirrel.modeT;
+        if (!squirrel.crashed && se2 >= 1.0){ squirrel.crashed = true; doStealPenalty(true); }
+        if (se2 < 0.4){
+          squirrel.x = squirrel.stealFromX + (so2 - squirrel.stealFromX) * easeIO(se2 / 0.4);
+          squirrel.facing = (so2 >= squirrel.stealFromX) ? 1 : -1;
+        } else if (se2 < 1.0){
+          var jp = (se2 - 0.4) / 0.6;
+          squirrel.x = so2;
+          squirrel.jumpY = -((GROUND - player.y) + 40) * easeOut3(jp);
+          squirrel.flip = 360 * easeOut3(jp);
+        } else {
+          var fp = (se2 - 1.0) / 0.4;
+          squirrel.jumpY = -((GROUND - player.y) + 40) * (1 - easeIO(fp));
+          squirrel.x += 500 * dt;
+          squirrel.facing = 1;
+          if (fp >= 0.85) squirrel.flip = 0;
+        }
       }
       squirrel.modeT = Math.max(0, squirrel.modeT - dt);
       if (squirrel.modeT === 0){
+        if (squirrel.mode === 'steal' || squirrel.mode === 'skyjack'){
+          squirrel.x = W + 40;
+          squirrel.homeX = rnd(W * 0.55, Math.min(W * 0.88, hoop.x - 30));
+          squirrel.targetX = squirrel.homeX;
+          squirrel.wanderT = 2;
+          squirrel.jumpY = 0; squirrel.flip = 0; squirrel.holdingBall = false;
+        } else {
+          squirrel.x = squirrel.homeX;
+        }
         squirrel.mode = 'idle';
-        squirrel.x = squirrel.homeX;
         squirrel.dashX = squirrel.homeX;
+        squirrel.facing = -1;
       }
     }
   }
@@ -711,6 +754,8 @@ function sfx(kind){
   else if (kind === 'hot'){ tone(392, 0.14, 'sine', 0.08); tone(494, 0.2, 'sine', 0.08); tone(587, 0.28, 'triangle', 0.1); }
   else if (kind === 'record'){ tone(523, 0.12, 'sine', 0.1); setTimeout(function(){ tone(659, 0.12, 'sine', 0.1); }, 90); setTimeout(function(){ tone(784, 0.28, 'triangle', 0.12); }, 180); }
   else if (kind === 'caw'){ tone(1480 * r, 0.07, 'square', 0.05, 1.15); tone(980 * r, 0.11, 'triangle', 0.06, 0.85); noise(0.09, 0.04, 1400, 0.35); }
+  else if (kind === 'tick'){ tone(1320, 0.05, 'sine', 0.05); }
+  else if (kind === 'thud'){ tone(88, 0.16, 'sine', 0.15, 0.45); noise(0.09, 0.07, 220); }
 }
 document.addEventListener('pointerdown', unlockAudio, { once:true });
 document.addEventListener('keydown', unlockAudio, { once:true });
@@ -728,6 +773,7 @@ function onDown(x, y){
   var hx = x - cx, hy = y - cy;
   if (hx*hx + hy*hy <= OWL_HIT_R * OWL_HIT_R){
     owlDrag = { offX: player.x - x, offY: player.y - y };
+    holdT = 0;   // starting a drag resets the stall clock
     return;
   }
   if (!resolved) return;
@@ -779,6 +825,16 @@ function onUp(){
 }
 function launch(vx, vy){
   resolved = false;
+  holdT = 0;
+  if (squirrel){
+    squirrel.stealing = false;
+    squirrel.stealWarn = false;
+    if (squirrel.mode === 'steal' || squirrel.mode === 'skyjack'){
+      squirrel.mode = 'idle'; squirrel.modeT = 0;
+      squirrel.x = squirrel.homeX;
+      squirrel.jumpY = 0; squirrel.flip = 0;
+    }
+  }
   ball = {
     x: player.x + OWL_CX, y: player.y - OWL_LAUNCH_Y, vx: vx, vy: vy, r: 11.5,
     touchedRim: false, touchedBoard: false, wasAbove: false, scored: false, spin: 0,
@@ -836,6 +892,58 @@ function wildlifeOnShot(made, kind, prevStreak){
     if (prevStreak >= 3){ sfx('caw'); jay.cawT = 0.28; }
   }
   maybeEgretEnter();
+}
+
+function startSteal(){
+  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing) return;
+  squirrel.stealing = true;
+  squirrel.stealWarn = false;
+  holdT = 0;
+  if (RM){
+    doStealPenalty(owlAir);
+    squirrel.mode = 'idle';
+    squirrel.x = W + 40;
+    squirrel.homeX = rnd(W * 0.55, Math.min(W * 0.88, hoop.x - 30));
+    squirrel.targetX = squirrel.homeX;
+    squirrel.wanderT = 2;
+    squirrel.jumpY = 0; squirrel.flip = 0; squirrel.holdingBall = false;
+    return;
+  }
+  if (owlAir){
+    squirrel.mode = 'skyjack';
+    squirrel.modeT = 1.4;
+    squirrel.stealFromX = squirrel.x;
+    squirrel.jumpY = 0;
+    squirrel.flip = 0;
+    squirrel.crashed = false;
+    squirrel.holdingBall = false;
+  } else {
+    squirrel.mode = 'steal';
+    squirrel.modeT = 1.6;
+    squirrel.stealFromX = squirrel.x;
+    squirrel.stealOwlX = player.x + OWL_CX;
+    squirrel.holdingBall = false;
+  }
+}
+function doStealPenalty(airborne){
+  score = 0; displayScore = 0;
+  streak = 0; onFire = false;
+  hudScore.textContent = '0';
+  hudStreak.textContent = 'STREAK ×0';
+  hudStreak.classList.remove('on');
+  appEl.classList.remove('onfire');
+  if (squirrel) squirrel.holdingBall = true;
+  if (airborne){
+    banner('SKYJACKED!', 'the squirrel takes it — score reset');
+    sfx('thud');
+    owlAir = false;
+    owlVy = 900;
+    owlKnock = 0.4;
+    if (!RM) dust(player.x + OWL_CX, player.y);
+  } else {
+    banner('BALL HAWKED!', 'the squirrel takes it — score reset');
+  }
+  holdT = 0;
 }
 
 function resolveShot(made, kind){
@@ -1107,7 +1215,9 @@ function startGame(){
   owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; swipe = null;
   lastKind = '—';
   owlReact.brickT = 0; owlReact.blinkOnce = false;
+  holdT = 0; owlKnock = 0;
   squirrel.mode = 'idle'; squirrel.modeT = 0; squirrel.homeX = squirrel.x;
+  squirrel.stealing = false; squirrel.stealWarn = false; squirrel.holdingBall = false; squirrel.jumpY = 0; squirrel.flip = 0;
   egret.phase = 'hidden'; egret.active = false; egret.missTally = 0; egret.pitch = 0;
   jay.cawT = 0;
   fireflyPulseT = 0;
@@ -1193,6 +1303,27 @@ function update(dt){
   // airborne owl: hover in place, wings flap, stays put until dragged again
   if (owlAir){
     owlFlapT += dt;
+  }
+
+  // owl knockdown fall (skyjack crash) — tumbles back to the ground
+  if (owlKnock > 0){
+    owlKnock -= dt;
+    player.y = Math.min(GROUND, player.y + 900 * dt);
+    if (player.y >= GROUND){ owlKnock = 0; owlVy = 0; }
+  }
+
+  // ball-steal stall clock (7s hold rule) — resets on shot or drag start
+  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing;
+  if (holding && !owlDrag){
+    holdT += dt;
+    if (holdT >= 7){ startSteal(); }
+    else if (holdT >= 5){
+      squirrel.stealWarn = true;
+      if (holdT >= 6 && holdT - dt < 6 && !RM) sfx('tick');
+    }
+  } else {
+    holdT = 0;
+    if (squirrel) squirrel.stealWarn = false;
   }
 
   var spd = 220;
@@ -1335,6 +1466,11 @@ function drawSquirrel(s){
   ctx.translate(px, GROUND - 46 * 1.6 + 2);
   var fx = (s.facing === 1) ? -1 : 1;   // face travel direction; default faces left (toward the owl)
   ctx.scale(fx * 1.6, 1.6);
+  // skyjack: jump height + backflip rotation around the body center
+  ctx.translate(0, s.jumpY || 0);
+  if (s.flip){
+    ctx.translate(24, 30); ctx.rotate(s.flip * Math.PI / 180); ctx.translate(-24, -30);
+  }
 
   var t = 0;
   if (m === 'sit') t = 1 - s.modeT / 0.70;
@@ -1362,6 +1498,12 @@ function drawSquirrel(s){
     ctx.scale(1, 1 - crouch);
   }
 
+  // steal telegraph — low crouch, ready to spring
+  if (s.stealWarn && !RM){
+    ctx.translate(0, 3);
+    ctx.scale(1, 0.9);
+  }
+
   // idle life — subtle tail sway, occasional sit-up, blink
   var tailSway = 0, sitUp = 0, blinkIdle = 0;
   if (m === 'idle' && !RM){
@@ -1372,7 +1514,8 @@ function drawSquirrel(s){
     if (bp > 0.96) blinkIdle = 1;
   }
 
-  // dash — head chatter + body lean toward travel
+  // dash / steal run — head chatter + body lean toward travel
+  var isStealRun = !RM && (m === 'steal' || (m === 'skyjack' && (1.4 - s.modeT) < 0.4));
   var headAng = 0, bodyLean = 0;
   if (m === 'dash' && !RM){
     var ce = 1.10 - s.modeT;
@@ -1381,18 +1524,21 @@ function drawSquirrel(s){
       var tt = 0.35 + ck * 0.08, dd = ce - tt;
       if (dd >= 0 && dd < 0.08) headAng = Math.sin(dd / 0.08 * Math.PI) * 6;
     }
+  } else if (isStealRun){
+    bodyLean = (s.facing === 1) ? 15 : -15;
   }
 
   // pitch frame — rotate tail+body+head around the feet (ground) line
-  var pitch = sitUp * 20 + (m === 'dash' && !RM ? bodyLean : 0);
+  var pitch = sitUp * 20 + ((m === 'dash' || isStealRun) ? bodyLean : 0);
   ctx.save();
   ctx.translate(24, 46); ctx.rotate(pitch * Math.PI / 180); ctx.translate(-24, -46);
 
   // bushy tail (right) — streams back on dash, curls on sit-up, sways idle
   var tailAng = tailSway;
   if (m === 'sit' && !RM) tailAng += Math.sin(t * Math.PI * 4) * 5;
-  if (m === 'dash' && !RM) tailAng = -55;
+  if ((m === 'dash' || isStealRun) && !RM) tailAng = -55;
   if (sitUp > 0) tailAng += sitUp * 18;
+  if (s.stealWarn && !RM) tailAng = Math.sin(performance.now() / 110) * 22;
   var tailBob = (!RM) ? Math.sin(s.hp * 1.5) * 2.5 : 0;
   ctx.save();
   ctx.translate(38, 18); ctx.rotate(tailAng * Math.PI / 180); ctx.translate(0, tailBob); ctx.translate(-38, -18);
@@ -1430,7 +1576,7 @@ function drawSquirrel(s){
   } else {
     ctx.fillStyle = C.day2;
     ctx.beginPath(); ctx.arc(13, 19, 3.4, 0, Math.PI*2); ctx.fill();
-    if (blinkIdle){
+    if (blinkIdle || s.stealWarn){
       ctx.fillStyle = C.ink;
       ctx.fillRect(10, 19.2, 6, 1);
     } else {
@@ -1456,13 +1602,22 @@ function drawSquirrel(s){
     ctx.beginPath(); ctx.arc(22, 27, 2.2, 0, Math.PI*2); ctx.fill();
   }
 
+  // stolen ball tucked under the arm during the escape
+  if (s.holdingBall){
+    ctx.fillStyle = C.dawn;
+    ctx.beginPath(); ctx.arc(26, 32, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(26, 32, 5, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(21, 32); ctx.lineTo(31, 32); ctx.moveTo(26, 27); ctx.lineTo(26, 37); ctx.stroke();
+  }
+
   ctx.restore();   // close pitch frame
 
   // feet — planted on the ground; scramble while dashing
   ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
   ctx.beginPath();
-  if (m === 'dash' && !RM){
-    var sc = Math.sin((1.10 - s.modeT) * 12) * 2;
+  if ((m === 'dash' || isStealRun) && !RM){
+    var sc = (m === 'dash') ? Math.sin((1.10 - s.modeT) * 12) * 2 : Math.sin(performance.now() / 55) * 2;
     ctx.moveTo(16, 46); ctx.lineTo(13 + sc, 46);
     ctx.moveTo(32, 46); ctx.lineTo(36 - sc, 46);
   } else {
@@ -1484,6 +1639,7 @@ function drawJay(j){
   ctx.restore();
 }
 function easeIO(u){ return u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u+2, 2) / 2; }
+function easeOut3(u){ return 1 - Math.pow(1 - u, 3); }
 function owlAnim(now, dur, keys){
   var t = (now % dur) / dur;
   for (var i = 0; i < keys.length - 1; i++){
@@ -1515,7 +1671,7 @@ function drawOwl(){
 
   // whole-owl sway — same pivot as CSS transform-origin 50% 62%
   ctx.translate(32, 47);
-  ctx.rotate(sway * Math.PI / 180);
+  ctx.rotate((sway + (owlKnock > 0 && !RM ? Math.sin((0.4 - owlKnock) / 0.4 * Math.PI * 2) * 26 : 0)) * Math.PI / 180);
   ctx.translate(-32, -47);
 
   // body
