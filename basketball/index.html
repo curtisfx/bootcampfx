@@ -566,6 +566,7 @@ var owlDrag = null;       /* { offX, offY } active drag offset */
 var owlAir = false;       /* airborne after mid-air release */
 var owlFlapT = 0;         /* wing flap phase accumulator */
 var owlVy = 0;            /* airborne descent velocity */
+var turbT = 0;            /* turbulence phase clock — drives the airborne owl's drift */
 function placePlayer(){
   if (!player.x) player.x = Math.max(70, W * 0.22);
   player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
@@ -607,7 +608,7 @@ function initDecor(){
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.32), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
-  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0, missTally: 0, pitch: 0 };
+  egret = { x: -200, y: H * 0.2, s: 0.9, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0, missTally: 0, pitch: 0 };
   squirrel = { x: W * 0.70, hp: 0, homeX: W * 0.70, mode: 'idle', modeT: 0, dashX: W * 0.70, wanderT: rnd(4, 8), targetX: W * 0.70, facing: -1 };
   var bestI = 0, bestD = 1e9;
   for (i = 0; i < trees.length; i++){
@@ -679,7 +680,7 @@ function tickDecor(dt){
   }
   if (squirrel){
     if (squirrel.mode === 'idle'){
-      if (STATE === 'play' && !RM){
+      if (STATE === 'play' && !RM && !squirrel.holdingBall){
         // slow court wander — right half, clear of the owl's lane and the hoop
         squirrel.wanderT -= dt;
         if (squirrel.wanderT <= 0){
@@ -747,11 +748,15 @@ function tickDecor(dt){
       squirrel.modeT = Math.max(0, squirrel.modeT - dt);
       if (squirrel.modeT === 0){
         if (squirrel.mode === 'steal' || squirrel.mode === 'skyjack'){
-          squirrel.x = W + 40;
           squirrel.homeX = rnd(W * 0.55, Math.min(W * 0.88, hoop.x - 30));
           squirrel.targetX = squirrel.homeX;
           squirrel.wanderT = 2;
-          squirrel.jumpY = 0; squirrel.flip = 0; squirrel.holdingBall = false;
+          squirrel.jumpY = 0; squirrel.flip = 0;
+          if (squirrel.holdingBall){
+            squirrel.x = squirrel.homeX;   /* stays on court with the ball until the 4s possession clock runs out */
+          } else {
+            squirrel.x = W + 40;
+          }
         } else {
           squirrel.x = squirrel.homeX;
         }
@@ -917,6 +922,7 @@ function onDown(x, y){
   }
   if (!resolved) return;
   if (ball && ball.returning) return;
+  if (squirrel && squirrel.holdingBall) return;   /* no shot while the squirrel has the ball */
   var z = shootZone();
   var zoned = x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1;  /* shots only start in the shoot zone */
   swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false, zoned:zoned };
@@ -958,6 +964,7 @@ function onUp(){
   if (!zoned) return;   /* outside the shoot zone — reposition gesture only, never a shot */
   if (STATE !== 'play' || !resolved) return;
   if (ball && ball.returning) return;
+  if (squirrel && squirrel.holdingBall) return;   /* squirrel still has the ball */
   if (dy > -22) return;
   var vx = (dx / dt) * 0.92;
   var vy = (dy / dt) * 0.92;
@@ -1039,7 +1046,7 @@ function wildlifeOnShot(made, kind, prevStreak){
 }
 
 function startSteal(){
-  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing) return;
+  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
   squirrel.stealing = true;
   squirrel.stealWarn = false;
   holdT = 0;
@@ -1076,7 +1083,7 @@ function doStealPenalty(airborne){
   hudStreak.textContent = 'STREAK ×0';
   hudStreak.classList.remove('on');
   appEl.classList.remove('onfire');
-  if (squirrel) squirrel.holdingBall = true;
+  if (squirrel){ squirrel.holdingBall = true; squirrel.ballT = 4; }  /* 4s of sole possession, then he passes back */
   if (airborne){
     banner('SKYJACKED!', 'the squirrel takes it — score reset');
     sfx('thud');
@@ -1356,12 +1363,12 @@ function startGame(){
   makes = 0; swishes = 0; banks = 0; rims = 0;
   particles = []; pops = []; ball = null; trail = [];
   resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
-  owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; swipe = null;
+  owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; turbT = 0; swipe = null;
   lastKind = '—';
   owlReact.brickT = 0; owlReact.blinkOnce = false;
   holdT = 0; owlKnock = 0;
   squirrel.mode = 'idle'; squirrel.modeT = 0; squirrel.homeX = squirrel.x;
-  squirrel.stealing = false; squirrel.stealWarn = false; squirrel.holdingBall = false; squirrel.jumpY = 0; squirrel.flip = 0;
+  squirrel.stealing = false; squirrel.stealWarn = false; squirrel.holdingBall = false; squirrel.ballT = 0; squirrel.jumpY = 0; squirrel.flip = 0;
   egret.phase = 'hidden'; egret.active = false; egret.missTally = 0; egret.pitch = 0;
   jay.cawT = 0;
   fireflyPulseT = 0;
@@ -1444,9 +1451,17 @@ function update(dt){
   tickParticles(dt);
   hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
 
-  // airborne owl: hover in place, wings flap, stays put until dragged again
-  if (owlAir){
+  // airborne owl: hover, wings flap — but turbulence shoves him off his sticking point,
+  // and the wind pushes him while he flies (a wind change re-aims the push)
+  if (owlAir && player.y < GROUND - 10){
     owlFlapT += dt;
+    turbT += dt;
+    if (!owlDrag){
+      player.x += (Math.sin(turbT * 1.7) * 34 + Math.sin(turbT * 4.1 + 1.3) * 14 + wind * 0.7) * dt;
+      player.y += (Math.cos(turbT * 2.3 + 0.7) * 24 + Math.sin(turbT * 5.3) * 9) * dt;
+      player.x = Math.max(56, Math.min(hoop.x - 90, player.x));
+      player.y = Math.max(H * 0.12, Math.min(GROUND, player.y));
+    }
   }
 
   // owl knockdown fall (skyjack crash) — tumbles back to the ground
@@ -1456,8 +1471,18 @@ function update(dt){
     if (player.y >= GROUND){ owlKnock = 0; owlVy = 0; }
   }
 
+  // squirrel possession clock — after a steal he keeps the ball for 4s, then passes it back to the owl
+  if (squirrel && squirrel.holdingBall){
+    squirrel.ballT = (squirrel.ballT || 0) - dt;
+    if (squirrel.ballT <= 0){
+      squirrel.holdingBall = false;
+      squirrel.ballT = 0;
+      if (STATE === 'play') banner('PASSED BACK', 'the squirrel returns the ball');
+    }
+  }
+
   // ball-steal stall clock (7s hold rule) — resets on shot or drag start
-  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing;
+  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
   if (holding && !owlDrag){
     holdT += dt;
     if (holdT >= 7){ startSteal(); }
@@ -1606,17 +1631,20 @@ function drawEgretPerched(e){
   var now = performance.now() / 1000;
   var bob = (!RM) ? Math.sin(now * 1.6) * 1.5 : 0;
   ctx.translate(0, bob);
-  // legs + 3-toe feet gripping the board edge
+  // long legs + 3-toe feet gripping the board edge — clearly longer than before
+  // (body is raised 30px above the hips so the legs run y=48 → 84)
   ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
   ctx.beginPath();
-  ctx.moveTo(69, 60); ctx.lineTo(68, 84);
-  ctx.moveTo(75, 60); ctx.lineTo(76, 84);
+  ctx.moveTo(69, 48); ctx.lineTo(68, 84);
+  ctx.moveTo(75, 48); ctx.lineTo(76, 84);
   ctx.stroke();
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(68, 84); ctx.lineTo(65, 85); ctx.moveTo(68, 84); ctx.lineTo(68, 87); ctx.moveTo(68, 84); ctx.lineTo(71, 85);
   ctx.moveTo(76, 84); ctx.lineTo(73, 85); ctx.moveTo(76, 84); ctx.lineTo(76, 87); ctx.moveTo(76, 84); ctx.lineTo(79, 85);
   ctx.stroke();
+  ctx.save();
+  ctx.translate(0, -30);   // raise the body — the extra leg length lives below it
   // body — slim vertical teardrop, breast toward court (left)
   ctx.fillStyle = C.day;
   ctx.beginPath();
@@ -1650,8 +1678,11 @@ function drawEgretPerched(e){
   // beak — points left toward the owl
   ctx.fillStyle = C.dawn;
   ctx.beginPath(); ctx.moveTo(62, 16); ctx.lineTo(51, 17); ctx.lineTo(62, 19); ctx.closePath(); ctx.fill();
-  // eye
-  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(66, 15.5, 1.2, 0, Math.PI*2); ctx.fill();
+  // big cute eye — same identity as the squirrel: pale disc, dark pupil, catchlight
+  ctx.fillStyle = C.day2; ctx.beginPath(); ctx.arc(66, 15.5, 2.6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(65.4, 15.6, 1.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = C.day; ctx.beginPath(); ctx.arc(64.8, 14.8, 0.55, 0, Math.PI*2); ctx.fill();
+  ctx.restore();      // close the raised-body translate
   ctx.restore();
 }
 function drawSquirrel(s){
@@ -1936,8 +1967,8 @@ function drawOwl(){
   ctx.stroke();
   ctx.restore();
 
-  // held ball — idle only, at the owl's launch point
-  if (resolved && STATE === 'play' && !ball){
+  // held ball — idle only, at the owl's launch point (not while the squirrel has it)
+  if (resolved && STATE === 'play' && !ball && !(squirrel && squirrel.holdingBall)){
     var bx = x + OWL_CX, by = y - OWL_LAUNCH_Y;
     var r = 11;
     ctx.fillStyle = C.dawn;
@@ -1996,7 +2027,7 @@ function drawHoop(){
   ctx.beginPath(); ctx.arc(rr, rimY, hoop.rimR, 0, Math.PI*2); ctx.fill();
 }
 function drawBall(){
-  if (onFire && !ball){
+  if (onFire && !ball && !(squirrel && squirrel.holdingBall)){
     // idle flame lick — ball resting in the owl's hands, state active before the shot
     var ix = player.x + OWL_CX, iy = player.y - OWL_LAUNCH_Y;
     if (!RM){
