@@ -556,6 +556,7 @@ function buildNet(){
 var trees = [], clouds = [], egret = null, squirrel = null, stars = [];
 var tentImg = new Image();          /* Boot Camp FX tent — static mid-ground prop, drawn on canvas */
 tentImg.src = 'bootcamp-fx-tent.svg';
+var TENT_FEET_Y = 892;              /* viewBox y of the foot-plate bottoms (viewBox is 0..920; 28 units empty below) */
 function rnd(a, b){ return a + Math.random() * (b - a); }
 function initDecor(){
   trees = []; clouds = []; gusts = []; fireflies = []; stars = [];
@@ -2146,11 +2147,23 @@ function draw(){
 
   /* Boot Camp FX tent — static mid-ground prop on the shared GROUND baseline.
      Drawn after the ground strip (so it stands on it) and before squirrel/hoop/owl
-     (so characters render in front). Same coordinate system as every prop. */
+     (so characters render in front). Same coordinate system as every prop.
+     - feet plates land exactly on GROUND (SVG viewBox has 28 units of empty space
+       below the foot plates; shift down by that fraction, never a fixed pixel offset)
+     - width capped responsively so the tent's right edge clears the Acacia Park sign
+       with margin at every viewport width (same sign math as drawParkSign)
+     - uniform scale only: height derives from the capped width via the source aspect */
   if (tentImg && tentImg.complete && tentImg.naturalWidth){
     var tentH = Math.round(H * 0.40);
+    var signS = W > 640 ? 0.85 : 0.70;
+    var signX = Math.max(W * 0.64, W / 2 + 106 * signS + 14);
+    var signLeft = signX - 106 * signS;
+    var tentWMax = signLeft - W * 0.04 - 20;
+    var tentHMax = tentWMax * 920 / 800;
+    if (tentHMax < tentH) tentH = Math.max(60, Math.round(tentHMax));
     var tentW = Math.round(tentH * tentImg.naturalWidth / tentImg.naturalHeight);
-    ctx.drawImage(tentImg, Math.round(W * 0.06), GROUND - tentH, tentW, tentH);
+    var tentPad = tentH * (tentImg.naturalHeight - TENT_FEET_Y) / tentImg.naturalHeight;
+    ctx.drawImage(tentImg, Math.round(W * 0.04), Math.round(GROUND - tentH + tentPad), tentW, tentH);
   }
 
   var density = Math.max(0, 1 - rise);
