@@ -2148,7 +2148,7 @@ function draw(){
      Drawn after the ground strip (so it stands on it) and before squirrel/hoop/owl
      (so characters render in front). Same coordinate system as every prop. */
   if (tentImg && tentImg.complete && tentImg.naturalWidth){
-    var tentH = Math.round(H * 0.28);
+    var tentH = Math.round(H * 0.40);
     var tentW = Math.round(tentH * tentImg.naturalWidth / tentImg.naturalHeight);
     ctx.drawImage(tentImg, Math.round(W * 0.06), GROUND - tentH, tentW, tentH);
   }
