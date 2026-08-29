@@ -368,8 +368,8 @@ function drawTutorial(){
   s += '<path d="M' + rx + ' ' + cy2 + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="0.85"/>';
   s += '<line x1="' + cx2 + '" y1="' + uy0 + '" x2="' + cx2 + '" y2="' + uy1 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
   s += '<path d="M' + cx2 + ' ' + uy1 + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="0.85"/>';
-  s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
-  s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="10" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
+  s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
+  s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
   var hvx = cx2 + ox, hvy = cy2 - 26 + oy;
   var hop = RM ? 0.95 : Math.max(0, 0.95 - fade * 1.2);
   s += '<g opacity="' + hop.toFixed(2) + '">'
@@ -450,8 +450,8 @@ function drawGuide(){
        + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * o).toFixed(2) + '"/>';
     s += '<path d="M' + cx2 + ' ' + uy1.toFixed(1) + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
     if (guideShots < 10){
-      s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '" text-anchor="middle">DRAG</text>';
-      s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '">FLY</text>';
+      s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '" text-anchor="middle">DRAG</text>';
+      s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '">FLY</text>';
     }
   } else {
     /* ambient zone guide — fixed in the shoot zone; never tracks the owl or the hoop */
@@ -517,14 +517,18 @@ var OWL_CX = 35;          /* canvas x-offset of owl body center from player.x (v
 var OWL_LAUNCH_Y = 23;    /* ball rest + launch: belly level (owl local y≈55), clearly below head/beak */
 var OWL_HIT_R = 55;       /* generous drag hit radius around owl body center */
 var owlDrag = null;       /* { offX, offY } active drag offset */
-var owlAir = false;       /* airborne after mid-air release */
+var owlAir = true;        /* airborne: true at spawn (hover over the tent) and after mid-air release */
 var owlFlapT = 0;         /* wing flap phase accumulator */
 var owlVy = 0;            /* airborne descent velocity */
 var turbT = 0;            /* turbulence phase clock — drives the airborne owl's drift */
 function placePlayer(){
-  if (!player.x) player.x = Math.max(70, W * 0.22);
+  if (!player.x) player.x = Math.max(70, W * 0.16);   /* over the tent, not mid-court */
   player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
-  player.y = GROUND;
+  /* hover just above the tent peak (peak ≈ 0.412H): 0.38H lets the ±33px hover
+     bob dip the feet into the canopy on short screens, so spawn at 0.36H —
+     feet clear the peak by ~47px at rest, ≥14px at the bob extreme (desktop).
+     Guard preserves an in-flight y on window resize. */
+  if (!player.y || player.y === GROUND) player.y = Math.round(H * 0.36);
 }
 
 var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 120, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
@@ -1320,7 +1324,13 @@ function startGame(){
   makes = 0; swishes = 0; banks = 0; rims = 0;
   particles = []; pops = []; ball = null; trail = [];
   resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
-  owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; turbT = 0; swipe = null;
+  owlDrag = null; owlAir = true; owlFlapT = 0; owlVy = 0; turbT = 0; swipe = null;
+  /* fresh spawn: hover over the tent (placePlayer's guard would preserve a
+     leftover mid-air/grounded y from the previous game — a new game always
+     starts him at the tent, flapping, never where the old one ended) */
+  player.x = Math.max(70, W * 0.16);
+  player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
+  player.y = Math.round(H * 0.36);
   lastKind = '—';
   owlReact.brickT = 0; owlReact.blinkOnce = false;
   holdT = 0; owlKnock = 0;
