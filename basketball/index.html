@@ -173,8 +173,6 @@
 <body>
 <div id="app">
 <canvas id="game"></canvas>
-<img src="bootcamp-fx-tent.svg" alt="Boot Camp FX tent" draggable="false"
-     style="position:absolute; left:6%; bottom:20%; height:28%; pointer-events:none; z-index:1;">
 
 <div class="hud">
   <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
@@ -556,6 +554,8 @@ function buildNet(){
 }
 
 var trees = [], clouds = [], egret = null, squirrel = null, stars = [];
+var tentImg = new Image();          /* Boot Camp FX tent — static mid-ground prop, drawn on canvas */
+tentImg.src = 'bootcamp-fx-tent.svg';
 function rnd(a, b){ return a + Math.random() * (b - a); }
 function initDecor(){
   trees = []; clouds = []; gusts = []; fireflies = []; stars = [];
@@ -2143,6 +2143,15 @@ function draw(){
   ctx.fillRect(0, GROUND, W, H - GROUND);
   ctx.fillStyle = 'rgba(232,147,58,0.55)';
   ctx.fillRect(0, GROUND, W, 3);
+
+  /* Boot Camp FX tent — static mid-ground prop on the shared GROUND baseline.
+     Drawn after the ground strip (so it stands on it) and before squirrel/hoop/owl
+     (so characters render in front). Same coordinate system as every prop. */
+  if (tentImg && tentImg.complete && tentImg.naturalWidth){
+    var tentH = Math.round(H * 0.28);
+    var tentW = Math.round(tentH * tentImg.naturalWidth / tentImg.naturalHeight);
+    ctx.drawImage(tentImg, Math.round(W * 0.06), GROUND - tentH, tentW, tentH);
+  }
 
   var density = Math.max(0, 1 - rise);
   var visibleN = Math.round(fireflies.length * density);
