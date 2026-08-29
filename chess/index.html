@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Boot Camp FX — Chess</title>
 <meta name="description" content="Boot Camp FX chess — turtle, frog, coyote, rabbit, squirrel, owl. Tap to move.">
 <meta name="theme-color" content="#0F1B2C">
@@ -20,8 +20,8 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;background:var(--predawn);overflow:hidden;
     font-family:var(--body);color:var(--day);
-    -webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
-  #board{display:block;width:100vw;height:100vh;}
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
+  #board{display:block;width:100vw;height:100vh;touch-action:manipulation;}
   .hud{position:fixed;top:10px;left:50%;transform:translateX(-50%);text-align:center;z-index:5;pointer-events:none;
     background:rgba(15,27,44,.48);border:1px solid rgba(138,151,166,.35);backdrop-filter:blur(10px);
     border-radius:14px;padding:8px 18px 9px;color:var(--day);}
@@ -29,14 +29,39 @@
   .hud .brand em{font-style:italic;color:var(--gold);}
   .hud .brand .sep{color:var(--mist);font-weight:400;padding:0 4px;}
   .hud .tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);margin-top:3px;}
-  .bar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:8px;align-items:center;}
-  .bar button,.bar .stat{
-    font-family:var(--body);font-weight:700;font-size:.86rem;border:0;border-radius:14px;padding:10px 16px;cursor:pointer;}
-  .bar button{background:var(--dawn);color:#1B1206;}
-  .bar button.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);font-weight:600;}
-  .bar .stat{background:rgba(15,27,44,.55);color:var(--day);border:1px solid rgba(138,151,166,.35);
-    font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;min-width:132px;text-align:center;}
-  @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
+  .bar{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:5;display:flex;gap:8px;align-items:center;
+    background:rgba(15,27,44,.55);border:1px solid rgba(138,151,166,.35);backdrop-filter:blur(10px);
+    border-radius:14px;padding:7px 10px;max-width:96vw;flex-wrap:wrap;justify-content:center;}
+  .bar button,.bar select{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--dawn);color:var(--ink);border:none;border-radius:9px;padding:8px 12px;cursor:pointer;font-weight:600;}
+  .bar button.ghost,.bar select{background:transparent;color:var(--day);border:1px solid rgba(138,151,166,.5);}
+  .bar select{appearance:none;-webkit-appearance:none;text-align:center;}
+  .bar select option{color:#14100A;}
+  .bar .stat{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);padding:0 6px;min-width:7ch;text-align:center;}
+  .rail{position:fixed;z-index:4;display:flex;align-items:center;gap:6px;justify-content:center;
+    pointer-events:none;height:30px;font-family:var(--mono);}
+  .rail .slot{display:flex;align-items:center;gap:1px;}
+  .rail img{display:block;width:24px;height:24px;}
+  .rail .n{font-size:.58rem;color:var(--mist);letter-spacing:.05em;margin-right:4px;}
+  .rail .mat{font-size:.62rem;color:var(--gold);letter-spacing:.08em;margin-left:8px;font-weight:600;}
+  .panel{position:fixed;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:rgba(15,27,44,.92);border:1px solid rgba(242,184,75,.45);border-radius:18px;
+    backdrop-filter:blur(12px);padding:22px 26px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,.5);}
+  .panel.hidden{display:none;}
+  .panel h2{font-family:var(--display);font-weight:600;font-size:1.5rem;margin-bottom:4px;}
+  .panel h2 em{font-style:italic;color:var(--gold);}
+  .panel .sub{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);margin-bottom:14px;}
+  .panel .record{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--day-2);margin:10px 0 16px;}
+  .panel button{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--dawn);color:var(--ink);border:none;border-radius:9px;padding:10px 18px;cursor:pointer;font-weight:600;}
+  #promo .opts{display:flex;gap:12px;justify-content:center;}
+  #promo .opt{background:rgba(251,247,238,.08);border:1px solid rgba(138,151,166,.4);border-radius:12px;
+    padding:8px 10px 6px;cursor:pointer;transition:border-color .15s,background .15s;}
+  #promo .opt:hover,#promo .opt:focus-visible{border-color:var(--gold);background:rgba(242,184,75,.14);outline:none;}
+  #promo .opt img{width:44px;height:44px;display:block;}
+  #promo .opt span{font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);}
+  #dim{position:fixed;inset:0;background:rgba(15,27,44,.55);z-index:15;transition:opacity .26s;}
+  #dim.hidden{display:none;}
 </style>
 </head>
 <body>
@@ -45,10 +70,33 @@
   <div class="brand">Boot Camp <em>FX</em><span class="sep">·</span>Chess</div>
   <div class="tag" id="hudTag">Ink to move</div>
 </div>
+<div class="rail" id="railTop" aria-live="polite"></div>
+<div class="rail" id="railBot" aria-live="polite"></div>
 <div class="bar">
   <button type="button" id="btnNew">New game</button>
+  <button type="button" class="ghost" id="btnUndo" title="Take back a move">Undo</button>
+  <button type="button" class="ghost" id="btnHint" title="Show a good move">Hint</button>
+  <button type="button" class="ghost" id="btnFlip" title="Flip the board">Flip</button>
   <button type="button" class="ghost" id="btnMode">vs AI</button>
+  <select id="selDiff" title="AI difficulty">
+    <option value="easy">Easy</option>
+    <option value="medium" selected>Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+  <button type="button" class="ghost" id="btnSound" title="Sound on/off">Sound</button>
   <div class="stat" id="hudStat">your move</div>
+</div>
+<div id="dim" class="hidden"></div>
+<div class="panel hidden" id="promo" role="dialog" aria-label="Choose promotion">
+  <h2>Promote the <em>turtle</em></h2>
+  <div class="sub">choose its new form</div>
+  <div class="opts" id="promoOpts"></div>
+</div>
+<div class="panel hidden" id="endPanel" role="dialog" aria-label="Game over">
+  <h2 id="endTitle">Checkmate</h2>
+  <div class="sub" id="endSub"></div>
+  <div class="record" id="endRecord"></div>
+  <button type="button" id="btnAgain">Play again</button>
 </div>
 <script>
 (function(){
@@ -68,17 +116,26 @@ var C = {
   toad:'#6E7E33', toadDark:'#55632A', cream:'#F3ECDC'
 };
 
+var ANIMAL = { king:'Owl', queen:'Squirrel', rook:'Rabbit', knight:'Coyote', bishop:'Frog', pawn:'Turtle' };
+
 var DAY_LOOP = 86;
 var skyT = 0;
 function dayF(){ return 0.5 - 0.5 * Math.cos(skyT * 2 * Math.PI / DAY_LOOP); }
 
 var sq = 0, bx = 0, by = 0, board = 0;
 function layout(){
-  var reserved = 118;
+  var reserved = 128;
   board = Math.max(200, Math.min(W - 8, H - reserved));
   sq = board / 8;
   bx = Math.round((W - board) / 2);
   by = Math.round(58 + (H - reserved - board) / 2);
+  placeRails();
+}
+function placeRails(){
+  var rt = document.getElementById('railTop'), rb = document.getElementById('railBot');
+  if (!rt || !board) return;
+  rt.style.left = bx + 'px'; rt.style.width = board + 'px'; rt.style.top = Math.max(52, by - 34) + 'px';
+  rb.style.left = bx + 'px'; rb.style.width = board + 'px'; rb.style.top = (by + board + 5) + 'px';
 }
 function resize(){
   W = window.innerWidth; H = window.innerHeight;
@@ -155,7 +212,7 @@ function scaleFor(type){
   return (sq * fill) / h;
 }
 
-/* ---------- King = Owl. SVG 64×84, feet at y=76. Plant feet, do NOT invert. ---------- */
+/* ---------- King = Owl ---------- */
 function drawOwl(t, side){
   var sway = RM ? 0 : anim(t, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
   var blink = RM ? 1 : anim(t, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
@@ -195,7 +252,7 @@ function drawOwl(t, side){
   ctx.restore();
 }
 
-/* ---------- Queen = Squirrel. Runner 52×48, feet y=46. Dawn body. ---------- */
+/* ---------- Queen = Squirrel ---------- */
 function drawSquirrel(t, side){
   var flick = RM ? 0 : Math.sin(t * 2.2) * 4;
   ctx.save();
@@ -219,7 +276,7 @@ function drawSquirrel(t, side){
   ctx.restore();
 }
 
-/* ---------- Rook = Rabbit. Homepage 52×48. Stone (owl already owns mist). ---------- */
+/* ---------- Rook = Rabbit ---------- */
 function drawRabbit(t, side){
   var twitch = RM ? 0 : anim(t, 2.6, [[0,0],[0.88,0],[0.92,-8],[0.96,4],[1,0]]);
   ctx.save();
@@ -247,7 +304,7 @@ function drawRabbit(t, side){
   ctx.restore();
 }
 
-/* ---------- Knight = Coyote. Homepage 320×200, faces right — flip to face left. ---------- */
+/* ---------- Knight = Coyote ---------- */
 function drawCoyote(t, side){
   var sway = RM ? 0 : Math.sin(t * 0.9) * 1.3;
   ctx.save();
@@ -303,7 +360,7 @@ function roundRect(x, y, w, h, r){
   ctx.closePath();
 }
 
-/* ---------- Bishop = Frog. Runner toad, front-facing, big gold-language eyes now cute. ---------- */
+/* ---------- Bishop = Frog ---------- */
 function drawFrog(t, side){
   var bob = RM ? 0 : Math.sin(t * 2.1) * 1.1;
   ctx.save();
@@ -326,7 +383,7 @@ function drawFrog(t, side){
   ctx.restore();
 }
 
-/* ---------- Pawn = Turtle. Homepage 90×42, head on the right — flip to face left. ---------- */
+/* ---------- Pawn = Turtle ---------- */
 function drawTurtle(t, side){
   var nod = RM ? 0 : Math.sin(t * 1.4) * 1.2;
   ctx.save();
@@ -374,13 +431,38 @@ function drawShadow(cx, baseY, type){
   ctx.fill();
 }
 
-function drawPieceAt(p, cx, baseY, t, extraScale){
+function drawPieceAt(p, cx, baseY, t, extraScale, rot){
   var k = scaleFor(p.type) * (extraScale || 1);
   ctx.save();
   ctx.translate(cx, baseY);
+  if (rot) ctx.rotate(rot);
   ctx.scale((p.dir || 1) * k, k);
   DRAW[p.type](t + (p.ph || 0), p.side);
   ctx.restore();
+}
+
+/* ---------- sprites for rails / promo / flights ---------- */
+var spriteCache = {};
+function renderSprite(type, side, size){
+  var key = type + side + size;
+  if (spriteCache[key]) return spriteCache[key];
+  var c = document.createElement('canvas');
+  c.width = size * DPR; c.height = size * DPR;
+  var g = c.getContext('2d');
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  var h = { king:76, queen:46, rook:46, knight:48, bishop:36, pawn:38 }[type] || 50;
+  var k = (size * 0.86) / h;
+  g.translate(size / 2, size * 0.94);
+  g.scale(k, k);
+  var realCtx = ctx;
+  ctx = g;
+  DRAW[type](0.7, side);
+  ctx = realCtx;
+  spriteCache[key] = c;
+  return c;
+}
+function spriteURL(type, side, size){
+  return renderSprite(type, side, size).toDataURL();
 }
 
 /* ---------- game state ---------- */
@@ -396,12 +478,33 @@ var departing = [];
 var flashes = [];
 var hop = null;
 var aiWait = 0;
-var STORE = 'bootcampfxChessV3';
+var flipped = false;
+var difficulty = 'medium';
+var soundOn = true;
+var history = [];
+var capturedByW = [];   /* black animals Ink has taken -> bottom rail */
+var capturedByB = [];   /* white animals Stone has taken -> top rail */
+var lastMove = null;
+var checkSide = null;
+var hintMove = null, hintT = 0;
+var promoMoves = null;
+var plyCount = 0;
+var mateAnim = null;
+var gameCounted = false;
+var stats = { w:0, l:0, d:0 };
+var flights = [];
+var STORE = 'bootcampfxChessV4';
 var hudTag = document.getElementById('hudTag');
 var hudStat = document.getElementById('hudStat');
 var btnMode = document.getElementById('btnMode');
+var selDiff = document.getElementById('selDiff');
 
+function vF(f){ return flipped ? 7 - f : f; }
+function vR(r){ return flipped ? 7 - r : r; }
+
+/* ---------- sound ---------- */
 var ac = null;
+var nextChirp = 0;
 function unlockAudio(){
   if (!ac){
     var AC = window.AudioContext || window.webkitAudioContext;
@@ -409,27 +512,51 @@ function unlockAudio(){
   }
   if (ac && ac.state === 'suspended') ac.resume();
 }
-function sfx(kind){
-  if (RM || !ac) return;
-  var t0 = ac.currentTime;
+function tone(type, f0, f1, t0, dur, vol){
   var o = ac.createOscillator();
   var g = ac.createGain();
   o.connect(g); g.connect(ac.destination);
-  if (kind === 'move'){
-    o.type = 'triangle'; o.frequency.setValueAtTime(520, t0); o.frequency.exponentialRampToValueAtTime(280, t0 + 0.06);
-    g.gain.setValueAtTime(0.08, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.07);
-    o.start(t0); o.stop(t0 + 0.08);
+  o.type = type;
+  o.frequency.setValueAtTime(f0, t0);
+  if (f1) o.frequency.exponentialRampToValueAtTime(f1, t0 + dur * 0.8);
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function sfx(kind){
+  if (RM || !ac || !soundOn) return;
+  var t0 = ac.currentTime;
+  if (kind === 'select'){
+    tone('sine', 740, 900, t0, 0.05, 0.03);
+  } else if (kind === 'move'){
+    tone('triangle', 520, 280, t0, 0.07, 0.08);
   } else if (kind === 'capture'){
-    o.type = 'square'; o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(70, t0 + 0.12);
-    g.gain.setValueAtTime(0.07, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
-    o.start(t0); o.stop(t0 + 0.15);
+    tone('square', 180, 70, t0, 0.14, 0.07);
+    tone('triangle', 340, 160, t0 + 0.05, 0.1, 0.05);
   } else if (kind === 'check'){
-    o.type = 'sine'; o.frequency.setValueAtTime(660, t0); o.frequency.setValueAtTime(880, t0 + 0.08);
-    g.gain.setValueAtTime(0.07, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
-    o.start(t0); o.stop(t0 + 0.24);
+    tone('sine', 660, null, t0, 0.09, 0.07);
+    tone('sine', 880, null, t0 + 0.09, 0.13, 0.07);
+  } else if (kind === 'promo'){
+    tone('triangle', 440, null, t0, 0.09, 0.06);
+    tone('triangle', 554, null, t0 + 0.08, 0.09, 0.06);
+    tone('triangle', 659, null, t0 + 0.16, 0.16, 0.07);
+  } else if (kind === 'win'){
+    var seq = [523, 659, 784, 1047];
+    for (var i = 0; i < seq.length; i++) tone('triangle', seq[i], null, t0 + i * 0.11, 0.22, 0.07);
+  } else if (kind === 'lose'){
+    tone('sine', 392, null, t0, 0.22, 0.06);
+    tone('sine', 262, null, t0 + 0.2, 0.4, 0.06);
   }
 }
+function chirp(){
+  if (!ac || !soundOn || RM) return;
+  var t0 = ac.currentTime;
+  var base = rnd(2100, 2800);
+  tone('sine', base, base * 0.75, t0, 0.07, 0.014);
+  tone('sine', base * 1.15, base * 0.85, t0 + 0.1, 0.06, 0.011);
+}
 
+/* ---------- move engine ---------- */
 function copyList(list){
   var o = [];
   for (var i = 0; i < list.length; i++){
@@ -445,7 +572,7 @@ function occ(f, r, list){
 function onBoard(f, r){ return f >= 0 && f < 8 && r >= 0 && r < 8; }
 function enemy(side){ return side === 'w' ? 'b' : 'w'; }
 function mv(p, f, r, extra){
-  var m = { pid:p.id, f:f, r:r, capture:null, castle:null, ep:false, promote:false };
+  var m = { pid:p.id, f:f, r:r, capture:null, castle:null, ep:false, promote:false, promoteAs:'queen' };
   if (extra) for (var k in extra) m[k] = extra[k];
   return m;
 }
@@ -531,7 +658,7 @@ function applyMove(list, m, liveEp, liveCastle){
   var fromF = p.file, fromR = p.rank;
   p.dir = (m.f > fromF) ? -1 : (m.f < fromF) ? 1 : (p.dir || 1);
   p.file = m.f; p.rank = m.r; p.moved = true;
-  if (m.promote) p.type = 'queen';
+  if (m.promote) p.type = m.promoteAs || 'queen';
   if (m.castle === 'K'){
     for (i = 0; i < nxt.length; i++) if (nxt[i].side === p.side && nxt[i].type === 'rook' && nxt[i].file === 7){ nxt[i].file = 5; nxt[i].moved = true; nxt[i].dir = 1; }
   }
@@ -623,71 +750,193 @@ function findPiece(id){
   return null;
 }
 
-function fadeOut(p){
-  departing.push({
-    type:p.type, side:p.side, ph:p.ph, dir:p.dir || 1,
-    file:p.file, rank:p.rank, a:1, s:1, life: RM ? 0.01 : 0.28
+function insufficientMaterial(list){
+  var rest = [];
+  for (var i = 0; i < list.length; i++) if (list[i].type !== 'king') rest.push(list[i]);
+  if (!rest.length) return true;
+  if (rest.length === 1 && (rest[0].type === 'bishop' || rest[0].type === 'knight')) return true;
+  return false;
+}
+
+/* ---------- history / undo ---------- */
+function snapshot(){
+  return {
+    pieces: copyList(pieces), turn:turn, ep:ep,
+    castle:{ wK:castle.wK, wQ:castle.wQ, bK:castle.bK, bQ:castle.bQ },
+    capturedByW: capturedByW.slice(), capturedByB: capturedByB.slice(),
+    plyCount: plyCount, nextId: nextId, tagText: hudTag.textContent
+  };
+}
+function restoreSnap(s){
+  pieces = copyList(s.pieces);
+  turn = s.turn; ep = s.ep; castle = s.castle;
+  capturedByW = s.capturedByW.slice(); capturedByB = s.capturedByB.slice();
+  plyCount = s.plyCount; nextId = s.nextId;
+  STATE = 'play';
+  selected = null; legal = []; hop = null; departing = []; flashes = []; flights = [];
+  mateAnim = null; lastMove = null; hintMove = null; promoMoves = null;
+  checkSide = inCheck(turn, pieces) ? turn : null;
+  hidePanels();
+  setStatus(s.tagText);
+  updateRails();
+  persist();
+}
+function undo(){
+  if (!history.length || promoMoves) return;
+  var s = history.pop();
+  if (vsAI && s.turn === 'b' && history.length) s = history.pop();
+  restoreSnap(s);
+  gameCounted = false;
+  sfx('select');
+}
+
+/* ---------- status / flavor ---------- */
+function sideName(side){ return side === 'w' ? 'Ink' : 'Stone'; }
+function setStatus(s){
+  if (hudTag) hudTag.textContent = s;
+  if (hudStat && STATE !== 'over') hudStat.textContent = vsAI ? (turn === 'w' ? 'your move' : 'thinking…') : s;
+}
+function flavor(cap, mover){
+  if (!cap) return;
+  var msg = ANIMAL[mover.type] + ' takes ' + ANIMAL[cap.type].toLowerCase() + '!';
+  if (hudStat) hudStat.textContent = msg;
+}
+
+/* ---------- capture flight to the Pound ---------- */
+function launchFlight(cap){
+  var pos = cellXY(vF(cap.file), vR(cap.rank));
+  var toTop = cap.side === 'w'; /* white animal captured by black -> top rail */
+  flights.push({
+    spr: renderSprite(cap.type, cap.side, 48),
+    x0: pos.x, y0: pos.y - sq * 0.4,
+    x1: bx + board / 2 + rnd(-40, 40), y1: toTop ? Math.max(52, by - 20) : by + board + 18,
+    t: 0, dur: 0.3
   });
 }
 
-function persist(){
-  try {
-    localStorage.setItem(STORE, JSON.stringify({
-      pieces: pieces, turn:turn, ep:ep, castle:castle, vsAI:vsAI, STATE:STATE, nextId:nextId
-    }));
-  } catch (e) {}
-}
-function restore(){
-  try {
-    var raw = localStorage.getItem(STORE);
-    if (!raw) return false;
-    var d = JSON.parse(raw);
-    if (!d || !d.pieces || !d.pieces.length) return false;
-    pieces = d.pieces; turn = d.turn; ep = d.ep; castle = d.castle;
-    vsAI = !!d.vsAI; STATE = d.STATE || 'play'; nextId = d.nextId || 40;
-    btnMode.textContent = vsAI ? 'vs AI' : '2 player';
-    return true;
-  } catch (e) { return false; }
-}
-
+/* ---------- core move ---------- */
 function doMove(m){
   if (STATE !== 'play' || hop) return;
   var p = findPiece(m.pid);
   if (!p) return;
+  history.push(snapshot());
+  if (history.length > 200) history.shift();
   var fromF = p.file, fromR = p.rank;
   var cap = m.capture ? findPiece(m.capture) : null;
-  if (cap) fadeOut(cap);
+  if (cap){
+    fadeOut(cap);
+    launchFlight(cap);
+    if (cap.side === 'b') capturedByW.push(cap.type); else capturedByB.push(cap.type);
+  }
   flashes.push({ f:m.f, r:m.r, t:0.28 });
   var sim = applyMove(pieces, m, ep, castle);
   pieces = sim.list;
   ep = sim.ep;
   castle = sim.castle;
+  plyCount++;
+  lastMove = { f0:fromF, r0:fromR, f1:m.f, r1:m.r };
   var mover = findPiece(m.pid);
   if (mover && !RM){
     hop = { id:m.pid, f0:fromF, r0:fromR, f1:m.f, r1:m.r, t:0, dur:0.16 };
   }
   selected = null;
   legal = [];
+  hintMove = null;
   turn = enemy(turn);
-  sfx(cap ? 'capture' : 'move');
+  sfx(cap ? 'capture' : (m.promote ? 'promo' : 'move'));
+  flavor(cap, p);
+  updateRails();
+  checkSide = null;
   var moves = legalMoves(turn);
   if (!moves.length){
     STATE = 'over';
-    if (inCheck(turn, pieces)) setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' is mated');
-    else setStatus('stalemate');
+    if (inCheck(turn, pieces)){
+      var winner = enemy(turn);
+      setStatus(sideName(winner) + ' wins — ' + sideName(turn).toLowerCase() + ' is mated');
+      mateAnim = { side: turn, t: 0, dur: 0.6 };
+      endGame(winner === 'w' ? 'win' : 'lose', 'checkmate');
+    } else {
+      setStatus('stalemate — the forest holds its breath');
+      endGame('draw', 'stalemate');
+    }
+  } else if (insufficientMaterial(pieces)){
+    STATE = 'over';
+    setStatus('draw — only the owl and whispers remain');
+    endGame('draw', 'bare kings');
   } else {
-    if (inCheck(turn, pieces)){ setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' in check'); sfx('check'); }
-    else setStatus((turn === 'w' ? 'Ink' : 'Stone') + ' to move');
+    if (inCheck(turn, pieces)){ checkSide = turn; setStatus(sideName(turn) + ' in check'); sfx('check'); }
+    else setStatus(sideName(turn) + ' to move');
     if (vsAI && turn === 'b' && STATE === 'play') aiWait = RM ? 0.05 : 0.42;
   }
   persist();
 }
 
-function setStatus(s){
-  if (hudTag) hudTag.textContent = s;
-  if (hudStat) hudStat.textContent = STATE === 'over' ? s : (vsAI ? (turn === 'w' ? 'your move' : 'thinking') : s);
+/* ---------- end game / panels ---------- */
+var dim = document.getElementById('dim');
+var endPanel = document.getElementById('endPanel');
+var promoPanel = document.getElementById('promo');
+function hidePanels(){
+  dim.classList.add('hidden');
+  endPanel.classList.add('hidden');
+  promoPanel.classList.add('hidden');
+}
+function endGame(result, how){
+  if (vsAI && !gameCounted){
+    if (result === 'win') stats.w++;
+    else if (result === 'lose') stats.l++;
+    else stats.d++;
+    gameCounted = true;
+  }
+  if (result === 'win') sfx('win'); else if (result === 'lose') sfx('lose');
+  var title = document.getElementById('endTitle');
+  var sub = document.getElementById('endSub');
+  var rec = document.getElementById('endRecord');
+  if (result === 'win'){ title.innerHTML = 'Dawn <em>yours</em>'; sub.textContent = how + ' — the camp salutes you'; }
+  else if (result === 'lose'){ title.innerHTML = 'Night <em>falls</em>'; sub.textContent = how + ' — the wilds prevail'; }
+  else { title.innerHTML = 'A <em>truce</em>'; sub.textContent = how; }
+  rec.textContent = 'record vs AI — ' + stats.w + 'W · ' + stats.l + 'L · ' + stats.d + 'D';
+  dim.classList.remove('hidden');
+  setTimeout(function(){ endPanel.classList.remove('hidden'); }, RM ? 0 : 320);
+  if (hudStat) hudStat.textContent = how;
+}
+document.getElementById('btnAgain').addEventListener('click', function(e){
+  e.stopPropagation(); unlockAudio(); newGame();
+});
+
+/* ---------- promotion picker ---------- */
+function openPromo(moves){
+  promoMoves = moves;
+  var box = document.getElementById('promoOpts');
+  box.innerHTML = '';
+  var side = turn;
+  ['queen','rook','bishop','knight'].forEach(function(t){
+    var d = document.createElement('div');
+    d.className = 'opt';
+    d.setAttribute('role', 'button');
+    d.tabIndex = 0;
+    var img = document.createElement('img');
+    img.src = spriteURL(t, side, 44);
+    img.alt = ANIMAL[t];
+    var sp = document.createElement('span');
+    sp.textContent = ANIMAL[t];
+    d.appendChild(img); d.appendChild(sp);
+    function pick(){
+      var chosen = null;
+      for (var i = 0; i < promoMoves.length; i++)
+        if (promoMoves[i].promoteAs === t) chosen = promoMoves[i];
+      promoMoves = null;
+      hidePanels();
+      if (chosen) doMove(chosen);
+    }
+    d.addEventListener('click', function(e){ e.stopPropagation(); pick(); });
+    d.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') pick(); });
+    box.appendChild(d);
+  });
+  dim.classList.remove('hidden');
+  promoPanel.classList.remove('hidden');
 }
 
+/* ---------- AI ---------- */
 function scoreMove(m){
   var s = 0;
   if (m.capture){
@@ -710,9 +959,76 @@ function scoreMove(m){
   return s;
 }
 
+function evalList(list){
+  var s = 0;
+  for (var i = 0; i < list.length; i++){
+    var p = list[i];
+    var v = VAL[p.type] || 0;
+    v += ((3.5 - Math.abs(p.file - 3.5)) + (3.5 - Math.abs(p.rank - 3.5))) * 3;
+    s += p.side === 'w' ? v : -v;
+  }
+  return s;
+}
+function search(side, list, epS, castleS, depth, alpha, beta){
+  var moves = legalMoves(side, list, epS, castleS);
+  if (!moves.length){
+    if (inCheck(side, list)) return side === 'w' ? -90000 - depth : 90000 + depth;
+    return 0;
+  }
+  if (depth === 0) return evalList(list);
+  moves.sort(function(a, b){ return (b.capture ? 1 : 0) - (a.capture ? 1 : 0); });
+  var i, sim, v;
+  if (side === 'w'){
+    var best = -1e9;
+    for (i = 0; i < moves.length; i++){
+      sim = applyMove(list, moves[i], epS, castleS);
+      v = search('b', sim.list, sim.ep, sim.castle, depth - 1, alpha, beta);
+      if (v > best) best = v;
+      if (v > alpha) alpha = v;
+      if (beta <= alpha) break;
+    }
+    return best;
+  }
+  var bestB = 1e9;
+  for (i = 0; i < moves.length; i++){
+    sim = applyMove(list, moves[i], epS, castleS);
+    v = search('w', sim.list, sim.ep, sim.castle, depth - 1, alpha, beta);
+    if (v < bestB) bestB = v;
+    if (v < beta) beta = v;
+    if (beta <= alpha) break;
+  }
+  return bestB;
+}
+function bestMoveDeep(side, depth){
+  var moves = legalMoves(side);
+  if (!moves.length) return null;
+  moves.sort(function(a, b){ return (b.capture ? 1 : 0) - (a.capture ? 1 : 0); });
+  var best = side === 'w' ? -1e9 : 1e9, pool = [], tol = 30;
+  for (var i = 0; i < moves.length; i++){
+    var sim = applyMove(pieces, moves[i], ep, castle);
+    var v = search(enemy(side), sim.list, sim.ep, sim.castle, depth - 1, -1e9, 1e9);
+    var better = side === 'w' ? (v > best + tol) : (v < best - tol);
+    var tied = Math.abs(v - best) <= tol;
+    if (!pool.length || better){ best = v; pool = [moves[i]]; }
+    else if (tied) pool.push(moves[i]);
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function aiPick(){
   var moves = legalMoves('b');
   if (!moves.length) return null;
+  if (difficulty === 'hard') return bestMoveDeep('b', 3) || moves[0];
+  if (difficulty === 'easy'){
+    if (Math.random() < 0.35) return moves[Math.floor(Math.random() * moves.length)];
+    var bestE = -1e9, poolE = [];
+    for (var e = 0; e < moves.length; e++){
+      var scE = scoreMove(moves[e]);
+      if (scE > bestE + 60){ bestE = scE; poolE = [moves[e]]; }
+      else if (Math.abs(scE - bestE) <= 60) poolE.push(moves[e]);
+    }
+    return poolE[Math.floor(Math.random() * poolE.length)];
+  }
   var best = -1e9, pool = [];
   for (var i = 0; i < moves.length; i++){
     var sc = scoreMove(moves[i]);
@@ -722,29 +1038,47 @@ function aiPick(){
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+/* ---------- input ---------- */
 function sqFromEvent(e){
   var x = e.clientX, y = e.clientY;
   var f = Math.floor((x - bx) / sq);
   var r = Math.floor((y - by) / sq);
-  if (!onBoard(f, r)) return null;
-  return { f:f, r:r };
+  if (f < 0 || f > 7 || r < 0 || r > 7) return null;
+  return { f: vF(f), r: vR(r) };
 }
 
 function onPointer(e){
   unlockAudio();
   if (hop) hop = null;
-  if (STATE !== 'play') return;
+  if (STATE !== 'play' || promoMoves) return;
   if (vsAI && turn === 'b') return;
   var sqp = sqFromEvent(e);
   if (!sqp){ selected = null; legal = []; return; }
   if (selected){
+    var chosen = [];
     for (var i = 0; i < legal.length; i++){
-      if (legal[i].f === sqp.f && legal[i].r === sqp.r){ doMove(legal[i]); return; }
+      if (legal[i].f === sqp.f && legal[i].r === sqp.r) chosen.push(legal[i]);
+    }
+    if (chosen.length){
+      if (chosen[0].promote){
+        var variants = [];
+        ['queen','rook','bishop','knight'].forEach(function(t){
+          var c = {};
+          for (var k in chosen[0]) c[k] = chosen[0][k];
+          c.promoteAs = t;
+          variants.push(c);
+        });
+        openPromo(variants);
+      } else {
+        doMove(chosen[0]);
+      }
+      return;
     }
   }
   var p = occ(sqp.f, sqp.r, pieces);
   if (p && p.side === turn){
     selected = p;
+    sfx('select');
     var all = legalMoves(turn);
     legal = [];
     for (var j = 0; j < all.length; j++) if (all[j].pid === p.id) legal.push(all[j]);
@@ -753,6 +1087,7 @@ function onPointer(e){
   }
 }
 
+/* ---------- new game / persistence ---------- */
 function newGame(){
   resetPieces();
   turn = 'w';
@@ -763,21 +1098,122 @@ function newGame(){
   STATE = 'play';
   departing = [];
   flashes = [];
+  flights = [];
   hop = null;
   aiWait = 0;
+  history = [];
+  capturedByW = [];
+  capturedByB = [];
+  lastMove = null;
+  checkSide = null;
+  hintMove = null;
+  promoMoves = null;
+  plyCount = 0;
+  mateAnim = null;
+  gameCounted = false;
+  hidePanels();
   setStatus('Ink to move');
+  updateRails();
   persist();
 }
 
+function persist(){
+  try {
+    localStorage.setItem(STORE, JSON.stringify({
+      pieces: pieces, turn:turn, ep:ep, castle:castle, vsAI:vsAI, STATE:STATE, nextId:nextId,
+      capturedByW:capturedByW, capturedByB:capturedByB, plyCount:plyCount,
+      difficulty:difficulty, soundOn:soundOn, flipped:flipped, stats:stats
+    }));
+  } catch (e) {}
+}
+function restore(){
+  try {
+    var raw = localStorage.getItem(STORE);
+    if (!raw) return false;
+    var d = JSON.parse(raw);
+    if (!d || !d.pieces || !d.pieces.length) return false;
+    pieces = d.pieces; turn = d.turn; ep = d.ep; castle = d.castle;
+    vsAI = !!d.vsAI; STATE = d.STATE || 'play'; nextId = d.nextId || 40;
+    capturedByW = d.capturedByW || []; capturedByB = d.capturedByB || [];
+    plyCount = d.plyCount || 0;
+    difficulty = d.difficulty || 'medium';
+    soundOn = d.soundOn !== false;
+    flipped = !!d.flipped;
+    if (d.stats) stats = d.stats;
+    btnMode.textContent = vsAI ? 'vs AI' : '2 player';
+    selDiff.value = difficulty;
+    document.getElementById('btnSound').textContent = soundOn ? 'Sound' : 'Muted';
+    checkSide = STATE === 'play' && inCheck(turn, pieces) ? turn : null;
+    return true;
+  } catch (e) { return false; }
+}
+
+/* ---------- the Pound (capture rails) ---------- */
+function railHTML(list, ownSide){
+  var counts = {};
+  for (var i = 0; i < list.length; i++) counts[list[i]] = (counts[list[i]] || 0) + 1;
+  var order = ['queen','rook','bishop','knight','pawn'];
+  var html = '';
+  for (var j = 0; j < order.length; j++){
+    var t = order[j];
+    if (!counts[t]) continue;
+    html += '<span class="slot"><img src="' + spriteURL(t, ownSide, 24) + '" alt="' + ANIMAL[t] + '">';
+    if (counts[t] > 1) html += '<span class="n">×' + counts[t] + '</span>';
+    html += '</span>';
+  }
+  return html;
+}
+function material(){
+  var s = 0, i;
+  for (i = 0; i < capturedByW.length; i++) s += VAL[capturedByW[i]] || 0;
+  for (i = 0; i < capturedByB.length; i++) s -= VAL[capturedByB[i]] || 0;
+  return Math.round(s / 100);
+}
+function updateRails(){
+  var rt = document.getElementById('railTop');
+  var rb = document.getElementById('railBot');
+  var m = material();
+  rt.innerHTML = railHTML(capturedByB, 'w') + (m < 0 ? '<span class="mat">+' + (-m) + '</span>' : '');
+  rb.innerHTML = railHTML(capturedByW, 'b') + (m > 0 ? '<span class="mat">+' + m + '</span>' : '');
+}
+
+/* ---------- buttons ---------- */
 document.getElementById('btnNew').addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); newGame(); });
+document.getElementById('btnUndo').addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); undo(); });
+document.getElementById('btnHint').addEventListener('click', function(e){
+  e.stopPropagation(); unlockAudio();
+  if (STATE !== 'play' || (vsAI && turn === 'b') || promoMoves) return;
+  var m = bestMoveDeep(turn, 2);
+  if (m){ hintMove = m; hintT = 2.4; sfx('select'); }
+});
+document.getElementById('btnFlip').addEventListener('click', function(e){
+  e.stopPropagation(); unlockAudio();
+  flipped = !flipped;
+  selected = null; legal = [];
+  persist();
+});
+document.getElementById('btnSound').addEventListener('click', function(e){
+  e.stopPropagation(); unlockAudio();
+  soundOn = !soundOn;
+  e.target.textContent = soundOn ? 'Sound' : 'Muted';
+  if (soundOn) sfx('select');
+  persist();
+});
 btnMode.addEventListener('click', function(e){
   e.stopPropagation(); unlockAudio();
   vsAI = !vsAI;
   btnMode.textContent = vsAI ? 'vs AI' : '2 player';
+  selDiff.style.display = vsAI ? '' : 'none';
   newGame();
 });
+selDiff.addEventListener('change', function(e){
+  difficulty = selDiff.value;
+  persist();
+});
+selDiff.addEventListener('click', function(e){ e.stopPropagation(); });
 cv.addEventListener('pointerdown', onPointer);
 
+/* ---------- scenery ---------- */
 var clouds = [], stars = [];
 function initScene(){
   clouds = []; stars = [];
@@ -792,6 +1228,20 @@ function drawCloud(c){
   ctx.globalAlpha = 1;
 }
 
+function fadeOut(p){
+  departing.push({
+    type:p.type, side:p.side, ph:p.ph, dir:p.dir || 1,
+    file:p.file, rank:p.rank, a:1, s:1, life: RM ? 0.01 : 0.28
+  });
+}
+
+/* The sun climbs as the game unfolds: dawn arrives with the endgame. */
+function skyFrac(){
+  if (RM) return 0.45;
+  var prog = Math.min(1, plyCount / 60);
+  return Math.min(1, dayF() * 0.3 + prog * 0.68 + 0.04);
+}
+
 function update(dt){
   if (!RM){
     skyT += dt;
@@ -800,10 +1250,20 @@ function update(dt){
       c.x -= c.v * dt;
       if (c.x < -160){ c.x = W + rnd(0, 120); c.y = rnd(H*0.05, H*0.28); }
     }
+    var now = performance.now() / 1000;
+    if (skyFrac() > 0.55 && now > nextChirp){
+      chirp();
+      nextChirp = now + rnd(5, 13);
+    }
   }
   if (hop){
     hop.t += dt;
     if (hop.t >= hop.dur) hop = null;
+  }
+  if (mateAnim && mateAnim.t < mateAnim.dur) mateAnim.t += dt;
+  if (hintT > 0){
+    hintT -= dt;
+    if (hintT <= 0) hintMove = null;
   }
   for (var d = departing.length - 1; d >= 0; d--){
     var g = departing[d];
@@ -817,6 +1277,10 @@ function update(dt){
     flashes[f].t -= dt;
     if (flashes[f].t <= 0) flashes.splice(f, 1);
   }
+  for (var fl = flights.length - 1; fl >= 0; fl--){
+    flights[fl].t += dt;
+    if (flights[fl].t >= flights[fl].dur) flights.splice(fl, 1);
+  }
   if (aiWait > 0 && !hop){
     aiWait -= dt;
     if (aiWait <= 0 && STATE === 'play' && vsAI && turn === 'b'){
@@ -827,7 +1291,7 @@ function update(dt){
 }
 
 function drawSky(){
-  var f = RM ? 0.45 : dayF();
+  var f = skyFrac();
   var g = ctx.createLinearGradient(0, 0, 0, H);
   var stops = [[0, C.predawn, C.skyHi], [0.30, C.predawn, '#6E5A54'], [0.68, C.predawn2, C.dawn], [0.88, C.skyHi, C.gold], [1, C.skyHi, C.day]];
   for (var si = 0; si < stops.length; si++){
@@ -865,30 +1329,87 @@ function drawBoard(){
       ctx.fillRect(bx + f*sq, by + r*sq, sq + 0.5, sq + 0.5);
     }
   }
+  /* coordinates */
+  var fs = Math.max(9, sq * 0.16);
+  ctx.font = '600 ' + fs + 'px "Spline Sans Mono", monospace';
+  ctx.textBaseline = 'middle';
+  var files = 'abcdefgh';
+  for (var cf = 0; cf < 8; cf++){
+    var darkSq = ((cf + 7) % 2 === 1);
+    ctx.fillStyle = darkSq ? 'rgba(243,236,220,0.55)' : 'rgba(20,16,10,0.42)';
+    ctx.textAlign = 'center';
+    ctx.fillText(files[vF(cf)], bx + cf * sq + sq / 2, by + 8 * sq - fs * 0.85);
+  }
+  for (var cr = 0; cr < 8; cr++){
+    var darkR = ((0 + cr) % 2 === 1);
+    ctx.fillStyle = darkR ? 'rgba(243,236,220,0.55)' : 'rgba(20,16,10,0.42)';
+    ctx.textAlign = 'left';
+    ctx.fillText(String(vR(cr) + 1), bx + 3, by + cr * sq + sq / 2);
+  }
   ctx.strokeStyle = 'rgba(20,16,10,0.28)'; ctx.lineWidth = 2;
   ctx.strokeRect(bx - 3, by - 3, board + 6, board + 6);
 }
 
 function drawMarks(){
-  if (selected){
-    ctx.fillStyle = 'rgba(232,147,58,0.38)';
-    ctx.fillRect(bx + selected.file * sq, by + selected.rank * sq, sq, sq);
+  var i;
+  if (lastMove){
+    ctx.fillStyle = 'rgba(232,147,58,0.16)';
+    ctx.fillRect(bx + vF(lastMove.f0) * sq, by + vR(lastMove.r0) * sq, sq, sq);
+    ctx.fillRect(bx + vF(lastMove.f1) * sq, by + vR(lastMove.r1) * sq, sq, sq);
   }
-  for (var i = 0; i < flashes.length; i++){
+  if (selected){
+    var sx = bx + vF(selected.file) * sq, sy = by + vR(selected.rank) * sq;
+    ctx.strokeStyle = C.dawn; ctx.lineWidth = 3;
+    ctx.strokeRect(sx + 2, sy + 2, sq - 4, sq - 4);
+  }
+  if (checkSide){
+    var k = kingOf(checkSide, pieces);
+    if (k){
+      var kc = cellXY(vF(k.file), vR(k.rank));
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 3;
+      ctx.setLineDash([Math.max(4, sq * 0.1), Math.max(3, sq * 0.075)]);
+      ctx.beginPath(); ctx.arc(kc.x, kc.y - sq * 0.34, sq * 0.42, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+  for (i = 0; i < flashes.length; i++){
     var fl = flashes[i];
     ctx.fillStyle = 'rgba(232,147,58,' + (0.5 * (fl.t / 0.28)).toFixed(3) + ')';
-    ctx.fillRect(bx + fl.f * sq, by + fl.r * sq, sq, sq);
+    ctx.fillRect(bx + vF(fl.f) * sq, by + vR(fl.r) * sq, sq, sq);
   }
   for (var j = 0; j < legal.length; j++){
     var m = legal[j];
-    var cx = bx + (m.f + 0.5) * sq;
-    var cy = by + (m.r + 0.5) * sq;
+    var cx = bx + (vF(m.f) + 0.5) * sq;
+    var cy = by + (vR(m.r) + 0.5) * sq;
     if (m.capture || m.ep){
       ctx.strokeStyle = C.gold; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(cx, cy, sq * 0.36, 0, Math.PI * 2); ctx.stroke();
     } else {
       ctx.fillStyle = C.gold;
       ctx.beginPath(); ctx.arc(cx, cy, Math.max(4, sq * 0.11), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  if (hintMove){
+    var hp = findPiece(hintMove.pid);
+    if (hp){
+      var p1 = cellXY(vF(hp.file), vR(hp.rank));
+      var p2 = cellXY(vF(hintMove.f), vR(hintMove.r));
+      var pulse = RM ? 0.8 : 0.55 + 0.3 * Math.sin(performance.now() / 160);
+      ctx.strokeStyle = 'rgba(242,184,75,' + pulse.toFixed(3) + ')';
+      ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y - sq * 0.35);
+      ctx.lineTo(p2.x, p2.y - sq * 0.35);
+      ctx.stroke();
+      var ang = Math.atan2((p2.y - p1.y), (p2.x - p1.x));
+      ctx.fillStyle = 'rgba(242,184,75,' + pulse.toFixed(3) + ')';
+      ctx.save();
+      ctx.translate(p2.x, p2.y - sq * 0.35);
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(0, 0); ctx.lineTo(-12, -6); ctx.lineTo(-12, 6);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
     }
   }
 }
@@ -899,21 +1420,26 @@ function drawPieces(){
   for (var i = 0; i < pieces.length; i++){
     var p = pieces[i];
     if (p.id === hopId) continue;
-    var pos = cellXY(p.file, p.rank);
+    var pos = cellXY(vF(p.file), vR(p.rank));
+    var rot = 0;
+    if (mateAnim && p.type === 'king' && p.side === mateAnim.side){
+      var u = Math.min(1, mateAnim.t / mateAnim.dur);
+      rot = easeIO(u) * (Math.PI / 2.1) * (p.dir || 1);
+    }
     drawShadow(pos.x, pos.y, p.type);
-    drawPieceAt(p, pos.x, pos.y, t, 1);
+    drawPieceAt(p, pos.x, pos.y, t, 1, rot);
   }
   if (hop){
     var p2 = findPiece(hop.id);
     if (p2){
-      var u = Math.min(1, hop.t / hop.dur);
-      var e = easeIO(u);
-      var x = bx + (hop.f0 + (hop.f1 - hop.f0) * e + 0.5) * sq;
-      var y = by + (hop.r0 + (hop.r1 - hop.r0) * e + 1) * sq - 3;
-      var lift = Math.sin(u * Math.PI) * sq * 0.28;
+      var u2 = Math.min(1, hop.t / hop.dur);
+      var e = easeIO(u2);
+      var x = bx + (vF(hop.f0) + (vF(hop.f1) - vF(hop.f0)) * e + 0.5) * sq;
+      var y = by + (vR(hop.r0) + (vR(hop.r1) - vR(hop.r0)) * e + 1) * sq - 3;
+      var lift = Math.sin(u2 * Math.PI) * sq * 0.28;
       var settle = 0;
-      if (u > 0.82){
-        var s = (u - 0.82) / 0.18;
+      if (u2 > 0.82){
+        var s = (u2 - 0.82) / 0.18;
         settle = Math.sin(s * Math.PI) * 2.6;
       }
       drawShadow(x, y, p2.type);
@@ -922,10 +1448,25 @@ function drawPieces(){
   }
   for (var d = 0; d < departing.length; d++){
     var g = departing[d];
-    var pos2 = cellXY(g.file, g.rank);
+    var pos2 = cellXY(vF(g.file), vR(g.rank));
     ctx.save();
     ctx.globalAlpha = g.a;
     drawPieceAt(g, pos2.x, pos2.y, t, g.s);
+    ctx.restore();
+  }
+  /* capture flights to the Pound */
+  for (var fi = 0; fi < flights.length; fi++){
+    var F = flights[fi];
+    var fu = Math.min(1, F.t / F.dur);
+    var fe = easeIO(fu);
+    var fx = F.x0 + (F.x1 - F.x0) * fe;
+    var fy = F.y0 + (F.y1 - F.y0) * fe - Math.sin(fu * Math.PI) * sq * 0.5;
+    var fsize = sq * 0.8 + (24 - sq * 0.8) * fe;
+    ctx.save();
+    ctx.globalAlpha = fu > 0.85 ? (1 - fu) / 0.15 : 1;
+    ctx.translate(fx, fy);
+    ctx.rotate(Math.sin(fu * Math.PI) * 0.14);
+    ctx.drawImage(F.spr, -fsize / 2, -fsize / 2, fsize, fsize);
     ctx.restore();
   }
 }
@@ -949,8 +1490,14 @@ function frame(now){
 
 resize();
 initScene();
-if (!restore()) setStatus('Ink to move');
-else setStatus(STATE === 'over' ? hudTag.textContent : ((turn === 'w' ? 'Ink' : 'Stone') + ' to move'));
+updateRails();
+if (!restore()){
+  setStatus('Ink to move');
+} else {
+  updateRails();
+  setStatus(STATE === 'over' ? 'game over' : (sideName(turn) + ' to move'));
+}
+selDiff.style.display = vsAI ? '' : 'none';
 requestAnimationFrame(frame);
 })();
 </script>
