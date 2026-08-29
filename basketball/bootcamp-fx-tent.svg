@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 920" width="800" height="920">
+  <defs>
+    <linearGradient id="canopyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#353aa3"/>
+      <stop offset="1" stop-color="#2e3192"/>
+    </linearGradient>
+    <linearGradient id="valanceGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#353aa3"/>
+      <stop offset="0.25" stop-color="#2e3192"/>
+      <stop offset="1" stop-color="#272b7e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- canopy peak -->
+  <path d="M400 60 L120 340 L680 340 Z" fill="url(#canopyGrad)"/>
+  <path d="M400 62 L122 338" stroke="#4a4fc4" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M400 62 L678 338" stroke="#23267a" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+  <path d="M124 336 L676 336" stroke="#20247a" stroke-width="6" opacity="0.5"/>
+
+  <!-- branding, centered on canopy -->
+  <text x="400" y="242" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" font-style="italic" fill="#ffffff">curtis ludlow</text>
+  <text x="400" y="278" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" letter-spacing="5" fill="#cfd2f2">CORE STRENGTH TRAINING</text>
+
+  <!-- valance -->
+  <path d="M120 340 L680 340 L668 430 L132 430 Z" fill="url(#valanceGrad)"/>
+  <path d="M122 342 L678 342" stroke="#4a4fc4" stroke-width="3" opacity="0.6"/>
+  <path d="M134 428 L666 428" stroke="#1e226e" stroke-width="3" opacity="0.6"/>
+
+  <!-- valance text, uniform size -->
+  <text x="401" y="402" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="44" font-weight="900" letter-spacing="1" textLength="510" lengthAdjust="spacingAndGlyphs" fill="#191c5e" opacity="0.55">BOOT CAMP FX .COM</text>
+  <text x="400" y="400" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="44" font-weight="900" letter-spacing="1" textLength="510" lengthAdjust="spacingAndGlyphs" fill="#ffffff">BOOT CAMP FX .COM</text>
+  <text x="400" y="398" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="44" font-weight="900" letter-spacing="1" textLength="510" lengthAdjust="spacingAndGlyphs" fill="#8f95e8" opacity="0.25">BOOT CAMP FX .COM</text>
+
+  <!-- front legs + feet -->
+  <rect x="146" y="430" width="16" height="460" fill="#dfe3ea"/>
+  <rect x="146" y="430" width="5" height="460" fill="#ffffff" opacity="0.5"/>
+  <rect x="638" y="430" width="16" height="460" fill="#dfe3ea"/>
+  <rect x="638" y="430" width="5" height="460" fill="#ffffff" opacity="0.5"/>
+  <rect x="140" y="882" width="28" height="10" rx="3" fill="#aab0bb"/>
+  <rect x="632" y="882" width="28" height="10" rx="3" fill="#aab0bb"/>
+</svg>
