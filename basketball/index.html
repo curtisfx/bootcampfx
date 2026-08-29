@@ -382,7 +382,7 @@ function drawTutorial(){
   var cardH = 108;
   var hudSafe = 86, floorSafe = 132;
   var hoopSafeX = hoop.x - 52;
-  var tcx = owlCx, tcy = uy1 - 10 - cardH / 2;
+  var tcx = W * 0.5, tcy = hudSafe + cardH / 2 + 10;   /* park in the empty sky, top-center — clear of the owl cluster (was centered on the owl, which now spawns airborne over the tent) */
   tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
   tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
   if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
