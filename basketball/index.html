@@ -391,11 +391,11 @@ function drawTutorial(){
      fall back to dropping it below the owl instead. */
   var owlCy2 = Math.round(H * 0.36) - 40;   /* spawn body center (feet at 0.36H) */
   var tcx = owlCx + 190 + cardW / 2;
-  var tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2));
+  var tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, hoop.y - cardH/2));   /* card base on the rim line */
   tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
   if (Math.abs(tcx - owlCx) < cardW / 2 + 60){
     tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, owlCx));
-    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 170));
+    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 145));   /* as high as the geometry allows at 360 — the rim line itself is bracketed by the owl and the hoop there */
   }
   if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
     tcx = Math.min(tcx, hoopSafeX - cardW/2);
