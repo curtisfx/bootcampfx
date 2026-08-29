@@ -382,9 +382,18 @@ function drawTutorial(){
   var cardH = 108;
   var hudSafe = 86, floorSafe = 132;
   var hoopSafeX = hoop.x - 52;
-  var tcx = W * 0.5, tcy = hudSafe + cardH / 2 + 10;   /* park in the empty sky, top-center — clear of the owl cluster (was centered on the owl, which now spawns airborne over the tent) */
+  /* dock the card to the right of the owl — the FLY guideline rises vertically
+     above the owl, so a side-docked card can never cover it. On screens too
+     narrow for the dock (the clamp pushes the card back over the owl's column),
+     fall back to dropping it below the owl instead. */
+  var owlCy2 = player.y - 40;
+  var tcx = owlCx + 190 + cardW / 2;
+  var tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2));
   tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
-  tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, tcy));
+  if (Math.abs(tcx - owlCx) < cardW / 2 + 60){
+    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, owlCx));
+    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 170));
+  }
   if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
     tcx = Math.min(tcx, hoopSafeX - cardW/2);
     tcx = Math.max(cardW/2 + 8, tcx);
