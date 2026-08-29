@@ -395,7 +395,7 @@ function drawTutorial(){
   tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
   if (Math.abs(tcx - owlCx) < cardW / 2 + 60){
     tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, owlCx));
-    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 145));   /* as high as the geometry allows at 360 — the rim line itself is bracketed by the owl and the hoop there */
+    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 105));   /* card top on the owl's feet line (spawn feet = 0.36H); the rim line itself is bracketed by the owl and the hoop at 360 */
   }
   if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
     tcx = Math.min(tcx, hoopSafeX - cardW/2);
