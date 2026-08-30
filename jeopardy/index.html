@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Acacia Park — Dawn Jeopardy</title>
+<meta name="description" content="Dawn Jeopardy at Acacia Park. Hoot the Owl hosts from his moonlit tree as the sun comes up. Free to play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --predawn:#0F1B2C; --predawn-2:#16273D; --pine:#14291F;
+    --dawn:#E8933A; --gold:#F2B84B; --day:#FBF7EE; --day-2:#F3ECDC;
+    --ink:#14100A; --mist:#9FB0C4; --stone:#6A6255;
+    --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif; --mono:'Spline Sans Mono',monospace;
+    --ease:cubic-bezier(.22,.7,.25,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--predawn);overflow:hidden;
+    font-family:var(--body);color:var(--day);
+    -webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+  #bg{position:fixed;inset:0;width:100vw;height:100vh;display:block;}
+  /* foreground layer — clouds + acorn fireflies float in front of the board */
+  #fg{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:5;pointer-events:none;}
+  .hud{z-index:6;}
+  #speech{z-index:7;}
+  #hudTools{position:fixed;top:48px;left:50%;transform:translateX(-50%);z-index:8;display:flex;gap:8px;}
+  .iconbtn{appearance:none;border:1px solid rgba(159,176,196,.28);border-radius:10px;cursor:pointer;
+    background:rgba(15,27,44,.5);color:var(--mist);font-family:var(--mono);font-size:.6rem;
+    font-weight:600;letter-spacing:.18em;padding:9px 12px;transition:border-color .15s,color .15s;}
+  .iconbtn:hover{border-color:var(--gold);color:var(--gold);}
+  #app{position:fixed;inset:0;display:flex;flex-direction:column;}
+
+  .hud{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;
+    padding:12px 16px 0;text-shadow:0 2px 8px rgba(0,0,0,.45);pointer-events:none;gap:8px;}
+  .hud .stat{font-weight:700;letter-spacing:.02em;min-width:72px;}
+  .hud .stat b{display:block;font-family:var(--display);font-weight:600;font-size:1.55rem;line-height:1.1;}
+  .hud .stat span{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.22em;color:var(--mist);}
+  .hud .mid{text-align:center;flex:1;}
+  .hud .mid .game{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);}
+  .hud .mid .phase{font-family:var(--mono);font-size:.95rem;font-weight:600;letter-spacing:.12em;color:var(--gold);}
+  .hud .right{text-align:right;}
+  .hud .neg b{color:var(--dawn);}
+
+  #speech{position:fixed;z-index:6;max-width:280px;pointer-events:none;
+    background:var(--day);color:var(--ink);border-radius:14px;padding:10px 14px;
+    font-size:.86rem;font-weight:600;line-height:1.35;opacity:0;transform:translateY(6px);
+    transition:opacity .25s var(--ease),transform .25s var(--ease);
+    box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  #speech.on{opacity:1;transform:translateY(0);}
+  #speech::after{content:'';position:absolute;left:28px;bottom:-8px;border:9px solid transparent;
+    border-top-color:var(--day);border-bottom:0;}
+
+  /* board — shifted right of Hoot's tree so the host stays visible */
+  #board{position:relative;z-index:4;flex:1;display:grid;grid-template-columns:repeat(5,1fr);
+    grid-template-rows:auto repeat(5,1fr);gap:6px;padding:14px 16px 18px;max-width:1100px;width:100%;
+    margin:0 0 0 auto;padding-left:max(250px, 22vw);}
+  .cat{display:flex;align-items:center;justify-content:center;text-align:center;
+    font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);padding:8px 4px;line-height:1.3;}
+  .cell{border:1px solid rgba(159,176,196,.28);border-radius:10px;cursor:pointer;
+    background:color-mix(in srgb, var(--predawn-2) 72%, transparent);
+    backdrop-filter:blur(2px);
+    color:var(--gold);font-family:var(--display);font-weight:600;font-size:clamp(1rem,3.2vw,1.7rem);
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .15s var(--ease),border-color .15s,background .15s;}
+  .cell:hover{transform:translateY(-2px);border-color:var(--gold);background:color-mix(in srgb, var(--dawn) 18%, var(--predawn-2));}
+  .cell.done{pointer-events:none;color:var(--mist);font-family:var(--mono);font-weight:600;
+    font-size:clamp(.5rem,1.4vw,.66rem);letter-spacing:.04em;line-height:1.25;padding:4px;
+    background:color-mix(in srgb, var(--predawn-2) 40%, transparent);opacity:.85;}
+  .cell.acorn{border-color:var(--gold);}
+
+  /* overlays */
+  .overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+    background:rgba(15,27,44,.55);backdrop-filter:blur(4px);opacity:0;pointer-events:none;
+    transition:opacity .3s var(--ease);padding:16px;}
+  .overlay.on{opacity:1;pointer-events:auto;}
+  .modal{max-width:640px;width:100%;text-align:center;background:color-mix(in srgb, var(--predawn-2) 88%, transparent);
+    border:1px solid rgba(159,176,196,.25);border-radius:18px;padding:28px 26px;
+    box-shadow:0 24px 64px rgba(0,0,0,.5);position:relative;}
+  .title{font-family:var(--display);font-weight:700;font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;letter-spacing:.01em;}
+  .title em{font-style:normal;color:var(--dawn);}
+  .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--mist);margin:10px 0 18px;}
+  .rules{text-align:left;margin:0 auto;max-width:440px;display:flex;flex-direction:column;gap:8px;}
+  .rl{display:grid;grid-template-columns:14px 92px 1fr auto;gap:10px;align-items:baseline;font-size:.9rem;}
+  .rl .dot{width:9px;height:9px;border-radius:99px;align-self:center;}
+  .rl .lbl{font-weight:700;letter-spacing:.03em;}
+  .rl .keys{color:var(--day-2);}
+  .rl .why{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);text-align:right;}
+  .tip{margin-top:16px;font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
+  .btn{margin-top:22px;appearance:none;border:0;border-radius:12px;cursor:pointer;
+    background:var(--dawn);color:var(--ink);font-family:var(--body);font-weight:700;font-size:1.02rem;
+    padding:14px 34px;letter-spacing:.02em;transition:transform .15s var(--ease),background .15s;}
+  .btn:hover{transform:translateY(-2px);background:var(--gold);}
+
+  /* clue card — cartoon speech bubble, Hoot perched on its left edge */
+  #clueOv .modal{
+    background:var(--day);color:var(--ink);border:3px solid var(--ink);border-radius:26px;
+    box-shadow:8px 10px 0 rgba(20,16,10,.45);padding:30px 28px 26px;margin-left:96px;max-width:600px;
+    text-align:left;}
+  #clueOv .modal::after{
+    content:'';position:absolute;left:-26px;bottom:74px;width:0;height:0;
+    border:16px solid transparent;border-right-color:var(--ink);border-left:0;}
+  #clueOv .modal::before{
+    content:'';position:absolute;left:-19px;bottom:78px;width:0;height:0;z-index:1;
+    border:12px solid transparent;border-right-color:var(--day);border-left:0;}
+  #clueOwl{position:absolute;left:-118px;bottom:-10px;width:130px;height:160px;pointer-events:none;z-index:2;}
+  .clue-cat{font-family:var(--mono);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#B06A12;}
+  .clue-val{font-family:var(--display);font-weight:600;font-size:1.9rem;color:var(--ink);margin:2px 0 12px;}
+  .clue-text{font-family:var(--display);font-weight:500;font-size:clamp(1.1rem,2.6vw,1.45rem);line-height:1.42;margin-bottom:18px;color:var(--ink);}
+  .choices{display:flex;flex-direction:column;gap:8px;}
+  .choice{appearance:none;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;
+    background:var(--day-2);color:var(--ink);border:2px solid var(--ink);border-radius:12px;
+    padding:11px 14px;font-family:var(--body);font-weight:600;font-size:.98rem;
+    transition:transform .12s var(--ease),background .12s;}
+  .choice:hover{transform:translateX(4px);background:#EFE3C8;}
+  .choice .key{font-family:var(--mono);font-weight:600;font-size:.8rem;background:var(--ink);color:var(--gold);
+    border-radius:8px;padding:3px 9px;letter-spacing:.08em;flex:none;}
+  .choice.right{background:#DDE8C9;border-color:#4A7A2E;}
+  .choice.right .key{background:#4A7A2E;color:var(--day);}
+  .choice.wrong{background:#F4D9C4;border-color:#B04A12;}
+  .choice.wrong .key{background:#B04A12;color:var(--day);}
+  .choice:disabled{cursor:default;}
+  .choice:disabled:not(.right):not(.wrong){opacity:.55;}
+  .verdict{font-family:var(--display);font-weight:600;font-size:1.35rem;margin:4px 0 2px;min-height:1.7rem;color:var(--ink);text-align:left;}
+  .fact{font-size:.88rem;line-height:1.4;color:#4A4234;text-align:left;min-height:1.2rem;margin-top:2px;}
+  .fact b{color:#B06A12;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;}
+  .verdict.good{color:#4A7A2E;}
+  .verdict.bad{color:#B04A12;}
+  #clueOv .btn{margin-top:14px;}
+  .timer{height:5px;border-radius:99px;background:rgba(20,16,10,.15);overflow:hidden;margin:16px 0 0;max-width:none;}
+  .timer i{display:block;height:100%;background:var(--dawn);width:100%;border-radius:99px;}
+  .acorn-badge{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--ink);background:var(--gold);border:2px solid var(--ink);border-radius:99px;padding:5px 14px;margin-bottom:10px;}
+
+  .wager-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .wager-row .btn{margin-top:0;padding:10px 18px;font-size:.9rem;}
+
+  #over .scores{display:flex;gap:26px;justify-content:center;margin:18px 0 8px;}
+  #over .num{font-family:var(--display);font-weight:600;font-size:2.4rem;}
+  #over .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);}
+  .breakdown{display:flex;gap:18px;justify-content:center;margin:10px 0 4px;flex-wrap:wrap;}
+  .breakdown .n{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--day-2);}
+  .breakdown .l{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);}
+  .newrec{font-family:var(--mono);color:var(--gold);letter-spacing:.2em;font-size:.8rem;margin-bottom:8px;display:none;}
+  .hint{margin-top:14px;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;color:var(--mist);text-transform:uppercase;}
+  .hint b{color:var(--gold);}
+
+  @media (max-width:760px){
+    #board{padding-left:16px;}
+    .cat{font-size:.54rem;letter-spacing:.08em;}
+    #speech{max-width:210px;font-size:.78rem;}
+    .rl{grid-template-columns:12px 78px 1fr;font-size:.82rem;}
+    .rl .why{display:none;}
+    #clueOv .modal{margin-left:64px;padding:22px 18px 18px;}
+    #clueOwl{left:-78px;width:96px;height:120px;}
+  }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<canvas id="fg"></canvas>
+<div id="hudTools">
+  <button class="iconbtn" id="newBtn" type="button">NEW</button>
+  <button class="iconbtn" id="resetBtn" type="button">RESET</button>
+</div>
+<div id="app">
+  <div class="hud">
+    <div class="stat" id="scoreBox"><b id="hudScore">0</b><span>Score</span></div>
+    <div class="mid">
+      <div class="game">Acacia Park · Dawn Jeopardy</div>
+      <div class="phase" id="hudPhase">Board 1</div>
+    </div>
+    <div class="stat right"><b id="hudLeft">25</b><span>Clues left</span></div>
+  </div>
+  <div id="board"></div>
+</div>
+<div id="speech"></div>
+
+<!-- start menu -->
+<div class="overlay on" id="menu">
+  <div class="modal">
+    <div class="title">Acacia Park<br><em>Dawn</em> Jeopardy</div>
+    <div class="tag">Hoot hosts · Twenty-five clues · One sunrise</div>
+    <div class="rules">
+      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Pick</span><span class="keys">Choose a category and value</span><span class="why">100–500</span></div>
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Answer</span><span class="keys">Pick A, B or C before the timer runs out</span><span class="why">15s</span></div>
+      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Score</span><span class="keys">Right pays, wrong costs</span><span class="why">±value</span></div>
+      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Golden Acorn</span><span class="keys">One hidden daily double — wager big</span><span class="why">2×</span></div>
+    </div>
+    <div class="tip">Clear the board and Hoot offers the Sunrise Wager · the sun rises as you play</div>
+    <button class="btn" id="startBtn">Start the Game</button>
+  </div>
+</div>
+
+<!-- clue card: speech bubble + host overlay -->
+<div class="overlay" id="clueOv">
+  <div class="modal">
+    <canvas id="clueOwl" width="260" height="320"></canvas>
+    <div id="acornBadge" class="acorn-badge" style="display:none;">◆ Golden Acorn — Daily Double ◆</div>
+    <div class="clue-cat" id="clueCat"></div>
+    <div class="clue-val" id="clueVal"></div>
+    <div class="clue-text" id="clueText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="verdict" id="verdict"></div>
+    <div class="fact" id="factLine"></div>
+    <div class="answer-row" id="nextRow" style="display:none;">
+      <button class="btn" id="nextBtn" style="margin-top:0;">Back to the Board</button>
+    </div>
+    <div class="timer" id="timerBar"><i id="timerFill"></i></div>
+  </div>
+</div>
+
+<!-- wager modal -->
+<div class="overlay" id="wagerOv">
+  <div class="modal">
+    <div id="wagerBadge" class="acorn-badge">◆ Golden Acorn — Daily Double ◆</div>
+    <div class="clue-cat" id="wagerCat" style="color:var(--gold);"></div>
+    <div class="clue-text" id="wagerPrompt" style="color:var(--day);">How much will you wager?</div>
+    <div class="wager-row" id="wagerRow"></div>
+  </div>
+</div>
+
+<!-- game over -->
+<div class="overlay" id="over">
+  <div class="modal">
+    <div class="newrec" id="newRec">★ New Record ★</div>
+    <div class="title" style="font-size:clamp(1.6rem,4.5vw,2.4rem);" id="vTitle">Sunrise <em>complete</em></div>
+    <div class="scores">
+      <div><div class="num" id="finScore">0</div><div class="lbl">Score</div></div>
+      <div><div class="num" id="finRight">0</div><div class="lbl">Correct</div></div>
+      <div><div class="num" id="finBest">0</div><div class="lbl">Best</div></div>
+    </div>
+    <div class="breakdown">
+      <div><div class="n" id="finAcorn">—</div><div class="l">Golden Acorn</div></div>
+      <div><div class="n" id="finWager">—</div><div class="l">Sunrise Wager</div></div>
+      <div><div class="n" id="finAcc">0%</div><div class="l">Accuracy</div></div>
+    </div>
+    <button class="btn" id="againBtn">Play Again</button>
+    <div class="hint"><b>Hoot</b> returns to his tree at dusk</div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= CATEGORY POOL =================
+   106 categories x 5 clues. Format per clue:
+   [clue text, correct answer, distractor, distractor]
+   Seasonal/new boards: swap this block only — core code never changes. */
+var CATS = [];
+CATS.push({c:"Geography",e:"🌍",q:[
+["The Nile flows through this northeast African country on its way to the Mediterranean.","Egypt","Morocco","Kenya"],
+["This is the largest country in the world by land area.","Russia","Canada","China"],
+["This strait separates Spain from Morocco.","Strait of Gibraltar","Bosphorus","Strait of Hormuz"],
+["This is the only continent crossed by all lines of longitude.","Antarctica","Africa","Asia"],
+["This country has the most natural lakes in the world.","Canada","Finland","Brazil"]]});
+CATS.push({c:"History",e:"📜",q:[
+["This ancient trade route connected China to the Mediterranean.","The Silk Road","The Amber Road","The Incense Route"],
+["In 1066, William the Conqueror won this battle.","Hastings","Agincourt","Waterloo"],
+["This wall fell in 1989, symbolizing the end of the Cold War.","The Berlin Wall","Hadrian's Wall","The Western Wall"],
+["This ship sank in 1912 on its maiden voyage.","The Titanic","The Lusitania","The Bismarck"],
+["This civilization built Machu Picchu.","The Inca","The Maya","The Aztec"]]});
+CATS.push({c:"U.S. History",e:"🦅",q:[
+["The Declaration of Independence was signed in this city.","Philadelphia","Boston","New York"],
+["This 1803 land deal doubled the size of the United States.","The Louisiana Purchase","The Alaska Purchase","The Gadsden Purchase"],
+["This war was fought between the North and the South from 1861 to 1865.","The Civil War","The War of 1812","The Spanish-American War"],
+["This speech by Lincoln begins 'Four score and seven years ago.'","The Gettysburg Address","The Emancipation Proclamation","The Second Inaugural"],
+["This 1969 event put the first humans on the Moon.","Apollo 11","Mercury 7","Gemini 4"]]});
+CATS.push({c:"Entertainment",e:"🎬",q:[
+["This 1939 film follows Dorothy down the yellow brick road.","The Wizard of Oz","Gone with the Wind","Snow White"],
+["This British band released the album 'Abbey Road.'","The Beatles","The Rolling Stones","Pink Floyd"],
+["This streaming service produced 'Stranger Things.'","Netflix","Hulu","Disney+"],
+["This director made 'Jaws,' 'E.T.,' and 'Jurassic Park.'","Steven Spielberg","George Lucas","James Cameron"],
+["This awards show honors excellence in television.","The Emmys","The Grammys","The Tonys"]]});
+CATS.push({c:"Potent Potables",e:"🍸",q:[
+["Vodka is traditionally distilled from potatoes or this grain crop.","Grains like wheat or rye","Rice only","Corn only"],
+["This country is the birthplace of tequila.","Mexico","Spain","Brazil"],
+["This sparkling wine can only bear its name if it comes from a region of France.","Champagne","Prosecco","Cava"],
+["This juniper-flavored spirit is paired with tonic.","Gin","Rum","Bourbon"],
+["This dark beer style originated in Ireland, with Guinness its famous example.","Stout","Lager","Pilsner"]]});
+CATS.push({c:"Sports",e:"🏅",q:[
+["This tournament is tennis's oldest, played on grass in London.","Wimbledon","The US Open","The French Open"],
+["In soccer, a player scoring three goals in one game earns this.","A hat trick","A brace","A clean sheet"],
+["This boxer was known as 'The Greatest.'","Muhammad Ali","Mike Tyson","Joe Frazier"],
+["The Super Bowl decides the champion of this league.","The NFL","The NBA","MLB"],
+["This Jamaican sprinter holds the 100m world record.","Usain Bolt","Carl Lewis","Jesse Owens"]]});
+CATS.push({c:"Science",e:"🔬",q:[
+["This force keeps your feet on the ground.","Gravity","Friction","Magnetism"],
+["H2O is the chemical formula for this.","Water","Hydrogen peroxide","Salt"],
+["This scientist proposed the theory of relativity.","Albert Einstein","Isaac Newton","Niels Bohr"],
+["The Earth revolves around the Sun in about this many days.","365","30","100"],
+["This gas do plants absorb for photosynthesis.","Carbon dioxide","Oxygen","Nitrogen"]]});
+CATS.push({c:"Nature",e:"🌿",q:[
+["This is the tallest type of tree in the world, found in California.","The redwood","The baobab","The eucalyptus"],
+["This phenomenon lights up polar skies, also called the aurora.","The Northern Lights","The zodiacal light","The green flash"],
+["This is the largest living structure on Earth, off Australia's coast.","The Great Barrier Reef","The Amazon rainforest","The Siberian taiga"],
+["A caterpillar becomes this through metamorphosis.","A butterfly","A moth only","A beetle"],
+["This layer of the atmosphere contains most of our weather.","The troposphere","The stratosphere","The mesosphere"]]});
+CATS.push({c:"Animals",e:"🦁",q:[
+["This is the fastest land animal.","The cheetah","The lion","The greyhound"],
+["This is the largest animal ever known to have lived.","The blue whale","The African elephant","The megalodon"],
+["This marsupial carries its young in a pouch and boxes.","The kangaroo","The koala","The wombat"],
+["A group of lions is called this.","A pride","A pack","A herd"],
+["This bird is the symbol of the United States.","The bald eagle","The turkey","The condor"]]});
+CATS.push({c:"Literature",e:"📚",q:[
+["This Shakespeare play features the star-crossed lovers Romeo and Juliet.","Romeo and Juliet","Hamlet","Macbeth"],
+["This author wrote 'Pride and Prejudice.'","Jane Austen","Charlotte Bronte","Emily Dickinson"],
+["'Moby-Dick' is about the hunt for one of these.","A white whale","A giant squid","A sea serpent"],
+["This boy wizard stars in a J.K. Rowling series.","Harry Potter","Percy Jackson","Frodo Baggins"],
+["This novel begins 'Call me Ishmael.'","Moby-Dick","Treasure Island","The Odyssey"]]});
+CATS.push({c:"Movies",e:"🎥",q:[
+["This 1975 shark film is often called the first summer blockbuster.","Jaws","The Deep","Orca"],
+["This saga features the line 'May the Force be with you.'","Star Wars","Star Trek","Dune"],
+["This 1994 film features a bus that can't drop below 50 mph.","Speed","The Fugitive","Con Air"],
+["This director made 'Psycho' and 'The Birds.'","Alfred Hitchcock","Orson Welles","Billy Wilder"],
+["This animated film studio made 'Toy Story.'","Pixar","DreamWorks","Studio Ghibli"]]});
+CATS.push({c:"Television",e:"📺",q:[
+["This long-running animated family lives in Springfield.","The Simpsons","Family Guy","King of the Hill"],
+["This sitcom's six friends hung out at Central Perk.","Friends","Seinfeld","Cheers"],
+["This fantasy HBO series is based on George R.R. Martin's novels.","Game of Thrones","The Witcher","Westworld"],
+["This science show hosted by Carl Sagan explored the universe.","Cosmos","Nova","NOVA ScienceNOW"],
+["This British sci-fi hero travels in the TARDIS.","Doctor Who","Blake's 7","Red Dwarf"]]});
+CATS.push({c:"Music",e:"🎵",q:[
+["This composer wrote the 'Ninth Symphony' while deaf.","Beethoven","Mozart","Bach"],
+["This singer was known as the 'King of Pop.'","Michael Jackson","Elvis Presley","Prince"],
+["A piano has this many keys, traditionally.","88","76","96"],
+["This Elvis Presley home is in Memphis.","Graceland","Neverland","Paisley Park"],
+["This four-letter word names both a K-pop group and a heart test.","BTS","ABBA","EXO"]]});
+CATS.push({c:"Art",e:"🎨",q:[
+["This artist painted the 'Mona Lisa.'","Leonardo da Vinci","Michelangelo","Raphael"],
+["This Dutch painter cut off part of his own ear.","Vincent van Gogh","Pablo Picasso","Claude Monet"],
+["The 'Starry Night' hangs in this New York museum.","MoMA","The Met","The Guggenheim"],
+["This Spanish artist co-founded Cubism.","Pablo Picasso","Salvador Dali","Joan Miro"],
+["Michelangelo painted the ceiling of this chapel.","The Sistine Chapel","St. Peter's Basilica","Notre-Dame"]]});
+CATS.push({c:"Food",e:"🍽️",q:[
+["Sushi is most associated with this country.","Japan","China","Thailand"],
+["This Italian dish is made of a flat round base with toppings.","Pizza","Pasta","Risotto"],
+["This spice makes curry yellow.","Turmeric","Paprika","Saffron"],
+["This Mexican staple is a folded tortilla with fillings.","A taco","A burrito","An empanada"],
+["Honey is made by these insects.","Bees","Wasps","Ants"]]});
+CATS.push({c:"World Capitals",e:"🏛️",q:[
+["This is the capital of France.","Paris","Lyon","Nice"],
+["This is the capital of Japan.","Tokyo","Kyoto","Osaka"],
+["This is the capital of Australia.","Canberra","Sydney","Melbourne"],
+["This is the capital of Canada.","Ottawa","Toronto","Montreal"],
+["This is the capital of Egypt.","Cairo","Alexandria","Giza"]]});
+CATS.push({c:"Rivers",e:"🏞️",q:[
+["This river flows through Paris.","The Seine","The Thames","The Danube"],
+["This is generally considered the longest river in South America.","The Amazon","The Parana","The Orinoco"],
+["This U.S. river flows through the Grand Canyon.","The Colorado","The Mississippi","The Rio Grande"],
+["This river meets the Missouri near St. Louis.","The Mississippi","The Ohio","The Arkansas"],
+["This African river flows north into the Mediterranean.","The Nile","The Congo","The Niger"]]});
+CATS.push({c:"Mountains",e:"⛰️",q:[
+["This is the tallest mountain above sea level.","Mount Everest","K2","Kilimanjaro"],
+["This range runs along the western edge of South America.","The Andes","The Rockies","The Alps"],
+["This range separates France and Spain.","The Pyrenees","The Alps","The Carpathians"],
+["This Japanese mountain is a sacred, snow-capped volcano.","Mount Fuji","Mount Aso","Mount Tate"],
+["This range contains Mount McKinley, also called Denali.","The Alaska Range","The Cascades","The Sierra Nevada"]]});
+CATS.push({c:"Oceans & Seas",e:"🌊",q:[
+["This is the largest ocean on Earth.","The Pacific","The Atlantic","The Indian"],
+["This sea lies between Europe and Africa.","The Mediterranean","The Black Sea","The North Sea"],
+["This ocean is home to the Mariana Trench.","The Pacific","The Atlantic","The Arctic"],
+["This salty lake in the Middle East is so dense you float in it.","The Dead Sea","The Caspian Sea","The Red Sea"],
+["This warm Atlantic current moderates Europe's climate.","The Gulf Stream","The Labrador Current","The Canary Current"]]});
+CATS.push({c:"Space",e:"🚀",q:[
+["This was the first artificial satellite, launched by the USSR.","Sputnik","Vostok","Explorer 1"],
+["This telescope, launched in 1990, orbits Earth.","Hubble","Kepler","Webb"],
+["This NASA program landed humans on the Moon.","Apollo","Gemini","Mercury"],
+["This rover family has explored Mars, including Curiosity and this 2021 arrival.","Perseverance","Voyager","Pioneer"],
+["The boundary of a black hole is called this.","The event horizon","The singularity","The accretion disk"]]});
+CATS.push({c:"Astronomy",e:"✨",q:[
+["This is the closest star to Earth.","The Sun","Proxima Centauri","Sirius"],
+["This is the largest planet in our solar system.","Jupiter","Saturn","Neptune"],
+["This planet is known for its prominent rings.","Saturn","Mars","Venus"],
+["A group of stars forming a pattern is called this.","A constellation","A galaxy","A nebula"],
+["This dwarf planet was demoted in 2006.","Pluto","Ceres","Eris"]]});
+CATS.push({c:"Inventions",e:"💡",q:[
+["This man is credited with the practical light bulb.","Thomas Edison","Nikola Tesla","Benjamin Franklin"],
+["Alexander Graham Bell patented this device.","The telephone","The telegraph","The phonograph"],
+["The Wright brothers pioneered this.","The airplane","The automobile","The helicopter"],
+["This Gutenberg invention spread books across Europe.","The printing press","The typewriter","The paper mill"],
+["Tim Berners-Lee invented this at CERN.","The World Wide Web","Email","The personal computer"]]});
+CATS.push({c:"Math",e:"➗",q:[
+["This many sides does a hexagon have.","Six","Five","Eight"],
+["Pi is approximately this value.","3.14","2.72","1.62"],
+["This branch of math uses letters for unknowns.","Algebra","Geometry","Trigonometry"],
+["The angles of a triangle add up to this many degrees.","180","90","360"],
+["This Greek mathematician wrote 'Elements.'","Euclid","Pythagoras","Archimedes"]]});
+CATS.push({c:"Medicine",e:"⚕️",q:[
+["Alexander Fleming discovered this first antibiotic.","Penicillin","Aspirin","Insulin"],
+["This instrument listens to your heartbeat.","A stethoscope","An otoscope","A sphygmomanometer"],
+["This disease is prevented by the smallpox vaccine, the first ever developed.","Smallpox","Polio","Measles"],
+["Doctors take this ancient oath named for a Greek physician.","The Hippocratic Oath","The Galenic Oath","The Nightingale Pledge"],
+["This imaging technique uses magnetic fields to see soft tissue.","MRI","X-ray","Ultrasound"]]});
+CATS.push({c:"The Human Body",e:"🧠",q:[
+["This is the largest organ of the human body.","The skin","The liver","The heart"],
+["The adult human body has about this many bones.","206","186","250"],
+["This blood cell type carries oxygen.","Red blood cells","White blood cells","Platelets"],
+["This organ pumps blood through the body.","The heart","The lungs","The kidneys"],
+["This is the longest bone in the body.","The femur","The humerus","The tibia"]]});
+CATS.push({c:"Chemistry",e:"⚗️",q:[
+["This element's symbol is 'O.'","Oxygen","Gold","Osmium"],
+["This chart organizes all the elements.","The periodic table","The reactivity series","The atomic index"],
+["This gas makes up most of Earth's atmosphere.","Nitrogen","Oxygen","Carbon dioxide"],
+["The symbol 'Au' stands for this element.","Gold","Silver","Aluminum"],
+["A substance with a pH below 7 is this.","Acidic","Basic","Neutral"]]});
+CATS.push({c:"Physics",e:"🧲",q:[
+["This scientist's laws include 'an object in motion stays in motion.'","Isaac Newton","Galileo Galilei","James Clerk Maxwell"],
+["E=mc² relates energy to this.","Mass","Velocity","Charge"],
+["Light travels at about 300,000 of these per second.","Kilometers","Miles","Meters"],
+["This particle carries a negative charge.","The electron","The proton","The neutron"],
+["This unit measures electrical power, as in a 60-one light bulb.","The watt","The volt","The amp"]]});
+CATS.push({c:"Biology",e:"🧬",q:[
+["This molecule carries genetic instructions.","DNA","ATP","RNA polymerase"],
+["The 'powerhouse of the cell' is this organelle.","The mitochondrion","The nucleus","The ribosome"],
+["This naturalist proposed evolution by natural selection.","Charles Darwin","Gregor Mendel","Louis Pasteur"],
+["Plants make food using sunlight in this process.","Photosynthesis","Respiration","Fermentation"],
+["This is the basic unit of life.","The cell","The atom","The tissue"]]});
+CATS.push({c:"Mythology",e:"⚡",q:[
+["This Greek god wields the lightning bolt.","Zeus","Poseidon","Hades"],
+["This Norse god wields the hammer Mjolnir.","Thor","Odin","Loki"],
+["This Greek hero performed twelve labors.","Hercules","Achilles","Odysseus"],
+["This one-eyed creature appears in the Odyssey.","The Cyclops","The Minotaur","Medusa"],
+["This Egyptian sun god travels the sky in a boat.","Ra","Osiris","Anubis"]]});
+CATS.push({c:"World Religion",e:"🕊️",q:[
+["This is the holy book of Islam.","The Quran","The Torah","The Vedas"],
+["Buddhism began in this ancient region of the world.","India","China","Japan"],
+["This is the Jewish day of rest.","The Sabbath","Passover","Hanukkah"],
+["Mecca is the holiest city of this faith.","Islam","Christianity","Hinduism"],
+["This Hindu festival is known as the festival of lights.","Diwali","Holi","Ramadan"]]});
+CATS.push({c:"Architecture",e:"🏗️",q:[
+["This Paris tower was built for the 1889 World's Fair.","The Eiffel Tower","The Arc de Triomphe","Sacré-Cœur"],
+["This Italian tower is famous for its lean.","The Tower of Pisa","Big Ben","The Campanile of Venice"],
+["Frank Lloyd Wright designed this house over a waterfall.","Fallingwater","Taliesin","The Glass House"],
+["This style features pointed arches and flying buttresses, like Notre-Dame.","Gothic","Baroque","Romanesque"],
+["The Great Pyramid was built as a tomb in this country.","Egypt","Mexico","Peru"]]});
+CATS.push({c:"Business",e:"💼",q:[
+["This company, founded in a garage, makes the iPhone.","Apple","Microsoft","Dell"],
+["NYSE stands for this stock exchange.","The New York Stock Exchange","The National Yield Securities Exchange","The Northern York Stock Exchange"],
+["This is the world's largest online retailer, founded by Jeff Bezos.","Amazon","eBay","Alibaba"],
+["This soft drink company makes Coke.","Coca-Cola","PepsiCo","Dr Pepper"],
+["A company owned by shareholders trades this way.","Publicly","Privately","Cooperatively"]]});
+CATS.push({c:"Economics",e:"📈",q:[
+["A general rise in prices is called this.","Inflation","Deflation","Stagnation"],
+["GDP stands for this.","Gross Domestic Product","General Domestic Price","Global Development Percentage"],
+["This 1929 crash began the Great Depression.","The Wall Street Crash","Black Monday 1987","The Panic of 1907"],
+["Supply and this other force set market prices.","Demand","Labor","Tariffs"],
+["This U.S. institution sets the federal funds rate.","The Federal Reserve","The Treasury","The SEC"]]});
+CATS.push({c:"Politics",e:"🏛️",q:[
+["The U.S. Congress has these two chambers.","The Senate and the House","The Lords and the Commons","The Cabinet and the Court"],
+["A government ruled by the people is this.","A democracy","A monarchy","An oligarchy"],
+["The United Nations headquarters is in this city.","New York","Geneva","Paris"],
+["This document is the supreme law of the United States.","The Constitution","The Declaration of Independence","The Bill of Rights alone"],
+["The U.K.'s legislature meets in this building.","The Palace of Westminster","Buckingham Palace","10 Downing Street"]]});
+CATS.push({c:"U.S. Presidents",e:"🇺🇸",q:[
+["This was the first U.S. president.","George Washington","Thomas Jefferson","John Adams"],
+["This president issued the Emancipation Proclamation.","Abraham Lincoln","Ulysses S. Grant","Andrew Johnson"],
+["This president served four terms, leading through the Depression and WWII.","Franklin D. Roosevelt","Theodore Roosevelt","Harry Truman"],
+["This president appears on the $20 bill.","Andrew Jackson","Alexander Hamilton","Ulysses S. Grant"],
+["This president was assassinated in Dallas in 1963.","John F. Kennedy","Robert Kennedy","William McKinley"]]});
+CATS.push({c:"World Wars",e:"🎖️",q:[
+["WWI began after the assassination in this city.","Sarajevo","Vienna","Berlin"],
+["D-Day landings occurred on the beaches of this region.","Normandy","Dunkirk","Sicily"],
+["WWII in Europe ended in this year.","1945","1944","1946"],
+["This attack brought the U.S. into WWII.","Pearl Harbor","Midway","Guam"],
+["The WWI alliance of Britain, France, and Russia was called this.","The Triple Entente","The Axis","The Central Powers"]]});
+CATS.push({c:"Explorers",e:"🧭",q:[
+["This Italian sailed for Spain and reached the Americas in 1492.","Christopher Columbus","Amerigo Vespucci","Ferdinand Magellan"],
+["This Portuguese explorer's crew first circumnavigated the globe.","Magellan's","Da Gama's","Drake's"],
+["This pair led the Corps of Discovery across the American West.","Lewis and Clark","Pike and Long","Boone and Crockett"],
+["This Norwegian was first to the South Pole.","Roald Amundsen","Robert Scott","Ernest Shackleton"],
+["Marco Polo traveled from Venice to the court of this ruler.","Kublai Khan","Genghis Khan","Tamerlane"]]});
+CATS.push({c:"Ancient Rome",e:"🏺",q:[
+["This general was assassinated on the Ides of March.","Julius Caesar","Augustus","Brutus"],
+["Rome was said to be founded by these twin brothers.","Romulus and Remus","Castor and Pollux","Cain and Abel"],
+["This amphitheater hosted gladiator games.","The Colosseum","The Pantheon","The Forum"],
+["This volcano buried Pompeii in 79 AD.","Vesuvius","Etna","Stromboli"],
+["The Roman Empire's language was this.","Latin","Greek","Aramaic"]]});
+CATS.push({c:"Ancient Greece",e:"🏛️",q:[
+["This city-state was famous for its warriors.","Sparta","Athens","Corinth"],
+["The first Olympic Games honored this god.","Zeus","Apollo","Ares"],
+["This blind poet is credited with the Iliad and Odyssey.","Homer","Hesiod","Virgil"],
+["The Parthenon sits on this Athenian hill.","The Acropolis","Mount Olympus","The Agora"],
+["This philosopher taught Plato, who taught Aristotle.","Socrates","Pythagoras","Epicurus"]]});
+CATS.push({c:"Ancient Egypt",e:"𓂀",q:[
+["These structures served as pharaohs' tombs.","Pyramids","Ziggurats","Obelisks"],
+["This young pharaoh's tomb was found intact in 1922.","Tutankhamun","Ramses II","Akhenaten"],
+["Egyptian writing used these picture symbols.","Hieroglyphs","Cuneiform","Runes"],
+["This stone unlocked the reading of hieroglyphs.","The Rosetta Stone","The Behistun Inscription","The Narmer Palette"],
+["This river was the lifeblood of ancient Egypt.","The Nile","The Tigris","The Euphrates"]]});
+CATS.push({c:"The 1980s",e:"📼",q:[
+["This 1985 concert raised money for famine relief.","Live Aid","Woodstock","Band Aid on Tour"],
+["This arcade game with a yellow circle debuted in 1980.","Pac-Man","Donkey Kong","Space Invaders"],
+["MTV launched in 1981, first playing this kind of content.","Music videos","News","Sitcom reruns"],
+["This Rubik's puzzle craze began in the early 80s.","The Rubik's Cube","The Slinky","The yo-yo"],
+["This 1986 disaster destroyed a space shuttle shortly after launch.","Challenger","Columbia","Apollo 13"]]});
+CATS.push({c:"The 1990s",e:"💾",q:[
+["This sitcom about 'nothing' starred Jerry Seinfeld.","Seinfeld","Frasier","Friends"],
+["This 1997 film about a shipwreck became the top-grossing movie of its time.","Titanic","Avatar","The Phantom Menace"],
+["This handheld Nintendo console dominated 90s gaming.","The Game Boy","The Lynx","The Game Gear"],
+["This web company's browser battle defined the early internet.","Netscape","Google","Yahoo"],
+["This 1994 soccer event was hosted by the United States.","The World Cup","The Copa America","The Olympics"]]});
+CATS.push({c:"Video Games",e:"🎮",q:[
+["This plumber is Nintendo's mascot.","Mario","Luigi","Link"],
+["This block-stacking game was created in the Soviet Union.","Tetris","Columns","Puyo Puyo"],
+["This best-selling game lets players build with blocks.","Minecraft","Roblox","Fortnite"],
+["Sonic the Hedgehog is this company's mascot.","Sega","Nintendo","Sony"],
+["This 1972 table-tennis game started the industry.","Pong","Breakout","Asteroids"]]});
+CATS.push({c:"Board Games",e:"🎲",q:[
+["In this game you buy properties like Boardwalk and Park Place.","Monopoly","Life","Sorry"],
+["In chess, this is the only piece that can jump over others.","The knight","The bishop","The rook"],
+["This word game uses letter tiles with point values.","Scrabble","Boggle","Upwords"],
+["In this game you deduce a murderer, weapon, and room.","Clue","Mousetrap","Battleship"],
+["This ancient Chinese game uses black and white stones.","Go","Checkers","Backgammon"]]});
+CATS.push({c:"Toys",e:"🧸",q:[
+["This Danish company's bricks snap together.","LEGO","Playmobil","Hasbro"],
+["This fashion doll debuted in 1959 from Mattel.","Barbie","Cabbage Patch Kids","Sindy"],
+["This toy is a coiled spring that walks down stairs.","The Slinky","The yo-yo","The hula hoop"],
+["These plush animals with heart tags were a 90s craze.","Beanie Babies","Care Bears","Troll dolls"],
+["This drawing toy uses two knobs and aluminum powder.","Etch A Sketch","Spirograph","Lite-Brite"]]});
+CATS.push({c:"Fashion",e:"👗",q:[
+["This French designer popularized the 'little black dress.'","Coco Chanel","Christian Dior","Yves Saint Laurent"],
+["Jeans were popularized during this era of American history.","The Gold Rush","The Roaring Twenties","The Civil War"],
+["This Italian city is one of fashion's 'big four' capitals.","Milan","Rome","Naples"],
+["Levi Strauss made these from denim.","Jeans","Jackets","Boots"],
+["This magazine with Anna Wintour leads fashion media.","Vogue","Elle","Harper's Bazaar"]]});
+CATS.push({c:"Cars",e:"🚗",q:[
+["Henry Ford's assembly line built this model.","The Model T","The Model A","The Edsel"],
+["This German company makes the Beetle.","Volkswagen","BMW","Mercedes-Benz"],
+["This Italian brand's logo is a prancing horse.","Ferrari","Lamborghini","Maserati"],
+["This fuel-electric Toyota pioneered hybrids.","The Prius","The Corolla","The Camry"],
+["This safety feature became mandatory in U.S. cars in 1968.","Seat belts","Airbags","Backup cameras"]]});
+CATS.push({c:"Aviation",e:"✈️",q:[
+["The Wright brothers' first flight was at this location.","Kitty Hawk","Dayton","Cape Canaveral"],
+["This woman flew solo across the Atlantic in 1932.","Amelia Earhart","Bessie Coleman","Harriet Quimby"],
+["This supersonic airliner retired in 2003.","The Concorde","The 747","The DC-10"],
+["The world's busiest airport is in this U.S. city.","Atlanta","Chicago","Los Angeles"],
+["This force lifts a wing.","Lift","Thrust","Drag"]]});
+CATS.push({c:"Trains",e:"🚂",q:[
+["The first U.S. transcontinental railroad was completed in this state.","Utah","Nevada","Colorado"],
+["Japan's high-speed trains are nicknamed this.","Bullet trains","Arrow trains","Comet trains"],
+["The Orient Express linked Paris to this city.","Istanbul","Vienna","Moscow"],
+["This underground railway serves London.","The Tube","The Metro","The Subway"],
+["The 'Golden Spike' joined the railroads in this year.","1869","1849","1889"]]});
+CATS.push({c:"Ships & Sailing",e:"⚓",q:[
+["The Titanic was operated by this line.","White Star Line","Cunard","P&O"],
+["This explorer's ships were the Nina, Pinta, and Santa Maria.","Columbus","Magellan","Cook"],
+["A ship's left side is called this.","Port","Starboard","Bow"],
+["This canal connects the Atlantic and Pacific.","The Panama Canal","The Suez Canal","The Erie Canal"],
+["This 1620 ship carried the Pilgrims to America.","The Mayflower","The Santa Maria","The Beagle"]]});
+CATS.push({c:"Dance",e:"💃",q:[
+["This classical dance form features tutus and pointe shoes.","Ballet","Jazz","Modern"],
+["The tango originated in this country.","Argentina","Spain","Brazil"],
+["This Cuban-born dance is named for a ballroom rhythm, 'rumba.'","The rumba","The waltz","The foxtrot"],
+["Breakdancing, or breaking, joined this event's program in 2024.","The Olympics","The World Games","The X Games"],
+["This Austrian-born dance is in 3/4 time.","The waltz","The polka","The mazurka"]]});
+CATS.push({c:"Theater",e:"🎭",q:[
+["Shakespeare's company performed at this London theater.","The Globe","The Royal Court","The Old Vic"],
+["This musical tells of a phantom haunting an opera house.","The Phantom of the Opera","Les Miserables","Cats"],
+["Broadway is in this city.","New York","London","Chicago"],
+["The highest honor in U.S. theater is this award.","The Tony","The Emmy","The Olivier"],
+["This ancient culture gave us the first tragedies and comedies.","The Greeks","The Romans","The Egyptians"]]});
+CATS.push({c:"Poetry",e:"🖋️",q:[
+["This poet wrote 'The Road Not Taken.'","Robert Frost","Walt Whitman","Emily Dickinson"],
+["A haiku has this many syllables in total.","17","14","21"],
+["This epic by Dante describes a journey through Hell.","The Inferno","Paradise Lost","The Aeneid"],
+["Shakespeare wrote 154 of these 14-line poems.","Sonnets","Odes","Ballads"],
+["'The Raven' is by this American author.","Edgar Allan Poe","Nathaniel Hawthorne","Herman Melville"]]});
+CATS.push({c:"Comic Books",e:"💥",q:[
+["Superman first appeared in this 1938 comic.","Action Comics #1","Detective Comics #27","Amazing Fantasy #15"],
+["This company publishes Spider-Man and the X-Men.","Marvel","DC","Image"],
+["Batman protects this city.","Gotham","Metropolis","Star City"],
+["This writer co-created Spider-Man and the Fantastic Four.","Stan Lee","Jack Kirby","Bob Kane"],
+["Wonder Woman is a princess of this people.","The Amazons","The Atlanteans","The Valkyries"]]});
+CATS.push({c:"Superheroes",e:"🦸",q:[
+["Superman's weakness is this green mineral.","Kryptonite","Vibranium","Adamantium"],
+["This hero's real name is Bruce Wayne.","Batman","Superman","Green Lantern"],
+["Peter Parker gained powers from one of these.","A radioactive spider bite","A gamma bomb","A super-soldier serum"],
+["This team includes Iron Man, Thor, and the Hulk.","The Avengers","The Justice League","The X-Men"],
+["Captain America's shield is made of this fictional metal.","Vibranium","Adamantium","Uru"]]});
+CATS.push({c:"Cartoons",e:"📼",q:[
+["This mouse debuted in 'Steamboat Willie' in 1928.","Mickey Mouse","Donald Duck","Goofy"],
+["This sponge lives in a pineapple under the sea.","SpongeBob SquarePants","Patrick Star","Squidward"],
+["This cat chases a mouse named Jerry.","Tom","Sylvester","Garfield"],
+["This sailor man eats spinach.","Popeye","Bluto","Olive Oyl"],
+["This bear loves honey in the Hundred Acre Wood.","Winnie the Pooh","Yogi","Paddington"]]});
+CATS.push({c:"Sitcoms",e:"🛋️",q:[
+["This show's bar is 'where everybody knows your name.'","Cheers","Frasier","Taxi"],
+["This show follows the Bluth family.","Arrested Development","Modern Family","The Office"],
+["This mockumentary sitcom is set at Dunder Mifflin.","The Office","Parks and Recreation","Brooklyn Nine-Nine"],
+["This show featured Lucy and a candy-factory conveyor belt.","I Love Lucy","The Honeymooners","Bewitched"],
+["This show's four seniors lived together in Miami.","The Golden Girls","Designing Women","Murphy Brown"]]});
+CATS.push({c:"Game Shows",e:"🎰",q:[
+["This show, hosted by Alex Trebek for decades, uses answers and questions.","Jeopardy!","Wheel of Fortune","The Price Is Right"],
+["On this show contestants spin a giant wheel and guess letters.","Wheel of Fortune","Jeopardy!","Family Feud"],
+["'Come on down!' belongs to this show.","The Price Is Right","Let's Make a Deal","Press Your Luck"],
+["This show surveys 100 people for its answers.","Family Feud","Match Game","Card Sharks"],
+["Contestants on this show pick briefcases of money.","Deal or No Deal","Who Wants to Be a Millionaire","1 vs. 100"]]});
+CATS.push({c:"Newspapers",e:"📰",q:[
+["This New York paper's slogan is 'All the News That's Fit to Print.'","The New York Times","The New York Post","The Wall Street Journal"],
+["This London paper shares its name with a clock tower nickname.","The Times","The Guardian","The Telegraph"],
+["This U.S. paper broke the Watergate story.","The Washington Post","The New York Times","The Boston Globe"],
+["The 'Fleet Street' press is associated with this city.","London","New York","Dublin"],
+["This news agency, founded in 1846, is a wire service based in New York.","The Associated Press","Reuters","UPI"]]});
+CATS.push({c:"Awards & Prizes",e:"🏆",q:[
+["This prize, funded by dynamite's inventor, honors peace and science.","The Nobel Prize","The Pulitzer","The Fields Medal"],
+["The Pulitzer Prizes honor journalism and this field.","The arts","Medicine","Economics"],
+["The EGOT includes the Emmy, Grammy, Oscar, and this.","The Tony","The Globe","The BAFTA"],
+["This medal is math's highest honor.","The Fields Medal","The Abel Prize only","The Turing Award"],
+["Olympic first-place medals are made mostly of this metal.","Silver","Gold","Bronze"]]});
+CATS.push({c:"The Oscars",e:"🎞️",q:[
+["The Oscar statuette holds one of these objects.","A sword","A torch","A laurel wreath"],
+["This film won Best Picture in 2020, a first for a non-English film.","Parasite","Roma","Amour"],
+["This actress holds the record for most acting nominations.","Meryl Streep","Katharine Hepburn","Bette Davis"],
+["The first Academy Awards were held in this year.","1929","1935","1921"],
+["This director won Best Director for 'The Shape of Water.'","Guillermo del Toro","Alfonso Cuaron","Alejandro Inarritu"]]});
+CATS.push({c:"The Grammys",e:"🎤",q:[
+["The Grammy trophy is shaped like this.","A gramophone","A microphone","A guitar"],
+["This singer of 'Hello' swept the 2017 Grammys.","Adele","Beyonce","Taylor Swift"],
+["The Grammy for best new artist is called this.","Best New Artist","Rising Star","First Note"],
+["This band won Album of the Year for 'Rumours.'","Fleetwood Mac","The Eagles","Fleet Foxes"],
+["The first Grammy Awards were held in this year.","1959","1965","1949"]]});
+CATS.push({c:"The Olympics",e:"🔥",q:[
+["The modern Olympics began in this Greek city in 1896.","Athens","Olympia","Sparta"],
+["The Olympic rings number this many.","Five","Six","Four"],
+["This swimmer won 23 Olympic gold medals.","Michael Phelps","Mark Spitz","Ryan Lochte"],
+["The Winter Olympics include this sport on ice with stones.","Curling","Bobsled","Luge"],
+["The Olympic flame is lit in this Greek town.","Olympia","Athens","Delphi"]]});
+CATS.push({c:"Soccer",e:"⚽",q:[
+["This country has won the most men's World Cups.","Brazil","Germany","Argentina"],
+["The World Cup is held every this many years.","Four","Two","Three"],
+["This Argentine legend scored the 'Hand of God' goal.","Diego Maradona","Lionel Messi","Pele"],
+["This club plays at Camp Nou.","Barcelona","Real Madrid","Manchester United"],
+["A standard soccer match lasts this many minutes.","90","60","80"]]});
+CATS.push({c:"Baseball",e:"⚾",q:[
+["This Yankee hit 714 home runs and was called 'The Bambino.'","Babe Ruth","Lou Gehrig","Mickey Mantle"],
+["A perfect game means no batter does this.","Reaches base","Scores a run","Hits a home run"],
+["This team broke an 86-year 'Curse of the Bambino' in 2004.","The Boston Red Sox","The Chicago Cubs","The New York Mets"],
+["The championship series is called this.","The World Series","The Super Series","The Fall Games"],
+["This many strikes make an out.","Three","Four","Two"]]});
+CATS.push({c:"Basketball",e:"🏀",q:[
+["This Laker scored 81 points in a single game.","Kobe Bryant","Wilt Chamberlain","Michael Jordan"],
+["This player is known as 'King James.'","LeBron James","Michael Jordan","Kareem Abdul-Jabbar"],
+["This team has won the most NBA championships, with 17.","The Boston Celtics","The Los Angeles Lakers","The Chicago Bulls"],
+["A shot from beyond the arc is worth this many points.","Three","Two","Four"],
+["The NBA was founded in this decade.","The 1940s","The 1950s","The 1960s"]]});
+CATS.push({c:"Football",e:"🏈",q:[
+["This quarterback won seven Super Bowls.","Tom Brady","Peyton Manning","Joe Montana"],
+["A touchdown is worth this many points.","Six","Seven","Three"],
+["The Super Bowl trophy is named for this coach.","Vince Lombardi","George Halas","Don Shula"],
+["This position throws the ball.","The quarterback","The fullback","The center"],
+["The first Super Bowl was played in this year.","1967","1957","1972"]]});
+CATS.push({c:"Golf",e:"⛳",q:[
+["This golfer has won 15 major championships and wears red on Sundays.","Tiger Woods","Jack Nicklaus","Arnold Palmer"],
+["The Masters is played at this club.","Augusta National","Pebble Beach","St. Andrews"],
+["One stroke under par on a hole is called this.","A birdie","An eagle","A bogey"],
+["A hole in one is also called this.","An ace","A deuce","An albatross"],
+["This is golf's oldest major, first played in 1860.","The Open Championship","The U.S. Open","The PGA"]]});
+CATS.push({c:"Tennis",e:"🎾",q:[
+["This Spaniard is the 'King of Clay.'","Rafael Nadal","Roger Federer","Novak Djokovic"],
+["A score of zero in tennis is called this.","Love","Nil","Deuce"],
+["This American sisters duo dominated women's tennis.","The Williams sisters","The Bryan brothers","The Sharapovas"],
+["The French Open is played on this surface.","Clay","Grass","Hard court"],
+["This many Grand Slam tournaments exist each year.","Four","Three","Five"]]});
+CATS.push({c:"Boxing",e:"🥊",q:[
+["This 1974 'Rumble in the Jungle' was fought in this country.","Zaire","The Philippines","Mexico"],
+["This boxer bit an opponent's ear in 1997.","Mike Tyson","Evander Holyfield","Lennox Lewis"],
+["Muhammad Ali's birth name was this.","Cassius Clay","Sonny Liston","Floyd Patterson"],
+["A boxing match can end with these letters meaning a knockout.","KO","TKO only","DQ"],
+["The heaviest weight class in boxing is this.","Heavyweight","Cruiserweight","Super middleweight"]]});
+CATS.push({c:"Hockey",e:"🏒",q:[
+["The NHL championship trophy is this cup.","The Stanley Cup","The Grey Cup","The Davis Cup"],
+["Wayne Gretzky is known by this nickname.","The Great One","The Rocket","Mr. Hockey"],
+["A hockey puck is frozen before games to reduce this.","Bouncing","Speed","Friction"],
+["A team on the ice has this many skaters plus a goalie.","Five","Six","Four"],
+["This country has won the most Olympic men's hockey golds.","Canada","Russia","The United States"]]});
+CATS.push({c:"Auto Racing",e:"🏎️",q:[
+["This race in Indiana is called 'The Greatest Spectacle in Racing.'","The Indy 500","The Daytona 500","Le Mans"],
+["Formula 1's top team trophy is the Constructors' this.","Championship","Cup","Shield"],
+["This Italian brand is F1's oldest and most famous team.","Ferrari","Mercedes","McLaren"],
+["The Le Mans race lasts this many hours.","24","12","6"],
+["This many wheels does an F1 car have.","Four","Three","Six"]]});
+CATS.push({c:"Weather",e:"⛈️",q:[
+["This scale rates tornado strength.","The Enhanced Fujita scale","The Richter scale","The Saffir-Simpson scale"],
+["Hurricanes form over this.","Warm ocean water","Cold fronts only","Mountain ranges"],
+["This instrument measures air pressure.","A barometer","A thermometer","An anemometer"],
+["A bolt of lightning is hotter than the surface of this.","The Sun","Lava","Venus"],
+["Cumulonimbus clouds bring this kind of weather.","Thunderstorms","Fog","Drizzle"]]});
+CATS.push({c:"Trees",e:"🌳",q:[
+["This tree's sap becomes syrup.","The sugar maple","The oak","The birch"],
+["Sequoias are the largest trees by this measure.","Volume","Height","Canopy width"],
+["This tree drops acorns.","The oak","The pine","The willow"],
+["Baobab trees are icons of this continent.","Africa","Asia","Australia"],
+["Conifers bear these instead of flowers.","Cones","Fruits","Pods"]]});
+CATS.push({c:"Flowers",e:"🌸",q:[
+["This flower is the national symbol of Japan's spring season.","The cherry blossom","The lotus","The chrysanthemum"],
+["Tulips caused an economic bubble in this country in the 1630s.","The Netherlands","England","France"],
+["This flower is the state flower of Texas.","The bluebonnet","The rose","The sunflower"],
+["Roses 'of Sharon' are actually this kind of plant.","A hibiscus","A true rose","A peony"],
+["This flower tracks the sun across the sky when young.","The sunflower","The daisy","The marigold"]]});
+CATS.push({c:"Birds",e:"🐦",q:[
+["This bird cannot fly but swims superbly.","The penguin","The ostrich","The emu"],
+["This is the fastest bird, diving at over 240 mph.","The peregrine falcon","The golden eagle","The albatross"],
+["Owls hunt mostly at this time.","Night","Dawn","Midday"],
+["This bird migrates the farthest, pole to pole.","The Arctic tern","The albatross","The swallow"],
+["A baby goose is called this.","A gosling","A duckling","A chick"]]});
+CATS.push({c:"Fish",e:"🐟",q:[
+["This is the largest fish in the ocean.","The whale shark","The great white shark","The bluefin tuna"],
+["Salmon famously swim this way to spawn.","Upstream","Downstream","In circles"],
+["This fish inflates into a ball when threatened.","The pufferfish","The lionfish","The stonefish"],
+["Goldfish belong to this fish family.","Carp","Minnow","Characin"],
+["This fish can generate electricity.","The electric eel","The catfish","The stingray"]]});
+CATS.push({c:"Insects",e:"🐝",q:[
+["Bees communicate food locations with this.","A waggle dance","A scent trail","A song"],
+["This insect has the strongest bite relative to body size.","The stag beetle","The ant","The bullet ant"],
+["A dragonfly begins life in this environment.","Water","Soil","Tree bark"],
+["This insect's bite spreads malaria.","The mosquito","The tsetse fly","The tick"],
+["Ants can carry this many times their body weight.","Up to 50","Up to 5","Up to 500"]]});
+CATS.push({c:"Dogs",e:"🐕",q:[
+["This breed is known for sled racing in Alaska.","The husky","The poodle","The beagle"],
+["A group of puppies born together is this.","A litter","A pack","A brood"],
+["This is the tallest dog breed.","The Great Dane","The Irish wolfhound","The mastiff"],
+["Lassie was this breed.","A collie","A German shepherd","A golden retriever"],
+["Dogs sweat mainly through these.","Their paw pads","Their tongues","Their ears"]]});
+CATS.push({c:"Cats",e:"🐈",q:[
+["This is the largest cat species in the world.","The Siberian tiger","The lion","The jaguar"],
+["Cats spend about this share of the day sleeping.","Two-thirds","One-third","One-half"],
+["This sound cats make may promote healing.","Purring","Hissing","Chirping"],
+["The cheetah cannot do this, unlike other big cats.","Roar","Run","Climb"],
+["Ancient Egyptians revered cats and this cat-headed goddess.","Bastet","Sekhmet","Isis"]]});
+CATS.push({c:"Horses",e:"🐴",q:[
+["A baby horse is called this.","A foal","A calf","A yearling"],
+["This race, the Kentucky Derby's next jewel, is held in Baltimore.","The Preakness","The Belmont","The Breeders' Cup"],
+["This is the fastest gait of a horse.","The gallop","The trot","The canter"],
+["Horse height is measured in these units.","Hands","Feet","Palms"],
+["This wild horse breed roams the American West.","The mustang","The appaloosa","The pinto"]]});
+CATS.push({c:"Reptiles & Amphibians",e:"🦎",q:[
+["This is the largest living reptile.","The saltwater crocodile","The Komodo dragon","The leatherback turtle"],
+["Frogs begin life as these.","Tadpoles","Larvae","Fry"],
+["A chameleon changes color mainly for this reason.","Mood and temperature","Camouflage only","Mating only"],
+["Snakes smell with this organ.","Their tongue","Their nose","Their skin"],
+["This amphibian can regrow entire limbs.","The axolotl","The newt","The tree frog"]]});
+CATS.push({c:"Dinosaurs",e:"🦕",q:[
+["This predator's name means 'tyrant lizard king.'","T. rex","Allosaurus","Spinosaurus"],
+["Dinosaurs went extinct about this many years ago.","66 million","6 million","660 million"],
+["Triceratops had this many horns.","Three","Two","Five"],
+["The first named fossil dinosaur was this.","Megalosaurus","Iguanodon","Diplodocus"],
+["Birds descend from this dinosaur group.","Theropods","Sauropods","Ceratopsians"]]});
+CATS.push({c:"Gems & Minerals",e:"💎",q:[
+["This is the hardest natural substance.","Diamond","Quartz","Corundum"],
+["This green gem is May's birthstone.","Emerald","Peridot","Jade"],
+["Rubies are the red variety of this mineral.","Corundum","Beryl","Garnet"],
+["This purple quartz is February's birthstone.","Amethyst","Topaz","Opal"],
+["Gold's chemical symbol comes from this Latin word.","Aurum","Golda","Gildium"]]});
+CATS.push({c:"Colors",e:"🌈",q:[
+["Mixing blue and yellow paint makes this color.","Green","Purple","Orange"],
+["The rainbow's colors number this many in the classic list.","Seven","Six","Eight"],
+["In Japan, this color symbolizes the sun on the flag.","Red","White","Gold"],
+["This pigment made from lapis lazuli was pricier than gold.","Ultramarine","Vermilion","Ochre"],
+["Black is the absence of this.","Light","Pigment","Heat"]]});
+CATS.push({c:"Language",e:"🗣️",q:[
+["This language has the most native speakers in the world.","Mandarin Chinese","English","Spanish"],
+["This ancient language is the root of the Romance languages.","Latin","Greek","Sanskrit"],
+["This many letters are in the English alphabet.","26","24","28"],
+["'Ciao' is a greeting in this language.","Italian","Spanish","Portuguese"],
+["This is the most widely spoken constructed language.","Esperanto","Klingon","Elvish"]]});
+CATS.push({c:"Word Origins",e:"📖",q:[
+["The word 'salary' comes from this Roman commodity.","Salt","Silver","Bread"],
+["'Robot' comes from a Czech word meaning this.","Forced labor","Machine","Servant"],
+["'Karaoke' is Japanese for this.","Empty orchestra","Open microphone","Silent singer"],
+["The word 'sandwich' is named for one of these.","An earl","A chef","A town"],
+["'Muscle' comes from the Latin for this small animal.","Mouse","Rat","Worm"]]});
+CATS.push({c:"Holidays",e:"🎄",q:[
+["This U.S. holiday falls on the fourth Thursday of November.","Thanksgiving","Labor Day","Memorial Day"],
+["This holiday honors the dead in Mexico with altars and marigolds.","Dia de los Muertos","Cinco de Mayo","Las Posadas"],
+["This is the Jewish festival of lights.","Hanukkah","Passover","Purim"],
+["This February holiday predicts weather with a groundhog.","Groundhog Day","Valentine's Day","Presidents' Day"],
+["Bastille Day is the national holiday of this country.","France","Belgium","Canada"]]});
+CATS.push({c:"Desserts",e:"🍰",q:[
+["This Italian dessert means 'pick me up.'","Tiramisu","Cannoli","Panna cotta"],
+["This French dessert is a custard with a caramelized sugar top.","Creme brulee","Flan","Mousse"],
+["This New York dessert is a dense baked cheese cake.","Cheesecake","Blackout cake","Carrot cake"],
+["This Japanese treat is pounded rice cake.","Mochi","Dango","Dorayaki"],
+["This dessert is named for a ballerina, with meringue and fruit.","Pavlova","Eton mess","Trifle"]]});
+CATS.push({c:"Fruits",e:"🍎",q:[
+["This fruit has its seeds on the outside.","The strawberry","The raspberry","The cherry"],
+["Bananas grow on plants classified as this.","Herbs","Trees","Vines"],
+["This fruit is the world's most popular by production volume.","The tomato","The banana","The apple"],
+["This spiky fruit is infamous for its smell.","The durian","The jackfruit","The pineapple"],
+["This state is famous for its oranges.","Florida","Texas","Georgia"]]});
+CATS.push({c:"Vegetables",e:"🥕",q:[
+["This vegetable was once believed to be poisonous in Europe.","The tomato","The potato","The eggplant"],
+["Popeye ate this leafy green.","Spinach","Kale","Lettuce"],
+["This vegetable's florets look like tiny trees.","Broccoli","Cauliflower","Cabbage"],
+["Carrots are rich in this vitamin linked to vision.","Vitamin A","Vitamin C","Vitamin D"],
+["This vegetable is actually a flower bud.","The artichoke","Asparagus","Brussels sprouts"]]});
+CATS.push({c:"Cheese",e:"🧀",q:[
+["This Italian cheese is aged in wheels and grated on pasta.","Parmigiano-Reggiano","Mozzarella","Ricotta"],
+["This blue cheese comes from caves in France.","Roquefort","Gorgonzola","Stilton"],
+["This country's Edam and Gouda are world famous.","The Netherlands","Switzerland","Denmark"],
+["Traditional mozzarella is made from this animal's milk.","Water buffalo","Goat","Sheep"],
+["This Swiss cheese is famous for its holes.","Emmental","Gruyere","Appenzeller"]]});
+CATS.push({c:"Coffee & Tea",e:"☕",q:[
+["Coffee beans are technically this part of the plant.","Seeds","Beans","Fruits"],
+["This country is the world's largest coffee producer.","Brazil","Colombia","Vietnam"],
+["This green powdered tea is central to Japanese tea ceremony.","Matcha","Sencha","Oolong"],
+["An espresso with steamed milk foam is this.","A cappuccino","A latte","A macchiato"],
+["Tea was first cultivated in this country.","China","India","Japan"]]});
+CATS.push({c:"Beer",e:"🍺",q:[
+["This flower gives beer its bitterness.","Hops","Barley","Yeast"],
+["This dark beer style is associated with Guinness.","Stout","Porter","Lager"],
+["The Reinheitsgebot purity law came from this country.","Germany","Belgium","Czechia"],
+["Beer is made through this process.","Fermentation","Distillation","Carbonation"],
+["Oktoberfest is held in this German city.","Munich","Berlin","Hamburg"]]});
+CATS.push({c:"Wine",e:"🍷",q:[
+["This French region is famous for its red blends of cabernet and merlot.","Bordeaux","Burgundy","Champagne"],
+["Red wine gets its color from this part of the grape.","The skins","The seeds","The stems"],
+["This white grape is the most planted in the world.","Chardonnay","Sauvignon blanc","Pinot grigio"],
+["Port wine comes from this country.","Portugal","Spain","Italy"],
+["This tool removes a cork.","A corkscrew","A decanter","A foil cutter"]]});
+CATS.push({c:"Cocktails",e:"🍹",q:[
+["A margarita is built on this spirit.","Tequila","Vodka","Rum"],
+["This cocktail mixes gin and vermouth, garnished with an olive.","The martini","The negroni","The Manhattan"],
+["This Cuban cocktail features mint, lime, and rum.","The mojito","The daiquiri","The pina colada"],
+["The Old Fashioned is made with this spirit.","Whiskey","Gin","Brandy"],
+["This brunch cocktail is tomato juice and vodka.","The Bloody Mary","The mimosa","The screwdriver"]]});
+CATS.push({c:"Cooking",e:"🍳",q:[
+["Searing meat at high heat creates this browning reaction.","The Maillard reaction","Caramelization","Oxidation"],
+["This knife cut produces fine matchsticks.","Julienne","Chiffonade","Brunoise"],
+["Sous vide cooking uses this.","A water bath","A pressure chamber","An open flame"],
+["This French term means 'everything in its place.'","Mise en place","Haute cuisine","A la carte"],
+["Pasta cooked 'al dente' is this.","Firm to the bite","Soft","Raw"]]});
+CATS.push({c:"U.S. States",e:"🗺️",q:[
+["This is the largest U.S. state by area.","Alaska","Texas","California"],
+["This state is known as the Sunshine State.","Florida","California","Arizona"],
+["This state is an archipelago in the Pacific.","Hawaii","Alaska","Puerto Rico"],
+["This state was the first to ratify the Constitution.","Delaware","Virginia","Massachusetts"],
+["This state has the most people.","California","Texas","New York"]]});
+CATS.push({c:"U.S. Cities",e:"🌆",q:[
+["This city is called 'The Windy City.'","Chicago","Boston","Detroit"],
+["This city's nickname is 'The Big Apple.'","New York","Los Angeles","Philadelphia"],
+["This city hosts Mardi Gras.","New Orleans","Memphis","Nashville"],
+["The Golden Gate Bridge is in this city.","San Francisco","Seattle","San Diego"],
+["This is the most populous city in Texas.","Houston","Dallas","Austin"]]});
+CATS.push({c:"Europe",e:"🏰",q:[
+["This country is shaped like a boot.","Italy","Greece","Portugal"],
+["The Alps run through Switzerland, France, and this country.","Austria","Spain","Poland"],
+["This country is both a city and a nation-state within Rome.","Vatican City","Monaco","San Marino"],
+["The Danube flows through this many countries, a record.","Ten","Six","Fourteen"],
+["This Scandinavian country has the most islands of any nation.","Sweden","Norway","Finland"]]});
+CATS.push({c:"Asia",e:"🏯",q:[
+["This is the most populous country in Asia.","India","China","Indonesia"],
+["The Ganges is sacred in this country.","India","Nepal","Bangladesh"],
+["This is the only Southeast Asian country never colonized by Europe.","Thailand","Vietnam","Laos"],
+["This country consists of over 17,000 islands.","Indonesia","The Philippines","Japan"],
+["The Gobi Desert lies in Mongolia and this country.","China","Kazakhstan","Russia"]]});
+CATS.push({c:"Africa",e:"🦁",q:[
+["This is the largest desert in Africa.","The Sahara","The Kalahari","The Namib"],
+["This country has the most pyramids in the world.","Sudan","Egypt","Ethiopia"],
+["This mountain is Africa's highest peak.","Kilimanjaro","Mount Kenya","The Atlas Mountains"],
+["This island nation lies off Africa's southeast coast.","Madagascar","Mauritius","Zanzibar"],
+["This river is central to Central Africa's rainforest.","The Congo","The Niger","The Zambezi"]]});
+CATS.push({c:"South America",e:"🏔️",q:[
+["This is the largest country in South America.","Brazil","Argentina","Peru"],
+["This ancient city sits high in the Peruvian Andes.","Machu Picchu","Cusco","Chan Chan"],
+["This is the world's highest navigable lake, between Peru and Bolivia.","Lake Titicaca","Lake Maracaibo","Lake Poopo"],
+["The Amazon rainforest covers about 60% of this country.","Brazil","Colombia","Ecuador"],
+["This waterfall system borders Argentina and Brazil.","Iguazu Falls","Angel Falls","Kaieteur Falls"]]});
+CATS.push({c:"Islands",e:"🏝️",q:[
+["This is the largest island in the world.","Greenland","New Guinea","Borneo"],
+["The Galapagos belong to this country.","Ecuador","Chile","Peru"],
+["This island nation was once called Ceylon.","Sri Lanka","Malta","Cyprus"],
+["Sicily belongs to this country.","Italy","Greece","Spain"],
+["This Indonesian island is famous for its dragons.","Komodo","Bali","Sumatra"]]});
+CATS.push({c:"Deserts",e:"🏜️",q:[
+["This is the largest hot desert on Earth.","The Sahara","The Gobi","The Arabian"],
+["This is the driest nonpolar desert in the world.","The Atacama","The Mojave","The Namib"],
+["Antarctica is technically this kind of landscape.","A desert","A tundra only","A glacier only"],
+["The Sonoran Desert is home to this giant cactus.","The saguaro","The prickly pear","The barrel cactus"],
+["This Australian desert region is called this.","The Outback","The Bush","The Never Never"]]});
+CATS.push({c:"Landmarks",e:"🗽",q:[
+["The Statue of Liberty was a gift from this country.","France","England","Spain"],
+["This wall stretches thousands of miles across northern China.","The Great Wall","The Long Wall","Hadrian's Wall"],
+["This Indian mausoleum was built by Shah Jahan.","The Taj Mahal","The Red Fort","The Amber Palace"],
+["This ancient circle of stones stands in England.","Stonehenge","Avebury","Newgrange"],
+["This Sydney landmark resembles sails.","The Opera House","The Harbour Bridge","The Tower Eye"]]});
+
+/* ================= FOLLOW-UP FACTS =================
+   One "you'll want to know this" fact per clue, same order as CATS. */
+var FACTS = [];
+FACTS.push([ /* Geography */
+"The Nile runs about 4,130 miles — the longest river in Africa.",
+"Russia spans 11 time zones and borders 14 different countries.",
+"At its narrowest, the Strait of Gibraltar is only about 8 miles wide.",
+"Antarctica holds about 60% of the world's fresh water, locked in ice.",
+"Canada contains roughly 60% of all the lakes on Earth."]);
+FACTS.push([ /* History */
+"Silk Road goods moved in relays — few traders ever walked its whole length.",
+"The Bayeux Tapestry, 230 feet long, depicts the Norman conquest of 1066.",
+"East Germans began dismantling the Berlin Wall by hand the night it fell.",
+"The Titanic's wreck was only located in 1985, 73 years after sinking.",
+"Machu Picchu was never found by the Spanish conquistadors — it survived intact."]);
+FACTS.push([ /* U.S. History */
+"The Declaration was actually approved on July 2; July 4 is the print date.",
+"Louisiana Purchase land cost about three cents an acre.",
+"More Americans died in the Civil War than in any other U.S. conflict.",
+"Lincoln's Gettysburg Address lasted about two minutes.",
+"Apollo 11's guidance computer had less power than a modern calculator watch."]);
+FACTS.push([ /* Entertainment */
+"The ruby slippers were silver in L. Frank Baum's original book.",
+"Abbey Road's crosswalk is now a listed historic site in London.",
+"Stranger Things' 'Upside Down' was almost called 'the Nether.'",
+"Spielberg was rejected from film school twice.",
+"The first Emmy Awards were held in 1949, before most homes had TVs."]);
+FACTS.push([ /* Potent Potables */
+"Vodka can be distilled from almost anything fermentable — even milk whey.",
+"Tequila may only be made in five Mexican states by law.",
+"About 49 million bubbles form in a single glass of champagne.",
+"Gin and tonic began as British anti-malaria medicine in India.",
+"Guinness is actually dark ruby red, not black — hold it to the light."]);
+FACTS.push([ /* Sports */
+"Wimbledon still requires players to wear almost entirely white.",
+"The term 'hat trick' comes from 19th-century cricket.",
+"Muhammad Ali won an Olympic gold medal in 1960 as Cassius Clay.",
+"The Vince Lombardi Trophy is made by Tiffany & Co. each year.",
+"Usain Bolt's top speed was about 27.8 mph during his record run."]);
+FACTS.push([ /* Science */
+"Gravity is the weakest of the four fundamental forces — by far.",
+"Water is one of the few substances that expands when it freezes.",
+"Einstein failed his first university entrance exam.",
+"A year on Mercury lasts only 88 Earth days.",
+"About 78% of the air you breathe is nitrogen, not oxygen."]);
+FACTS.push([ /* Nature */
+"Redwoods can live over 2,000 years and grow taller than the Statue of Unity.",
+"The Northern Lights occur when solar particles strike our atmosphere.",
+"The Great Barrier Reef is visible from space.",
+"Butterflies taste their food with their feet.",
+"The troposphere shrinks near the poles and bulges at the equator."]);
+FACTS.push([ /* Animals */
+"A cheetah can reach 60 mph in about three seconds.",
+"A blue whale's tongue alone can weigh as much as an elephant.",
+"Kangaroos cannot walk backward.",
+"A lion's roar can be heard from five miles away.",
+"Bald eagles build the largest tree nests of any bird — up to 13 feet deep."]);
+FACTS.push([ /* Literature */
+"Shakespeare is credited with coining or popularizing over 1,700 words.",
+"Jane Austen published anonymously — her name never appeared on her books in life.",
+"Moby-Dick flopped in Melville's lifetime and was rediscovered decades later.",
+"Harry Potter has been translated into more than 80 languages.",
+"Herman Melville dedicated Moby-Dick to Nathaniel Hawthorne."]);
+FACTS.push([ /* Movies */
+"The mechanical shark in Jaws was nicknamed 'Bruce' after Spielberg's lawyer.",
+"The Star Wars opening crawl was filmed by physically rolling a camera past text.",
+"Speed was written as a spoof-proof thriller after the writer heard of a real bus bomb scare.",
+"Hitchcock made cameo appearances in 39 of his own films.",
+"Toy Story (1995) was the first fully computer-animated feature film."]);
+FACTS.push([ /* Television */
+"The Simpsons is the longest-running scripted primetime series in U.S. TV history.",
+"Central Perk's orange couch was found in the Warner Bros. basement.",
+"Game of Thrones' 'Red Wedding' episode sparked audible gasps recorded across the internet.",
+"Carl Sagan's Cosmos has been seen by an estimated 500 million people.",
+"The TARDIS is bigger on the inside because it's a dimensionally transcendental time machine."]);
+FACTS.push([ /* Music */
+"Beethoven continued composing even after becoming completely deaf.",
+"Michael Jackson's 'Thriller' is the best-selling album of all time.",
+"A piano is technically both a string and a percussion instrument.",
+"Graceland receives about 500,000 visitors a year.",
+"BTS was the first K-pop act to top the Billboard 200 album chart."]);
+FACTS.push([ /* Art */
+"The Mona Lisa has no visible eyebrows — a fashion of the era.",
+"Van Gogh sold only a handful of paintings during his lifetime.",
+"MoMA's 'Starry Night' was painted from van Gogh's asylum window view.",
+"Picasso could draw before he could write, according to his mother.",
+"The Sistine Chapel ceiling took Michelangelo about four years, mostly standing."]);
+FACTS.push([ /* Food */
+"Sushi began as a way to preserve fish in fermented rice — the rice was discarded.",
+"Pizza Margherita is said to be named for an Italian queen in 1889.",
+"Saffron, not turmeric, is the world's most expensive spice by weight.",
+"The word 'taco' originally referred to gunpowder charges used in silver mines.",
+"A single beehive can produce over 60 pounds of honey in a good year."]);
+FACTS.push([ /* World Capitals */
+"Paris was a Roman city called Lutetia.",
+"Tokyo was a small fishing village named Edo until 1868.",
+"Canberra was purpose-built as a compromise between Sydney and Melbourne.",
+"Ottawa's Rideau Canal becomes the world's largest skating rink in winter.",
+"Cairo is the largest city in the Arab world."]);
+FACTS.push([ /* Rivers */
+"The Seine flows 483 miles from Burgundy to the English Channel.",
+"The Amazon discharges more water than the next seven largest rivers combined.",
+"The Colorado River carved the Grand Canyon over five to six million years.",
+"St. Louis is known as the 'Gateway to the West' for its river traffic.",
+"The Nile is one of the few major rivers that flows south to north."]);
+FACTS.push([ /* Mountains */
+"Everest grows about 4 millimeters taller every year.",
+"The Andes are the longest continental mountain range on Earth.",
+"The Pyrenees are older than the Alps by millions of years.",
+"Mount Fuji last erupted in 1707.",
+"Denali's base-to-summit rise is actually greater than Everest's."]);
+FACTS.push([ /* Oceans & Seas */
+"The Pacific Ocean covers more area than all the land on Earth combined.",
+"The Mediterranean nearly dried up completely about six million years ago.",
+"The Mariana Trench's deepest point could submerge Everest with room to spare.",
+"The Dead Sea's shoreline is the lowest land elevation on Earth.",
+"The Gulf Stream moves water at roughly 300 times the flow of the Amazon."]);
+FACTS.push([ /* Space */
+"Sputnik's beeps could be picked up by amateur radio operators worldwide.",
+"Hubble's mirror was famously flawed; astronauts installed corrective optics in 1993.",
+"Twelve astronauts have walked on the Moon — all during Apollo.",
+"Perseverance carries a tiny helicopter named Ingenuity.",
+"Not even light escapes an event horizon — hence 'black' hole."]);
+FACTS.push([ /* Astronomy */
+"The Sun contains 99.86% of the solar system's mass.",
+"Jupiter's Great Red Spot is a storm larger than Earth that has raged for centuries.",
+"Saturn's rings are mostly ice and only about 30 feet thick in places.",
+"The International Astronomical Union officially recognizes 88 constellations.",
+"Pluto is smaller than Earth's Moon."]);
+FACTS.push([ /* Inventions */
+"Edison held 1,093 U.S. patents.",
+"Bell beat rival Elisha Gray to the patent office by just hours.",
+"The first flight at Kitty Hawk lasted 12 seconds and covered 120 feet.",
+"The Gutenberg Bible was the first major book printed with movable type.",
+"Berners-Lee gave the web away for free — he never patented it."]);
+FACTS.push([ /* Math */
+"Bees use hexagons because they tile perfectly with the least wax.",
+"Pi has been computed to over 100 trillion digits.",
+"The word 'algebra' comes from Arabic 'al-jabr,' meaning reunion of broken parts.",
+"This 180-degree rule holds only on flat surfaces — not on spheres.",
+"Euclid's 'Elements' was the standard math textbook for over 2,000 years."]);
+FACTS.push([ /* Medicine */
+"Fleming discovered penicillin when mold contaminated a petri dish he left out.",
+"The stethoscope was invented in 1816 partly because a doctor felt shy using his ear.",
+"Smallpox remains the only human disease ever eradicated.",
+"Modern medical oaths are rewritten versions; few doctors swear the ancient text verbatim.",
+"An MRI scanner's magnet is about 60,000 times stronger than Earth's magnetic field."]);
+FACTS.push([ /* The Human Body */
+"Skin accounts for about 15% of your total body weight.",
+"Babies are born with about 300 bones; many fuse as they grow.",
+"Red blood cells live about 120 days before being recycled.",
+"Your heart beats about 100,000 times a day.",
+"The femur can support about 30 times an adult's body weight."]);
+FACTS.push([ /* Chemistry */
+"Joseph Priestley is usually credited with isolating oxygen in 1774.",
+"More than 90 elements occur naturally on Earth.",
+"You exhale carbon dioxide, but inhaled air still contains plenty of oxygen.",
+"Gold is so malleable that one ounce can be stretched into a 50-mile wire.",
+"Lemon juice (pH ~2) is about as acidic as vinegar."]);
+FACTS.push([ /* Physics */
+"Legend says Newton's insight came from watching an apple fall at Woolsthorpe.",
+"The equation says a little mass converts into enormous energy — the basis of nuclear power.",
+"Light from the Sun takes about 8 minutes and 20 seconds to reach Earth.",
+"Electrons are about 1,836 times lighter than protons.",
+"A 100-watt bulb consumes about 2.4 kilowatt-hours per day."]);
+FACTS.push([ /* Biology */
+"If uncoiled, the DNA in one human cell would stretch about 6 feet.",
+"A single cell can contain thousands of mitochondria.",
+"Darwin spent five years aboard HMS Beagle gathering evidence.",
+"Photosynthesis produces the oxygen in nearly every breath you take.",
+"Your body contains roughly 37 trillion cells."]);
+FACTS.push([ /* Mythology */
+"Zeus's lightning bolts were forged by the Cyclopes.",
+"Thor's hammer always returned to his hand after being thrown.",
+"Hercules' labors included cleaning the Augean stables by rerouting two rivers.",
+"Odysseus escaped the Cyclops by calling himself 'Nobody.'",
+"Ra was said to be swallowed by the sky goddess Nut each night."]);
+FACTS.push([ /* World Religion */
+"The Quran is divided into 114 chapters called surahs.",
+"The Buddha was born Siddhartha Gautama in what is now Nepal.",
+"The Sabbath runs from Friday sunset to Saturday nightfall.",
+"Every year, millions of Muslims complete the Hajj pilgrimage to Mecca.",
+"Diwali rows of lamps celebrate the victory of light over darkness."]);
+FACTS.push([ /* Architecture */
+"The Eiffel Tower was intended to stand for only 20 years.",
+"The Tower of Pisa began leaning during construction in the 12th century.",
+"Fallingwater was built directly over an active waterfall in Pennsylvania.",
+"Chartres Cathedral contains some of the finest Gothic stained glass in the world.",
+"The Great Pyramid was the tallest human-made structure for over 3,800 years."]);
+FACTS.push([ /* Business */
+"Apple was founded on April 1, 1976 — April Fools' Day.",
+"The NYSE traces its origins to an 1792 agreement signed under a buttonwood tree.",
+"Amazon began as an online bookstore run from Bezos's garage.",
+"Coca-Cola sold only about 25 glasses in its first year.",
+"Public companies must file quarterly reports with the SEC."]);
+FACTS.push([ /* Economics */
+"Hyperinflation in 1923 Germany made a loaf of bread cost billions of marks.",
+"GDP per capita divides GDP by population — a rough living-standard measure.",
+"Recovery from the 1929 crash took the Dow 25 years.",
+"When demand exceeds supply, prices rise — the core of market economics.",
+"The Federal Reserve was created in 1913 after a series of bank panics."]);
+FACTS.push([ /* Politics */
+"The Senate has 100 members; the House has 435.",
+"The word 'democracy' comes from the Greek for 'rule by the people.'",
+"The UN has 193 member states.",
+"The U.S. Constitution has been amended 27 times.",
+"Westminster's famous bell tower is officially the Elizabeth Tower."]);
+FACTS.push([ /* U.S. Presidents */
+"Washington's teeth were not wooden — they were ivory, metal, and human teeth.",
+"Lincoln was a licensed bartender before entering politics.",
+"FDR hid his paralysis from most of the public with braces and careful staging.",
+"Andrew Jackson once dueled a man over an insult to his wife — and took a bullet.",
+"JFK was the youngest elected president; Theodore Roosevelt was youngest to serve."]);
+FACTS.push([ /* World Wars */
+"The assassin of Archduke Franz Ferdinand was Gavrilo Princip, 19 years old.",
+"D-Day involved about 156,000 Allied troops — the largest amphibious invasion ever.",
+"V-E Day celebrations erupted worldwide on May 8, 1945.",
+"The Pearl Harbor attack lasted under two hours but killed 2,403 Americans.",
+"The Triple Entente formed in response to Germany's rising power."]);
+FACTS.push([ /* Explorers */
+"Columbus made four voyages to the Americas, never realizing he'd found a new continent.",
+"Magellan died in the Philippines; only 18 of his 270 crew finished the voyage.",
+"Lewis and Clark's expedition lasted about two years and four months.",
+"Amundsen beat Scott to the South Pole by five weeks.",
+"Marco Polo spent 24 years traveling through Asia."]);
+FACTS.push([ /* Ancient Rome */
+"Caesar was stabbed 23 times by a group of senators.",
+"Legend says Romulus killed Remus over the location of the city.",
+"The Colosseum could hold about 50,000 spectators and even be flooded for naval shows.",
+"Pompeii lay buried and largely forgotten for over 1,500 years.",
+"Latin survived through the Church and evolved into the Romance languages."]);
+FACTS.push([ /* Ancient Greece */
+"Spartan boys began military training at age seven.",
+"Ancient Olympic athletes competed nude — 'gymnasium' means 'place to be naked.'",
+"Homer's epics were sung from memory for centuries before being written down.",
+"The Parthenon has no straight lines — every column subtly curves.",
+"Socrates was sentenced to death by drinking hemlock."]);
+FACTS.push([ /* Ancient Egypt */
+"The Great Pyramid consists of about 2.3 million stone blocks.",
+"King Tut ruled for only about nine years and died around age 19.",
+"Hieroglyphs were deciphered only after 1822, thanks to Champollion.",
+"The Rosetta Stone carries the same decree in three scripts.",
+"Egyptians called the Nile's annual flood the 'inundation' — their calendar revolved around it."]);
+FACTS.push([ /* The 1980s */
+"Live Aid reached an estimated 1.9 billion viewers across 150 countries.",
+"Pac-Man's shape was inspired by a pizza with a slice removed.",
+"MTV's first video was 'Video Killed the Radio Star.'",
+"Over 350 million Rubik's Cubes have been sold.",
+"Christa McAuliffe, a teacher, died aboard Challenger."]);
+FACTS.push([ /* The 1990s */
+"Seinfeld's finale drew 76 million viewers.",
+"Titanic won 11 Oscars, tying the all-time record.",
+"Nintendo sold nearly 119 million Game Boys.",
+"Netscape Navigator launched in 1994 and dominated within a year.",
+"The 1994 World Cup final was decided by penalty kicks."]);
+FACTS.push([ /* Video Games */
+"Mario was originally called 'Jumpman.'",
+"Tetris creator Alexey Pajitnov earned no royalties for years due to Soviet law.",
+"Minecraft has sold over 300 million copies — the best-selling game ever.",
+"Sonic was designed to be Mario's faster, edgier rival.",
+"Pong's inventor built the prototype in a weekend."]);
+FACTS.push([ /* Board Games */
+"Monopoly was originally designed to teach the dangers of monopolies.",
+"A knight moves in an L-shape: two squares one way, one the other.",
+"The highest-value Scrabble letter is worth 10 points — Q and Z.",
+"Clue's original name was 'Cluedo,' a mashup of 'clue' and 'ludo.'",
+"Go has more possible board positions than atoms in the universe."]);
+FACTS.push([ /* Toys */
+"The name LEGO comes from Danish 'leg godt' — 'play well.'",
+"Barbie's full name is Barbara Millicent Roberts.",
+"The Slinky was invented by accident when a spring fell off a desk.",
+"Some Beanie Babies resold for thousands during the craze.",
+"An Etch A Sketch's powder is aluminum — the same metal in aircraft."]);
+FACTS.push([ /* Fashion */
+"Chanel also popularized the women's suit and costume jewelry.",
+"Levi Strauss made jeans for miners who needed durable workwear.",
+"Milan Fashion Week is one of the 'Big Four' with Paris, London, and New York.",
+"The oldest known leather shoe is about 5,500 years old.",
+"Vogue's September issue is famously its biggest of the year."]);
+FACTS.push([ /* Cars */
+"The Model T came in 'any color, so long as it is black' — for drying speed.",
+"'Volkswagen' means 'people's car' in German.",
+"Ferrari's prancing horse came from a WWI fighter pilot's emblem.",
+"The Prius launched in Japan in 1997 — the first mass-produced hybrid.",
+"Airbags became standard equipment in the late 1990s."]);
+FACTS.push([ /* Aviation */
+"The first flight lasted less time than it takes to read this sentence.",
+"Amelia Earhart vanished over the Pacific in 1937; her fate is still debated.",
+"A Concorde crossed the Atlantic in under three hours.",
+"Atlanta's airport handles about 100 million passengers a year.",
+"Bernoulli's principle and Newton's third law both explain lift."]);
+FACTS.push([ /* Trains */
+"Promontory, Utah, is where the golden spike joined east and west.",
+"Bullet trains (Shinkansen) have had zero passenger fatalities in their history.",
+"The Orient Express inspired Agatha Christie's famous mystery novel.",
+"The London Underground is the world's oldest, opened in 1863.",
+"Trains once kept 'railroad time' before standard time zones existed."]);
+FACTS.push([ /* Ships & Sailing */
+"The Titanic was considered 'practically unsinkable' before its voyage.",
+"The Santa Maria was the largest of Columbus's three ships.",
+"'Starboard' comes from old steering boards mounted on the right side.",
+"Ships in the Panama Canal rise 85 feet through its locks.",
+"The Mayflower carried about 102 passengers on a 66-day crossing."]);
+FACTS.push([ /* Dance */
+"Ballet terms are almost entirely French, from its royal court origins.",
+"Tango was born in the working-class ports of Buenos Aires and Montevideo.",
+"The rumba is the slowest of the competitive Latin dances.",
+"Breaking debuted at the Paris 2024 Games.",
+"The waltz was once scandalous — dancers held each other too closely."]);
+FACTS.push([ /* Theater */
+"The original Globe burned down in 1613 when a stage cannon ignited the thatch.",
+"Phantom of the Opera is Broadway's longest-running show.",
+"Broadway's theaters aren't all on Broadway — the name describes the district.",
+"The Tony Awards are named for actress and director Antoinette Perry.",
+"Greek actors wore masks with built-in megaphone mouths."]);
+FACTS.push([ /* Poetry */
+"Frost said the poem was about his indecisive friend Edward Thomas.",
+"Traditional haiku reference a season word called a 'kigo.'",
+"Dante wrote his epic in Tuscan dialect, helping shape modern Italian.",
+"A Shakespearean sonnet ends with a rhymed couplet.",
+"Poe married his 13-year-old cousin; his life was famously troubled."]);
+FACTS.push([ /* Comic Books */
+"Action Comics #1 has sold at auction for over $3 million.",
+"Marvel was nearly bankrupt in the 1990s before its movie era.",
+"Gotham's name comes from a nickname for New York City.",
+"Stan Lee's real surname was Lieber.",
+"Wonder Woman debuted in 1941, created by the inventor of the lie detector."]);
+FACTS.push([ /* Superheroes */
+"Kryptonite was invented for a 1943 radio show so Superman's actor could take vacation.",
+"Bruce Wayne first appeared in Detective Comics #27, in 1939.",
+"Spider-Man debuted in Amazing Fantasy #15 in 1962.",
+"The Avengers first assembled in 1963 to fight Loki.",
+"Vibranium is also the metal of Wakanda, Black Panther's homeland."]);
+FACTS.push([ /* Cartoons */
+"Mickey's first words were 'hot dogs!' in 1929's The Karnival Kid.",
+"SpongeBob was created by a marine biologist, Stephen Hillenburg.",
+"Tom and Jerry won seven Academy Awards for their shorts.",
+"Popeye's spinach boosted U.S. spinach sales by a third in the 1930s.",
+"A.A. Milne based Winnie-the-Pooh on his son's teddy bear."]);
+FACTS.push([ /* Sitcoms */
+"Cheers ran for 11 seasons and launched the spinoff Frasier.",
+"Arrested Development was revived by Netflix after seven years off air.",
+"The Office's U.S. version adapted Ricky Gervais's British original.",
+"I Love Lucy pioneered the three-camera sitcom setup still used today.",
+"The Golden Girls' kitchen table only had three chairs — one always faced the camera."]);
+FACTS.push([ /* Game Shows */
+"Jeopardy! gives contestants the answer and requires the question.",
+"Wheel of Fortune's wheel weighs about 2,400 pounds.",
+"The Price Is Right has aired since 1956 in various forms.",
+"Family Feud's top answer reveals are called 'the survey says.'",
+"Deal or No Deal originated in the Netherlands as 'Miljoenenjacht.'"]);
+FACTS.push([ /* Newspapers */
+"The New York Times has won over 130 Pulitzer Prizes.",
+"The Times of London was founded in 1785 as The Daily Universal Register.",
+"Watergate reporting by Woodward and Bernstein helped bring down a presidency.",
+"Fleet Street's last major newsroom moved out in 2016.",
+"The AP is a nonprofit cooperative owned by its member newspapers."]);
+FACTS.push([ /* Awards & Prizes */
+"Alfred Nobel reportedly created the prizes after reading his own premature obituary.",
+"The Pulitzer also covers drama, music, and literature.",
+"Only about 19 people have achieved EGOT status.",
+"The Fields Medal is awarded only to mathematicians under 40.",
+"Olympic gold medals are at least 92.5% silver with gold plating."]);
+FACTS.push([ /* The Oscars */
+"The Oscar statuette is officially 13.5 inches tall and weighs 8.5 pounds.",
+"Parasite won four Oscars that night, including Best Director.",
+"Meryl Streep has been nominated 21 times.",
+"Only 15 Oscars were given at the first ceremony — in 15 minutes.",
+"Guillermo del Toro's win completed the 'Three Amigos' directors' Oscar sweep with Cuarón and Iñárritu."]);
+FACTS.push([ /* The Grammys */
+"The gramophone trophy honors the phonograph's inventor, Emile Berliner.",
+"Adele won Album, Record, and Song of the Year that night.",
+"Some Best New Artist winners famously vanished afterward — the so-called curse.",
+"'Rumours' has sold over 40 million copies worldwide.",
+"The Grammys were created partly because musicians felt snubbed by the Walk of Fame."]);
+FACTS.push([ /* The Olympics */
+"The 1896 Games featured 43 events and 14 nations.",
+"The five rings represent the inhabited continents' union through sport.",
+"Phelps won eight golds at the single 2008 Beijing Games.",
+"Curling stones come from one tiny Scottish island, Ailsa Craig.",
+"The flame is lit by sunlight focused through a parabolic mirror."]);
+FACTS.push([ /* Soccer */
+"Brazil won in 1958, 1962, 1970, 1994, and 2002.",
+"The World Cup trophy is 18-karat gold and weighs about 13.5 pounds.",
+"Maradona called his other goal in that match the 'Goal of the Century' — minutes later.",
+"Camp Nou seats about 99,000 — the largest stadium in Europe.",
+"Only about 1% of a soccer match is the ball actually near a goal."]);
+FACTS.push([ /* Baseball */
+"Babe Ruth began his career as a star pitcher for the Red Sox.",
+"Only 24 perfect games have been thrown in MLB history.",
+"The Cubs then broke their own 108-year drought in 2016.",
+"Despite the name, the World Series involves only U.S. and Canadian teams.",
+"A foul ball on a two-strike bunt attempt is still strike three."]);
+FACTS.push([ /* Basketball */
+"Wilt Chamberlain scored 100 points in a single game in 1962.",
+"LeBron passed Kareem Abdul-Jabbar as the NBA's all-time scoring leader in 2023.",
+"The Lakers also have 17 titles, tying Boston.",
+"The three-point line was adopted by the NBA in 1979.",
+"Basketball was invented in 1891 by James Naismith with a peach basket."]);
+FACTS.push([ /* Football */
+"Brady won six with the Patriots and one with Tampa Bay.",
+"The extra point makes seven; a safety is worth two.",
+"Lombardi's Packers won the first two Super Bowls.",
+"The quarterback lines up directly behind the center.",
+"Super Bowl I had empty seats — tickets cost about $12."]);
+FACTS.push([ /* Golf */
+"Jack Nicklaus holds the record with 18 major wins.",
+"Augusta National's famous holes include 'Amen Corner' — 11, 12, and 13.",
+"Two under par on a hole is an eagle; three under is an albatross.",
+"Aces on par-4 holes are extremely rare — fewer than a handful in pro history.",
+"St. Andrews in Scotland is called the 'Home of Golf.'"]);
+FACTS.push([ /* Tennis */
+"Nadal won the French Open a record 14 times.",
+"'Love' likely comes from the French 'l'oeuf,' meaning egg — like a zero.",
+"Serena Williams won 23 Grand Slam singles titles.",
+"Clay courts produce the slowest, highest-bouncing play in tennis.",
+"The four Slams are the Australian Open, French Open, Wimbledon, and US Open."]);
+FACTS.push([ /* Boxing */
+"The Rumble in the Jungle was Ali vs. Foreman in Kinshasa.",
+"The ear bite cost Tyson his license for over a year.",
+"Ali changed his name after joining the Nation of Islam in 1964.",
+"A TKO is a technical knockout — the referee stops the fight.",
+"Heavyweight champions are traditionally called 'the baddest man on the planet.'"]);
+FACTS.push([ /* Hockey */
+"The Stanley Cup is the oldest trophy in North American pro sports, from 1893.",
+"Gretzky holds 61 NHL records.",
+"Frozen pucks slide more predictably and bounce less.",
+"Teams play 5-on-5 at full strength.",
+"Canada's men's team has won nine Olympic gold medals."]);
+FACTS.push([ /* Auto Racing */
+"The Indy 500 winner traditionally drinks a bottle of milk.",
+"Ferrari has competed in every F1 season since 1950.",
+"The Constructors' Championship rewards the team, not just the driver.",
+"Le Mans winners cover over 3,000 miles in a day.",
+"F1 cars generate enough downforce to theoretically drive upside down."]);
+FACTS.push([ /* Weather */
+"Tornado ratings are based on damage, measured after the storm.",
+"Hurricanes lose strength quickly once they make landfall.",
+"Falling barometric pressure usually means a storm is coming.",
+"A lightning bolt can reach about 50,000°F.",
+"A single thunderstorm can drop hundreds of millions of gallons of water."]);
+FACTS.push([ /* Trees */
+"It takes about 40 gallons of sap to make one gallon of maple syrup.",
+"The largest tree by volume is General Sherman, a giant sequoia.",
+"Only about one in 10,000 acorns becomes a tree.",
+"Baobabs can store thousands of gallons of water in their trunks.",
+"Pine cones open and close in response to humidity."]);
+FACTS.push([ /* Flowers */
+"Japan holds cherry-blossom viewing parties called 'hanami.'",
+"At the bubble's peak, one tulip bulb could cost more than a house.",
+"Texas bluebonnets bloom across highways every spring.",
+"The Rose of Sharon is mentioned in the Song of Solomon.",
+"Sunflowers stop tracking the sun once they mature, facing east."]);
+FACTS.push([ /* Birds */
+"Penguins' wings evolved into flippers — they 'fly' through water.",
+"Peregrines are the fastest animals on Earth in their hunting dive.",
+"Owls fly almost silently thanks to fringed wing feathers.",
+"Arctic terns see more daylight than any other creature on Earth.",
+"Goslings imprint on the first moving thing they see — sometimes humans."]);
+FACTS.push([ /* Fish */
+"Whale sharks can grow to 40 feet but eat mostly plankton.",
+"Salmon navigate home using Earth's magnetic field and their sense of smell.",
+"Pufferfish toxin is 1,200 times deadlier than cyanide.",
+"Goldfish can remember things for months, not seconds.",
+"An electric eel can discharge about 600 volts."]);
+FACTS.push([ /* Insects */
+"The waggle dance encodes distance and direction relative to the sun.",
+"Leafcutter ants don't eat the leaves — they farm fungus on them.",
+"Dragonflies spend most of their lives as underwater nymphs.",
+"Only female mosquitoes bite — they need blood protein for eggs.",
+"Ants sometimes 'herd' aphids like livestock for their honeydew."]);
+FACTS.push([ /* Dogs */
+"Siberian huskies can run 100 miles a day in races like the Iditarod.",
+"Puppies are born blind, deaf, and toothless.",
+"A Great Dane named Zeus stood 44 inches tall at the shoulder.",
+"The first Lassie was actually a male dog named Pal.",
+"A dog's nose print is unique, like a human fingerprint."]);
+FACTS.push([ /* Cats */
+"Siberian tigers can weigh over 600 pounds.",
+"Adult cats sleep 12 to 16 hours a day.",
+"A cat's purr vibrates at frequencies that may promote bone healing.",
+"Cheetahs chirp and purr instead of roaring.",
+"Killing a cat in ancient Egypt could be punishable by death."]);
+FACTS.push([ /* Horses */
+"A foal can stand and walk within an hour of birth.",
+"The Triple Crown's final leg is the Belmont Stakes.",
+"Galloping horses have all four hooves off the ground at once.",
+"One 'hand' equals four inches.",
+"Mustangs descend from horses brought by Spanish explorers."]);
+FACTS.push([ /* Reptiles & Amphibians */
+"Saltwater crocodiles can exceed 20 feet and 2,000 pounds.",
+"Tadpoles breathe through gills before developing lungs.",
+"Chameleons' color changes also signal aggression and courtship.",
+"Snakes' forked tongues sample two points at once to detect direction.",
+"Axolotls can regrow parts of their heart and brain."]);
+FACTS.push([ /* Dinosaurs */
+"T. rex had a bite force of about 8,000 pounds.",
+"The extinction asteroid struck near today's Yucatán Peninsula.",
+"Triceratops' frill may have been used for display as much as defense.",
+"Megalosaurus was named in 1824 — before the word 'dinosaur' existed.",
+"Modern birds are, cladistically, living dinosaurs."]);
+FACTS.push([ /* Gems & Minerals */
+"Diamonds form about 100 miles below the surface under extreme pressure.",
+"Emeralds are rarer than diamonds in fine quality.",
+"Sapphires and rubies are the same mineral — only the color differs.",
+"Amethyst was once considered as precious as ruby.",
+"'Aurum' also gives us the term 'Au' on every gold bar in film heists."]);
+FACTS.push([ /* Colors */
+"With light, red and green mix to make yellow — opposite of paint.",
+"Newton added indigo so the rainbow would have seven colors like musical notes.",
+"Japan's flag is called the Nisshōki, or 'sun-mark flag.'",
+"Ultramarine literally means 'beyond the sea' — the lapis came from Afghanistan.",
+"Black objects absorb nearly all visible light."]);
+FACTS.push([ /* Language */
+"Mandarin has over 900 million native speakers.",
+"French, Spanish, Italian, Portuguese, and Romanian all descend from Latin.",
+"The letter 'J' was the last added to the English alphabet.",
+"'Ciao' originally meant 'I am your servant' in Venetian dialect.",
+"Esperanto was created in 1887 to be a universal second language."]);
+FACTS.push([ /* Word Origins */
+"Roman soldiers were sometimes paid partly in salt — 'salarium.'",
+"Karel Čapek coined 'robot' in a 1920 play.",
+"Karaoke machines first appeared in Japan in 1971.",
+"The Earl of Sandwich reportedly wanted food he could eat while gambling.",
+"Roman anatomists thought flexing muscles looked like mice under skin."]);
+FACTS.push([ /* Holidays */
+"Thanksgiving became a national holiday under Lincoln in 1863.",
+"Día de los Muertos blends Aztec ritual with Catholic tradition.",
+"Hanukkah's oil miracle is why foods are fried, like latkes.",
+"Punxsutawney Phil has predicted since 1887.",
+"Bastille Day marks the 1789 storming of the Bastille prison."]);
+FACTS.push([ /* Desserts */
+"Tiramisu was invented in the Veneto region in the 1960s.",
+"The caramelized top is cracked with the back of a spoon.",
+"New York cheesecake uses cream cheese, invented in 1872.",
+"Mochi is traditionally pounded in a ceremony called 'mochitsuki.'",
+"Pavlova honors Russian ballerina Anna Pavlova's tour of Australia and New Zealand."]);
+FACTS.push([ /* Fruits */
+"A strawberry isn't a true berry — botanically, a banana is.",
+"Banana plants are giant herbs, and their 'trunks' are leaf stalks.",
+"Tomatoes are fruits — the U.S. Supreme Court called them vegetables for tariffs.",
+"Durian is banned on many airlines and hotels in Southeast Asia.",
+"An orange tree can produce fruit for over 50 years."]);
+FACTS.push([ /* Vegetables */
+"Tomatoes were called 'poison apples' by some Europeans.",
+"Spinach's iron reputation came partly from a decimal-point error myth.",
+"Broccoli, kale, and cabbage are all the same species, bred differently.",
+"Your body converts carrots' beta-carotene into vitamin A.",
+"Artichokes are the unopened buds of a thistle."]);
+FACTS.push([ /* Cheese */
+"True Parmigiano-Reggiano ages a minimum of 12 months.",
+"Roquefort must be aged in the natural caves of Roquefort-sur-Soulzon by law.",
+"Gouda accounts for over half of the Netherlands' cheese production.",
+"Buffalo mozzarella is creamier and richer than cow's-milk versions.",
+"Emmental's holes are made by carbon-dioxide-releasing bacteria."]);
+FACTS.push([ /* Coffee & Tea */
+"Each coffee cherry usually contains two beans.",
+"Brazil has led world coffee production for over 150 years.",
+"Matcha is shade-grown, boosting its chlorophyll and umami.",
+"A cappuccino is named for the brown robes of Capuchin friars.",
+"Legend says tea was discovered by Emperor Shen Nong in 2737 BC."]);
+FACTS.push([ /* Beer */
+"Hops also act as a natural preservative in beer.",
+"Porters were named for the London street porters who drank them.",
+"The 1516 purity law allowed only water, barley, and hops.",
+"Yeast converts sugars into alcohol and carbon dioxide during fermentation.",
+"Oktoberfest began as an 1810 royal wedding celebration."]);
+FACTS.push([ /* Wine */
+"Bordeaux's classified 'growths' date to an 1855 ranking still in use.",
+"Most grape juice is actually clear — even from red grapes.",
+"Chardonnay is called the 'winemaker's grape' for its versatility.",
+"Port is fortified with brandy, stopping fermentation early.",
+"A double-hinged 'waiter's friend' is the sommelier's corkscrew of choice."]);
+FACTS.push([ /* Cocktails */
+"The margarita may be named for a Dallas socialite, Margarita Sames.",
+"A 'dry' martini simply means less vermouth.",
+"Ernest Hemingway famously drank mojitos at La Bodeguita del Medio in Havana.",
+"The Old Fashioned dates to the early 1800s — among the first named cocktails.",
+"The Bloody Mary was invented at Harry's New York Bar in Paris."]);
+FACTS.push([ /* Cooking */
+"Maillard browning is chemistry between amino acids and sugars — not burning.",
+"A chiffonade rolls leafy herbs into thin ribbons.",
+"Sous vide means 'under vacuum' in French.",
+"Professional kitchens live by mise en place before service begins.",
+"'Al dente' translates as 'to the tooth.'"]);
+FACTS.push([ /* U.S. States */
+"Alaska is larger than the next three biggest states combined.",
+"Florida also leads the U.S. in lightning strikes.",
+"Hawaii is the most isolated population center on Earth.",
+"Delaware earned the nickname 'The First State.'",
+"California's population exceeds Canada's."]);
+FACTS.push([ /* U.S. Cities */
+"Chicago's nickname may come from its boastful politicians, not its weather.",
+"New York's nickname was popularized by a 1920s sportswriter.",
+"Mardi Gras colors are purple, green, and gold — justice, faith, power.",
+"The Golden Gate Bridge's color is officially 'International Orange.'",
+"Houston is the fourth-largest city in the United States."]);
+FACTS.push([ /* Europe */
+"Italy's 'boot' appears to kick the island of Sicily.",
+"The Matterhorn straddles the Swiss-Italian border.",
+"Vatican City is the world's smallest country — about 110 acres.",
+"The Danube passes through four national capitals.",
+"Stockholm's archipelago alone has about 30,000 islands."]);
+FACTS.push([ /* Asia */
+"India surpassed China in population in 2023.",
+"The Ganges supports roughly 400 million people in its basin.",
+"Thailand means 'land of the free.'",
+"About 6,000 of Indonesia's islands are inhabited.",
+"The Gobi is a cold desert — it can drop below -40°F."]);
+FACTS.push([ /* Africa */
+"The Sahara is nearly as large as the entire United States.",
+"Sudan's Nubian pyramids outnumber Egypt's roughly two to one.",
+"Kilimanjaro is a dormant volcano with three cones.",
+"Madagascar's wildlife is about 90% found nowhere else.",
+"The Congo River is the world's deepest river, over 700 feet down."]);
+FACTS.push([ /* South America */
+"Brazil covers nearly half the South American continent.",
+"Machu Picchu sits at about 7,970 feet above sea level.",
+"Lake Titicaca sits at 12,507 feet above sea level.",
+"The Amazon produces about 10% of Earth's photosynthesis.",
+"Iguazu Falls is wider than Niagara and taller than Victoria Falls combined — nearly."]);
+FACTS.push([ /* Islands */
+"Australia is considered a continent, so Greenland takes the island crown.",
+"Darwin's finches on the Galápagos helped inspire evolutionary theory.",
+"Sri Lanka was renamed in 1972.",
+"Sicily has been ruled by Greeks, Romans, Arabs, and Normans.",
+"Komodo dragons are the world's largest lizards, up to 10 feet long."]);
+FACTS.push([ /* Deserts */
+"The Sahara grows and shrinks over 20,000-year climate cycles.",
+"Some Atacama weather stations have never recorded rain.",
+"Antarctica is the largest desert of all — cold deserts count.",
+"Some saguaros live over 150 years and weigh several tons.",
+"'Outback' covers about 70% of Australia."]);
+FACTS.push([ /* Landmarks */
+"The statue's full name is 'Liberty Enlightening the World.'",
+"The Great Wall is not a single wall but many overlapping fortifications.",
+"The Taj Mahal took about 20,000 workers and 1,000 elephants to build.",
+"Stonehenge is older than the Egyptian pyramids.",
+"The Opera House roof tiles were designed to be self-cleaning in the rain."]);
+var FINAL = {
+  cat: 'First Light',
+  q: 'In the Acacia Park morning basketball drill, the sun climbs to exactly this height after the fiftieth shot.',
+  a: ['Halfway above the horizon', 'Fully above the horizon', 'Just touching the horizon'],
+  fact: 'The same half-mast sunrise rule caps the park\'s basketball drill — a shared Acacia Park tradition.'
+};
+var CLUE_TIME = 15;
+
+/* ---------- host dialogue ---------- */
+var LINES = {
+  welcome: [ 'Hoo-hoo! Welcome to Dawn Jeopardy.', 'Pick a clue, friend. The sun is climbing.' ],
+  pick:    [ 'Ooh, a fine choice.', 'Let\'s see… this one.', 'Ah yes, a favorite of mine.' ],
+  good:    [ 'Correct! The stars dim for you.', 'Hoot-hoot! Beautifully done.', 'Sharp as a talon. Well played.', 'Yes! The dawn approves.' ],
+  bad:     [ 'Oh my feathers… not quite.', 'The squirrel would have loved that one. No.', 'Hoo… sadly no.', 'A brave guess, but no.' ],
+  timeout: [ 'Time\'s up! Even the sun doesn\'t wait.', 'Too slow, friend — the dawn marches on.' ],
+  acorn:   [ 'THE GOLDEN ACORN! The squirrel will be furious.', 'A Golden Acorn! Wager bravely!' ],
+  final:   [ 'The board is clear… time for the Sunrise Wager.', 'One last clue before the sun crests. Wager well.' ],
+  win:     [ 'What a morning! You glow brighter than the sunrise.', 'Champion of the dawn! Hoot-hoot!' ],
+  lose:    [ 'The sun still rose. There\'s always tomorrow\'s drill.', 'A cloudy morning — but dawn comes again.' ]
+};
+function pickLine(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ---------- state ---------- */
+var STATE = 'menu';
+var score = 0, best = 0;
+var GAME = [];                /* 5 categories picked for this game */
+var done = (function(){ var d = []; for (var c = 0; c < 5; c++) d.push([false, false, false, false, false]); return d; })();
+var acorn = { c: -1, r: -1 };
+var cur = null;               /* { c, r, q, options:[{t,ok}], v } */
+var wager = 0, isFinal = false;
+var right = 0, answered = 0, acornHit = false, acornRight = false, finalRight = false;
+var timerT = 0, timerOn = false;
+var speechT = 0;
+var progress = 0;
+var owlExcited = 0;
+
+var $ = function(id){ return document.getElementById(id); };
+var boardEl = $('board'), speechEl = $('speech');
+function loadBest(){ try{ best = parseInt(localStorage.getItem('dawnJepBest') || '0', 10) || 0; }catch(e){ best = 0; } }
+function saveBest(){ try{ localStorage.setItem('dawnJepBest', String(best)); }catch(e){} }
+
+function say(text, dur){
+  speechEl.textContent = text;
+  speechEl.classList.add('on');
+  speechT = dur || 2.6;
+  if (LINES.good.indexOf(text) >= 0 || LINES.acorn.indexOf(text) >= 0) owlExcited = 0.8;
+}
+function colBoundary(k){
+  /* x of the gap after board column k (0-based) — the exact midpoint between two columns */
+  var br = boardEl.getBoundingClientRect();
+  var cs = getComputedStyle(boardEl);
+  var padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+  var colW = (br.width - padL - padR - 4 * 6) / 5;
+  return br.left + padL + (k + 1) * colW + k * 6 + 3;
+}
+function hootPos(){
+  /* host perch: exactly centered between the 4th and 5th category columns */
+  return { x: colBoundary(3), y: Math.max(96, H * 0.13) };
+}
+function placeSpeech(){
+  var h = hootPos();
+  speechEl.style.left = Math.min(W - 300, Math.max(12, h.x + 40)) + 'px';
+  speechEl.style.top = Math.max(64, h.y - 120) + 'px';
+}
+
+/* ---------- board ---------- */
+function buildBoard(){
+  boardEl.innerHTML = '';
+  for (var c = 0; c < 5; c++){
+    var h = document.createElement('div');
+    h.className = 'cat'; h.textContent = GAME[c].e + ' ' + GAME[c].c;
+    boardEl.appendChild(h);
+  }
+  for (var r = 0; r < 5; r++){
+    for (var c2 = 0; c2 < 5; c2++){
+      (function(cc, rr){
+        var b = document.createElement('button');
+        b.className = 'cell';
+        b.textContent = (rr + 1) * 100;
+        if (done[cc][rr]){ b.classList.add('done'); b.textContent = done[cc][rr]; }
+        if (cc === acorn.c && rr === acorn.r && !done[cc][rr]) b.classList.add('acorn');
+        b.addEventListener('click', function(){ pickClue(cc, rr, b); });
+        boardEl.appendChild(b);
+      })(c2, r);
+    }
+  }
+  $('hudLeft').textContent = String(cluesLeft());
+  $('hudPhase').textContent = cluesLeft() > 0 ? 'Board 1' : 'Sunrise Wager';
+}
+function cluesLeft(){
+  var n = 0;
+  for (var c = 0; c < 5; c++) for (var r = 0; r < 5; r++) if (!done[c][r]) n++;
+  return n;
+}
+
+/* ---------- flow ---------- */
+function pickGame(){
+  var pool = CATS.slice();
+  GAME = [];
+  for (var i = 0; i < 5; i++){
+    var k = Math.floor(Math.random() * pool.length);
+    GAME.push(pool.splice(k, 1)[0]);
+  }
+}
+function startGame(){
+  score = 0; right = 0; answered = 0; progress = 0;
+  acornHit = false; acornRight = false; finalRight = false; wager = 0;
+  done = [];
+  for (var c = 0; c < 5; c++){ done.push([false, false, false, false, false]); }
+  pickGame();
+  acorn.c = Math.floor(Math.random() * 5);
+  acorn.r = Math.floor(Math.random() * 5);
+  STATE = 'board';
+  $('menu').classList.remove('on');
+  $('over').classList.remove('on');
+  timerOn = false;
+  $('hudScore').textContent = '0';
+  $('scoreBox').classList.remove('neg');
+  buildBoard();
+  placeSpeech();
+  say(pickLine(LINES.welcome), 3.4);
+}
+function shuffle(a){
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function spawnFire(x, y){
+  for (var i = 0; i < 18; i++){
+    var a = Math.random() * Math.PI * 2, s = 30 + Math.random() * 90;
+    fgFire.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40,
+      t: 0, life: 1.2 + Math.random() * 1.2, r: 1.5 + Math.random() * 2.5,
+      p: Math.random() * 6, gold: Math.random() < 0.6 });
+  }
+}
+function pickClue(c, r, btn){
+  if (STATE !== 'board' || done[c][r]) return;
+  var raw = GAME[c].q[r];
+  cur = { c: c, r: r, q: raw[0], fact: FACTS[CATS.indexOf(GAME[c])][r], options: shuffle([
+    { t: raw[1], ok: true }, { t: raw[2], ok: false }, { t: raw[3], ok: false }
+  ]), v: (r + 1) * 100, cat: GAME[c].c, e: GAME[c].e };
+  isFinal = false;
+  if (c === acorn.c && r === acorn.r){
+    acornHit = true;
+    if (btn){
+      var rect = btn.getBoundingClientRect();
+      spawnFire(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+    say(pickLine(LINES.acorn), 3);
+    openWager(false);
+  } else {
+    say(pickLine(LINES.pick), 1.8);
+    openClue(cur.v);
+  }
+}
+function openWager(finalMode){
+  STATE = 'wager';
+  isFinal = finalMode;
+  var maxW = finalMode ? Math.max(score, 0) : Math.max(score, cur ? cur.v * 2 : 1000);
+  maxW = Math.max(maxW, finalMode ? 0 : 500);
+  $('wagerBadge').textContent = finalMode ? '◆ Sunrise Wager — Final ◆' : '◆ Golden Acorn — Daily Double ◆';
+  $('wagerCat').textContent = finalMode ? FINAL.cat : (GAME[cur.c].e + ' ' + GAME[cur.c].c);
+  $('wagerPrompt').textContent = finalMode
+    ? (maxW > 0 ? 'One clue left. Wager up to ' + maxW + '?' : 'One clue left — play it for pride.')
+    : 'Daily double! Wager up to ' + maxW + '.';
+  var row = $('wagerRow');
+  row.innerHTML = '';
+  var opts;
+  if (maxW <= 0){ opts = [0]; }
+  else {
+    var half = Math.round(maxW / 2);
+    opts = [];
+    [100, half, maxW].forEach(function(v){
+      v = Math.min(v, maxW);
+      if (v > 0 && opts.indexOf(v) < 0) opts.push(v);
+    });
+  }
+  opts.forEach(function(v){
+    var b = document.createElement('button');
+    b.className = 'btn';
+    b.textContent = maxW <= 0 ? 'No wager — just play' : (v === maxW && maxW > 100 ? 'All in · ' + v : String(v));
+    b.addEventListener('click', function(){
+      wager = v;
+      $('wagerOv').classList.remove('on');
+      if (finalMode){
+        cur = { c: -1, r: -1, q: FINAL.q, cat: FINAL.cat, e: '🌞', v: v,
+          options: shuffle([
+            { t: FINAL.a[0], ok: true }, { t: FINAL.a[1], ok: false }, { t: FINAL.a[2], ok: false }
+          ]) };
+      }
+      openClue(v);
+    });
+    row.appendChild(b);
+  });
+  $('wagerOv').classList.add('on');
+}
+function openClue(v){
+  STATE = 'clue';
+  var isAcorn = !isFinal && cur.c === acorn.c && cur.r === acorn.r;
+  $('acornBadge').style.display = isAcorn ? 'inline-block' : 'none';
+  $('clueCat').textContent = cur.e + ' ' + cur.cat;
+  $('clueVal').textContent = v > 0 ? v : '—';
+  $('clueText').textContent = cur.q;
+  $('verdict').textContent = '';
+  $('verdict').className = 'verdict';
+  $('factLine').innerHTML = '';
+  showSquirrel = false;
+  var box = $('choices');
+  box.innerHTML = '';
+  var keys = ['A', 'B', 'C'];
+  cur.options.forEach(function(op, i){
+    var b = document.createElement('button');
+    b.className = 'choice';
+    b.innerHTML = '<span class="key">' + keys[i] + '</span><span>' + op.t + '</span>';
+    b.addEventListener('click', function(){ submitAnswer(false, i); });
+    box.appendChild(b);
+  });
+  $('choices').style.display = 'flex';
+  $('nextRow').style.display = 'none';
+  $('nextBtn').textContent = isFinal ? 'See the Sunrise' : 'Back to the Board';
+  $('clueOv').classList.add('on');
+  timerT = CLUE_TIME; timerOn = true;
+}
+function submitAnswer(timedOut, choiceI){
+  if (STATE !== 'clue' || $('nextRow').style.display !== 'none') return;
+  timerOn = false;
+  var isAcorn = !isFinal && cur.c === acorn.c && cur.r === acorn.r;
+  var val = (isFinal || isAcorn) ? wager : cur.v;
+  var ok = !timedOut && choiceI != null && cur.options[choiceI].ok;
+  answered++;
+  if (!isFinal) done[cur.c][cur.r] = cur.options.find(function(o){ return o.ok; }).t;
+  progress = Math.min(1, (25 - cluesLeft()) / 25 * 0.85 + (isFinal ? 0.15 : 0));
+  /* paint the choices */
+  var btns = $('choices').children;
+  var correctTxt = '';
+  for (var i = 0; i < btns.length; i++){
+    btns[i].disabled = true;
+    if (cur.options[i].ok){ btns[i].classList.add('right'); correctTxt = cur.options[i].t; }
+  }
+  if (!ok && choiceI != null && btns[choiceI]) btns[choiceI].classList.add('wrong');
+  var vEl = $('verdict');
+  if (ok){
+    right++;
+    score += val;
+    vEl.textContent = 'Correct +' + val + ' — ' + correctTxt;
+    vEl.className = 'verdict good';
+    say(pickLine(LINES.good), 2.6);
+    if (isAcorn) acornRight = true;
+    if (isFinal) finalRight = true;
+  } else {
+    score -= val;
+    vEl.textContent = (timedOut ? 'Time! −' : 'Missed −') + val + ' — it was ' + correctTxt;
+    vEl.className = 'verdict bad';
+    say(timedOut ? pickLine(LINES.timeout) : pickLine(LINES.bad), 2.8);
+  }
+  $('hudScore').textContent = String(score);
+  $('scoreBox').classList.toggle('neg', score < 0);
+  /* the correct answer plus the follow-up fact everyone wants next */
+  var fact = isFinal ? FINAL.fact : cur.fact;
+  $('factLine').innerHTML = '<b>Answer</b> ' + correctTxt + (fact ? ' &nbsp;·&nbsp; <b>Good to know</b> ' + fact : '');
+  if (!ok) showSquirrel = true;
+  $('nextRow').style.display = 'flex';
+  setTimeout(function(){ $('nextBtn').focus(); }, 60);
+}
+function nextAfterClue(){
+  $('clueOv').classList.remove('on');
+  if (isFinal){ showOver(); return; }
+  buildBoard();
+  if (cluesLeft() === 0){
+    STATE = 'final';
+    say(pickLine(LINES.final), 3.2);
+    setTimeout(function(){ openWager(true); }, 900);
+  } else {
+    STATE = 'board';
+  }
+}
+/* reset = same five categories, fresh board; new game = draw new categories */
+function resetGame(){
+  if (!GAME.length){ startGame(); return; }
+  score = 0; right = 0; answered = 0; progress = 0;
+  acornHit = false; acornRight = false; finalRight = false; wager = 0;
+  done = [];
+  for (var c = 0; c < 5; c++){ done.push([false, false, false, false, false]); }
+  acorn.c = Math.floor(Math.random() * 5);
+  acorn.r = Math.floor(Math.random() * 5);
+  STATE = 'board';
+  $('menu').classList.remove('on');
+  $('over').classList.remove('on');
+  $('clueOv').classList.remove('on');
+  $('wagerOv').classList.remove('on');
+  timerOn = false;
+  $('hudScore').textContent = '0';
+  $('scoreBox').classList.remove('neg');
+  buildBoard();
+  say('Same board, fresh sunrise. Go again!', 2.6);
+}
+function showOver(){
+  STATE = 'over';
+  if (score > best){ best = score; saveBest(); $('newRec').style.display = 'block'; }
+  else $('newRec').style.display = 'none';
+  $('finScore').textContent = String(score);
+  $('finRight').textContent = right + ' / ' + answered;
+  $('finBest').textContent = String(best);
+  $('finAcorn').textContent = acornHit ? (acornRight ? 'Won' : 'Lost') : '—';
+  $('finWager').textContent = wager ? (finalRight ? '+' : '−') + wager : '—';
+  $('finAcc').textContent = answered ? Math.round(right / answered * 100) + '%' : '0%';
+  $('vTitle').innerHTML = score > 0 ? 'Sunrise <em>complete</em>' : 'Cloudy <em>morning</em>';
+  say(pickLine(score > 0 ? LINES.win : LINES.lose), 4);
+  $('over').classList.add('on');
+}
+
+/* ---------- canvas setup ---------- */
+var cv = document.getElementById('bg');
+var ctx = cv.getContext('2d');
+var fgCv = document.getElementById('fg');
+var fgCtx = fgCv.getContext('2d');
+var owlCv = document.getElementById('clueOwl');
+var owlCtx = owlCv.getContext('2d');
+var fgFire = [];        /* firefly burst particles on the foreground layer */
+var showSquirrel = false;  /* squirrel joins the clue card after a wrong answer */
+var W = 0, H = 0, GROUND = 0, DPR = 1;
+var C = {
+  predawn:'#0F1B2C', predawn2:'#16273D', pine:'#14291F',
+  ink:'#14100A', dawn:'#E8933A', gold:'#F2B84B',
+  day:'#FBF7EE', day2:'#F3ECDC', mist:'#9FB0C4', stone:'#6A6255'
+};
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = W * DPR; cv.height = H * DPR;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  fgCv.width = W * DPR; fgCv.height = H * DPR;
+  fgCv.style.width = W + 'px'; fgCv.style.height = H + 'px';
+  fgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  GROUND = H - Math.max(84, H * 0.14);
+}
+window.addEventListener('resize', resize);
+
+function poly(c2, pts){
+  c2.beginPath();
+  c2.moveTo(pts[0][0], pts[0][1]);
+  for (var i = 1; i < pts.length; i++) c2.lineTo(pts[i][0], pts[i][1]);
+  c2.closePath(); c2.fill();
+}
+function owlAnim(now, dur, keys){
+  var t = (now % dur) / dur;
+  for (var i = 0; i < keys.length - 1; i++){
+    var a = keys[i], b = keys[i + 1];
+    if (t >= a[0] && t <= b[0]){
+      var u = (t - a[0]) / ((b[0] - a[0]) || 1);
+      u = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      return a[1] + (b[1] - a[1]) * u;
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+/* Hoot — the exact basketball-game owl. drawCtx = any 2d context. */
+function drawHoot(drawCtx, x, y, scale, now){
+  var sway = owlAnim(now, 5.4, [[0, 0], [0.28, 6], [0.62, -4], [1, 0]]);
+  var blink = owlAnim(now, 4.2, [[0, 1], [0.96, 1], [0.98, 0.1], [1, 1]]);
+  drawCtx.save();
+  drawCtx.translate(x, y);
+  drawCtx.scale(scale * 1.1, scale * 1.1);
+  drawCtx.translate(0, -76);
+  drawCtx.translate(32, 47);
+  drawCtx.rotate(sway * Math.PI / 180);
+  drawCtx.translate(-32, -47);
+  drawCtx.fillStyle = C.mist;
+  drawCtx.beginPath(); drawCtx.ellipse(32, 50, 18, 24, 0, 0, Math.PI * 2); drawCtx.fill();
+  poly(drawCtx, [[19, 14], [14, 0], [22, 12]]);
+  poly(drawCtx, [[45, 14], [50, 0], [42, 12]]);
+  drawCtx.beginPath(); drawCtx.arc(32, 26, 17, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.save();
+  drawCtx.translate(32, 24); drawCtx.scale(1, blink); drawCtx.translate(-32, -24);
+  drawCtx.fillStyle = C.day2;
+  drawCtx.beginPath(); drawCtx.arc(25, 24, 6, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.beginPath(); drawCtx.arc(39, 24, 6, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.fillStyle = C.ink;      /* black pupils */
+  drawCtx.beginPath(); drawCtx.arc(25, 24, 2.2, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.beginPath(); drawCtx.arc(39, 24, 2.2, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.fillStyle = C.dawn;
+  poly(drawCtx, [[32, 29], [28, 36], [32, 34], [36, 36]]);
+  var flap = owlExcited > 0 && !RM ? Math.sin(now * 18) * 24 : Math.sin(now * 1.3) * 2.4;
+  drawCtx.fillStyle = '#7A8A9A';
+  drawCtx.save();
+  drawCtx.translate(16, 36); drawCtx.rotate(-flap * Math.PI / 180); drawCtx.translate(-16, -36);
+  drawCtx.beginPath(); drawCtx.moveTo(16, 36); drawCtx.bezierCurveTo(12, 46, 12, 58, 18, 62); drawCtx.lineTo(18, 40); drawCtx.closePath(); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.save();
+  drawCtx.translate(48, 36); drawCtx.rotate(flap * Math.PI / 180); drawCtx.translate(-48, -36);
+  drawCtx.beginPath(); drawCtx.moveTo(48, 36); drawCtx.bezierCurveTo(52, 46, 52, 58, 46, 62); drawCtx.lineTo(46, 40); drawCtx.closePath(); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.strokeStyle = C.dawn; drawCtx.lineWidth = 2.2; drawCtx.lineCap = 'round';
+  drawCtx.beginPath();
+  drawCtx.moveTo(24, 70); drawCtx.lineTo(24, 76); drawCtx.moveTo(22, 70); drawCtx.lineTo(22, 76); drawCtx.moveTo(26, 70); drawCtx.lineTo(26, 76);
+  drawCtx.moveTo(40, 70); drawCtx.lineTo(40, 76); drawCtx.moveTo(38, 70); drawCtx.lineTo(38, 76); drawCtx.moveTo(42, 70); drawCtx.lineTo(42, 76);
+  drawCtx.stroke();
+  drawCtx.restore();
+}
+function drawSquirrelMini(x, y, wag){
+  wag = wag || 0;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(30 + wag, 14, 9, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(26 + wag * 0.6, 26, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18, 34, 8, 10, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.ellipse(16, 36, 4.5, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(10, 24, 6, 0, Math.PI * 2); ctx.fill();
+  poly(ctx, [[9, 20], [8, 14], [12, 18]]);
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.arc(9.5, 23.5, 2.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(9, 23.5, 1.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day;
+  ctx.beginPath(); ctx.arc(8.5, 22.9, 0.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(4.5, 25.5, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function drawAcorn(x, y, s){
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = C.gold;
+  ctx.beginPath(); ctx.ellipse(0, 6, 9, 11, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.ellipse(0, -3, 10, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, -8); ctx.quadraticCurveTo(2, -12, 5, -13); ctx.stroke();
+  ctx.restore();
+}
+var stars = [], fireflies = [], clouds = [];
+/* squirrel fidget physics — a tiny spring that gets random little impulses */
+var sqF = { y: 0, v: 0, next: 1.2 };
+function initScenery(){
+  stars = []; fireflies = []; clouds = [];
+  var i;
+  for (i = 0; i < 26; i++) stars.push({ x: Math.random() * W, y: Math.random() * H * 0.4, a: 0.15 + Math.random() * 0.45, p: Math.random() * 6.2 });
+  for (i = 0; i < 7; i++) fireflies.push({ x: W * (0.3 + Math.random() * 0.65), y: GROUND - 20 - Math.random() * 70, p: Math.random() * 6, s: 0.6 + Math.random() * 0.6 });
+  for (i = 0; i < 9; i++) clouds.push({ x: Math.random() * W, y: H * (0.05 + Math.random() * 0.3), s: 0.5 + Math.random() * 0.7, a: 0.22 + Math.random() * 0.28 });
+}
+function mixRGB(a, b, t){
+  var r = Math.round(a[0] + (b[0] - a[0]) * t);
+  var g = Math.round(a[1] + (b[1] - a[1]) * t);
+  var bl = Math.round(a[2] + (b[2] - a[2]) * t);
+  return 'rgb(' + r + ',' + g + ',' + bl + ')';
+}
+function draw(now){
+  var i;
+  var k = progress;
+  var skyTop = mixRGB([15, 27, 44], [62, 74, 96], k * 0.8);
+  var skyMid = mixRGB([22, 39, 61], [232, 147, 58], k * 0.55);
+  var g = ctx.createLinearGradient(0, 0, 0, GROUND);
+  g.addColorStop(0, skyTop);
+  g.addColorStop(1, skyMid);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, GROUND + 2);
+  for (i = 0; i < stars.length; i++){
+    var st = stars[i];
+    var tw = RM ? 1 : 0.6 + 0.4 * Math.sin(now * 1.4 + st.p);
+    ctx.globalAlpha = st.a * tw * (1 - k * 0.9);
+    ctx.fillStyle = C.day;
+    ctx.beginPath(); ctx.arc(st.x, st.y, 1.3, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  var sunX = W * 0.78, sunR = 54;
+  var sunY = GROUND + sunR + 20 - k * (sunR * 2 + H * 0.30);
+  var sg = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, sunR * 2.6);
+  sg.addColorStop(0, 'rgba(242,184,75,' + (0.25 + k * 0.65) + ')');
+  sg.addColorStop(1, 'rgba(242,184,75,0)');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.arc(sunX, sunY, sunR * 2.6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.gold;
+  ctx.beginPath(); ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.pine;
+  ctx.fillRect(0, GROUND, W, H - GROUND);
+  ctx.fillStyle = 'rgba(232,147,58,' + (0.08 + k * 0.15) + ')';
+  ctx.fillRect(0, GROUND, W, 3);
+  ctx.fillStyle = 'rgba(20,41,31,0.8)';
+  for (i = 0; i < 8; i++){
+    var tx = W * 0.34 + i * (W * 0.09), ts = 0.5 + (i % 3) * 0.16;
+    ctx.save(); ctx.translate(tx, GROUND); ctx.scale(ts, ts);
+    ctx.beginPath(); ctx.moveTo(0, -86); ctx.lineTo(28, -28); ctx.lineTo(-28, -28); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -64); ctx.lineTo(34, -6); ctx.lineTo(-34, -6); ctx.fill();
+    ctx.restore();
+  }
+  /* the big moonlit tree — TALL, so its canopy touches the top of the screen */
+  var treeX = W * 0.12, treeS = GROUND / 272;
+  ctx.save();
+  ctx.translate(treeX, GROUND); ctx.scale(treeS, treeS);
+  ctx.fillStyle = '#2E2015';
+  ctx.fillRect(-9, -150, 18, 154);
+  ctx.fillStyle = C.pine;
+  ctx.beginPath(); ctx.arc(0, -196, 74, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-52, -162, 46, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(56, -166, 50, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  if (!RM){
+    for (i = 0; i < fireflies.length; i++){
+      var f = fireflies[i];
+      ctx.globalAlpha = (0.35 + 0.35 * Math.sin(now * 2 + f.p)) * (1 - k * 0.8);
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(f.x, f.y, 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  /* two dedicated branches reach right from the tree — one to each perched friend */
+  var hp = hootPos();
+  /* the squirrel's spot: exactly centered between the 1st and 2nd category columns */
+  var sqCX = colBoundary(0);
+  /* two dedicated branches grow out of the tree — one to each perched friend */
+  ctx.strokeStyle = '#2E2015'; ctx.lineCap = 'round';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(treeX - 8, hp.y + 46);
+  ctx.quadraticCurveTo((treeX + sqCX) / 2, hp.y + 32, sqCX + 22, hp.y + 8);
+  ctx.stroke();
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(treeX - 2, hp.y + 56);
+  ctx.quadraticCurveTo((treeX + hp.x) / 2, hp.y + 38, hp.x + 96, hp.y + 11);
+  ctx.stroke();
+  /* the squirrel perches on his own branch between columns 1 and 2,
+     with his subtle springy fidget and a slow lateral shuffle along the branch */
+  var sqDX = RM ? 0 : Math.sin(now * 0.5 + 1.1) * 8 + Math.sin(now * 0.21 + 3.7) * 5;
+  ctx.save();
+  ctx.translate(sqCX - 20 + sqDX, hp.y - 36 + sqF.y);
+  ctx.rotate(sqF.y * 0.012 + sqDX * 0.002);
+  drawSquirrelMini(0, 0, Math.sin(now * 5.2) * 3 + sqF.y * 0.4);
+  ctx.restore();
+  /* Hoot sidles along his branch — anchored between the 4th and 5th columns,
+     drifting slowly into the 4th column and back across into the 5th.
+     Owl biomechanics: a slight body lean into the walk, and a soft step-bounce
+     whose height follows how fast he's moving. */
+  var owlAmp = RM ? 0 : (colBoundary(3) - colBoundary(2)) * 0.36;
+  var owlPh = now * 0.16;
+  var owlDX = Math.sin(owlPh) * owlAmp;
+  var owlVX = Math.cos(owlPh) * owlAmp * 0.16;
+  var owlLean = Math.max(-0.055, Math.min(0.055, owlVX * 0.0038));
+  var owlBob = RM ? 0 : Math.abs(Math.sin(now * 1.15)) * Math.min(2.4, Math.abs(owlVX) * 0.07);
+  ctx.save();
+  ctx.translate(hp.x + owlDX, hp.y + 11 - owlBob);
+  ctx.rotate(owlLean);
+  ctx.translate(-(hp.x + owlDX), -(hp.y + 11 - owlBob));
+  drawHoot(ctx, hp.x + owlDX, hp.y + 11 - owlBob, 0.72, now);
+  ctx.restore();
+  if (acornHit && STATE !== 'menu'){
+    drawSquirrelMini(treeX - 44 * treeS + W * 0.04, GROUND - 46);
+    drawAcorn(treeX - 44 * treeS + W * 0.04 + 6, GROUND - 52, 0.8);
+  }
+  /* host overlay on the clue card — same owl, perched on the bubble's left edge */
+  if ($('clueOv').classList.contains('on')){
+    owlCtx.setTransform(2, 0, 0, 2, 0, 0);
+    owlCtx.clearRect(0, 0, 130, 160);
+    drawHoot(owlCtx, 40, 158, 1.6, now);
+    if (showSquirrel){
+      /* the ball-hawking squirrel crashes the card after a wrong answer */
+      owlCtx.save();
+      owlCtx.translate(72, 92);
+      owlCtx.scale(0.9, 0.9);
+      var keep = ctx; ctx = owlCtx;
+      drawSquirrelMini(0, 0);
+      ctx = keep;
+      owlCtx.restore();
+    }
+  }
+  drawFg(now);
+}
+
+/* foreground layer — clouds drift in FRONT of the board; acorn fireflies burst here */
+function drawFg(now){
+  fgCtx.clearRect(0, 0, W, H);
+  var i;
+  for (i = 0; i < clouds.length; i++){
+    var cl = clouds[i];
+    fgCtx.globalAlpha = cl.a * 0.9;
+    fgCtx.fillStyle = C.mist;
+    fgCtx.beginPath(); fgCtx.arc(cl.x, cl.y, 18 * cl.s, 0, Math.PI * 2);
+    fgCtx.arc(cl.x + 22 * cl.s, cl.y + 4, 14 * cl.s, 0, Math.PI * 2);
+    fgCtx.arc(cl.x - 18 * cl.s, cl.y + 6, 12 * cl.s, 0, Math.PI * 2);
+    fgCtx.fill();
+  }
+  fgCtx.globalAlpha = 1;
+  for (i = fgFire.length - 1; i >= 0; i--){
+    var p = fgFire[i];
+    var u = p.t / p.life;
+    fgCtx.globalAlpha = Math.max(0, 0.9 * (1 - u)) * (0.6 + 0.4 * Math.sin(now * 14 + p.p));
+    fgCtx.fillStyle = p.gold ? C.gold : C.day;
+    fgCtx.beginPath(); fgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); fgCtx.fill();
+  }
+  fgCtx.globalAlpha = 1;
+}
+
+/* ---------- frame loop ---------- */
+var last = performance.now();
+function frame(nowMs){
+  var dt = Math.min((nowMs - last) / 1000, 0.05);
+  last = nowMs;
+  var now = nowMs / 1000;
+  if (owlExcited > 0) owlExcited -= dt;
+  if (speechT > 0){
+    speechT -= dt;
+    if (speechT <= 0) speechEl.classList.remove('on');
+  }
+  if (timerOn && STATE === 'clue'){
+    timerT -= dt;
+    $('timerFill').style.width = Math.max(0, timerT / CLUE_TIME * 100) + '%';
+    if (timerT <= 0){ timerOn = false; submitAnswer(true, null); }
+  }
+  for (var i = 0; i < fireflies.length; i++){
+    var f = fireflies[i];
+    f.p += dt * f.s;
+    f.x += Math.sin(f.p * 1.4) * 10 * dt;
+    f.y += Math.cos(f.p * 0.9) * 7 * dt;
+  }
+  for (i = 0; i < clouds.length; i++){
+    clouds[i].x -= 4 * dt;
+    if (clouds[i].x < -160) clouds[i].x = W + 120;
+  }
+  /* squirrel fidget: a damped spring, kicked by small random impulses */
+  if (!RM){
+    sqF.next -= dt;
+    if (sqF.next <= 0){ sqF.v -= 26 + Math.random() * 30; sqF.next = 1.4 + Math.random() * 2.4; }
+    sqF.v += (-90 * sqF.y - 7 * sqF.v) * dt;
+    sqF.y += sqF.v * dt;
+  } else { sqF.y = 0; sqF.v = 0; }
+  for (i = fgFire.length - 1; i >= 0; i--){
+    var p = fgFire[i];
+    p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.t >= p.life) fgFire.splice(i, 1);
+  }
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wire up ---------- */
+$('startBtn').addEventListener('click', startGame);
+$('againBtn').addEventListener('click', startGame);
+$('nextBtn').addEventListener('click', nextAfterClue);
+$('newBtn').addEventListener('click', function(){ $('clueOv').classList.remove('on'); $('wagerOv').classList.remove('on'); $('over').classList.remove('on'); timerOn = false; startGame(); });
+$('resetBtn').addEventListener('click', resetGame);
+document.addEventListener('keydown', function(e){
+  if (STATE === 'clue' && $('nextRow').style.display === 'none'){
+    var k = e.key.toLowerCase();
+    if (k === 'a' || k === '1') submitAnswer(false, 0);
+    if (k === 'b' || k === '2') submitAnswer(false, 1);
+    if (k === 'c' || k === '3') submitAnswer(false, 2);
+  }
+  if (e.key === 'Enter' && $('nextRow').style.display !== 'none' && $('clueOv').classList.contains('on')) nextAfterClue();
+  if ((e.key === 'Enter' || e.key === ' ') && (STATE === 'menu' || STATE === 'over')) startGame();
+});
+
+loadBest();
+resize();
+initScenery();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
