@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Boot Camp FX — Chess</title>
-<meta name="description" content="Boot Camp FX chess — turtle, frog, coyote, rabbit, squirrel, owl. Tap to move.">
+<meta name="description" content="Boot Camp FX chess — turtle, bumblebee, coyote, rabbit, squirrel, owl. Tap to move.">
 <meta name="theme-color" content="#0F1B2C">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +43,8 @@
   .rail .slot{display:flex;align-items:center;gap:1px;}
   .rail img{display:block;width:24px;height:24px;}
   .rail .n{font-size:.58rem;color:var(--mist);letter-spacing:.05em;margin-right:4px;}
+  .rail .side{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--day-2);font-weight:600;
+    background:rgba(15,27,44,.55);border:1px solid rgba(138,151,166,.35);border-radius:7px;padding:3px 7px;margin-right:6px;}
   .rail .mat{font-size:.62rem;color:var(--gold);letter-spacing:.08em;margin-left:8px;font-weight:600;}
   .panel{position:fixed;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);
     background:rgba(15,27,44,.92);border:1px solid rgba(242,184,75,.45);border-radius:18px;
@@ -60,11 +62,14 @@
   #promo .opt:hover,#promo .opt:focus-visible{border-color:var(--gold);background:rgba(242,184,75,.14);outline:none;}
   #promo .opt img{width:44px;height:44px;display:block;}
   #promo .opt span{font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);}
+  #keyRows{display:grid;grid-template-columns:1fr 1fr;gap:8px 26px;margin:6px 0 18px;text-align:left;}
+  #keyRows .krow{display:flex;align-items:center;gap:10px;}
+  #keyRows img{width:40px;height:40px;display:block;}
+  #keyRows .an{font-family:var(--display);font-weight:600;font-size:.98rem;color:var(--day);}
+  #keyRows .pn{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);}
+  @media (max-width:480px){ #keyRows{grid-template-columns:1fr;} }
   #dim{position:fixed;inset:0;background:rgba(15,27,44,.55);z-index:15;transition:opacity .26s;}
   #dim.hidden{display:none;}
-  .foot{position:fixed;top:36px;right:14px;color:rgba(159,176,196,.55);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;z-index:4;}
-  .foot a{color:inherit;text-decoration:none;}
-  .foot a:hover{color:var(--mist);}
 </style>
 </head>
 <body>
@@ -87,6 +92,7 @@
     <option value="hard">Hard</option>
   </select>
   <button type="button" class="ghost" id="btnSound" title="Sound on/off">Sound</button>
+  <button type="button" class="ghost" id="btnKey" title="Which animal is which piece">Key</button>
   <div class="stat" id="hudStat">your move</div>
 </div>
 <div id="dim" class="hidden"></div>
@@ -94,6 +100,12 @@
   <h2>Promote the <em>turtle</em></h2>
   <div class="sub">choose its new form</div>
   <div class="opts" id="promoOpts"></div>
+</div>
+<div class="panel hidden" id="keyPanel" role="dialog" aria-label="Piece key">
+  <h2>The <em>wilds</em> key</h2>
+  <div class="sub">who plays which piece</div>
+  <div id="keyRows"></div>
+  <button type="button" id="btnKeyClose">Close</button>
 </div>
 <div class="panel hidden" id="endPanel" role="dialog" aria-label="Game over">
   <h2 id="endTitle">Checkmate</h2>
@@ -119,7 +131,7 @@ var C = {
   toad:'#6E7E33', toadDark:'#55632A', cream:'#F3ECDC'
 };
 
-var ANIMAL = { king:'Owl', queen:'Squirrel', rook:'Rabbit', knight:'Coyote', bishop:'Frog', pawn:'Turtle' };
+var ANIMAL = { king:'Owl', queen:'Squirrel', rook:'Rabbit', knight:'Coyote', bishop:'Bumblebee', pawn:'Turtle' };
 
 var DAY_LOOP = 86;
 var skyT = 0;
@@ -127,7 +139,7 @@ function dayF(){ return 0.5 - 0.5 * Math.cos(skyT * 2 * Math.PI / DAY_LOOP); }
 
 var sq = 0, bx = 0, by = 0, board = 0;
 function layout(){
-  var reserved = 128;
+  var reserved = 168;
   board = Math.max(200, Math.min(W - 8, H - reserved));
   sq = board / 8;
   bx = Math.round((W - board) / 2);
@@ -215,6 +227,24 @@ function scaleFor(type){
   return (sq * fill) / h;
 }
 
+/* ---------- crown: gold zigzag, worn by owl (large) and squirrel (small) ---------- */
+function drawCrown(cx, baseY, w, h){
+  ctx.fillStyle = C.gold;
+  ctx.beginPath();
+  ctx.moveTo(cx - w/2, baseY);
+  ctx.lineTo(cx - w/2, baseY - h*0.55);
+  ctx.lineTo(cx - w/4, baseY - h*0.32);
+  ctx.lineTo(cx, baseY - h);
+  ctx.lineTo(cx + w/4, baseY - h*0.32);
+  ctx.lineTo(cx + w/2, baseY - h*0.55);
+  ctx.lineTo(cx + w/2, baseY);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#B97A1E'; ctx.lineWidth = Math.max(0.7, h * 0.09);
+  ctx.stroke();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(cx, baseY - h, h * 0.13, 0, Math.PI * 2); ctx.fill();
+}
+
 /* ---------- King = Owl ---------- */
 function drawOwl(t, side){
   var sway = RM ? 0 : anim(t, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
@@ -229,6 +259,7 @@ function drawOwl(t, side){
   ctx.beginPath(); ctx.arc(32, 26, 17, 0, Math.PI * 2); ctx.fill();
   poly([[19,14],[14,0],[22,12]]);
   poly([[45,14],[50,0],[42,12]]);
+  drawCrown(32, 12, 27, 16);
   var flap = RM ? 0 : Math.sin(t * 1.3) * 2.4;
   ctx.fillStyle = '#7A8A9A';
   ctx.save(); ctx.translate(16, 36); ctx.rotate(-flap * Math.PI / 180); ctx.translate(-16, -36);
@@ -271,6 +302,7 @@ function drawSquirrel(t, side){
   poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
   ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI * 2); ctx.fill();
   poly([[11,16],[9,9],[13,12]]);
+  drawCrown(14, 15, 11, 7);
   face(12.4, 19.2, 3.4);
   ctx.fillStyle = C.ink;
   ctx.beginPath(); ctx.arc(9.2, 22.2, 1.1, 0, Math.PI * 2); ctx.fill();
@@ -363,56 +395,81 @@ function roundRect(x, y, w, h, r){
   ctx.closePath();
 }
 
-/* ---------- Bishop = Frog ---------- */
-function drawFrog(t, side){
-  var bob = RM ? 0 : Math.sin(t * 2.1) * 1.1;
+/* ---------- Bishop = Bumblebee. Gold striped body, fluttering wings, stinger tail. ---------- */
+function drawBee(t, side){
+  var buzz = RM ? 0 : Math.sin(t * 3.1) * 1.2;
+  var flutter = RM ? 0 : Math.sin(t * 14) * 18;
   ctx.save();
-  ctx.translate(0, bob);
-  ctx.fillStyle = tint(C.toad, side);
-  ctx.beginPath(); ctx.ellipse(0, -16, 22, 15, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = tint(C.toadDark, side);
-  ctx.beginPath(); ctx.ellipse(-16, -8, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(16, -8, 7, 8, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = C.cream;
-  ctx.beginPath(); ctx.ellipse(0, -10, 12, 7, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = tint(C.toad, side);
-  ctx.beginPath(); ctx.arc(-9, -28, 8, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(9, -28, 8, 0, Math.PI * 2); ctx.fill();
-  face(-9, -29, 5.2); face(9, -29, 5.2);
-  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.arc(0, -12, 4, 0.15, Math.PI - 0.15); ctx.stroke();
-  ctx.strokeStyle = C.dawn; ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(-22,0); ctx.moveTo(18,0); ctx.lineTo(22,0); ctx.stroke();
+  ctx.translate(0, buzz);
+  /* wings (behind body) */
+  ctx.save();
+  ctx.translate(2, -30);
+  ctx.rotate((-24 + flutter) * Math.PI / 180);
+  ctx.fillStyle = side === 'w' ? 'rgba(251,247,238,0.85)' : 'rgba(159,176,196,0.7)';
+  ctx.beginPath(); ctx.ellipse(0, -8, 5.5, 11, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  ctx.save();
+  ctx.translate(9, -29);
+  ctx.rotate((-38 + flutter) * Math.PI / 180);
+  ctx.fillStyle = side === 'w' ? 'rgba(251,247,238,0.65)' : 'rgba(159,176,196,0.5)';
+  ctx.beginPath(); ctx.ellipse(0, -7, 4.5, 9, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  /* body with clipped stripes */
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(0, -16, 18, 13.5, 0, 0, Math.PI * 2); ctx.clip();
+  ctx.fillStyle = tint(C.gold, side);
+  ctx.fillRect(-20, -32, 40, 30);
+  ctx.fillStyle = tint('#2A241C', side);
+  ctx.fillRect(-6, -32, 7, 30);
+  ctx.fillRect(6, -32, 7, 30);
+  ctx.restore();
+  /* body rim */
+  ctx.strokeStyle = tint('#2A241C', side); ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.ellipse(0, -16, 18, 13.5, 0, 0, Math.PI * 2); ctx.stroke();
+  /* stinger */
+  ctx.fillStyle = tint('#2A241C', side);
+  poly([[18,-18],[25,-16],[18,-13]]);
+  /* head */
+  ctx.fillStyle = tint(C.gold, side);
+  ctx.beginPath(); ctx.arc(-16, -22, 7.5, 0, Math.PI * 2); ctx.fill();
+  /* antennae */
+  ctx.strokeStyle = tint('#2A241C', side); ctx.lineWidth = 1.3; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-19, -28); ctx.quadraticCurveTo(-23, -34, -26, -35);
+  ctx.moveTo(-14, -29); ctx.quadraticCurveTo(-15, -36, -18, -38);
+  ctx.stroke();
+  ctx.fillStyle = tint('#2A241C', side);
+  ctx.beginPath(); ctx.arc(-26, -35, 1.4, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-18, -38, 1.4, 0, Math.PI * 2); ctx.fill();
+  face(-18, -23, 4.2);
+  /* legs */
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-8, -4); ctx.lineTo(-12, 0);
+  ctx.moveTo(4, -4); ctx.lineTo(6, 0);
+  ctx.moveTo(12, -6); ctx.lineTo(16, 0);
+  ctx.stroke();
   ctx.restore();
 }
 
-/* ---------- Pawn = Turtle ---------- */
+/* ---------- Pawn = Turtle. Light side wears the 4.9★ proof-turtle scheme:
+   day-white shell (#FBF7EE), mist head/legs (#9FB0C4), pine scutes (#2E5A3F). ---------- */
+var TURTLE = { skin:'#9FB0C4', shell:'#FBF7EE', scute:'#2E5A3F' };
 function drawTurtle(t, side){
   var nod = RM ? 0 : Math.sin(t * 1.4) * 1.2;
   ctx.save();
   ctx.scale(-1, 1);
   ctx.translate(-45, -38);
-  ctx.fillStyle = C.dawn;
+  ctx.fillStyle = tint(TURTLE.skin, side);
   ctx.beginPath();
   ctx.moveTo(30,28); ctx.bezierCurveTo(28,34,26,37,28,38); ctx.bezierCurveTo(32,39,36,36,36,30); ctx.closePath(); ctx.fill();
   ctx.beginPath();
   ctx.moveTo(56,28); ctx.bezierCurveTo(54,34,52,37,54,38); ctx.bezierCurveTo(58,39,62,36,62,30); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = tint(C.pine, side);
   poly([[18,28],[8,26],[16,32]]);
-  ctx.fillStyle = tint('#2E5A3F', side);
-  ctx.beginPath();
-  ctx.moveTo(72,30); ctx.bezierCurveTo(76,16,62,7,46,7); ctx.bezierCurveTo(30,7,16,16,20,30);
-  ctx.bezierCurveTo(34,32,58,32,72,30); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6;
-  ctx.beginPath();
-  ctx.moveTo(46,7); ctx.quadraticCurveTo(46.5,16,44,30);
-  ctx.moveTo(46,7); ctx.quadraticCurveTo(49.5,16,53,30);
-  ctx.moveTo(26,12); ctx.quadraticCurveTo(32,16,35,29);
-  ctx.moveTo(66,12); ctx.quadraticCurveTo(60,16,57,29);
-  ctx.stroke();
+  drawTurtleShell(side);
   ctx.save();
   ctx.translate(73, 28); ctx.rotate(nod * Math.PI / 180); ctx.translate(-73, -28);
-  ctx.fillStyle = C.dawn;
+  ctx.fillStyle = tint(TURTLE.skin, side);
   ctx.beginPath();
   ctx.moveTo(72,25); ctx.bezierCurveTo(80,23,86,23,89,25); ctx.bezierCurveTo(92,27,90,30,85,30);
   ctx.bezierCurveTo(81,30,76,30,73,29); ctx.closePath(); ctx.fill();
@@ -420,10 +477,72 @@ function drawTurtle(t, side){
   ctx.restore();
   ctx.restore();
 }
+/* Shell dome + scutes, shared by the live turtle and the captured shell-only sprite.
+   Pattern matched to a real shell: tan scutes with concentric growth rings,
+   separated by wide charcoal seams. */
+var SHELL = { seam:'#33302A', plate:'#CBB782', ring:'#9A8256', ring2:'#B39B68', edge:'#595244' };
+function scalePoly(p, cx, cy, k){
+  var o = [];
+  for (var i = 0; i < p.length; i++) o.push([cx + (p[i][0] - cx) * k, cy + (p[i][1] - cy) * k]);
+  return o;
+}
+function drawTurtleShell(side){
+  var t2 = function(c){ return side === 'w' ? c : tint(c, side); };
+  /* charcoal seam bed */
+  ctx.fillStyle = t2(SHELL.seam);
+  ctx.beginPath();
+  ctx.moveTo(72,30); ctx.bezierCurveTo(76,16,62,7,46,7); ctx.bezierCurveTo(30,7,16,16,20,30);
+  ctx.bezierCurveTo(34,32,58,32,72,30); ctx.closePath(); ctx.fill();
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(72,30); ctx.bezierCurveTo(76,16,62,7,46,7); ctx.bezierCurveTo(30,7,16,16,20,30);
+  ctx.bezierCurveTo(34,32,58,32,72,30); ctx.closePath(); ctx.clip();
+  var scutes = [
+    { c:[46,19], p: [[46,9],[54,13],[54,24],[46,29],[38,24],[38,13]] },   /* vertebral */
+    { c:[31,19], p: [[36,10.5],[27,14],[24.5,22.5],[33,28],[37.5,22]] },  /* costal left */
+    { c:[61,19], p: [[56,10.5],[65,14],[67.5,22.5],[59,28],[54.5,22]] },  /* costal right */
+    { c:[24,22], p: [[24,15.5],[18.5,21],[20.5,29.5],[29,29.5],[26.5,22]] }, /* marginal left */
+    { c:[68,22], p: [[68,15.5],[73.5,21],[71.5,29.5],[63,29.5],[65.5,22]] }  /* marginal right */
+  ];
+  for (var i = 0; i < scutes.length; i++){
+    var sc = scutes[i];
+    /* tan plate */
+    ctx.fillStyle = t2(SHELL.plate);
+    poly(sc.p);
+    /* dark plate edge */
+    ctx.strokeStyle = t2(SHELL.edge); ctx.lineWidth = 1.0;
+    ctx.beginPath();
+    ctx.moveTo(sc.p[0][0], sc.p[0][1]);
+    for (var j = 1; j < sc.p.length; j++) ctx.lineTo(sc.p[j][0], sc.p[j][1]);
+    ctx.closePath(); ctx.stroke();
+    /* concentric growth rings */
+    ctx.strokeStyle = t2(SHELL.ring); ctx.lineWidth = 0.8;
+    var r1 = scalePoly(sc.p, sc.c[0], sc.c[1], 0.68);
+    ctx.beginPath();
+    ctx.moveTo(r1[0][0], r1[0][1]);
+    for (var k = 1; k < r1.length; k++) ctx.lineTo(r1[k][0], r1[k][1]);
+    ctx.closePath(); ctx.stroke();
+    ctx.strokeStyle = t2(SHELL.ring2); ctx.lineWidth = 0.7;
+    var r2 = scalePoly(sc.p, sc.c[0], sc.c[1], 0.4);
+    ctx.beginPath();
+    ctx.moveTo(r2[0][0], r2[0][1]);
+    for (var m = 1; m < r2.length; m++) ctx.lineTo(r2[m][0], r2[m][1]);
+    ctx.closePath(); ctx.stroke();
+  }
+  ctx.restore();
+}
+/* Captured turtle: pulled into its shell — no head, no legs. */
+function drawTurtleShelled(t, side){
+  ctx.save();
+  ctx.scale(-1, 1);
+  ctx.translate(-45, -30);
+  drawTurtleShell(side);
+  ctx.restore();
+}
 
 var DRAW = {
   king: drawOwl, queen: drawSquirrel, rook: drawRabbit,
-  knight: drawCoyote, bishop: drawFrog, pawn: drawTurtle
+  knight: drawCoyote, bishop: drawBee, pawn: drawTurtle
 };
 
 function drawShadow(cx, baseY, type){
@@ -446,8 +565,8 @@ function drawPieceAt(p, cx, baseY, t, extraScale, rot){
 
 /* ---------- sprites for rails / promo / flights ---------- */
 var spriteCache = {};
-function renderSprite(type, side, size){
-  var key = type + side + size;
+function renderSprite(type, side, size, shelled){
+  var key = type + side + size + (shelled ? 'x' : '');
   if (spriteCache[key]) return spriteCache[key];
   var c = document.createElement('canvas');
   c.width = size * DPR; c.height = size * DPR;
@@ -459,13 +578,14 @@ function renderSprite(type, side, size){
   g.scale(k, k);
   var realCtx = ctx;
   ctx = g;
-  DRAW[type](0.7, side);
+  if (shelled && type === 'pawn') drawTurtleShelled(0.7, side);
+  else DRAW[type](0.7, side);
   ctx = realCtx;
   spriteCache[key] = c;
   return c;
 }
-function spriteURL(type, side, size){
-  return renderSprite(type, side, size).toDataURL();
+function spriteURL(type, side, size, shelled){
+  return renderSprite(type, side, size, shelled).toDataURL();
 }
 
 /* ---------- game state ---------- */
@@ -481,7 +601,7 @@ var departing = [];
 var flashes = [];
 var hop = null;
 var aiWait = 0;
-var flipped = false;
+var flipped = true;
 var difficulty = 'medium';
 var soundOn = true;
 var history = [];
@@ -496,7 +616,7 @@ var mateAnim = null;
 var gameCounted = false;
 var stats = { w:0, l:0, d:0 };
 var flights = [];
-var STORE = 'bootcampfxChessV4';
+var STORE = 'bootcampfxChessV5';
 var hudTag = document.getElementById('hudTag');
 var hudStat = document.getElementById('hudStat');
 var btnMode = document.getElementById('btnMode');
@@ -775,7 +895,7 @@ function restoreSnap(s){
   turn = s.turn; ep = s.ep; castle = s.castle;
   capturedByW = s.capturedByW.slice(); capturedByB = s.capturedByB.slice();
   plyCount = s.plyCount; nextId = s.nextId;
-  STATE = 'play';
+  STATE = 'play'; gameCounted = true;
   selected = null; legal = []; hop = null; departing = []; flashes = []; flights = [];
   mateAnim = null; lastMove = null; hintMove = null; promoMoves = null;
   checkSide = inCheck(turn, pieces) ? turn : null;
@@ -789,7 +909,6 @@ function undo(){
   var s = history.pop();
   if (vsAI && s.turn === 'b' && history.length) s = history.pop();
   restoreSnap(s);
-  gameCounted = false;
   sfx('select');
 }
 
@@ -810,7 +929,7 @@ function launchFlight(cap){
   var pos = cellXY(vF(cap.file), vR(cap.rank));
   var toTop = cap.side === 'w'; /* white animal captured by black -> top rail */
   flights.push({
-    spr: renderSprite(cap.type, cap.side, 48),
+    spr: renderSprite(cap.type, cap.side, 48, true),
     x0: pos.x, y0: pos.y - sq * 0.4,
     x1: bx + board / 2 + rnd(-40, 40), y1: toTop ? Math.max(52, by - 20) : by + board + 18,
     t: 0, dur: 0.3
@@ -882,6 +1001,7 @@ function hidePanels(){
   dim.classList.add('hidden');
   endPanel.classList.add('hidden');
   promoPanel.classList.add('hidden');
+  document.getElementById('keyPanel').classList.add('hidden');
 }
 function endGame(result, how){
   if (vsAI && !gameCounted){
@@ -1160,7 +1280,7 @@ function railHTML(list, ownSide){
   for (var j = 0; j < order.length; j++){
     var t = order[j];
     if (!counts[t]) continue;
-    html += '<span class="slot"><img src="' + spriteURL(t, ownSide, 24) + '" alt="' + ANIMAL[t] + '">';
+    html += '<span class="slot"><img src="' + spriteURL(t, ownSide, 24, true) + '" alt="' + ANIMAL[t] + '">';
     if (counts[t] > 1) html += '<span class="n">×' + counts[t] + '</span>';
     html += '</span>';
   }
@@ -1176,8 +1296,10 @@ function updateRails(){
   var rt = document.getElementById('railTop');
   var rb = document.getElementById('railBot');
   var m = material();
-  rt.innerHTML = railHTML(capturedByB, 'w') + (m < 0 ? '<span class="mat">+' + (-m) + '</span>' : '');
-  rb.innerHTML = railHTML(capturedByW, 'b') + (m > 0 ? '<span class="mat">+' + m + '</span>' : '');
+  rt.innerHTML = '<span class="side">Dark</span>' + railHTML(capturedByB, 'w') + (m < 0 ? '<span class="mat">+' + (-m) + '</span>' : '');
+  rb.innerHTML = '<span class="side">Light</span>' + railHTML(capturedByW, 'b') + (m > 0 ? '<span class="mat">+' + m + '</span>' : '');
+  rt.setAttribute('aria-label', 'Dark\'s captures' + (m < 0 ? ', ahead by ' + (-m) : ''));
+  rb.setAttribute('aria-label', 'Light\'s captures' + (m > 0 ? ', ahead by ' + m : ''));
 }
 
 /* ---------- buttons ---------- */
@@ -1214,6 +1336,43 @@ selDiff.addEventListener('change', function(e){
   persist();
 });
 selDiff.addEventListener('click', function(e){ e.stopPropagation(); });
+/* ---------- piece key ---------- */
+var keyPanel = document.getElementById('keyPanel');
+function buildKey(){
+  var rows = document.getElementById('keyRows');
+  rows.innerHTML = '';
+  ['king','queen','rook','knight','bishop','pawn'].forEach(function(t){
+    var d = document.createElement('div');
+    d.className = 'krow';
+    var img = document.createElement('img');
+    img.src = spriteURL(t, 'w', 40);
+    img.alt = ANIMAL[t];
+    var txt = document.createElement('div');
+    var an = document.createElement('div'); an.className = 'an'; an.textContent = ANIMAL[t];
+    var pn = document.createElement('div'); pn.className = 'pn'; pn.textContent = t;
+    txt.appendChild(an); txt.appendChild(pn);
+    d.appendChild(img); d.appendChild(txt);
+    rows.appendChild(d);
+  });
+}
+document.getElementById('btnKey').addEventListener('click', function(e){
+  e.stopPropagation(); unlockAudio();
+  if (keyPanel.classList.contains('hidden')){
+    hidePanels();
+    buildKey();
+    dim.classList.remove('hidden');
+    keyPanel.classList.remove('hidden');
+    sfx('select');
+  } else {
+    hidePanels();
+  }
+});
+document.getElementById('btnKeyClose').addEventListener('click', function(e){
+  e.stopPropagation(); hidePanels();
+});
+dim.addEventListener('click', function(){
+  if (!keyPanel.classList.contains('hidden')) hidePanels();
+});
 cv.addEventListener('pointerdown', onPointer);
 
 /* ---------- scenery ---------- */
@@ -1328,7 +1487,14 @@ function drawBoard(){
   ctx.fillRect(bx - 5, by - 5, board + 10, board + 10);
   for (var r = 0; r < 8; r++){
     for (var f = 0; f < 8; f++){
-      ctx.fillStyle = ((f + r) % 2 === 1) ? C.pine : C.day2;
+      if ((f + r) % 2 === 1){
+        var dg = ctx.createLinearGradient(bx + f*sq, by + r*sq, bx + (f+1)*sq, by + (r+1)*sq);
+        dg.addColorStop(0, '#2C4A3B');
+        dg.addColorStop(1, '#12231B');
+        ctx.fillStyle = dg;
+      } else {
+        ctx.fillStyle = C.day2;
+      }
       ctx.fillRect(bx + f*sq, by + r*sq, sq + 0.5, sq + 0.5);
     }
   }
@@ -1504,6 +1670,5 @@ selDiff.style.display = vsAI ? '' : 'none';
 requestAnimationFrame(frame);
 })();
 </script>
-<div class="foot"><a href="https://bootcampfx.com">bootcampfx.com</a> · more games: <a href="../basketball/">Basketball</a> · <a href="../go/">Go</a> · <a href="../mahjong/">Mahjong</a> · <a href="../runner/">Runner</a></div>
 </body>
 </html>
