@@ -1335,7 +1335,7 @@ function startGame(){
   onFire = false;
   makes = 0; swishes = 0; banks = 0; rims = 0;
   particles = []; pops = []; ball = null; trail = [];
-  resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
+  resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0;
   owlDrag = null; owlAir = true; owlFlapT = 0; owlVy = 0; turbT = 0; swipe = null;
   /* fresh spawn: hover over the tent (placePlayer's guard would preserve a
      leftover mid-air/grounded y from the previous game — a new game always
@@ -1480,7 +1480,6 @@ function update(dt){
   }
 
   var wantCam = 0;
-  if (ball && ball.y < H * 0.42) wantCam = Math.max(-70, (ball.y - H * 0.42) * 0.35);
   camY += (wantCam - camY) * (1 - Math.exp(-6 * dt));
 
   if (STATE !== 'play') return;
