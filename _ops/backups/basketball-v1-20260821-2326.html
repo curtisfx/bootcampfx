@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Boot Camp FX — First Light Shootout</title>
+<meta name="description" content="Basketball, the Boot Camp FX way. Ten balls, one hoop, first light. Flick to shoot — swishes pay double. Free to play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --predawn:#0F1B2C; --predawn-2:#16273D; --pine:#14291F;
+    --dawn:#E8933A; --gold:#F2B84B; --day:#FBF7EE; --day-2:#F3ECDC;
+    --ink:#14100A; --mist:#9FB0C4; --stone:#6A6255;
+    --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif; --mono:'Spline Sans Mono',monospace;
+    --ease:cubic-bezier(.22,.7,.25,1);
+  }
+  @property --clearance{ syntax:'<number>'; inherits:true; initial-value:0; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--predawn);overflow:hidden;
+    font-family:var(--body);color:var(--day);
+    -webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
+  #game{display:block;width:100vw;height:100vh;}
+  #app{--clearance:0;position:fixed;inset:0;
+    background:radial-gradient(circle at 50% 20%, var(--predawn-2), var(--predawn));
+    background:radial-gradient(circle at 50% 20%,
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn-2)),
+      color-mix(in srgb, var(--dawn) calc(var(--clearance) * 45%), var(--predawn)));
+    transition:--clearance 1.2s var(--ease);}
+  #app.golden #game{filter:sepia(.15) saturate(1.2) brightness(1.06);transition:filter .3s var(--ease);}
+
+  .hud{position:fixed;top:0;left:0;right:0;padding:14px 18px;display:flex;
+    justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:5;
+    text-shadow:0 2px 8px rgba(0,0,0,.45);}
+  .hud .stat{font-weight:700;letter-spacing:.02em;}
+  .hud .stat b{display:block;font-family:var(--display);font-weight:600;font-size:1.7rem;line-height:1.1;}
+  .hud .stat span{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.24em;color:var(--mist);}
+  .hud .mid{text-align:center;}
+  .hud .mid .streak{font-family:var(--mono);font-size:1rem;font-weight:600;letter-spacing:.12em;color:var(--gold);opacity:0;
+    transform:translateY(6px);transition:opacity .15s,transform .15s;}
+  .hud .mid .streak.on{opacity:1;transform:translateY(0);}
+  .hud .right{text-align:right;}
+
+  .banner{position:fixed;top:32%;left:0;right:0;text-align:center;pointer-events:none;
+    opacity:0;transform:scale(.85);transition:opacity .2s,transform .2s;z-index:6;}
+  .banner.on{opacity:1;transform:scale(1);}
+  .banner .big{font-family:var(--display);font-weight:700;font-size:clamp(2rem,7vw,4rem);
+    color:var(--gold);text-shadow:0 4px 24px rgba(242,184,75,.4);}
+  .banner .sub{color:var(--mist);font-family:var(--mono);font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;margin-top:2px;}
+
+  .overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;background:rgba(15,27,44,.8);backdrop-filter:blur(6px);
+    z-index:10;opacity:0;pointer-events:none;transition:opacity .28s var(--ease);overflow:hidden;}
+  .overlay.on{opacity:1;pointer-events:auto;}
+  .overlay .title{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,9vw,4.8rem);
+    color:var(--day);letter-spacing:.02em;text-align:center;line-height:.98;}
+  .overlay .title em{font-style:italic;color:var(--dawn);}
+  .tag{color:var(--mist);font-family:var(--mono);letter-spacing:.3em;text-transform:uppercase;
+    font-size:.7rem;margin-top:12px;text-align:center;}
+  .rules{display:flex;flex-direction:column;gap:9px;margin-top:22px;width:min(420px,86vw);}
+  .rl{display:flex;align-items:center;gap:14px;text-align:left;
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;}
+  .rl .dot{flex:0 0 auto;width:14px;height:14px;border-radius:50%;}
+  .rl .lbl{color:var(--gold);font-weight:600;flex:0 0 66px;}
+  .rl .keys{color:var(--day);flex:1;}
+  .rl .why{color:var(--mist);letter-spacing:.06em;}
+  .tip{color:var(--gold);font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;
+    text-transform:uppercase;margin-top:20px;text-align:center;}
+  .overlay .scores{display:flex;gap:38px;margin:26px 0 24px;text-align:center;}
+  .overlay .scores .num{font-family:var(--display);font-weight:600;font-size:2.3rem;color:var(--day);line-height:1;}
+  .overlay .scores .num.record{color:var(--gold);}
+  .overlay .scores .lbl{font-family:var(--mono);font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--mist);margin-top:6px;}
+  .newrec{color:var(--gold);font-family:var(--mono);font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    font-size:.78rem;animation:blink 1s steps(2,start) infinite;margin-bottom:10px;min-height:1.2em;}
+  @keyframes blink{to{visibility:hidden;}}
+  @keyframes ctaPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}
+  .btn{pointer-events:auto;cursor:pointer;border:0;border-radius:14px;padding:16px 44px;
+    background:var(--dawn);color:#1B1206;font-family:var(--body);font-weight:700;font-size:1.05rem;letter-spacing:.04em;
+    box-shadow:0 10px 30px rgba(232,147,58,.35);
+    animation:ctaPulse 3s ease-in-out infinite;
+    transition:transform .16s var(--ease),background .16s var(--ease);}
+  .btn:hover{transform:translateY(-2px);background:var(--gold);animation:none;}
+  .btn:active{transform:translateY(0);}
+  .hint{color:var(--mist);font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    margin-top:22px;text-align:center;line-height:1.9;}
+  .hint b{color:var(--day);}
+
+  .sun{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--gold);
+    box-shadow:0 0 60px 20px rgba(232,147,58,.4), 0 0 120px 40px rgba(242,184,75,.15);
+    left:50%;transform:translateX(-50%);bottom:-40px;z-index:1;
+    transition:bottom 2.5s cubic-bezier(.25,1,.5,1);}
+  .overlay.on .sun{bottom:auto;top:10%;}
+  #particles{position:absolute;inset:0;pointer-events:none;z-index:2;}
+  .vp{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);
+    animation:vpUp 1.4s ease-out forwards;}
+  @keyframes vpUp{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-46px);}}
+  .overlay .modal{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;}
+  .overlay .v-title{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,9vw,4.4rem);color:var(--day);
+    animation:breathe 1s var(--ease) both;text-align:center;}
+  .overlay .v-title em{font-style:italic;color:var(--gold);}
+  @keyframes breathe{from{opacity:0;letter-spacing:.3em;}to{opacity:1;letter-spacing:.05em;}}
+
+  .foot{position:fixed;bottom:8px;right:14px;color:rgba(159,176,196,.55);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;z-index:4;}
+  .foot a{color:inherit;text-decoration:none;}
+  .foot a:hover{color:var(--mist);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+<canvas id="game"></canvas>
+
+<div class="hud">
+  <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
+  <div class="mid"><div class="streak" id="hudStreak">STREAK ×0</div></div>
+  <div class="right stat"><span>Best</span><b id="hudBest">0</b></div>
+</div>
+
+<div class="banner" id="banner"><div class="big" id="bannerBig"></div><div class="sub" id="bannerSub"></div></div>
+
+<div class="overlay on" id="menu">
+  <div class="modal">
+    <div class="title">Boot Camp <em>FX</em><br>SHOOTOUT</div>
+    <div class="tag">Ten balls · One hoop · First light</div>
+    <div class="rules">
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Flick</span><span class="keys">Swipe up at the hoop</span><span class="why">speed = power</span></div>
+      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Swish</span><span class="keys">Nothing but net</span><span class="why">pays double</span></div>
+      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Wind</span><span class="keys">Watch the gust lines</span><span class="why">push the ball</span></div>
+    </div>
+    <div class="tip">Chain three and the court goes golden</div>
+    <button class="btn" id="startBtn" style="margin-top:22px;">Start the Drill</button>
+  </div>
+</div>
+
+<div class="overlay" id="over">
+  <div class="sun" aria-hidden="true"></div>
+  <div id="particles" aria-hidden="true"></div>
+  <div class="modal">
+    <div class="newrec" id="newRec">★ New Record ★</div>
+    <div class="v-title" id="vTitle">Drill <em>done</em></div>
+    <div class="scores">
+      <div><div class="num" id="finScore">0</div><div class="lbl">Score</div></div>
+      <div><div class="num" id="finStreak">0</div><div class="lbl">Best Streak</div></div>
+      <div><div class="num record" id="finBest">0</div><div class="lbl">Best</div></div>
+    </div>
+    <button class="btn" id="againBtn">Run It Back</button>
+    <div class="hint"><b>TAP</b> to shoot again at dawn</div>
+  </div>
+</div>
+
+<div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="/" onclick="event.preventDefault();history.back();">back</a></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- canvas ---------- */
+var cv = document.getElementById('game');
+var ctx = cv.getContext('2d');
+var DPR = Math.min(window.devicePixelRatio || 1, 2);
+var W = 0, H = 0, GROUND = 0;
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  GROUND = Math.round(H * 0.8);
+  placeHoop(); placePlayer();
+}
+window.addEventListener('resize', resize);
+
+/* ---------- DOM ---------- */
+var hudScore = document.getElementById('hudScore');
+var hudBest = document.getElementById('hudBest');
+var hudStreak = document.getElementById('hudStreak');
+var bannerEl = document.getElementById('banner');
+var bannerBigEl = document.getElementById('bannerBig');
+var bannerSubEl = document.getElementById('bannerSub');
+var menuEl = document.getElementById('menu');
+var overEl = document.getElementById('over');
+var newRecEl = document.getElementById('newRec');
+var appEl = document.getElementById('app');
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- palette ---------- */
+var C = {
+  predawn:'#0F1B2C', predawn2:'#16273D', skyHi:'#2C3A50',
+  pine:'#14291F', ink:'#14100A', dawn:'#E8933A', gold:'#F2B84B',
+  day:'#FBF7EE', day2:'#F3ECDC', mist:'#9FB0C4', stone:'#6A6255'
+};
+
+/* ---------- state machine: menu | play | over ---------- */
+var STATE = 'menu';
+var GRAV = 2100;
+var SHOTS = 10;
+var score = 0, streak = 0, bestStreak = 0, best = 0, shotsLeft = SHOTS;
+var wind = 0;               // horizontal accel, changes per shot
+var bannerT = 0;
+var particles = [], pops = [], gusts = [];
+var shake = 0;
+var resolved = true;        // current ball resolved (make/miss)
+var ball = null;
+var trail = [];
+
+/* ---------- player (ink silhouette shooter) ---------- */
+var player = { x: 0, y: 0, phase: 0, shootT: 0 };
+function placePlayer(){
+  player.x = Math.max(60, W * 0.2);
+  player.y = GROUND;
+}
+
+/* ---------- hoop ---------- */
+var hoop = { x: 0, y: 0, rimW: 52, rimR: 4.5, boardW: 8, boardH: 74, baseY: 0, drift: 0 };
+function placeHoop(){
+  hoop.baseY = Math.round(H * 0.34);
+  hoop.x = Math.min(W - 70, W * 0.74);
+  hoop.y = hoop.baseY;
+}
+
+/* ---------- décor (site language) ---------- */
+var trees = [], clouds = [], egret = null, squirrel = null;
+function rnd(a, b){ return a + Math.random() * (b - a); }
+function initDecor(){
+  trees = []; clouds = []; gusts = [];
+  var i;
+  for (i = 0; i < 12; i++) trees.push({ x: rnd(0, W), s: rnd(0.4, 0.9) });
+  for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.34), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
+  egret = { x: W + 200, y: H * 0.2, s: 0.42, fl: 0, active: false };
+  squirrel = { x: W * 0.5, hp: 0 };
+}
+function tickDecor(dt){
+  var i;
+  for (i = 0; i < clouds.length; i++){
+    var cl = clouds[i];
+    cl.x -= (10 + Math.abs(wind) * 0.04) * dt * (wind < 0 ? 1 : -1) * 0.4;
+    if (cl.x < -160){ cl.x = W + rnd(0,120); }
+    if (cl.x > W + 160){ cl.x = -rnd(0,120) - 80; }
+  }
+  if (egret){
+    if (!egret.active && Math.random() < dt * 0.04){ egret.active = true; egret.x = W + 180; egret.y = rnd(H*0.1, H*0.3); }
+    if (egret.active){
+      egret.x -= 90 * dt; egret.fl += dt * 5;
+      if (egret.x < -200) egret.active = false;
+    }
+  }
+  if (squirrel) squirrel.hp += dt * 6;
+  // wind gust streaks
+  if (Math.abs(wind) > 30 && Math.random() < dt * 3){
+    gusts.push({ x: wind > 0 ? -40 : W + 40, y: rnd(H*0.2, GROUND - 60), t: 0, life: rnd(0.7, 1.3) });
+  }
+  for (i = gusts.length - 1; i >= 0; i--){
+    var g = gusts[i];
+    g.t += dt; g.x += wind * 1.6 * dt;
+    if (g.t >= g.life) gusts.splice(i, 1);
+  }
+}
+
+/* ---------- storage ---------- */
+function loadBest(){
+  try { best = parseInt(localStorage.getItem('bootcampfxHoopsBest') || '0', 10) || 0; }
+  catch(e){ best = 0; }
+  hudBest.textContent = best;
+}
+function saveBest(){
+  try { localStorage.setItem('bootcampfxHoopsBest', String(best)); } catch(e){}
+}
+
+/* ---------- shooting ---------- */
+var swipe = null;  // {x0,y0,t0}
+function onDown(x, y){
+  if (STATE === 'menu' || STATE === 'over'){ startGame(); return; }
+  if (STATE !== 'play' || !resolved) return;
+  swipe = { x0: x, y0: y, t0: performance.now(), x: x, y: y };
+}
+function onMove(x, y){ if (swipe){ swipe.x = x; swipe.y = y; } }
+function onUp(){
+  if (!swipe) return;
+  var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
+  var dt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
+  swipe = null;
+  if (STATE !== 'play' || !resolved) return;
+  if (dy > -20) return;                       // not a shot — too flat
+  var vx = (dx / dt) * 0.9;
+  var vy = (dy / dt) * 0.9;
+  // clamp to sane shot envelope
+  var sp = Math.sqrt(vx*vx + vy*vy);
+  var max = 1900;
+  if (sp > max){ vx *= max/sp; vy *= max/sp; }
+  if (vy > -260) vy = -260;                   // minimum arc
+  launch(vx, vy);
+}
+function launch(vx, vy){
+  resolved = false;
+  player.shootT = 0.42;
+  ball = {
+    x: player.x + 16, y: player.y - 104, vx: vx, vy: vy, r: 11,
+    touchedRim: false, touchedBoard: false, wasAbove: false, scored: false, spin: 0
+  };
+  trail = [];
+}
+
+function resolveShot(made){
+  resolved = true;
+  shotsLeft--;
+  appEl.style.setProperty('--clearance', (SHOTS - shotsLeft) / SHOTS);
+  if (made){
+    var swish = !ball.touchedRim && !ball.touchedBoard;
+    var pts = swish ? 2 : 1;
+    score += pts;
+    streak++; bestStreak = Math.max(bestStreak, streak);
+    pops.push({ x: hoop.x, y: hoop.y - 40, t: 0, life: 0.9,
+      txt: (swish ? 'SWISH +' : '+') + pts, gold: swish });
+    burst(hoop.x, hoop.y + 6, swish ? C.gold : C.day, swish ? 20 : 10);
+    if (streak === 3) banner('GOLDEN HOUR', 'Streak ×3 — stay hot');
+    if (streak >= 3) appEl.classList.add('golden');
+    hudStreak.textContent = 'STREAK ×' + streak;
+    hudStreak.classList.toggle('on', streak > 1);
+  } else {
+    if (streak >= 3) banner('COLD SNAP', 'Streak ends at ×' + streak);
+    streak = 0;
+    hudStreak.classList.remove('on');
+    appEl.classList.remove('golden');
+  }
+  hudScore.textContent = score;
+  ball = null; trail = [];
+  if (shotsLeft <= 0){
+    setTimeout(showOver, 650);
+  } else {
+    newWind();
+  }
+}
+
+function banner(big, sub){
+  bannerBigEl.textContent = big;
+  bannerSubEl.textContent = sub;
+  bannerEl.classList.add('on');
+  bannerT = 1.4;
+}
+function newWind(){
+  // wind builds as the drill goes on
+  var depth = (SHOTS - shotsLeft) / SHOTS;
+  var mag = Math.random() < 0.3 + depth * 0.5 ? rnd(0, 60 + depth * 130) : 0;
+  wind = (Math.random() < 0.5 ? -1 : 1) * mag;
+  if (Math.abs(wind) > 90) banner('WIND UP', wind > 0 ? 'gusting right' : 'gusting left');
+  // hoop drifts a little late in the drill
+  hoop.drift = (shotsLeft <= 5) ? rnd(-26, 26) : 0;
+}
+
+/* ---------- particles / pops ---------- */
+function burst(x, y, color, n){
+  if (RM) return;
+  for (var i = 0; i < n; i++){
+    var a = Math.random()*Math.PI*2, s = 60 + Math.random()*240;
+    particles.push({ x:x, y:y, vx:Math.cos(a)*s, vy:Math.sin(a)*s - 120,
+      life:0.5 + Math.random()*0.3, t:0, c:color, r:2 + Math.random()*3 });
+  }
+}
+function tickParticles(dt){
+  for (var p = particles.length - 1; p >= 0; p--){
+    var pt = particles[p];
+    pt.t += dt; pt.x += pt.vx*dt; pt.y += pt.vy*dt; pt.vy += 900*dt;
+    if (pt.t >= pt.life) particles.splice(p, 1);
+  }
+  for (var m = pops.length - 1; m >= 0; m--){
+    var pp = pops[m]; pp.t += dt; pp.y -= 44*dt;
+    if (pp.t >= pp.life) pops.splice(m, 1);
+  }
+}
+
+/* ---------- ball physics ---------- */
+function tickBall(dt){
+  if (!ball) return;
+  ball.vy += GRAV * dt;
+  ball.vx += wind * dt;
+  ball.x += ball.vx * dt;
+  ball.y += ball.vy * dt;
+  ball.spin += ball.vx * dt * 0.02;
+  trail.push({ x: ball.x, y: ball.y, t: 0 });
+  if (trail.length > 14) trail.shift();
+  for (var i = 0; i < trail.length; i++) trail[i].t += dt;
+
+  var rimY = hoop.y;
+  var rl = hoop.x - hoop.rimW / 2, rr = hoop.x + hoop.rimW / 2;
+
+  // score: crossing the rim plane downward, between the rim points
+  if (!ball.scored && ball.vy > 0){
+    if (ball.wasAbove && ball.y - ball.r < rimY + 6 && ball.y > rimY - 2 &&
+        ball.x > rl + ball.r * 0.4 && ball.x < rr - ball.r * 0.4){
+      ball.scored = true;
+      resolveShot(true);
+      return;
+    }
+  }
+  if (ball.y + ball.r < rimY - 10) ball.wasAbove = true;
+
+  // rim point collisions
+  collideRim(rl, rimY); collideRim(rr, rimY);
+  // backboard
+  var bx = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2;
+  if (ball.x + ball.r > bx - hoop.boardW/2 && ball.x - ball.r < bx + hoop.boardW/2 &&
+      ball.y > rimY - hoop.boardH && ball.y < rimY + 4){
+    ball.x = bx - hoop.boardW/2 - ball.r;
+    ball.vx = -Math.abs(ball.vx) * 0.62;
+    ball.touchedBoard = true;
+  }
+  // ground bounce
+  if (ball.y + ball.r > GROUND){
+    ball.y = GROUND - ball.r;
+    ball.vy = -Math.abs(ball.vy) * 0.52;
+    ball.vx *= 0.8;
+    if (Math.abs(ball.vy) < 90){ ball.vy = 0; }
+    if (!ball.scored && Math.abs(ball.vy) === 0){ resolveShot(false); return; }
+  }
+  // out of bounds = miss
+  if (ball.x < -80 || ball.x > W + 80 || ball.y > H + 80){
+    if (!ball.scored){ resolveShot(false); return; }
+    ball = null; trail = [];
+  }
+  // a ball that bounced away after scoring is done visually soon anyway
+  if (ball && ball.scored && ball.y + ball.r >= GROUND - 1 && Math.abs(ball.vy) < 1){
+    ball = null; trail = [];
+  }
+}
+function collideRim(px, py){
+  var dx = ball.x - px, dy = ball.y - py;
+  var d = Math.sqrt(dx*dx + dy*dy);
+  var minD = ball.r + hoop.rimR;
+  if (d < minD && d > 0.01){
+    var nx = dx / d, ny = dy / d;
+    ball.x = px + nx * minD; ball.y = py + ny * minD;
+    var dot = ball.vx * nx + ball.vy * ny;
+    if (dot < 0){
+      ball.vx -= 1.72 * dot * nx;
+      ball.vy -= 1.72 * dot * ny;
+      ball.vx *= 0.86; ball.vy *= 0.86;
+      ball.touchedRim = true;
+    }
+  }
+}
+
+/* ---------- game flow ---------- */
+function startGame(){
+  score = 0; streak = 0; bestStreak = 0; shotsLeft = SHOTS;
+  particles = []; pops = []; ball = null; trail = [];
+  resolved = true; wind = 0; hoop.drift = 0;
+  appEl.classList.remove('golden');
+  appEl.style.setProperty('--clearance', 0);
+  menuEl.classList.remove('on');
+  overEl.classList.remove('on');
+  newRecEl.style.visibility = 'hidden';
+  hudScore.textContent = '0'; hudStreak.classList.remove('on');
+  STATE = 'play';
+  newWind();
+  banner('FIRST LIGHT', 'Ten balls. Make them count.');
+}
+function showOver(){
+  STATE = 'over';
+  if (score > best){ best = score; saveBest(); newRecEl.style.visibility = 'visible'; }
+  else newRecEl.style.visibility = 'hidden';
+  document.getElementById('finScore').textContent = score;
+  document.getElementById('finStreak').textContent = bestStreak;
+  document.getElementById('finBest').textContent = best;
+  hudBest.textContent = best;
+  document.getElementById('vTitle').innerHTML =
+    score >= 16 ? 'Sun<em>rise</em>' : (score >= 10 ? 'Drill <em>done</em>' : 'Back at it <em>at dawn</em>');
+  overEl.classList.add('on');
+  if (!RM && score >= 10){
+    var ps = document.getElementById('particles'); ps.innerHTML = '';
+    for (var k = 0; k < 12; k++){
+      (function(k){
+        setTimeout(function(){
+          var p = document.createElement('div');
+          p.className = 'vp';
+          p.style.left = (20 + Math.random() * 60) + '%';
+          p.style.top = (30 + Math.random() * 40) + '%';
+          ps.appendChild(p);
+          setTimeout(function(){ p.remove(); }, 1500);
+        }, k * 90);
+      })(k);
+    }
+  }
+}
+
+/* ---------- update ---------- */
+function update(dt){
+  if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
+  if (shake > 0) shake -= dt;
+  tickDecor(dt);
+  tickParticles(dt);
+  player.phase += dt * 8;
+  if (player.shootT > 0) player.shootT -= dt;
+  hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
+  if (STATE !== 'play') return;
+  tickBall(dt);
+}
+
+/* ---------- silhouette helpers (site anatomy) ---------- */
+function poly(pts){
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.closePath(); ctx.fill();
+}
+function capsule(x, y, w, h){
+  var r = w / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath(); ctx.fill();
+}
+function drawTree(t){
+  var s = t.s;
+  ctx.save();
+  ctx.translate(t.x, GROUND);
+  ctx.scale(s, s);
+  ctx.fillStyle = 'rgba(20,16,10,0.8)';
+  ctx.fillRect(44, 205, 10, 82);
+  ctx.fillStyle = C.pine;
+  ctx.globalAlpha = 1.0;  poly([[48,4],[60,34],[54,34],[66,62],[48,62],[32,62],[42,34],[36,34]]);
+  ctx.globalAlpha = 0.96; poly([[50,46],[74,90],[60,90],[82,128],[48,128],[18,128],[36,90],[24,90]]);
+  ctx.globalAlpha = 0.92; poly([[52,105],[86,155],[68,155],[92,182],[48,185],[10,185],[30,155],[16,155]]);
+  ctx.globalAlpha = 0.88; poly([[24,168],[52,150],[82,165],[88,188],[50,182],[18,190]]);
+  ctx.globalAlpha = 0.84; poly([[16,185],[50,172],[90,180],[96,208],[52,200],[8,210]]);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+function drawCloud(c){
+  ctx.save();
+  ctx.translate(c.x, c.y); ctx.scale(c.s, c.s);
+  ctx.fillStyle = 'rgba(251,247,238,' + c.a + ')';
+  ctx.beginPath();
+  ctx.arc(0, 10, 16, 0, Math.PI * 2);
+  ctx.arc(20, 0, 20, 0, Math.PI * 2);
+  ctx.arc(44, 10, 15, 0, Math.PI * 2);
+  ctx.fillRect(-4, 10, 54, 12);
+  ctx.fill();
+  ctx.restore();
+}
+function drawEgret(e){
+  ctx.save();
+  ctx.translate(e.x, e.y + Math.sin(e.fl) * 3); ctx.scale(e.s, e.s);
+  var flap = Math.sin(e.fl) * 8;
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(94, 40); ctx.lineTo(118, 46); ctx.moveTo(94, 42); ctx.lineTo(117, 52); ctx.stroke();
+  ctx.fillStyle = '#C9D4E2';
+  poly([[62,36],[46,40],[28,52],[14,70],[30,62],[48,52],[64,42]]);
+  ctx.fillStyle = C.day;
+  poly([[52,34],[60,28],[78,27],[92,34],[100,38],[100,44],[92,46],[76,50],[58,46],[50,40]]);
+  poly([[54,36],[46,30],[40,30],[36,24],[33,19],[36,14],[41,15],[45,16],[45,20],[43,23],[46,27],[52,29],[58,33]]);
+  ctx.fillStyle = C.dawn;
+  poly([[38,17],[18,21],[37,23]]);
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(39.5, 18.5, 1.3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day2;
+  ctx.save();
+  ctx.translate(62, 34); ctx.rotate(-flap * Math.PI / 180); ctx.translate(-62, -34);
+  poly([[62,34],[44,26],[24,12],[8,-6],[30,-2],[52,10],[68,28]]);
+  ctx.restore();
+  ctx.restore();
+}
+function drawSquirrel(s){
+  ctx.save();
+  ctx.translate(s.x, GROUND + 2); ctx.scale(0.8, 0.8);
+  var hop = Math.abs(Math.sin(s.hp)) * -5;
+  ctx.translate(0, hop);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#D07F2E';
+  ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
+  ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI * 2); ctx.fill();
+  poly([[11,16],[9,9],[13,12]]);
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(16, 46); ctx.lineTo(13, 46); ctx.moveTo(32, 46); ctx.lineTo(36, 46); ctx.stroke();
+  ctx.restore();
+}
+function drawPlayer(){
+  var x = player.x, y = player.y;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = C.ink;
+  var shooting = player.shootT > 0;
+  var crouch = shooting ? 0 : Math.sin(player.phase) * 1.5;
+  ctx.translate(0, crouch);
+  // legs — slight stagger, capsule
+  capsule(-13, -34, 9, 34);
+  capsule(5, -34, 9, 34);
+  // torso
+  capsule(-13, -64, 26, 34);
+  // head — faceless
+  ctx.beginPath(); ctx.arc(1, -74, 8, 0, Math.PI * 2); ctx.fill();
+  // arms
+  if (shooting){
+    // follow-through: both arms up toward the hoop
+    ctx.save(); ctx.translate(6, -60); ctx.rotate(-1.15); capsule(-3, -24, 7, 24); ctx.restore();
+    ctx.save(); ctx.translate(-6, -60); ctx.rotate(-0.85); capsule(-3, -22, 7, 22); ctx.restore();
+  } else {
+    // holding the ball at the chest when ready
+    ctx.save(); ctx.translate(7, -58); ctx.rotate(0.5); capsule(-3, 0, 7, 20); ctx.restore();
+    ctx.save(); ctx.translate(-7, -58); ctx.rotate(-0.5); capsule(-3, 0, 7, 20); ctx.restore();
+    if (resolved && STATE === 'play'){
+      ctx.fillStyle = C.dawn;
+      ctx.beginPath(); ctx.arc(0, -44, 11, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(0, -44, 11, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-11, -44); ctx.lineTo(11, -44);
+      ctx.moveTo(0, -55); ctx.lineTo(0, -33); ctx.stroke();
+    }
+  }
+  ctx.restore();
+  // ground shadow — contact rule
+  ctx.fillStyle = 'rgba(20,16,10,0.18)';
+  ctx.beginPath();
+  ctx.ellipse(x, GROUND + 5, 26, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+function drawHoop(){
+  var rimY = hoop.y, rl = hoop.x - hoop.rimW / 2, rr = hoop.x + hoop.rimW / 2;
+  var bx = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2;
+  // pole down to ground — pine
+  ctx.fillStyle = C.pine;
+  ctx.fillRect(bx + 6, rimY - hoop.boardH, 7, GROUND - rimY + hoop.boardH);
+  // backboard — day with dawn square
+  ctx.fillStyle = C.day;
+  ctx.fillRect(bx - hoop.boardW / 2, rimY - hoop.boardH, hoop.boardW, hoop.boardH);
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 2;
+  ctx.strokeRect(bx - hoop.boardW / 2 - 14, rimY - 34, 2, 2); // anchor dot nicety (kept subtle)
+  ctx.strokeRect(bx - hoop.boardW / 2 - 1, rimY - 30, hoop.boardW + 2, 22);
+  // net — mist lattice
+  ctx.strokeStyle = 'rgba(159,176,196,0.8)'; ctx.lineWidth = 1.4;
+  var netH = 26, nb = 4;
+  for (var i = 0; i <= nb; i++){
+    var t = i / nb;
+    var x1 = rl + (rr - rl) * t;
+    var x2 = rl + 6 + (rr - rl - 12) * t;
+    ctx.beginPath(); ctx.moveTo(x1, rimY + 2); ctx.lineTo(x2, rimY + netH); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(rl + 3, rimY + netH * 0.55); ctx.lineTo(rr - 3, rimY + netH * 0.55); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(rl + 6, rimY + netH); ctx.lineTo(rr - 6, rimY + netH); ctx.stroke();
+  // rim — dawn
+  ctx.strokeStyle = C.dawn; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(rl, rimY); ctx.lineTo(rr, rimY); ctx.stroke();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(rl, rimY, hoop.rimR, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(rr, rimY, hoop.rimR, 0, Math.PI * 2); ctx.fill();
+}
+function drawBall(){
+  if (!ball) return;
+  // trail
+  if (!RM){
+    for (var i = 0; i < trail.length; i++){
+      var tr = trail[i];
+      ctx.globalAlpha = Math.max(0, 0.28 - tr.t * 0.5);
+      ctx.fillStyle = C.dawn;
+      ctx.beginPath(); ctx.arc(tr.x, tr.y, ball.r * 0.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.save();
+  ctx.translate(ball.x, ball.y);
+  ctx.rotate(ball.spin);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-ball.r, 0); ctx.lineTo(ball.r, 0);
+  ctx.moveTo(0, -ball.r); ctx.lineTo(0, ball.r); ctx.stroke();
+  ctx.beginPath(); ctx.arc(-ball.r * 1.5, 0, ball.r * 1.2, -0.6, 0.6); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ball.r * 1.5, 0, ball.r * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+  ctx.restore();
+}
+function drawAim(){
+  if (!swipe) return;
+  var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
+  if (dy > -20) return;
+  // projected arc dots — gold, fading
+  var dtg = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
+  var vx = (dx / dtg) * 0.9, vy = (dy / dtg) * 0.9;
+  var sp = Math.sqrt(vx*vx + vy*vy), max = 1900;
+  if (sp > max){ vx *= max/sp; vy *= max/sp; }
+  if (vy > -260) vy = -260;
+  var x = player.x + 16, y = player.y - 104, t = 0;
+  ctx.fillStyle = C.gold;
+  for (var i = 0; i < 16; i++){
+    t += 0.07;
+    var px = x + vx * t + 0.5 * wind * t * t;
+    var py = y + vy * t + 0.5 * GRAV * t * t;
+    if (py > GROUND) break;
+    ctx.globalAlpha = 0.7 * (1 - i / 16);
+    ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- main draw ---------- */
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  var shx = 0, shy = 0;
+  if (shake > 0){ shx = (Math.random() - 0.5) * 10; shy = (Math.random() - 0.5) * 8; }
+  ctx.save();
+  ctx.translate(shx, shy);
+
+  // sky
+  var sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, C.predawn); sky.addColorStop(0.62, C.predawn2); sky.addColorStop(1, C.skyHi);
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+
+  for (var ci = 0; ci < clouds.length; ci++) drawCloud(clouds[ci]);
+  if (egret && egret.active) drawEgret(egret);
+
+  // wind gust streaks — mist
+  ctx.strokeStyle = 'rgba(159,176,196,0.35)'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+  for (var gi = 0; gi < gusts.length; gi++){
+    var g = gusts[gi];
+    var a = Math.sin((g.t / g.life) * Math.PI);
+    ctx.globalAlpha = a * 0.5;
+    ctx.beginPath(); ctx.moveTo(g.x, g.y); ctx.lineTo(g.x + (wind > 0 ? 46 : -46), g.y - 4); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  for (var ti = 0; ti < trees.length; ti++) drawTree(trees[ti]);
+
+  // ground — pine court line
+  ctx.fillStyle = C.pine;
+  ctx.fillRect(0, GROUND, W, H - GROUND);
+  ctx.fillStyle = 'rgba(232,147,58,0.55)';
+  ctx.fillRect(0, GROUND, W, 3);
+  // court markings — free-throw arc + lane lines, faint cream
+  ctx.strokeStyle = 'rgba(243,236,220,0.16)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(hoop.x, GROUND, 110, Math.PI, Math.PI * 2, false); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(hoop.x - 60, GROUND + 2); ctx.lineTo(hoop.x - 60, GROUND + 46);
+  ctx.moveTo(hoop.x + 60, GROUND + 2); ctx.lineTo(hoop.x + 60, GROUND + 46); ctx.stroke();
+
+  if (squirrel) drawSquirrel(squirrel);
+  drawHoop();
+  drawPlayer();
+  drawAim();
+  drawBall();
+
+  // particles
+  for (var i = 0; i < particles.length; i++){
+    var pt = particles[i];
+    ctx.globalAlpha = 1 - pt.t / pt.life;
+    ctx.fillStyle = pt.c;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // pops
+  for (var m = 0; m < pops.length; m++){
+    var pp = pops[m];
+    ctx.globalAlpha = 1 - pp.t / pp.life;
+    ctx.fillStyle = pp.gold ? C.gold : C.day;
+    ctx.font = '700 ' + (pp.gold ? 20 : 16) + 'px "Instrument Sans", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(pp.txt, pp.x, pp.y);
+  }
+  ctx.globalAlpha = 1;
+
+  // shots remaining — ball pips, bottom left
+  if (STATE === 'play'){
+    for (var b = 0; b < SHOTS; b++){
+      ctx.fillStyle = b < shotsLeft ? C.dawn : 'rgba(159,176,196,0.25)';
+      ctx.beginPath(); ctx.arc(20 + b * 16, H - 22, 5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  ctx.restore();
+}
+
+/* ---------- loop ---------- */
+var last = performance.now();
+function frame(now){
+  var dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  update(dt);
+  draw();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- input ---------- */
+cv.addEventListener('pointerdown', function(e){ onDown(e.clientX, e.clientY); });
+cv.addEventListener('pointermove', function(e){ onMove(e.clientX, e.clientY); });
+cv.addEventListener('pointerup', onUp);
+cv.addEventListener('pointercancel', function(){ swipe = null; });
+cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+window.addEventListener('keydown', function(e){
+  if (e.code === 'Space' || e.code === 'Enter'){
+    e.preventDefault();
+    if (STATE === 'menu' || STATE === 'over') startGame();
+  }
+});
+
+/* ---------- boot ---------- */
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('againBtn').addEventListener('click', startGame);
+resize();
+initDecor();
+loadBest();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

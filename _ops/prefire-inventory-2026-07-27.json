@@ -1,0 +1,41 @@
+{
+  "md5": "6b0d6827a4041d476f025ada843972ec",
+  "sms": [
+    "sms:+16572170820",
+    "sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20",
+    "sms:+16572170820?&body=UNLIMITED%20%24197%2Fmo%20%E2%80%94%20I%27d%20like%20to%20join.%20My%20name%20is%20"
+  ],
+  "forms": [
+    "https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform"
+  ],
+  "order": [
+    "top",
+    "outside",
+    "standard",
+    "coach",
+    "members",
+    "honest",
+    "letter",
+    "freeweek",
+    "membership",
+    "schedule"
+  ],
+  "counts": {
+    "egret": 2,
+    "duck": 2,
+    "wild-rabbit": 12,
+    "jacker": 72,
+    "roper": 46,
+    "hero-stars": 3,
+    "horizon": 1,
+    "paypal-unlimited": 1,
+    "sun class": 1,
+    "letter": 1,
+    "members": 1,
+    "challenge link": 2
+  },
+  "plans": [
+    "P-5LX3921079692330VNGW67ZI",
+    "P-5LX3921079692330VNGW67ZI"
+  ]
+}

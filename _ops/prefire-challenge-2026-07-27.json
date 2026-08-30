@@ -1,0 +1,22 @@
+{
+  "ch_md5": "76474615b35b2c2e15a372e80d4865bc",
+  "ix_md5": "138a9a3df36744c3ffa281b608936cb1",
+  "ch_sms": [
+    "sms:+16572170820",
+    "sms:+16572170820?&body=CHALLENGE%20\u2014%20I%20want%20one%20of%20the%2020%20spots%20in%20the%20next%206-week%20cohort.%20My%20name%20is%20"
+  ],
+  "ch_tel": [
+    "tel:+16572170820"
+  ],
+  "ix_sms_fw": [
+    "sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20"
+  ],
+  "paypal_349": true,
+  "ix_arch": {
+    "wild-rabbit": 12,
+    "jacker": 72,
+    "roper": 46,
+    "egret": 2,
+    "paypal-unlimited": 1
+  }
+}

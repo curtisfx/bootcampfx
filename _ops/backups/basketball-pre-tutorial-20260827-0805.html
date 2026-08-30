@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Acacia Park Shootout — fifty shots, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.</title>
-<meta name="description" content="Acacia Park Shootout — fifty shots, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.">
+<title>Boot Camp FX — First Light Shootout</title>
+<meta name="description" content="Basketball, the Boot Camp FX way. Fifty balls, one hoop, first light. Flick to shoot — swishes pay extra. Free to play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
     backdrop-filter:blur(8px);}
   .iconbtn:hover{border-color:var(--dawn);color:var(--gold);}
 
-  .banner{position:fixed;bottom:calc(58.78% + 12px);left:0;right:0;text-align:center;pointer-events:none;
+  .banner{position:fixed;top:calc(30% + 200px);left:0;right:0;text-align:center;pointer-events:none;
     opacity:0;transform:scale(.85);transition:opacity .2s,transform .2s;z-index:6;}
   .banner.on{opacity:1;transform:scale(1);}
   .banner .big{font-family:var(--display);font-weight:700;font-size:clamp(2rem,7vw,4rem);
@@ -115,25 +115,6 @@
     margin-top:18px;text-align:center;line-height:1.9;}
   .hint b{color:var(--day);}
 
-  /* ---------- drag tutorial (single-step, runs at every drill start) ---------- */
-  .tut{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .28s var(--ease);}
-  .tut.on{opacity:1;pointer-events:auto;}
-  .tut svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-  #guideSvg{position:fixed;inset:0;z-index:8;width:100%;height:100%;pointer-events:none;overflow:visible;}
-  .tut .tcard{position:absolute;transform:translate(-50%,-50%);text-align:center;
-    background:rgba(15,27,44,.72);border:1px solid rgba(242,184,75,.28);border-radius:14px;
-    padding:10px 16px;backdrop-filter:blur(6px);max-width:min(340px,80vw);
-    box-shadow:0 8px 28px rgba(0,0,0,.35);}
-  .tut .tl1{font-family:var(--display);font-weight:600;font-size:1.12rem;color:var(--day);line-height:1.15;}
-  .tut .tl2{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:5px;}
-  .tut .tbtnrow{display:flex;gap:8px;justify-content:center;margin-top:10px;}
-  .tut .tbtn{pointer-events:auto;cursor:pointer;border-radius:10px;padding:7px 18px;
-    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
-    border:1px solid rgba(159,176,196,.3);background:rgba(15,27,44,.5);color:var(--mist);}
-  .tut .tbtn:hover{border-color:var(--dawn);color:var(--gold);}
-  .tut .tbtn.primary{background:var(--dawn);border-color:var(--dawn);color:#1B1206;font-weight:700;}
-  .tut .tbtn.primary:hover{background:var(--gold);color:#1B1206;}
-
   .sun{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--gold);
     box-shadow:0 0 60px 20px rgba(232,147,58,.4), 0 0 120px 40px rgba(242,184,75,.15);
     left:50%;transform:translateX(-50%);bottom:-40px;z-index:1;
@@ -150,7 +131,6 @@
   @keyframes breathe{from{opacity:0;letter-spacing:.3em;}to{opacity:1;letter-spacing:.05em;}}
 
   .foot{position:fixed;bottom:8px;right:14px;color:rgba(159,176,196,.55);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;z-index:4;}
-  @media (max-width:520px){ .foot{font-size:.48rem;letter-spacing:.05em;} }
   .foot a{color:inherit;text-decoration:none;}
   .foot a:hover{color:var(--mist);}
 
@@ -158,13 +138,6 @@
     .hud .stat b{font-size:1.28rem;}
     .breakdown{grid-template-columns:repeat(4,1fr);}
     .iconbtn{width:36px;height:36px;}
-  }
-  @media (max-height:600px){
-    .overlay .title{font-size:clamp(1.7rem,7vw,2.6rem);}
-    .rules{gap:5px;margin-top:14px;}
-    .rl{font-size:.68rem;letter-spacing:.08em;}
-    .tip{margin-top:12px;font-size:.64rem;}
-    .btn{margin-top:14px !important;padding:12px 32px;}
   }
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;}
@@ -196,6 +169,21 @@
 <div class="pips" id="pips"></div>
 <div class="tally" id="tally"><span class="tlbl">Makes</span><span class="tmarks" id="tmarks"></span><span class="tcount" id="tcount">0</span></div>
 
+<div class="overlay on" id="menu">
+  <div class="modal">
+    <div class="title">Boot Camp <em>FX</em><br>SHOOTOUT</div>
+    <div class="tag">Fifty balls · One hoop · First light</div>
+    <div class="rules">
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Flick</span><span class="keys">Swipe up at the hoop</span><span class="why">speed = power</span></div>
+      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Swish</span><span class="keys">Nothing but net</span><span class="why">+3</span></div>
+      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Make</span><span class="keys">Rim or bank</span><span class="why">+2</span></div>
+      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Shift</span><span class="keys">A / D or drag sideways</span><span class="why">find the angle</span></div>
+    </div>
+    <div class="tip">Chain three and the ball catches fire · hot bonus after that</div>
+    <button class="btn" id="startBtn" style="margin-top:22px;">Start the Drill</button>
+  </div>
+</div>
+
 <div class="overlay" id="over">
   <div class="sun" aria-hidden="true"></div>
   <div id="particles" aria-hidden="true"></div>
@@ -218,21 +206,7 @@
   </div>
 </div>
 
-<svg id="guideSvg" aria-hidden="true"></svg>
-
-<div class="tut" id="tut" role="dialog" aria-live="polite" aria-label="Tutorial">
-  <svg id="tutSvg" aria-hidden="true"></svg>
-  <div class="tcard" id="tutCard">
-    <div class="tl1" id="tutTitle"></div>
-    <div class="tl2" id="tutSub"></div>
-    <div class="tbtnrow">
-      <button type="button" class="tbtn" id="tutSkip" aria-label="Skip tutorial">Skip</button>
-      <button type="button" class="tbtn primary" id="tutNext">Got it</button>
-    </div>
-  </div>
-</div>
-
-<div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="https://bootcampfx.com">bootcampfx.com</a> · more games: <a href="../chess/">Chess</a> · <a href="../go/">Go</a> · <a href="../mahjong/">Mahjong</a> · <a href="../runner/">Runner</a></div>
+<div class="foot">BOOTCAMP<span style="color:var(--dawn);">FX</span> — <a href="https://bootcampfx.com">bootcampfx.com</a></div>
 </div>
 
 <script>
@@ -260,6 +234,7 @@ var hudShot = document.getElementById('hudShot');
 var bannerEl = document.getElementById('banner');
 var bannerBigEl = document.getElementById('bannerBig');
 var bannerSubEl = document.getElementById('bannerSub');
+var menuEl = document.getElementById('menu');
 var overEl = document.getElementById('over');
 var newRecEl = document.getElementById('newRec');
 var appEl = document.getElementById('app');
@@ -297,251 +272,18 @@ var keys = { a:false, d:false };
 var muted = false;
 var lastKind = '—';
 
-/* ---------- wildlife reaction state (Boot Camp FX) ---------- */
-var owlReact = { brickT: 0, blinkOnce: false };
-var holdT = 0;            /* ball-hold clock — 7s stall triggers the squirrel steal */
-var owlKnock = 0;         /* owl knockdown timer after a skyjack crash */
-var fireflyPulseT = 0;
-var jay = { treeI: 0, x: 0, y: 0, cawT: 0 };
-
-/* ---------- drag tutorial (single-step, runs at every drill start) ---------- */
-var tutorialStep = 0;      /* 0=off, 1=drag the owl */
-var tutT = 0;              /* seconds elapsed in current step */
-var tutTimer = null;
-var TUT_DUR = 5;           /* auto-advance fallback (s) */
-var tutEl = document.getElementById('tut');
-var tutSvg = document.getElementById('tutSvg');
-var tutCard = document.getElementById('tutCard');
-var tutTitleEl = document.getElementById('tutTitle');
-var tutSubEl = document.getElementById('tutSub');
-var tutNextBtn = document.getElementById('tutNext');
-var tutSkipBtn = document.getElementById('tutSkip');
-/* ---------- perpetual aim guide ---------- */
-var guideSvg = document.getElementById('guideSvg');
-var guideA = 0;          /* guide group opacity — fades in/out ~0.3s */
-var guideShots = 0;      /* session shot counter — "FLICK"/"DRAG" labels show while < 10 */
-var frameDt = 0.016;     /* latest frame dt, set in frame(); drives the fade lerp */
-/* Shoot zone — lower third, center half of the screen. Shot flicks only count from here,
-   and the shooting guide lives here permanently (never tracks the owl or the hoop). */
-function shootZone(){ return { x0: W * 0.30, x1: W * 0.70, y0: H * 0.66, y1: H * 0.97 }; }
-/* Flick lane — vertical guide rising from the zone baseline; tilts into the wind. */
-function guideLane(){
-  var windComp = Math.abs(wind) > 40;
-  var tilt = windComp ? Math.max(-30, Math.min(30, -wind * 0.15)) : 0;
-  return { bx: W / 2, by: H * 0.88, tx: W / 2 + tilt, ty: H * 0.55,
-           windComp: windComp, wt: windComp ? Math.min(1, Math.abs(wind) / 195) : 0 };
-}
-function mixHex(a, b, t){
-  var pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
-  var r = Math.round(((pa >> 16) & 255) * (1 - t) + ((pb >> 16) & 255) * t);
-  var g = Math.round(((pa >> 8) & 255) * (1 - t) + ((pb >> 8) & 255) * t);
-  var bl = Math.round((pa & 255) * (1 - t) + (pb & 255) * t);
-  return 'rgb(' + r + ',' + g + ',' + bl + ')';
-}
-function setTut(step){
-  tutorialStep = step; tutT = 0;
-  clearTimeout(tutTimer);
-  if (!step){ tutEl.classList.remove('on'); return; }
-  tutTitleEl.textContent = 'Drag the owl to find the angle';
-  tutSubEl.textContent = 'A / D or drag — even up. He can fly.';
-  tutNextBtn.textContent = 'Got it';
-  tutNextBtn.setAttribute('aria-label', 'Finish tutorial');
-  tutEl.classList.add('on');
-  tutTimer = setTimeout(advanceTut, TUT_DUR * 1000);
-}
-function advanceTut(){ setTut(0); }
-function drawTutorial(){
-  if (!tutorialStep || STATE !== 'play' || !player.x || !player.y){ tutSvg.innerHTML = ''; return; }
-  var cyc = RM ? 0 : (tutT % 3.2) / 3.2;       /* hold → left → right → center → up → release */
-  var ox = 0, oy = 0, fade = 0, u;
-  if (cyc < 0.12){}
-  else if (cyc < 0.32){ u = (cyc - 0.12) / 0.20; u = u*u*(3-2*u); ox = -30 * u; }
-  else if (cyc < 0.55){ u = (cyc - 0.32) / 0.23; u = u*u*(3-2*u); ox = -30 + 60 * u; }
-  else if (cyc < 0.66){ u = (cyc - 0.55) / 0.11; u = u*u*(3-2*u); ox = 30 * (1 - u); }
-  else if (cyc < 0.86){ u = (cyc - 0.66) / 0.20; u = u*u*(3-2*u); oy = -46 * u; }
-  else { oy = -46; fade = (cyc - 0.86) / 0.14; }
-  var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
-  var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
-  var uy0 = cy2 - 56, uy1 = Math.max(20, cy2 - 130);
-  var s = '';
-  s += '<line x1="' + lx + '" y1="' + cy2 + '" x2="' + rx + '" y2="' + cy2 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
-  s += '<path d="M' + lx + ' ' + cy2 + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="0.85"/>';
-  s += '<path d="M' + rx + ' ' + cy2 + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="0.85"/>';
-  s += '<line x1="' + cx2 + '" y1="' + uy0 + '" x2="' + cx2 + '" y2="' + uy1 + '" stroke="#9FB0C4" stroke-width="2" stroke-dasharray="5 8" opacity="0.55"/>';
-  s += '<path d="M' + cx2 + ' ' + uy1 + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="0.85"/>';
-  s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="0.9" text-anchor="middle">DRAG</text>';
-  s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="0.9">FLY</text>';
-  var hvx = cx2 + ox, hvy = cy2 - 26 + oy;
-  var hop = RM ? 0.95 : Math.max(0, 0.95 - fade * 1.2);
-  s += '<g opacity="' + hop.toFixed(2) + '">'
-     + '<g transform="translate(' + hvx.toFixed(1) + ' ' + hvy.toFixed(1) + ') rotate(-20)">'
-     + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>'
-     + '<circle cx="' + hvx.toFixed(1) + '" cy="' + hvy.toFixed(1) + '" r="30" fill="none" stroke="#F2B84B" stroke-width="1.5" opacity="0.35"/></g>';
-  /* pinned to the owl's SPAWN position (over the tent) — the card stays put for
-     the whole tutorial even as he drifts with the wind; the guideline cluster
-     below still tracks his live position. */
-  var owlCx = Math.max(56, Math.min(hoop.x - 90, Math.max(70, W * 0.16))) + OWL_CX;
-  var owlCy = player.y - 70;
-  var cardW = Math.min(340, W * 0.80);
-  var cardH = 108;
-  var hudSafe = 86, floorSafe = 132;
-  var hoopSafeX = hoop.x - 52;
-  /* dock the card to the right of the owl — the FLY guideline rises vertically
-     above the owl, so a side-docked card can never cover it. On screens too
-     narrow for the dock (the clamp pushes the card back over the owl's column),
-     fall back to dropping it below the owl instead. */
-  var owlCy2 = Math.round(H * 0.36) - 40;   /* spawn body center (feet at 0.36H) */
-  var tcx = owlCx + 190 + cardW / 2;
-  var tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, hoop.y - cardH/2));   /* card base on the rim line */
-  tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, tcx));
-  if (Math.abs(tcx - owlCx) < cardW / 2 + 60){
-    tcx = Math.max(cardW/2 + 8, Math.min(W - cardW/2 - 8, owlCx));
-    tcy = Math.max(hudSafe + cardH/2, Math.min(H - floorSafe - cardH/2, owlCy2 + 105));   /* card top on the owl's feet line (spawn feet = 0.36H); the rim line itself is bracketed by the owl and the hoop at 360 */
-  }
-  if (tcx + cardW/2 > hoopSafeX && Math.abs(tcy - hoop.y) < 140){
-    tcx = Math.min(tcx, hoopSafeX - cardW/2);
-    tcx = Math.max(cardW/2 + 8, tcx);
-  }
-  tutCard.style.left = tcx + 'px';
-  tutCard.style.top = tcy + 'px';
-  tutSvg.innerHTML = s;
-}
-
-/* Perpetual aim guide — the tutorial's step-1 arc promoted to quiet furniture.
-   Three modes: aim arc (player's turn), live aim vector (finger down), drag lines (owl held).
-   Renders into #guideSvg (its own fullscreen SVG). */
-function drawGuide(){
-  var vis = STATE === 'play' && tutorialStep === 0 && shotsLeft > 0
-         && !(squirrel && squirrel.stealing)
-         && ((swipe && swipe.zoned) || owlDrag || (resolved && !ball));
-  if (squirrel && squirrel.stealing) guideA = 0;          /* steal cuts the guide instantly */
-  else guideA += ((vis ? 1 : 0) - guideA) * (1 - Math.exp(-8 * frameDt));
-  if (guideA < 0.01){ if (guideSvg.innerHTML) guideSvg.innerHTML = ''; return; }
-
-  var o = guideA, s = '';
-  var now = performance.now() / 1000;
-
-  if (swipe && swipe.zoned){
-    /* live power meter — in this game the ball leaves in the flick direction (flick up = ball up) */
-    var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
-    var sdt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
-    var vx = (dx / sdt) * 0.92, vy = (dy / sdt) * 0.92;
-    var sp = Math.sqrt(vx * vx + vy * vy), vmax = 1980;
-    if (sp > vmax){ vx *= vmax / sp; vy *= vmax / sp; sp = vmax; }
-    var power = Math.min(1, sp / vmax);
-    var live = dy <= -22;   /* onUp only launches upward flicks past this gate */
-    /* power meter — fills the flick lane from the baseline up, in the shoot zone */
-    var L = guideLane();
-    var laneDx = L.tx - L.bx, laneDy = L.ty - L.by;
-    var laneLen = Math.sqrt(laneDx * laneDx + laneDy * laneDy);
-    var lux = laneDx / laneLen, luy = laneDy / laneLen;
-    s += guideLaneSVG(L, o);
-    var fill = live ? power : power * 0.5;
-    var fCol = live ? mixHex('#F2B84B', '#E8933A', power) : '#9FB0C4';
-    var fOp = (live ? 0.9 : 0.35) * o;
-    if (fill > 0.01){
-      s += '<line x1="' + L.bx.toFixed(1) + '" y1="' + L.by.toFixed(1)
-         + '" x2="' + (L.bx + lux * laneLen * fill).toFixed(1) + '" y2="' + (L.by + luy * laneLen * fill).toFixed(1)
-         + '" stroke="' + fCol + '" stroke-width="' + (3 + power * 3).toFixed(2)
-         + '" stroke-linecap="round" opacity="' + fOp.toFixed(2) + '"/>';
-    }
-    /* finger line — the actual gesture, inside the zone */
-    s += '<line x1="' + swipe.x0.toFixed(1) + '" y1="' + swipe.y0.toFixed(1)
-       + '" x2="' + swipe.x.toFixed(1) + '" y2="' + swipe.y.toFixed(1)
-       + '" stroke="' + mixHex('#F2B84B', '#E8933A', power) + '" stroke-width="' + (2.5 + power * 1.5).toFixed(2)
-       + '" stroke-linecap="round" opacity="' + (0.85 * o).toFixed(2) + '"/>';
-  } else if (owlDrag){
-    /* drag guide — tutorial step-2 language at furniture opacity, no hand icon */
-    var cx2 = player.x + OWL_CX, cy2 = player.y - 40;
-    var lx = Math.max(16, cx2 - 118), rx = Math.min(W - 16, cx2 + 118);
-    var uy0 = cy2 - 56, uy1 = Math.max(96, cy2 - 130);   /* clamp below the top HUD */
-    s += '<line x1="' + lx + '" y1="' + cy2.toFixed(1) + '" x2="' + rx + '" y2="' + cy2.toFixed(1)
-       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * o).toFixed(2) + '"/>';
-    s += '<path d="M' + lx + ' ' + cy2.toFixed(1) + ' l13 -7 l-5 7 l5 7 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
-    s += '<path d="M' + rx + ' ' + cy2.toFixed(1) + ' l-13 -7 l5 7 l-5 7 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
-    s += '<line x1="' + cx2 + '" y1="' + uy0.toFixed(1) + '" x2="' + cx2 + '" y2="' + uy1.toFixed(1)
-       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * o).toFixed(2) + '"/>';
-    s += '<path d="M' + cx2 + ' ' + uy1.toFixed(1) + ' l-7 13 l7 -5 l7 5 Z" fill="#F2B84B" opacity="' + (0.45 * o).toFixed(2) + '"/>';
-    if (guideShots < 10){
-      s += '<text x="' + (cx2 - 70) + '" y="' + (cy2 - 10).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '" text-anchor="middle">DRAG</text>';
-      s += '<text x="' + (cx2 + 12) + '" y="' + ((uy0 + uy1) / 2 + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="13" letter-spacing="2.5" fill="#F2B84B" opacity="' + (0.5 * o).toFixed(2) + '">FLY</text>';
-    }
-  } else {
-    /* ambient zone guide — fixed in the shoot zone; never tracks the owl or the hoop */
-    var z = shootZone();
-    var L = guideLane();
-    var boost = onFire ? 1.5 : 1;
-    /* zone floor — the strip you flick from */
-    s += '<line x1="' + z.x0.toFixed(1) + '" y1="' + L.by.toFixed(1) + '" x2="' + z.x1.toFixed(1) + '" y2="' + L.by.toFixed(1)
-       + '" stroke="#9FB0C4" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.28 * boost * o).toFixed(2) + '"/>';
-    /* zone outline — barely-there affordance */
-    s += '<rect x="' + z.x0.toFixed(1) + '" y="' + z.y0.toFixed(1) + '" width="' + (z.x1 - z.x0).toFixed(1) + '" height="' + (z.y1 - z.y0).toFixed(1)
-       + '" rx="14" fill="none" stroke="#9FB0C4" stroke-width="1" opacity="' + (0.10 * o).toFixed(2) + '"/>';
-    /* flick lane + ticks + arrowhead */
-    s += guideLaneSVG(L, o);
-    /* traveling dot + tutorial hand loop up the lane like a real flick (accelerating) —
-       the fingertip rides the lane so it's clear where the finger goes and how fast it moves */
-    if (!RM){
-      var dur = onFire ? 1.7 : 2.2;
-      var cyc = (now % dur) / dur;
-      var e = 1 - (1 - cyc) * (1 - cyc);          /* ease-out — starts fast like a flick */
-      var ddx = L.bx + (L.tx - L.bx) * e, ddy = L.by + (L.ty - L.by) * e;
-      s += '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="11" fill="rgba(242,184,75,.28)" stroke="#F2B84B" stroke-width="2" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>'
-         + '<circle cx="' + ddx.toFixed(1) + '" cy="' + ddy.toFixed(1) + '" r="3" fill="#FBF7EE" opacity="' + (0.6 * boost * o).toFixed(2) + '"/>';
-      /* copy of the tutorial's finger hand, fingertip on the lane, tilted into the flick direction */
-      var hang = Math.atan2(L.ty - L.by, L.tx - L.bx) * 180 / Math.PI + 70;
-      s += '<g transform="translate(' + ddx.toFixed(1) + ' ' + ddy.toFixed(1) + ') rotate(' + hang.toFixed(1) + ')" opacity="' + (0.9 * boost * o).toFixed(2) + '">'
-         + '<path d="M0 0 L0 -20 Q0 -27 6 -27 Q12 -27 12 -20 L12 -12 L17 -17 Q21 -20 24 -17 Q26 -15 23 -11 L15 2 Q12 8 6 8 Q0 8 -3 2 L-8 -7 Q-10 -11 -7 -13 Q-4 -15 -1 -11 Z" fill="#F2B84B" stroke="#14100A" stroke-width="1.4"/></g>';
-    }
-    if (guideShots < 10){
-      s += '<text x="' + (W / 2).toFixed(1) + '" y="' + (L.by + 44).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="24" font-weight="700" letter-spacing="4" fill="#F2B84B" opacity="' + (0.85 * o).toFixed(2) + '" text-anchor="middle">FLICK UP</text>';
-    }
-  }
-  guideSvg.innerHTML = s;
-}
-
-/* Shared lane drawing — dashed wind-tilted lane, power ticks, gold arrowhead.
-   Used by both the ambient zone guide and the live power meter. */
-function guideLaneSVG(L, o){
-  var boost = onFire ? 1.5 : 1;
-  var col = L.windComp ? mixHex('#9FB0C4', '#E8933A', L.wt) : '#9FB0C4';
-  var s = '<line x1="' + L.bx.toFixed(1) + '" y1="' + L.by.toFixed(1) + '" x2="' + L.tx.toFixed(1) + '" y2="' + L.ty.toFixed(1)
-     + '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 8" opacity="' + (0.30 * boost * o).toFixed(2) + '"/>';
-  /* power ticks at 33% / 66% / 100% — perpendicular marks across the lane */
-  var dx = L.tx - L.bx, dy = L.ty - L.by;
-  var len = Math.sqrt(dx * dx + dy * dy);
-  var pxn = -dy / len, pyn = dx / len;            /* lane normal */
-  for (var i = 1; i <= 3; i++){
-    var f = i / 3, cxp = L.bx + dx * f, cyp = L.by + dy * f, hw = i === 3 ? 9 : 6;
-    s += '<line x1="' + (cxp - pxn * hw).toFixed(1) + '" y1="' + (cyp - pyn * hw).toFixed(1)
-       + '" x2="' + (cxp + pxn * hw).toFixed(1) + '" y2="' + (cyp + pyn * hw).toFixed(1)
-       + '" stroke="' + col + '" stroke-width="1.5" opacity="' + (0.35 * o).toFixed(2) + '"/>';
-  }
-  /* gold arrowhead at the top of the lane, aligned to the lane direction */
-  var ang = Math.atan2(dy, dx) * 180 / Math.PI;
-  s += '<g transform="translate(' + L.tx.toFixed(1) + ' ' + L.ty.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')">'
-     + '<path d="M0 0 L-12 -5.5 L-8 0 L-12 5.5 Z" fill="#F2B84B" opacity="' + (0.5 * boost * o).toFixed(2) + '"/></g>';
-  s += '<text x="' + (L.tx + 16).toFixed(1) + '" y="' + (L.ty + 3).toFixed(1) + '" font-family="\'Spline Sans Mono\', monospace" font-size="8" letter-spacing="2.5" fill="' + col + '" opacity="' + (0.45 * o).toFixed(2) + '">MAX</text>';
-  return s;
-}
-
 var player = { x: 0, y: 0 };
 var OWL_CX = 35;          /* canvas x-offset of owl body center from player.x (viewBox 32 × scale 1.1) */
 var OWL_LAUNCH_Y = 23;    /* ball rest + launch: belly level (owl local y≈55), clearly below head/beak */
 var OWL_HIT_R = 55;       /* generous drag hit radius around owl body center */
 var owlDrag = null;       /* { offX, offY } active drag offset */
-var owlAir = true;        /* airborne: true at spawn (hover over the tent) and after mid-air release */
+var owlAir = false;       /* airborne after mid-air release */
 var owlFlapT = 0;         /* wing flap phase accumulator */
 var owlVy = 0;            /* airborne descent velocity */
-var turbT = 0;            /* turbulence phase clock — drives the airborne owl's drift */
 function placePlayer(){
-  if (!player.x) player.x = Math.max(70, W * 0.16);   /* over the tent, not mid-court */
+  if (!player.x) player.x = Math.max(70, W * 0.22);
   player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
-  /* hover just above the tent peak (peak ≈ 0.412H): 0.38H lets the ±33px hover
-     bob dip the feet into the canopy on short screens, so spawn at 0.36H —
-     feet clear the peak by ~47px at rest, ≥14px at the bob extreme (desktop).
-     Guard preserves an in-flight y on window resize. */
-  if (!player.y || player.y === GROUND) player.y = Math.round(H * 0.36);
+  player.y = GROUND;
 }
 
 var hoop = { x: 0, y: 0, rimW: 54, rimR: 4.6, boardW: 10, boardH: 120, baseY: 0, drift: 0, flex: 0, boardWob: 0 };
@@ -571,9 +313,6 @@ function buildNet(){
 }
 
 var trees = [], clouds = [], egret = null, squirrel = null, stars = [];
-var tentImg = new Image();          /* Boot Camp FX tent — static mid-ground prop, drawn on canvas */
-tentImg.src = 'bootcamp-fx-tent.svg';
-var TENT_FEET_Y = 892;              /* viewBox y of the foot-plate bottoms (viewBox is 0..920; 28 units empty below) */
 function rnd(a, b){ return a + Math.random() * (b - a); }
 function initDecor(){
   trees = []; clouds = []; gusts = []; fireflies = []; stars = [];
@@ -582,17 +321,8 @@ function initDecor(){
   for (i = 0; i < 4; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.06, H*0.32), s: rnd(0.5, 1.1), a: rnd(0.25, 0.5) });
   for (i = 0; i < 18; i++) stars.push({ x: rnd(0,W), y: rnd(0, H*0.38), a: rnd(0.15, 0.55), p: rnd(0, 6.2) });
   for (i = 0; i < 8; i++) fireflies.push({ x: rnd(W*0.1, W*0.9), y: rnd(GROUND-80, GROUND-12), p: rnd(0,6), s: rnd(0.6,1.2) });
-  egret = { x: -200, y: H * 0.2, s: 0.9, fl: 0, active: false, dir: 1, phase: 'hidden', theta: 0, lap: 0, missTally: 0, pitch: 0 };
-  squirrel = { x: W * 0.70, hp: 0, homeX: W * 0.70, mode: 'idle', modeT: 0, dashX: W * 0.70, wanderT: rnd(4, 8), targetX: W * 0.70, facing: -1 };
-  var bestI = 0, bestD = 1e9;
-  for (i = 0; i < trees.length; i++){
-    var dd = Math.abs(trees[i].x - W * 0.18);
-    if (dd < bestD){ bestD = dd; bestI = i; }
-  }
-  jay.treeI = bestI;
-  jay.x = trees[bestI].x;
-  jay.y = GROUND - 86 * trees[bestI].s - 6;
-  jay.cawT = 0;
+  egret = { x: -200, y: H * 0.2, s: 0.42, fl: 0, active: false, dir: 1 };
+  squirrel = { x: W * 0.74, hp: 0 };
 }
 
 function tickDecor(dt){
@@ -604,159 +334,25 @@ function tickDecor(dt){
     if (cl.x > W + 160) cl.x = -rnd(0,120) - 80;
   }
   if (egret){
-    var perchX = hoop.x + hoop.rimW / 2 + hoop.rimR + hoop.boardW / 2;
-    var perchY = hoop.y - hoop.boardH - 84 * egret.s + 4;
-    var circX = perchX, circY = perchY - 36;
-    if (egret.phase === 'enter'){
-      var edx = circX - egret.x, edy = circY - egret.y;
-      var ed = Math.sqrt(edx * edx + edy * edy);
-      if (ed < 18){
-        egret.phase = 'circle';
-        egret.theta = Math.atan2(egret.y - circY, egret.x - circX);
-        egret.lap = 0;
-      } else {
-        var esp = 90 * dt;
-        egret.x += (edx / ed) * esp;
-        egret.y += (edy / ed) * esp;
-        egret.fl += dt * 5;
-      }
-    } else if (egret.phase === 'circle'){
-      egret.theta += dt * 1.15;
-      egret.lap += (dt * 1.15) / (Math.PI * 2);
-      egret.x = circX + Math.cos(egret.theta) * 36;
-      egret.y = circY + Math.sin(egret.theta) * 36;
-      egret.fl += dt * 5;
-      if (egret.lap >= 1){
-        if (RM){ egret.phase = 'perch'; egret.pitch = -75; egret.fl = 0; egret.dir = -1; }
-        else { egret.phase = 'land'; egret.landT = 0; egret.landFromX = egret.x; egret.landFromY = egret.y; }
-      }
-    } else if (egret.phase === 'land'){
-      egret.landT += dt;
-      var lu = Math.min(1, egret.landT / 0.5);
-      var le = easeIO(lu);
-      egret.x = egret.landFromX + (perchX - egret.landFromX) * le;
-      egret.y = egret.landFromY + (perchY - egret.landFromY) * le;
-      egret.pitch = -75 * le;
-      egret.fl += dt * 3;
-      if (lu >= 1){ egret.phase = 'perch'; egret.pitch = -75; egret.fl = 0; egret.dir = -1; }
-    } else if (egret.phase === 'perch'){
-      egret.x = perchX;
-      egret.y = perchY;
+    if (!egret.active && Math.random() < dt * 0.045){
+      egret.active = true;
+      egret.dir = Math.random() < 0.5 ? 1 : -1;
+      egret.x = egret.dir > 0 ? -180 : W + 180;
+      egret.y = rnd(H*0.1, H*0.3);
       egret.fl = 0;
-      egret.dir = -1;
-      egret.pitch = -75;
-    } else if (egret.phase === 'exit'){
-      egret.x += 110 * dt * egret.dir;
-      egret.y -= 20 * dt;
+    }
+    if (egret.active){
+      egret.x += 90 * dt * egret.dir;
       egret.fl += dt * 5;
-      if (egret.x < -200 || egret.x > W + 200){ egret.phase = 'hidden'; egret.active = false; }
+      if ((egret.dir > 0 && egret.x > W + 200) || (egret.dir < 0 && egret.x < -200)) egret.active = false;
     }
   }
-  if (squirrel){
-    if (squirrel.mode === 'idle'){
-      if (STATE === 'play' && !RM && !squirrel.holdingBall){
-        // slow court wander — right half, clear of the owl's lane and the hoop
-        squirrel.wanderT -= dt;
-        if (squirrel.wanderT <= 0){
-          squirrel.wanderT = rnd(4, 8);
-          squirrel.targetX = rnd(W * 0.45, Math.min(W * 0.88, hoop.x - 30));
-        }
-        squirrel.x += (squirrel.targetX - squirrel.x) * (1 - Math.exp(-1.2 * dt));
-        squirrel.facing = Math.abs(squirrel.targetX - squirrel.x) > 2 ? (squirrel.targetX > squirrel.x ? 1 : -1) : -1;
-      } else {
-        squirrel.x = squirrel.homeX;
-        squirrel.facing = -1;
-      }
-      squirrel.homeX = squirrel.x;
-      if (!RM) squirrel.hp += dt * 2.2;
-    } else {
-      if (squirrel.mode === 'dash'){
-        var rimX = hoop.x - 34;
-        var e = 1.10 - squirrel.modeT;
-        var dashDir = (rimX >= squirrel.homeX) ? 1 : -1;
-        if (!RM) squirrel.facing = (e < 0.75) ? dashDir : -dashDir;
-        if (RM){ squirrel.dashX = squirrel.homeX; }
-        else if (e < 0.35){ squirrel.dashX = squirrel.homeX + (rimX - squirrel.homeX) * easeIO(e / 0.35); }
-        else if (e < 0.75){ squirrel.dashX = rimX; }
-        else { squirrel.dashX = rimX + (squirrel.homeX - rimX) * easeIO((e - 0.75) / 0.35); }
-      } else if (squirrel.mode === 'cover'){
-        // return home unconditionally for the whole cover duration (was gated → could freeze off-home)
-        if (!RM && Math.abs(squirrel.x - squirrel.homeX) > 0.5){
-          squirrel.x += (squirrel.homeX - squirrel.x) * (1 - Math.exp(-6 * dt));
-        } else {
-          squirrel.x = squirrel.homeX;
-        }
-      } else if (squirrel.mode === 'steal'){
-        var so = squirrel.stealOwlX;
-        var se = 1.6 - squirrel.modeT;
-        if (se < 0.5){
-          squirrel.x = squirrel.stealFromX + (so - squirrel.stealFromX) * easeIO(se / 0.5);
-          squirrel.facing = (so >= squirrel.stealFromX) ? 1 : -1;
-        } else if (se < 0.7){
-          squirrel.x = so;
-          if (!squirrel.holdingBall){ squirrel.holdingBall = true; doStealPenalty(false); }
-        } else {
-          squirrel.x += 620 * dt;
-          squirrel.facing = 1;
-        }
-      } else if (squirrel.mode === 'skyjack'){
-        var so2 = player.x + OWL_CX;
-        var se2 = 1.4 - squirrel.modeT;
-        if (!squirrel.crashed && se2 >= 1.0){ squirrel.crashed = true; doStealPenalty(true); }
-        if (se2 < 0.4){
-          squirrel.x = squirrel.stealFromX + (so2 - squirrel.stealFromX) * easeIO(se2 / 0.4);
-          squirrel.facing = (so2 >= squirrel.stealFromX) ? 1 : -1;
-        } else if (se2 < 1.0){
-          var jp = (se2 - 0.4) / 0.6;
-          squirrel.x = so2;
-          squirrel.jumpY = -((GROUND - player.y) + 40) * easeOut3(jp);
-          squirrel.flip = 360 * easeOut3(jp);
-        } else {
-          var fp = (se2 - 1.0) / 0.4;
-          squirrel.jumpY = -((GROUND - player.y) + 40) * (1 - easeIO(fp));
-          squirrel.x += 500 * dt;
-          squirrel.facing = 1;
-          if (fp >= 0.85) squirrel.flip = 0;
-        }
-      }
-      squirrel.modeT = Math.max(0, squirrel.modeT - dt);
-      if (squirrel.modeT === 0){
-        if (squirrel.mode === 'steal' || squirrel.mode === 'skyjack'){
-          squirrel.homeX = rnd(W * 0.55, Math.min(W * 0.88, hoop.x - 30));
-          squirrel.targetX = squirrel.homeX;
-          squirrel.wanderT = 2;
-          squirrel.jumpY = 0; squirrel.flip = 0;
-          if (squirrel.holdingBall){
-            squirrel.x = squirrel.homeX;   /* stays on court with the ball until the 4s possession clock runs out */
-          } else {
-            squirrel.x = W + 40;
-          }
-        } else {
-          squirrel.x = squirrel.homeX;
-        }
-        squirrel.mode = 'idle';
-        squirrel.dashX = squirrel.homeX;
-        squirrel.facing = -1;
-      }
-    }
-  }
-  if (jay.cawT > 0) jay.cawT = Math.max(0, jay.cawT - dt);
-  if (trees.length && trees[jay.treeI]){ jay.x = trees[jay.treeI].x; jay.y = GROUND - 86 * trees[jay.treeI].s - 6; }
-  if (fireflyPulseT > 0){
-    fireflyPulseT -= dt;
-    var fk = 1 - Math.exp(-8 * dt);
-    for (i = 0; i < fireflies.length; i++){
-      var pf = fireflies[i];
-      pf.x += (hoop.x - pf.x) * fk;
-      pf.y += (hoop.y + 8 - pf.y) * fk;
-    }
-  } else if (!RM){
-    for (i = 0; i < fireflies.length; i++){
-      var f = fireflies[i];
-      f.p += dt * f.s;
-      f.x += Math.sin(f.p * 1.4) * 12 * dt;
-      f.y += Math.cos(f.p * 0.9) * 8 * dt;
-    }
+  if (squirrel) squirrel.hp += dt * 2.2;
+  for (i = 0; i < fireflies.length; i++){
+    var f = fireflies[i];
+    f.p += dt * f.s;
+    f.x += Math.sin(f.p * 1.4) * 12 * dt;
+    f.y += Math.cos(f.p * 0.9) * 8 * dt;
   }
   if (Math.abs(wind) > 30 && Math.random() < dt * 3){
     gusts.push({ x: wind > 0 ? -40 : W + 40, y: rnd(H*0.2, GROUND - 60), t: 0, life: rnd(0.7, 1.3) });
@@ -871,9 +467,6 @@ function sfx(kind){
   else if (kind === 'miss'){ tone(92, 0.22, 'sine', 0.12, 0.45); noise(0.12, 0.05, 180); }
   else if (kind === 'hot'){ tone(392, 0.14, 'sine', 0.08); tone(494, 0.2, 'sine', 0.08); tone(587, 0.28, 'triangle', 0.1); }
   else if (kind === 'record'){ tone(523, 0.12, 'sine', 0.1); setTimeout(function(){ tone(659, 0.12, 'sine', 0.1); }, 90); setTimeout(function(){ tone(784, 0.28, 'triangle', 0.12); }, 180); }
-  else if (kind === 'caw'){ tone(1480 * r, 0.07, 'square', 0.05, 1.15); tone(980 * r, 0.11, 'triangle', 0.06, 0.85); noise(0.09, 0.04, 1400, 0.35); }
-  else if (kind === 'tick'){ tone(1320, 0.05, 'sine', 0.05); }
-  else if (kind === 'thud'){ tone(88, 0.16, 'sine', 0.15, 0.45); noise(0.09, 0.07, 220); }
 }
 document.addEventListener('pointerdown', unlockAudio, { once:true });
 document.addEventListener('keydown', unlockAudio, { once:true });
@@ -883,7 +476,6 @@ muteBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(
 /* ---------- shooting ---------- */
 var swipe = null;
 function onDown(x, y){
-  if (tutorialStep > 0){ advanceTut(); return; }
   if (STATE === 'over'){ startGame(); return; }
   if (STATE !== 'play') return;
   // generous hit area on the owl → drag mode (reposition only, never shoots)
@@ -891,19 +483,14 @@ function onDown(x, y){
   var hx = x - cx, hy = y - cy;
   if (hx*hx + hy*hy <= OWL_HIT_R * OWL_HIT_R){
     owlDrag = { offX: player.x - x, offY: player.y - y };
-    holdT = 0;   // starting a drag resets the stall clock
     return;
   }
   if (!resolved) return;
   if (ball && ball.returning) return;
-  if (squirrel && squirrel.holdingBall) return;   /* no shot while the squirrel has the ball */
-  var z = shootZone();
-  var zoned = x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1;  /* shots only start in the shoot zone */
-  swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false, zoned:zoned };
-  if (zoned) sfx('flick');
+  swipe = { x0:x, y0:y, t0:performance.now(), x:x, y:y, moved:false };
+  sfx('flick');
 }
 function onMove(x, y){
-  if (tutorialStep > 0) return;
   if (owlDrag){
     var nx = x + owlDrag.offX, ny = y + owlDrag.offY;
     player.x = Math.max(56, Math.min(hoop.x - 90, nx));
@@ -919,7 +506,6 @@ function onMove(x, y){
   }
 }
 function onUp(){
-  if (tutorialStep > 0) return;
   if (owlDrag){
     owlDrag = null;
     // released above the ground plane → airborne state: wings extend + gentle flap
@@ -933,12 +519,9 @@ function onUp(){
   if (!swipe) return;
   var dx = swipe.x - swipe.x0, dy = swipe.y - swipe.y0;
   var dt = Math.max(0.05, (performance.now() - swipe.t0) / 1000);
-  var zoned = swipe.zoned;
   swipe = null;
-  if (!zoned) return;   /* outside the shoot zone — reposition gesture only, never a shot */
   if (STATE !== 'play' || !resolved) return;
   if (ball && ball.returning) return;
-  if (squirrel && squirrel.holdingBall) return;   /* squirrel still has the ball */
   if (dy > -22) return;
   var vx = (dx / dt) * 0.92;
   var vy = (dy / dt) * 0.92;
@@ -949,17 +532,6 @@ function onUp(){
 }
 function launch(vx, vy){
   resolved = false;
-  holdT = 0;
-  guideShots++;
-  if (squirrel){
-    squirrel.stealing = false;
-    squirrel.stealWarn = false;
-    if (squirrel.mode === 'steal' || squirrel.mode === 'skyjack'){
-      squirrel.mode = 'idle'; squirrel.modeT = 0;
-      squirrel.x = squirrel.homeX;
-      squirrel.jumpY = 0; squirrel.flip = 0;
-    }
-  }
   ball = {
     x: player.x + OWL_CX, y: player.y - OWL_LAUNCH_Y, vx: vx, vy: vy, r: 11.5,
     touchedRim: false, touchedBoard: false, wasAbove: false, scored: false, spin: 0,
@@ -975,108 +547,11 @@ function hotBonus(){
   return 0;
 }
 
-function egretEnter(){
-  if (!egret) return;
-  if (RM){
-    egret.phase = 'perch'; egret.active = true; egret.dir = -1;
-    egret.fl = 0; egret.theta = 0; egret.lap = 1; egret.missTally = 0; egret.pitch = -75;
-    return;
-  }
-  egret.phase = 'enter'; egret.active = true;
-  egret.dir = Math.random() < 0.5 ? 1 : -1;
-  egret.x = egret.dir > 0 ? -180 : W + 180;
-  egret.y = rnd(H * 0.1, H * 0.3);
-  egret.fl = 0; egret.theta = 0; egret.lap = 0; egret.missTally = 0;
-}
-function maybeEgretEnter(){
-  if (egret && egret.phase === 'hidden' && (streak >= 3 || Math.abs(wind) > 90) && STATE === 'play' && tutorialStep === 0){
-    egretEnter();
-  }
-}
-function wildlifeOnShot(made, kind, prevStreak){
-  if (made){
-    if (kind === 'swish'){
-      squirrel.mode = 'swish'; squirrel.modeT = 0.85;
-      if (!RM) fireflyPulseT = 0.55;
-    } else {
-      squirrel.mode = 'sit'; squirrel.modeT = 0.70;
-    }
-    if (streak >= 5){ squirrel.mode = 'dash'; squirrel.modeT = 1.10; squirrel.dashX = squirrel.x; }
-  } else {
-    if (squirrel.mode === 'dash') squirrel.x = squirrel.dashX;
-    squirrel.mode = 'cover'; squirrel.modeT = 0.80;
-    owlReact.brickT = 0.55;
-    if (egret && (egret.phase === 'circle' || egret.phase === 'perch')){
-      egret.missTally = (egret.missTally || 0) + 1;
-      if (egret.missTally >= 3){
-        egret.missTally = 0;
-        if (RM){ egret.phase = 'hidden'; egret.active = false; }
-        else egret.phase = 'exit';
-      }
-    }
-    if (prevStreak >= 3){ sfx('caw'); jay.cawT = 0.28; }
-  }
-  maybeEgretEnter();
-}
-
-function startSteal(){
-  if (!squirrel || STATE !== 'play' || tutorialStep > 0 || shotsLeft <= 0 || squirrel.stealing || squirrel.holdingBall) return;
-  squirrel.stealing = true;
-  squirrel.stealWarn = false;
-  holdT = 0;
-  if (RM){
-    doStealPenalty(owlAir);
-    squirrel.mode = 'idle';
-    squirrel.x = W + 40;
-    squirrel.homeX = rnd(W * 0.55, Math.min(W * 0.88, hoop.x - 30));
-    squirrel.targetX = squirrel.homeX;
-    squirrel.wanderT = 2;
-    squirrel.jumpY = 0; squirrel.flip = 0; squirrel.holdingBall = false;
-    return;
-  }
-  if (owlAir){
-    squirrel.mode = 'skyjack';
-    squirrel.modeT = 1.4;
-    squirrel.stealFromX = squirrel.x;
-    squirrel.jumpY = 0;
-    squirrel.flip = 0;
-    squirrel.crashed = false;
-    squirrel.holdingBall = false;
-  } else {
-    squirrel.mode = 'steal';
-    squirrel.modeT = 1.6;
-    squirrel.stealFromX = squirrel.x;
-    squirrel.stealOwlX = player.x + OWL_CX;
-    squirrel.holdingBall = false;
-  }
-}
-function doStealPenalty(airborne){
-  score = 0; displayScore = 0;
-  streak = 0; onFire = false;
-  hudScore.textContent = '0';
-  hudStreak.textContent = 'STREAK ×0';
-  hudStreak.classList.remove('on');
-  appEl.classList.remove('onfire');
-  if (squirrel){ squirrel.holdingBall = true; squirrel.ballT = 4; }  /* 4s of sole possession, then he passes back */
-  if (airborne){
-    banner('SKYJACKED!', 'the squirrel takes it — score reset');
-    sfx('thud');
-    owlAir = false;
-    owlVy = 900;
-    owlKnock = 0.4;
-    if (!RM) dust(player.x + OWL_CX, player.y);
-  } else {
-    banner('BALL HAWKED!', 'the squirrel takes it — score reset');
-  }
-  holdT = 0;
-}
-
 function resolveShot(made, kind){
   if (resolved && !ball) return;
   resolved = true;
-  var prevStreak = streak;
   shotsLeft--;
-  appEl.style.setProperty('--clearance', ((SHOTS - shotsLeft) / SHOTS) * 0.5);
+  appEl.style.setProperty('--clearance', (SHOTS - shotsLeft) / SHOTS);
   var pts = 0;
   if (made){
     makes++;
@@ -1120,7 +595,6 @@ function resolveShot(made, kind){
     sfx('miss');
     trauma = Math.min(1, trauma + 0.12);
   }
-  if (STATE === 'play' && tutorialStep === 0) wildlifeOnShot(made, kind, prevStreak);
   lastPlayEl.innerHTML = 'Last <b>' + lastKind + '</b>';
   renderPips();
   hudShot.textContent = 'Shot ' + (SHOTS - shotsLeft) + ' / ' + SHOTS;
@@ -1158,7 +632,6 @@ function newWind(){
   if (Math.abs(wind) > 90) banner('WIND UP', wind > 0 ? 'gusting right' : 'gusting left');
   hoop.drift = (shotsLeft <= 5) ? rnd(-28, 28) : 0;
   setWindUI();
-  maybeEgretEnter();
 }
 
 function burst(x, y, color, n){
@@ -1336,34 +809,22 @@ function startGame(){
   onFire = false;
   makes = 0; swishes = 0; banks = 0; rims = 0;
   particles = []; pops = []; ball = null; trail = [];
-  resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0;
-  owlDrag = null; owlAir = true; owlFlapT = 0; owlVy = 0; turbT = 0; swipe = null;
-  /* fresh spawn: hover over the tent (placePlayer's guard would preserve a
-     leftover mid-air/grounded y from the previous game — a new game always
-     starts him at the tent, flapping, never where the old one ended) */
-  player.x = Math.max(70, W * 0.16);
-  player.x = Math.max(56, Math.min(player.x, hoop.x - 90));
-  player.y = Math.round(H * 0.36);
+  resolved = true; wind = 0; hoop.drift = 0; hoop.flex = 0; trauma = 0; punch = 0; camY = 0;
+  owlDrag = null; owlAir = false; owlFlapT = 0; owlVy = 0; swipe = null;
   lastKind = '—';
-  owlReact.brickT = 0; owlReact.blinkOnce = false;
-  holdT = 0; owlKnock = 0;
-  squirrel.mode = 'idle'; squirrel.modeT = 0; squirrel.homeX = squirrel.x;
-  squirrel.stealing = false; squirrel.stealWarn = false; squirrel.holdingBall = false; squirrel.ballT = 0; squirrel.jumpY = 0; squirrel.flip = 0;
-  egret.phase = 'hidden'; egret.active = false; egret.missTally = 0; egret.pitch = 0;
-  jay.cawT = 0;
-  fireflyPulseT = 0;
   appEl.classList.remove('onfire');
   appEl.style.setProperty('--clearance', 0);
+  menuEl.classList.remove('on');
   overEl.classList.remove('on');
   newRecEl.style.visibility = 'hidden';
   hudScore.textContent = '0'; hudStreak.classList.remove('on');
   lastPlayEl.innerHTML = 'Last —';
   hudShot.textContent = 'Shot 0 / ' + SHOTS;
   STATE = 'play';
-  setTut(1);
   renderPips();
   renderTally();
   newWind();
+  banner('FIRST LIGHT', SHOTS + ' balls. Make them count.');
 }
 
 function gradeCopy(s){
@@ -1376,7 +837,6 @@ function gradeCopy(s){
 
 function showOver(){
   STATE = 'over';
-  setTut(0);
   career.games++;
   career.points += score;
   career.makes += makes;
@@ -1413,8 +873,6 @@ function showOver(){
 }
 
 function update(dt){
-  if (owlReact.brickT > 0) owlReact.brickT = Math.max(0, owlReact.brickT - dt);
-  if (tutorialStep > 0) tutT += dt;
   if (bannerT > 0){ bannerT -= dt; if (bannerT <= 0) bannerEl.classList.remove('on'); }
   trauma = Math.max(0, trauma - dt * 1.8);
   punch = Math.max(0, punch - dt * 0.9);
@@ -1429,48 +887,9 @@ function update(dt){
   tickParticles(dt);
   hoop.y = hoop.baseY + Math.sin(performance.now() / 900) * hoop.drift * 0.4 + hoop.drift * 0.3;
 
-  // airborne owl: hover, wings flap — but turbulence shoves him off his sticking point,
-  // and the wind pushes him while he flies (a wind change re-aims the push)
-  if (owlAir && player.y < GROUND - 10){
+  // airborne owl: hover in place, wings flap, stays put until dragged again
+  if (owlAir){
     owlFlapT += dt;
-    turbT += dt;
-    if (!owlDrag){
-      player.x += (Math.sin(turbT * 1.7) * 34 + Math.sin(turbT * 4.1 + 1.3) * 14 + wind * 0.7) * dt;
-      player.y += (Math.cos(turbT * 2.3 + 0.7) * 24 + Math.sin(turbT * 5.3) * 9) * dt;
-      player.x = Math.max(56, Math.min(hoop.x - 90, player.x));
-      player.y = Math.max(H * 0.12, Math.min(GROUND, player.y));
-    }
-  }
-
-  // owl knockdown fall (skyjack crash) — tumbles back to the ground
-  if (owlKnock > 0){
-    owlKnock -= dt;
-    player.y = Math.min(GROUND, player.y + 900 * dt);
-    if (player.y >= GROUND){ owlKnock = 0; owlVy = 0; }
-  }
-
-  // squirrel possession clock — after a steal he keeps the ball for 4s, then passes it back to the owl
-  if (squirrel && squirrel.holdingBall){
-    squirrel.ballT = (squirrel.ballT || 0) - dt;
-    if (squirrel.ballT <= 0){
-      squirrel.holdingBall = false;
-      squirrel.ballT = 0;
-      if (STATE === 'play') banner('PASSED BACK', 'the squirrel returns the ball');
-    }
-  }
-
-  // ball-steal stall clock (7s hold rule) — resets on shot or drag start
-  var holding = STATE === 'play' && resolved && !ball && tutorialStep === 0 && shotsLeft > 0 && !squirrel.stealing && !(squirrel && squirrel.holdingBall);
-  if (holding && !owlDrag){
-    holdT += dt;
-    if (holdT >= 7){ startSteal(); }
-    else if (holdT >= 5){
-      squirrel.stealWarn = true;
-      if (holdT >= 6 && holdT - dt < 6 && !RM) sfx('tick');
-    }
-  } else {
-    holdT = 0;
-    if (squirrel) squirrel.stealWarn = false;
   }
 
   var spd = 220;
@@ -1481,6 +900,7 @@ function update(dt){
   }
 
   var wantCam = 0;
+  if (ball && ball.y < H * 0.42) wantCam = Math.max(-70, (ball.y - H * 0.42) * 0.35);
   camY += (wantCam - camY) * (1 - Math.exp(-6 * dt));
 
   if (STATE !== 'play') return;
@@ -1511,57 +931,6 @@ function drawTree(t){
   ctx.fillStyle = C.ink; ctx.fillRect(-4, -8, 8, 12);
   ctx.restore();
 }
-/* Acacia Park sign — flat polygon version of the photo: dark stained timber,
-   routed yellow letters, small closed-hours placard, concrete footing. */
-function drawParkSign(x, s){
-  ctx.save(); ctx.translate(x, GROUND); ctx.scale(s, s);
-  // concrete footing
-  ctx.fillStyle = 'rgba(159,176,196,0.25)';
-  ctx.beginPath(); ctx.moveTo(-112, 2); ctx.lineTo(112, 2); ctx.lineTo(104, -12); ctx.lineTo(-104, -12); ctx.closePath(); ctx.fill();
-  // posts (extend above the board like the real sign)
-  ctx.fillStyle = '#2E2015';
-  ctx.fillRect(-94, -186, 16, 198);
-  ctx.fillRect(78, -186, 16, 198);
-  ctx.fillStyle = '#231810';                       // post-cap shadow
-  ctx.fillRect(-94, -186, 16, 8); ctx.fillRect(78, -186, 16, 8);
-  // main board + plank grooves
-  ctx.fillStyle = '#4A3221';
-  ctx.fillRect(-106, -168, 212, 66);
-  ctx.strokeStyle = '#33230F'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(-106, -146); ctx.lineTo(106, -146); ctx.moveTo(-106, -124); ctx.lineTo(106, -124); ctx.stroke();
-  ctx.strokeStyle = '#5C4128'; ctx.lineWidth = 2;  // top edge highlight
-  ctx.beginPath(); ctx.moveTo(-106, -166); ctx.lineTo(106, -166); ctx.stroke();
-  // routed letters — shrink-to-fit inside the board (max width 188, board spans ±106)
-  ctx.fillStyle = C.gold;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
-  var fs = 34;
-  ctx.font = '700 ' + fs + 'px "Instrument Sans", sans-serif';
-  while (fs > 16 && ctx.measureText('ACACIA PARK').width > 188){
-    fs -= 1;
-    ctx.font = '700 ' + fs + 'px "Instrument Sans", sans-serif';
-  }
-  ctx.fillText('ACACIA PARK', 0, -134);
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-  // lower board with the hours placard
-  ctx.fillStyle = '#41301F';
-  ctx.fillRect(-88, -94, 176, 62);
-  ctx.fillStyle = C.day2;
-  if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(-46, -88, 92, 50, 4); ctx.fill(); }
-  else ctx.fillRect(-46, -88, 92, 50);
-  ctx.strokeStyle = C.stone; ctx.lineWidth = 1.5;
-  if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(-46, -88, 92, 50, 4); ctx.stroke(); }
-  else ctx.strokeRect(-46, -88, 92, 50);
-  // placard text lines (abstracted — illegible at this scale, like the photo at distance)
-  ctx.fillStyle = C.ink;
-  var rowW = [60, 44, 66, 38, 52];
-  for (var ri = 0; ri < rowW.length; ri++){
-    ctx.globalAlpha = 0.75;
-    ctx.fillRect(-rowW[ri] / 2, -78 + ri * 8, rowW[ri], 2.5);
-  }
-  ctx.globalAlpha = 1;
-  ctx.restore();
-}
 function drawCloud(c){
   ctx.globalAlpha = c.a; ctx.fillStyle = C.mist;
   ctx.beginPath(); ctx.arc(c.x, c.y, 18*c.s, 0, Math.PI*2);
@@ -1570,14 +939,10 @@ function drawCloud(c){
   ctx.globalAlpha = 1;
 }
 function drawEgret(e){
-  if (e.phase === 'perch'){ drawEgretPerched(e); return; }
   ctx.save(); ctx.translate(e.x, e.y);
   // Polygons were authored facing LEFT (beak at local x≈18). Flip when dir=+1 so the beak leads.
   ctx.scale(-e.dir * e.s, e.s);
-  ctx.translate(-72, 0);   // center the bird on its anchor (body center ≈ local x 72)
-  // flare while landing: pitch nose-up around the body center
-  if (e.phase === 'land'){ ctx.translate(0, 38); ctx.rotate((e.pitch || 0) * Math.PI / 180); ctx.translate(0, -38); }
-  var flap = Math.sin(e.fl) * (e.phase === 'land' ? 22 : 12);
+  var flap = Math.sin(e.fl) * 12;
   function p(pts){ poly(pts); }
   ctx.fillStyle = C.day;
   p([[94,40],[118,46],[94,42],[117,52]]);
@@ -1599,255 +964,21 @@ function drawEgret(e){
   ctx.globalAlpha = 1;
   ctx.restore();
 }
-function drawEgretPerched(e){
-  // vertical stance: spine up-down, feet at local y=84 (so the perch math
-  // already puts them on the board top edge). Beak faces left (toward the owl).
-  ctx.save(); ctx.translate(e.x, e.y);
-  ctx.scale(-e.dir * e.s, e.s);
-  ctx.translate(-72, 0);   // center on anchor (feet then sit on the board center)
-  var now = performance.now() / 1000;
-  var bob = (!RM) ? Math.sin(now * 1.6) * 1.5 : 0;
-  ctx.translate(0, bob);
-  // long legs + 3-toe feet gripping the board edge — clearly longer than before
-  // (body is raised 30px above the hips so the legs run y=48 → 84)
-  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(69, 48); ctx.lineTo(68, 84);
-  ctx.moveTo(75, 48); ctx.lineTo(76, 84);
-  ctx.stroke();
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(68, 84); ctx.lineTo(65, 85); ctx.moveTo(68, 84); ctx.lineTo(68, 87); ctx.moveTo(68, 84); ctx.lineTo(71, 85);
-  ctx.moveTo(76, 84); ctx.lineTo(73, 85); ctx.moveTo(76, 84); ctx.lineTo(76, 87); ctx.moveTo(76, 84); ctx.lineTo(79, 85);
-  ctx.stroke();
-  ctx.save();
-  ctx.translate(0, -30);   // raise the body — the extra leg length lives below it
-  // body — slim vertical teardrop, breast toward court (left)
-  ctx.fillStyle = C.day;
-  ctx.beginPath();
-  ctx.moveTo(72, 34);
-  ctx.bezierCurveTo(63, 40, 59, 54, 61, 66);
-  ctx.bezierCurveTo(62, 75, 67, 79, 72, 79);
-  ctx.bezierCurveTo(78, 79, 83, 71, 82, 58);
-  ctx.bezierCurveTo(81, 46, 78, 38, 72, 34);
-  ctx.closePath(); ctx.fill();
-  // folded wing — slim shape hugging the back (right) side
-  ctx.fillStyle = C.day2;
-  ctx.beginPath();
-  ctx.moveTo(74, 42);
-  ctx.bezierCurveTo(85, 46, 87, 62, 82, 74);
-  ctx.bezierCurveTo(80, 72, 80, 58, 78, 50);
-  ctx.closePath(); ctx.fill();
-  // tail feather — pointing down-back (right)
-  ctx.fillStyle = '#C9D4E2';
-  ctx.beginPath();
-  ctx.moveTo(72, 76); ctx.lineTo(86, 81); ctx.lineTo(72, 82);
-  ctx.closePath(); ctx.fill();
-  // folded S-neck + head (retracted, not the spear-out flight neck)
-  ctx.fillStyle = C.day;
-  ctx.beginPath();
-  ctx.moveTo(72, 36);
-  ctx.bezierCurveTo(69, 28, 74, 24, 70, 18);
-  ctx.lineTo(61, 21);
-  ctx.lineTo(66, 29);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.arc(68, 17, 5.5, 0, Math.PI*2); ctx.fill();
-  // beak — points left toward the owl
-  ctx.fillStyle = C.dawn;
-  ctx.beginPath(); ctx.moveTo(62, 16); ctx.lineTo(51, 17); ctx.lineTo(62, 19); ctx.closePath(); ctx.fill();
-  // big cute eye — same identity as the squirrel: pale disc, dark pupil, catchlight
-  ctx.fillStyle = C.day2; ctx.beginPath(); ctx.arc(66, 15.5, 2.6, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(65.4, 15.6, 1.5, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = C.day; ctx.beginPath(); ctx.arc(64.8, 14.8, 0.55, 0, Math.PI*2); ctx.fill();
-  ctx.restore();      // close the raised-body translate
-  ctx.restore();
-}
 function drawSquirrel(s){
-  var m = s.mode || 'idle';
-  var px = (m === 'dash') ? s.dashX : s.x;
-  ctx.save();
-  ctx.translate(px, GROUND - 46 * 1.6 + 2);
-  var fx = (s.facing === 1) ? -1 : 1;   // face travel direction; default faces left (toward the owl)
-  ctx.scale(fx * 1.6, 1.6);
-  // skyjack: jump height + backflip rotation around the body center
-  ctx.translate(0, s.jumpY || 0);
-  if (s.flip){
-    ctx.translate(24, 30); ctx.rotate(s.flip * Math.PI / 180); ctx.translate(-24, -30);
-  }
-
-  var t = 0;
-  if (m === 'sit') t = 1 - s.modeT / 0.70;
-  else if (m === 'swish') t = 1 - s.modeT / 0.85;
-  else if (m === 'cover') t = 1 - s.modeT / 0.80;
-  else if (m === 'dash') t = 1 - s.modeT / 1.10;
-
-  // lift — sit + swish (swish = one real jump with a squash at landing)
-  var lift = 0;
-  if (m === 'sit') lift = -3;
-  else if (m === 'swish') lift = -5;
-  if (m === 'swish' && !RM) lift += -7 * Math.sin(Math.min(1, t / 0.6) * Math.PI);
-  ctx.translate(0, lift);
-  if (m === 'swish' && !RM && t > 0.6){
-    var sq = Math.sin((t - 0.6) / 0.25 * Math.PI);
-    ctx.translate(0, 46); ctx.scale(1 + sq * 0.06, 1 - sq * 0.10); ctx.translate(0, -46);
-  }
-
-  // cover flinch — quick crouch + recover shake
-  if (m === 'cover' && !RM){
-    var ct = 1 - s.modeT / 0.80;
-    var crouch = Math.max(0, Math.sin(Math.min(1, ct * 3.5) * Math.PI)) * 0.14;
-    var shake = Math.sin(ct * 5 * Math.PI) * Math.max(0, 1 - ct * 2.5) * 0.8;
-    ctx.translate(shake, 0);
-    ctx.scale(1, 1 - crouch);
-  }
-
-  // steal telegraph — low crouch, ready to spring
-  if (s.stealWarn && !RM){
-    ctx.translate(0, 3);
-    ctx.scale(1, 0.9);
-  }
-
-  // idle life — subtle tail sway, occasional sit-up, blink
-  var tailSway = 0, sitUp = 0, blinkIdle = 0;
-  if (m === 'idle' && !RM){
-    tailSway = Math.sin(s.hp * 1.2) * 4;
-    var ip = (s.hp % 4) / 4;
-    if (ip < 0.18) sitUp = Math.sin((ip / 0.18) * Math.PI);
-    var bp = (s.hp % 4.2) / 4.2;
-    if (bp > 0.96) blinkIdle = 1;
-  }
-
-  // dash / steal run — head chatter + body lean toward travel
-  var isStealRun = !RM && (m === 'steal' || (m === 'skyjack' && (1.4 - s.modeT) < 0.4));
-  var headAng = 0, bodyLean = 0;
-  if (m === 'dash' && !RM){
-    var ce = 1.10 - s.modeT;
-    if (ce < 0.35) bodyLean = 15; else if (ce > 0.75) bodyLean = -15;
-    for (var ck = 0; ck < 2; ck++){
-      var tt = 0.35 + ck * 0.08, dd = ce - tt;
-      if (dd >= 0 && dd < 0.08) headAng = Math.sin(dd / 0.08 * Math.PI) * 6;
-    }
-  } else if (isStealRun){
-    bodyLean = (s.facing === 1) ? 15 : -15;
-  }
-
-  // pitch frame — rotate tail+body+head around the feet (ground) line
-  var pitch = sitUp * 20 + ((m === 'dash' || isStealRun) ? bodyLean : 0);
-  ctx.save();
-  ctx.translate(24, 46); ctx.rotate(pitch * Math.PI / 180); ctx.translate(-24, -46);
-
-  // bushy tail (right) — streams back on dash, curls on sit-up, sways idle
-  var tailAng = tailSway;
-  if (m === 'sit' && !RM) tailAng += Math.sin(t * Math.PI * 4) * 5;
-  if ((m === 'dash' || isStealRun) && !RM) tailAng = -55;
-  if (sitUp > 0) tailAng += sitUp * 18;
-  if (s.stealWarn && !RM) tailAng = Math.sin(performance.now() / 110) * 22;
-  var tailBob = (!RM) ? Math.sin(s.hp * 1.5) * 2.5 : 0;
-  ctx.save();
-  ctx.translate(38, 18); ctx.rotate(tailAng * Math.PI / 180); ctx.translate(0, tailBob); ctx.translate(-38, -18);
-  ctx.fillStyle = '#D07F2E';
-  ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();      // dark base
-  ctx.fillStyle = C.dawn;
-  ctx.beginPath(); ctx.arc(40, 14, 8.5, 0, Math.PI*2); ctx.fill();     // orange mid
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.arc(42, 10, 5.5, 0, Math.PI*2); ctx.fill();     // cream tip
-  ctx.restore();
-
-  // body
+  ctx.save(); ctx.translate(s.x, GROUND + 22); ctx.scale(0.8, 0.8);
+  var hop = Math.abs(Math.sin(s.hp)) * -2; ctx.translate(0, hop);
+  ctx.fillStyle = C.dawn; ctx.beginPath(); ctx.arc(38, 18, 11, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#D07F2E'; ctx.beginPath(); ctx.arc(41, 14, 7, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = C.dawn;
   poly([[14,26],[10,30],[10,38],[14,44],[24,46],[34,46],[40,42],[40,34],[36,27],[28,24],[20,23]]);
-
-  // cream belly patch on the chest-underside
-  ctx.fillStyle = C.day2;
-  ctx.beginPath(); ctx.ellipse(20, 36, 8, 9, -0.25, 0, Math.PI*2); ctx.fill();
-
-  // head (left) — chatters on dash; big cute eye; two ears
-  ctx.save();
-  ctx.translate(14, 20); ctx.rotate(headAng * Math.PI / 180); ctx.translate(-14, -20);
-  ctx.fillStyle = C.dawn;
-  ctx.beginPath(); ctx.arc(14, 20, 8.5, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#D07F2E';
-  poly([[16,14],[17,7],[20,12]]);          // back ear (darker, behind)
-  ctx.fillStyle = C.dawn;
-  poly([[11,15],[9,8],[13,11]]);           // front ear
-  ctx.restore();
-
-  // face — big cute eye, pupil toward the snout (left)
-  if (m === 'cover'){
-    ctx.fillStyle = C.ink;
-    ctx.beginPath(); ctx.arc(12, 19, 2.6, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(18, 20, 2.6, 0, Math.PI*2); ctx.fill();
-  } else {
-    ctx.fillStyle = C.day2;
-    ctx.beginPath(); ctx.arc(13, 19, 3.4, 0, Math.PI*2); ctx.fill();
-    if (blinkIdle || s.stealWarn){
-      ctx.fillStyle = C.ink;
-      ctx.fillRect(10, 19.2, 6, 1);
-    } else {
-      ctx.fillStyle = C.ink;
-      ctx.beginPath(); ctx.arc(12.1, 19, 2, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = C.day;
-      ctx.beginPath(); ctx.arc(11.2, 17.8, 0.7, 0, Math.PI*2); ctx.fill();
-    }
-  }
-
-  // black dot nose at the snout tip
-  ctx.fillStyle = C.ink;
-  ctx.beginPath(); ctx.arc(6.5, 21.5, 1.4, 0, Math.PI*2); ctx.fill();
-
-  // paws — overhead on swish, tucked on sit
-  if (m === 'swish' && !RM){
-    ctx.fillStyle = '#D07F2E';
-    ctx.beginPath(); ctx.arc(12, 10, 2.6, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(22, 8, 2.6, 0, Math.PI*2); ctx.fill();
-  } else if (m === 'sit' && !RM){
-    ctx.fillStyle = '#D07F2E';
-    ctx.beginPath(); ctx.arc(14, 26, 2.2, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(22, 27, 2.2, 0, Math.PI*2); ctx.fill();
-  }
-
-  // stolen ball tucked under the arm — full basketball seams, same detail as the game ball
-  if (s.holdingBall){
-    var sbr = 6;
-    ctx.fillStyle = C.dawn;
-    ctx.beginPath(); ctx.arc(26, 32, sbr, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.arc(26, 32, sbr, 0, Math.PI*2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(26 - sbr, 32); ctx.lineTo(26 + sbr, 32);
-    ctx.moveTo(26, 32 - sbr); ctx.lineTo(26, 32 + sbr); ctx.stroke();
-    ctx.beginPath(); ctx.arc(26 - sbr * 1.5, 32, sbr * 1.2, -0.6, 0.6); ctx.stroke();
-    ctx.beginPath(); ctx.arc(26 + sbr * 1.5, 32, sbr * 1.2, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
-  }
-
-  ctx.restore();   // close pitch frame
-
-  // feet — planted on the ground; scramble while dashing
-  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
-  ctx.beginPath();
-  if ((m === 'dash' || isStealRun) && !RM){
-    var sc = (m === 'dash') ? Math.sin((1.10 - s.modeT) * 12) * 2 : Math.sin(performance.now() / 55) * 2;
-    ctx.moveTo(16, 46); ctx.lineTo(13 + sc, 46);
-    ctx.moveTo(32, 46); ctx.lineTo(36 - sc, 46);
-  } else {
-    ctx.moveTo(16, 46); ctx.lineTo(13, 46);
-    ctx.moveTo(32, 46); ctx.lineTo(36, 46);
-  }
-  ctx.stroke();
-  ctx.restore();
-}
-function drawJay(j){
-  ctx.save();
-  ctx.translate(j.x, j.y);
-  ctx.fillStyle = '#2A3340';
-  ctx.beginPath(); ctx.ellipse(0, 0, 8, 5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(-7, -1); ctx.lineTo(-16, -2); ctx.lineTo(-16, 1); ctx.lineTo(-7, 2); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.arc(7, -3, 3.6, 0, Math.PI*2); ctx.fill();
-  var gap = (!RM && j.cawT > 0) ? 2 : 0;
-  ctx.beginPath(); ctx.moveTo(10, -3); ctx.lineTo(15, -2); ctx.lineTo(10, -2 + gap); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.arc(14, 21, 6.5, 0, Math.PI*2); ctx.fill();
+  poly([[11,16],[9,9],[13,12]]);
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(12, 19.5, 1.3, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(16, 46); ctx.lineTo(13, 46); ctx.moveTo(32, 46); ctx.lineTo(36, 46); ctx.stroke();
   ctx.restore();
 }
 function easeIO(u){ return u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u+2, 2) / 2; }
-function easeOut3(u){ return 1 - Math.pow(1 - u, 3); }
 function owlAnim(now, dur, keys){
   var t = (now % dur) / dur;
   for (var i = 0; i < keys.length - 1; i++){
@@ -1869,8 +1000,6 @@ function drawOwl(){
   // .owl-eyes → owlBlink 4.2s ease-in-out (scaleY blink), origin 50% 50% of eyes
   var sway = owlAnim(now, 5.4, [[0,0],[0.28,6],[0.62,-4],[1,0]]);
   var blink = owlAnim(now, 4.2, [[0,1],[0.96,1],[0.98,0.1],[1,1]]);
-  if (!RM && owlReact.brickT > 0.28) blink = 0.12;
-  var dip = (!RM && owlReact.brickT > 0) ? -8 * Math.sin(Math.PI * (1 - owlReact.brickT / 0.55)) : 0;
 
   ctx.save();
   ctx.translate(x, y);
@@ -1879,7 +1008,7 @@ function drawOwl(){
 
   // whole-owl sway — same pivot as CSS transform-origin 50% 62%
   ctx.translate(32, 47);
-  ctx.rotate((sway + (owlKnock > 0 && !RM ? Math.sin((0.4 - owlKnock) / 0.4 * Math.PI * 2) * 26 : 0)) * Math.PI / 180);
+  ctx.rotate(sway * Math.PI / 180);
   ctx.translate(-32, -47);
 
   // body
@@ -1888,11 +1017,7 @@ function drawOwl(){
   // ear tufts
   poly([[19,14],[14,0],[22,12]]);
   poly([[45,14],[50,0],[42,12]]);
-  // head group — dip rotates head only (not body / feet / ball)
-  ctx.save();
-  ctx.translate(32, 26);
-  ctx.rotate(dip * Math.PI / 180);
-  ctx.translate(-32, -26);
+  // head
   ctx.beginPath(); ctx.arc(32, 26, 17, 0, Math.PI*2); ctx.fill();
 
   // eyes — blink pivot 50% 50% of the eyes group (≈32,24)
@@ -1903,7 +1028,7 @@ function drawOwl(){
   ctx.fillStyle = C.day2;           // #F3ECDC
   ctx.beginPath(); ctx.arc(25, 24, 6, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.arc(39, 24, 6, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = (streak >= 3) ? C.gold : C.ink;
+  ctx.fillStyle = C.ink;
   ctx.beginPath(); ctx.arc(25, 24, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.arc(39, 24, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.restore();
@@ -1911,19 +1036,10 @@ function drawOwl(){
   // beak
   ctx.fillStyle = C.dawn;
   poly([[32,29],[28,36],[32,34],[36,36]]);
-  ctx.restore();
 
   // wings — same paths as homepage owl (left M16.., right M48..). Independently animated.
   // Grounded: subtle idle rock. Airborne: hover — wings flap to hold position.
-  var flap;
-  if (owlAir){
-    var flapT = (streak >= 3) ? owlFlapT * 1.6 : owlFlapT;
-    flap = Math.sin(flapT * 7) * 22;
-  } else if (streak >= 3){
-    flap = Math.sin(now * 3.4) * 5.0;
-  } else {
-    flap = Math.sin(now * 1.3) * 2.4;
-  }
+  var flap = owlAir ? Math.sin(owlFlapT * 7) * 22 : Math.sin(now * 1.3) * 2.4;
   ctx.fillStyle = '#7A8A9A';
   // left wing
   ctx.save();
@@ -1948,8 +1064,8 @@ function drawOwl(){
   ctx.stroke();
   ctx.restore();
 
-  // held ball — idle only, at the owl's launch point (not while the squirrel has it)
-  if (resolved && STATE === 'play' && !ball && !(squirrel && squirrel.holdingBall)){
+  // held ball — idle only, at the owl's launch point
+  if (resolved && STATE === 'play' && !ball){
     var bx = x + OWL_CX, by = y - OWL_LAUNCH_Y;
     var r = 11;
     ctx.fillStyle = C.dawn;
@@ -2007,7 +1123,7 @@ function drawHoop(){
   ctx.beginPath(); ctx.arc(rr, rimY, hoop.rimR, 0, Math.PI*2); ctx.fill();
 }
 function drawBall(){
-  if (onFire && !ball && !(squirrel && squirrel.holdingBall)){
+  if (onFire && !ball){
     // idle flame lick — ball resting in the owl's hands, state active before the shot
     var ix = player.x + OWL_CX, iy = player.y - OWL_LAUNCH_Y;
     if (!RM){
@@ -2121,18 +1237,9 @@ function draw(){
 
   var rise = parseFloat(getComputedStyle(appEl).getPropertyValue('--clearance')) || 0;
   var sky = ctx.createLinearGradient(0, 0, 0, H);
-  /* per-stop day-lerp multipliers: horizon warms fully, upper sky barely lifts —
-     stars and navy survive to the final shot (just-before-dawn, never daylight) */
-  var skyStops = [
-    [0,    C.predawn,  C.skyHi,  0.35],
-    [0.30, C.predawn,  '#6E5A54', 0.5],
-    [0.68, C.predawn2, C.dawn,   1],
-    [0.88, C.skyHi,    C.gold,   1],
-    [1,    C.skyHi,    C.day,    1]
-  ];
+  var skyStops = [[0, C.predawn, C.skyHi], [0.30, C.predawn, '#6E5A54'], [0.68, C.predawn2, C.dawn], [0.88, C.skyHi, C.gold], [1, C.skyHi, C.day]];
   for (var si = 0; si < skyStops.length; si++){
-    var ss = skyStops[si];
-    sky.addColorStop(ss[0], lerpColor(ss[1], ss[2], rise * ss[3]));
+    sky.addColorStop(skyStops[si][0], lerpColor(skyStops[si][1], skyStops[si][2], rise));
   }
   ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
 
@@ -2144,9 +1251,7 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  /* sun ceiling capped just below the horizon — the disc never climbs into the sky;
-     at max rise the center sits 4px under the ground line, glow crests the horizon */
-  var sunY = GROUND + 40 - rise * (GROUND + 40 - (GROUND - 4));
+  var sunY = GROUND + 40 - rise * (GROUND + 40 - H * 0.5);
   var sg = ctx.createRadialGradient(W*0.5, sunY, 8, W*0.5, sunY, 90);
   sg.addColorStop(0, 'rgba(242,184,75,0.85)');
   sg.addColorStop(1, 'rgba(232,147,58,0)');
@@ -2154,7 +1259,7 @@ function draw(){
   ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(W*0.5, sunY, 22 + rise * 10, 0, Math.PI*2); ctx.fill();
 
   for (var ci = 0; ci < clouds.length; ci++) drawCloud(clouds[ci]);
-  if (egret && egret.active && egret.phase !== 'perch') drawEgret(egret);
+  if (egret && egret.active) drawEgret(egret);
 
   ctx.strokeStyle = 'rgba(159,176,196,0.35)'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
   for (var gi = 0; gi < gusts.length; gi++){
@@ -2166,45 +1271,15 @@ function draw(){
   ctx.globalAlpha = 1;
 
   for (var ti = 0; ti < trees.length; ti++) drawTree(trees[ti]);
-  // Acacia Park sign — doc default (W*0.64 @ 0.85) on wide screens; on narrow screens
-  // tuck right + shrink so the board clears the shoot-zone flick lane (x = W/2) and stays on-screen.
-  var signS = W > 640 ? 0.85 : 0.70;
-  var signX = Math.max(W * 0.64, W / 2 + 106 * signS + 14);
-  drawParkSign(signX, signS);
-  drawJay(jay);
 
   ctx.fillStyle = C.pine;
   ctx.fillRect(0, GROUND, W, H - GROUND);
   ctx.fillStyle = 'rgba(232,147,58,0.55)';
   ctx.fillRect(0, GROUND, W, 3);
 
-  /* Boot Camp FX tent — static mid-ground prop on the shared GROUND baseline.
-     Drawn after the ground strip (so it stands on it) and before squirrel/hoop/owl
-     (so characters render in front). Same coordinate system as every prop.
-     - feet plates land exactly on GROUND (SVG viewBox has 28 units of empty space
-       below the foot plates; shift down by that fraction, never a fixed pixel offset)
-     - width capped responsively so the tent's right edge clears the Acacia Park sign
-       with margin at every viewport width (same sign math as drawParkSign)
-     - uniform scale only: height derives from the capped width via the source aspect */
-  if (tentImg && tentImg.complete && tentImg.naturalWidth){
-    var tentH = Math.round(H * 0.40);
-    var signS = W > 640 ? 0.85 : 0.70;
-    var signX = Math.max(W * 0.64, W / 2 + 106 * signS + 14);
-    var signLeft = signX - 106 * signS;
-    var tentWMax = signLeft - W * 0.04 - 20;
-    var tentHMax = tentWMax * 920 / 800;
-    if (tentHMax < tentH) tentH = Math.max(60, Math.round(tentHMax));
-    var tentW = Math.round(tentH * tentImg.naturalWidth / tentImg.naturalHeight);
-    var tentPad = tentH * (tentImg.naturalHeight - TENT_FEET_Y) / tentImg.naturalHeight;
-    ctx.drawImage(tentImg, Math.round(W * 0.04), Math.round(GROUND - tentH + tentPad), tentW, tentH);
-  }
-
-  var density = Math.max(0, 1 - rise);
-  var visibleN = Math.round(fireflies.length * density);
   for (var fi = 0; fi < fireflies.length; fi++){
-    if (fi >= visibleN) break;
     var ff = fireflies[fi];
-    var fa = (0.15 + 0.55 * (0.5 + 0.5 * Math.sin(ff.p * 3))) * density;
+    var fa = 0.15 + 0.55 * (0.5 + 0.5 * Math.sin(ff.p * 3));
     ctx.globalAlpha = fa;
     ctx.fillStyle = C.gold;
     ctx.beginPath(); ctx.arc(ff.x, ff.y, 1.6, 0, Math.PI*2); ctx.fill();
@@ -2213,7 +1288,6 @@ function draw(){
 
   if (squirrel) drawSquirrel(squirrel);
   drawHoop();
-  if (egret && egret.active && egret.phase === 'perch') drawEgret(egret);
   drawOwl();
   drawBall();
 
@@ -2235,15 +1309,12 @@ function draw(){
   }
   ctx.globalAlpha = 1;
   ctx.restore();
-  if (tutorialStep) drawTutorial();
-  else drawGuide();
 }
 
 var last = performance.now();
 function frame(now){
   var dt = Math.min((now - last) / 1000, 0.05);
   last = now;
-  frameDt = dt;
   update(dt);
   draw();
   requestAnimationFrame(frame);
@@ -2255,7 +1326,6 @@ cv.addEventListener('pointerup', onUp);
 cv.addEventListener('pointercancel', function(){ swipe = null; });
 cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 window.addEventListener('keydown', function(e){
-  if (e.code === 'Escape' && tutorialStep > 0){ setTut(0); return; }
   if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.a = true;
   if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.d = true;
   if (e.code === 'KeyM'){ unlockAudio(); setMute(!muted); }
@@ -2269,18 +1339,12 @@ window.addEventListener('keyup', function(e){
   if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.d = false;
 });
 
+document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('againBtn').addEventListener('click', startGame);
-tutNextBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); advanceTut(); });
-tutSkipBtn.addEventListener('click', function(e){ e.stopPropagation(); unlockAudio(); setTut(0); });
-tutEl.addEventListener('pointerdown', function(e){
-  if (e.target.closest('.tbtn')) return;
-  unlockAudio(); advanceTut();
-});
 resize();
 initDecor();
 loadBest();
 renderPips();
-startGame();
 requestAnimationFrame(frame);
 })();
 </script>

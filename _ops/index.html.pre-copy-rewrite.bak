@@ -38,7 +38,7 @@
       --mono:'Spline Sans Mono', monospace;
       --ease:cubic-bezier(.22,.7,.25,1);
     }
-    html{ scroll-behavior:smooth; overflow-x:hidden; }
+    html{ scroll-behavior:smooth; }
     body{ font-family:var(--body); background:var(--day); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
     img, svg{ display:block; max-width:100%; }
     a{ color:inherit; }
@@ -84,13 +84,9 @@
     .nav-links a:not(.nav-cta)::after{ content:""; position:absolute; left:0; bottom:-6px; width:100%; height:1.5px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease); }
     .nav-links a:not(.nav-cta):hover{ opacity:1; }
     .nav-links a:not(.nav-cta):hover::after{ transform:scaleX(1); }
-    .nav-cta{ background:var(--dawn); color:#1B1206 !important; padding:11px 22px; border-radius:12px; opacity:1 !important; transition:transform .18s var(--ease), background .18s var(--ease); white-space:nowrap; flex-shrink:0; }
+    .nav-cta{ background:var(--dawn); color:#1B1206 !important; padding:11px 22px; border-radius:12px; opacity:1 !important; transition:transform .18s var(--ease), background .18s var(--ease); }
     .nav-cta:hover{ background:var(--gold); transform:translateY(-1px); }
     @media (max-width:820px){ .nav-links a:not(.nav-cta){ display:none; } }
-    @media (max-width:420px){
-      .nav-in{ padding:14px 16px; }
-      .nav-cta{ font-size:0.85rem; padding:8px 14px; }
-    }
 
     /* === Partner jumping-jack figures (multi-part, #standard) === */
     .jackers {
@@ -577,150 +573,6 @@
       50% { transform:rotate(-1.6deg); }
     }
 
-    /* ============ COYOTE — Kimi reference, scroll-triggered entry + in-scene loop ============
-       One-shot entry (3.5s trot-in from offscreen, gated by #standard.live) →
-       infinite 12s in-scene loop: alert freeze (0–16%) → sniff + tail wag (16–33%) →
-       look at viewer (33–50%) → trot to round tree + paw lift (50–75%) → trot back
-       to mid-gap (75–100%). No retreat, no opacity fade — stays in frame after entry. */
-    .jackers .j-coyote {
-      position:relative; flex:0 0 auto; align-self:flex-end;
-      pointer-events:none; z-index:2; color:var(--ink);
-      width:150px; height:0; margin:0 2px;
-    }
-    .jackers .j-coyote .cy-travel {
-      position:absolute; left:50%; bottom:-8px;
-      width:162px; margin-left:-81px;
-      --t-in:-700px; --t-out:95px;
-      will-change:transform;
-      animation:cyEnter 3.5s ease-out both, cyLoop 12s linear 3.5s infinite;
-      animation-play-state:paused;
-    }
-    .jackers .j-coyote .cy-travel svg { display:block; width:100%; height:auto; overflow:visible; }
-    .jackers .j-coyote .cy-head     { transform-origin:162px 96px; animation:cyHeadEnter 3.5s ease-out both, cyHeadLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-tail     { transform-origin:74px 108px; transform:rotate(4deg); animation:cyTailLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-ear.far  { transform-origin:199px 62px; transform:rotate(4deg); animation:cyEarFarLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-ear.near { transform-origin:216px 59px; transform:rotate(6deg); animation:cyEarNearLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-leg-hf   { transform-origin:78px 124px; animation:cyLegHfEnter 3.5s ease-in-out both, cyLegHfLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-leg-ff   { transform-origin:132px 128px; animation:cyLegFfEnter 3.5s ease-in-out both, cyLegFfLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-leg-hn   { transform-origin:88px 126px; animation:cyLegHnEnter 3.5s ease-in-out both, cyLegHnLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-    .jackers .j-coyote .cy-leg-fn   { transform-origin:154px 126px; animation:cyLegFnEnter 3.5s ease-in-out both, cyLegFnLoop 12s ease-in-out 3.5s infinite; animation-play-state:paused; }
-
-    /* unlock the whole coyote once #standard scrolls into view */
-    .live .jackers .j-coyote .cy-travel,
-    .live .jackers .j-coyote .cy-head,
-    .live .jackers .j-coyote .cy-tail,
-    .live .jackers .j-coyote .cy-ear.far,
-    .live .jackers .j-coyote .cy-ear.near,
-    .live .jackers .j-coyote .cy-leg-hf,
-    .live .jackers .j-coyote .cy-leg-ff,
-    .live .jackers .j-coyote .cy-leg-hn,
-    .live .jackers .j-coyote .cy-leg-fn { animation-play-state:running; }
-
-    /* ----- entry (one-shot, fill both) ----- */
-    @keyframes cyEnter {
-      0%   { transform:translateX(var(--t-in)); }
-      100% { transform:translateX(0); }
-    }
-    @keyframes cyHeadEnter {
-      0%,80% { transform:rotate(-24deg); }
-      100%   { transform:rotate(0deg); }
-    }
-    @keyframes cyLegFnEnter { 0%{transform:rotate(-14deg);} 25%{transform:rotate(14deg);} 50%{transform:rotate(-14deg);} 75%{transform:rotate(14deg);} 100%{transform:rotate(0deg);} }
-    @keyframes cyLegFfEnter { 0%{transform:rotate(12deg);} 25%{transform:rotate(-12deg);} 50%{transform:rotate(12deg);} 75%{transform:rotate(-12deg);} 100%{transform:rotate(0deg);} }
-    @keyframes cyLegHnEnter { 0%{transform:rotate(10deg);} 25%{transform:rotate(-10deg);} 50%{transform:rotate(10deg);} 75%{transform:rotate(-10deg);} 100%{transform:rotate(0deg);} }
-    @keyframes cyLegHfEnter { 0%{transform:rotate(-10deg);} 25%{transform:rotate(10deg);} 50%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} 100%{transform:rotate(0deg);} }
-
-    /* ----- in-scene loop (12s) ----- */
-    @keyframes cyLoop {
-      0%,16%,33%,50% { transform:translateX(0); }
-      75%            { transform:translateX(var(--t-out)); }
-      100%           { transform:translateX(0); }
-    }
-    @keyframes cyHeadLoop {
-      0%,16%   { transform:rotate(0deg); }
-      18%      { transform:rotate(-16deg); }
-      28%      { transform:rotate(-12deg); }
-      33%      { transform:rotate(-16deg); }
-      36%,50%  { transform:rotate(5deg) scaleX(0.94); }
-      52%,75%  { transform:rotate(-18deg); }
-      78%      { transform:rotate(-16deg); }
-      96%      { transform:rotate(-8deg); }
-      100%     { transform:rotate(0deg); }
-    }
-    @keyframes cyTailLoop {
-      0%,16%   { transform:rotate(0deg); }
-      18%      { transform:rotate(10deg); }
-      20%      { transform:rotate(-6deg); }
-      22%      { transform:rotate(10deg); }
-      24%      { transform:rotate(-6deg); }
-      26%      { transform:rotate(8deg); }
-      33%      { transform:rotate(4deg); }
-      36%,50%  { transform:rotate(2deg); }
-      52%,100% { transform:rotate(4deg); }
-    }
-    @keyframes cyEarFarLoop {
-      0%,16%   { transform:rotate(16deg); }
-      18%,33%  { transform:rotate(-18deg); }
-      36%,50%  { transform:rotate(10deg); }
-      52%,100% { transform:rotate(4deg); }
-    }
-    @keyframes cyEarNearLoop {
-      0%,16%   { transform:rotate(16deg); }
-      18%,33%  { transform:rotate(-8deg); }
-      36%,50%  { transform:rotate(14deg); }
-      52%,100% { transform:rotate(6deg); }
-    }
-    @keyframes cyLegFnLoop {
-      0%,16%,33%,50% { transform:rotate(0deg); }
-      52%  { transform:rotate(-14deg); }
-      60%  { transform:rotate(14deg); }
-      68%  { transform:rotate(-14deg); }
-      72%  { transform:rotate(8deg); }
-      74%,76% { transform:rotate(-32deg); }
-      77%  { transform:rotate(0deg); }
-      83%  { transform:rotate(14deg); }
-      91%  { transform:rotate(-10deg); }
-      96%  { transform:rotate(-4deg); }
-      100% { transform:rotate(0deg); }
-    }
-    @keyframes cyLegFfLoop {
-      0%,16%,33%,50% { transform:rotate(0deg); }
-      52%  { transform:rotate(12deg); }
-      60%  { transform:rotate(-12deg); }
-      68%  { transform:rotate(12deg); }
-      72%  { transform:rotate(-6deg); }
-      74%,76%,77% { transform:rotate(0deg); }
-      83%  { transform:rotate(-12deg); }
-      91%  { transform:rotate(8deg); }
-      96%  { transform:rotate(3deg); }
-      100% { transform:rotate(0deg); }
-    }
-    @keyframes cyLegHnLoop {
-      0%,16%,33%,50% { transform:rotate(0deg); }
-      52%  { transform:rotate(10deg); }
-      60%  { transform:rotate(-10deg); }
-      68%  { transform:rotate(10deg); }
-      72%  { transform:rotate(6deg); }
-      74%,76%,77% { transform:rotate(0deg); }
-      83%  { transform:rotate(-10deg); }
-      91%  { transform:rotate(6deg); }
-      96%  { transform:rotate(3deg); }
-      100% { transform:rotate(0deg); }
-    }
-    @keyframes cyLegHfLoop {
-      0%,16%,33%,50% { transform:rotate(0deg); }
-      52%  { transform:rotate(-10deg); }
-      60%  { transform:rotate(10deg); }
-      68%  { transform:rotate(-10deg); }
-      72%  { transform:rotate(-6deg); }
-      74%  { transform:rotate(8deg); }
-      76%,77% { transform:rotate(0deg); }
-      83%  { transform:rotate(10deg); }
-      91%  { transform:rotate(-6deg); }
-      96%  { transform:rotate(-3deg); }
-      100% { transform:rotate(0deg); }
-    }
-
     /* ============ TIME RAIL ============ */
     .rail{ position:fixed; left:26px; top:50%; transform:translateY(-50%); z-index:90; display:flex; flex-direction:column; gap:20px; mix-blend-mode:difference; }
     .rail a{ display:flex; align-items:center; gap:11px; text-decoration:none; font-family:var(--mono); font-weight:600; font-size:.6rem; letter-spacing:.2em; color:#fff; opacity:.42; transition:opacity .3s var(--ease); }
@@ -788,9 +640,8 @@
     .hero-in{ position:relative; z-index:2; text-align:center; max-width:1020px; margin:0 auto; padding:0 24px; }
     .hero .clock{ color:var(--gold); }
     .next-session{ display:block; font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; color:var(--gold); margin-top:14px; opacity:.9; }
-    .hero h1{ font-size:clamp(2.6rem, 7vw, 5.8rem); margin:26px 0 24px; line-height:.98; letter-spacing:-.02em; }
+    .hero h1{ font-size:clamp(3.1rem, 8.6vw, 7.2rem); margin:26px 0 24px; line-height:.98; letter-spacing:-.02em; }
     .hero h1 em{ font-style:italic; color:var(--gold); }
-    .hero h1 .lm-sub .lmi{ font-size:clamp(1.05rem, 2.9vw, 2.4rem); letter-spacing:-.01em; }
     .hero p.sub{ font-size:clamp(1rem, 1.6vw, 1.2rem); color:var(--mist); max-width:620px; margin:0 auto 38px; }
     .hero p.sub strong{ color:#fff; font-weight:600; }
     .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; align-items:center; }
@@ -802,9 +653,9 @@
     /* Soaring egret — crosses the pre-dawn sky on a loop */
     .egret{ position:absolute; top:0; left:0; z-index:2; pointer-events:none; animation:egretFly 34s linear 2s infinite; animation-fill-mode:backwards; will-change:transform; width:200px; height:180px; display:flex; align-items:center; justify-content:center; }
     .egret-bob{ animation:egretBob 4.6s ease-in-out infinite; }
-    .egret svg{ width:150px; height:auto; filter:drop-shadow(0 1px 3px rgba(15,27,44,.22)); transform:scaleX(-1); overflow:visible; }
-    .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.26s linear infinite; }
-    .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.26s linear infinite; }
+    .egret svg{ width:150px; height:auto; filter:drop-shadow(0 2px 6px rgba(15,27,44,.35)); transform:scaleX(-1); overflow:visible; }
+    .egret .wing-t{ transform-origin:62px 34px; animation:wingFlapT 1.05s ease-in-out infinite alternate; }
+    .egret .wing-b{ transform-origin:62px 36px; animation:wingFlapB 1.05s ease-in-out infinite alternate-reverse; }
     @keyframes egretFly{
       0%   { transform:translate(-18vw, calc(17vh + 12px - 75px)) rotate(0deg); opacity:0; }
       4%   { opacity:1; }
@@ -815,28 +666,8 @@
       100% { transform:translate(118vw, calc(10vh + 12px - 75px)) rotate(0deg); opacity:0; }
     }
     @keyframes egretBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
-    @keyframes wingFlapT{
-      0%    { transform:rotate(0deg); }
-      12.5% { transform:rotate(8.5deg); }
-      25%   { transform:rotate(12deg); }
-      37.5% { transform:rotate(8.5deg); }
-      50%   { transform:rotate(0deg); }
-      62.5% { transform:rotate(-8.5deg); }
-      75%   { transform:rotate(-12deg); }
-      87.5% { transform:rotate(-8.5deg); }
-      100%  { transform:rotate(0deg); }
-    }
-    @keyframes wingFlapB{
-      0%    { transform:rotate(0deg); }
-      12.5% { transform:rotate(-8.5deg); }
-      25%   { transform:rotate(-12deg); }
-      37.5% { transform:rotate(-8.5deg); }
-      50%   { transform:rotate(0deg); }
-      62.5% { transform:rotate(8.5deg); }
-      75%   { transform:rotate(12deg); }
-      87.5% { transform:rotate(8.5deg); }
-      100%  { transform:rotate(0deg); }
-    }
+    @keyframes wingFlapT{ from{ transform:rotate(16deg); } to{ transform:rotate(-24deg); } }
+    @keyframes wingFlapB{ from{ transform:rotate(-18deg); } to{ transform:rotate(20deg); } }
 
     /* Waddling ducks — along the grass line, one trailing the other */
     .duck{ position:absolute; bottom:26px; left:0; z-index:3; pointer-events:none; will-change:transform; opacity:0; animation-play-state:paused; }
@@ -896,45 +727,6 @@
       55%    { transform:translateX(74vw) translateY(-1.5px); }
       75%    { transform:translateX(74vw) translateY(-3px); }
     }
-
-    /* ============ CLOUD DRIFT — grouped, varied, organic puffs ============ */
-    .cloud-drift {
-      position:absolute;
-      top:var(--top, 12%);
-      left:0;
-      z-index:0;
-      width:var(--size, 200px);
-      opacity:0;
-      animation:cloudDrift var(--duration, 64s) linear var(--delay, 2s) infinite;
-      animation-play-state:paused;
-      pointer-events:none;
-      will-change:transform, opacity;
-      color:rgba(255,255,255,0.62);
-    }
-    .cloud-drift.early {
-      opacity:var(--early-opacity, 0.66);
-      animation:cloudDriftEarly var(--duration, 64s) linear infinite;
-    }
-    @keyframes cloudDriftEarly {
-      0%   { transform:translateX(var(--start, 10vw)); opacity:var(--early-opacity, 0.66); }
-      100% { transform:translateX(120vw); opacity:var(--early-opacity, 0.66); }
-    }
-    /* On light sections, use a near-transparent dark tint */
-    .day-section .cloud-drift,
-    .outside .cloud-drift,
-    .freeweek .cloud-drift { color:rgba(20,16,10,0.06); }
-    .cloud-drift svg { display:block; width:100%; height:auto; overflow:visible; }
-    .cloud-drift ellipse { fill:currentColor; }
-    .live .cloud-drift:not(.early) { animation-play-state:running; }
-    .live .cloud-drift.early { animation-play-state:running; }
-    @keyframes cloudDrift {
-      0%   { transform:translateX(-40vw); opacity:0; }
-      7%   { opacity:0.66; }
-      90%  { opacity:0.66; }
-      100% { transform:translateX(120vw); opacity:0; }
-    }
-    @media (max-width:640px){ .cloud-drift { width:min(var(--size), 34vw); } }
-
     @media (max-width:640px){
       .egret svg{ width:104px; }
       .duck svg{ width:40px; } .duck.d2 svg{ width:33px; }
@@ -950,8 +742,6 @@
       .jackers{ min-height:340px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
       .jackers .j-tree.t2{ width:78px; }
-      .jackers .j-coyote{ width:56px; }
-      .jackers .j-coyote .cy-travel{ width:128px; margin-left:-64px; bottom:-6px; --t-out:45px; }
       .jackers .jacker.a{ margin-left:14px; }
       .jackers .jacker.b{ margin-right:0; }
       .jacker .j-body{ bottom:4px; }
@@ -987,7 +777,7 @@
     .sec-lede{ font-size:1.12rem; color:var(--stone); }
 
     /* ============ WHY OUTSIDE — sunrise band ============ */
-    .outside{ background:linear-gradient(180deg, #2C3A50 0%, #6E5A54 30%, var(--dawn) 68%, var(--gold) 88%, var(--day) 100%); color:#fff; padding-top:110px; padding-bottom:60px; overflow:hidden; }
+    .outside{ background:linear-gradient(180deg, #2C3A50 0%, #6E5A54 30%, var(--dawn) 68%, var(--gold) 88%, var(--day) 100%); color:#fff; padding-top:130px; overflow:hidden; }
     .outside::before{ content:""; position:absolute; top:-140px; left:50%; transform:translateX(-50%); width:640px; height:640px; border-radius:50%;
       background:radial-gradient(circle, rgba(255,233,184,.35), rgba(242,184,75,.12) 45%, transparent 65%); pointer-events:none; }
     .outside .clock{ color:var(--cream); }
@@ -1001,23 +791,6 @@
     .why .wn{ font-family:var(--mono); font-size:.68rem; letter-spacing:.22em; color:var(--cream); opacity:.9; display:block; margin-bottom:14px; }
     .why h3{ font-family:var(--display); font-weight:600; font-size:1.45rem; margin-bottom:10px; letter-spacing:-.01em; }
     .why p{ font-size:.99rem; color:rgba(255,255,255,.94); }
-
-    /* Light rain in the 03 — CLIMATE card (drizzle: thin, slow, slanted, behind text) */
-    .why.why-rain{ overflow:hidden; }
-    .why-rain .rain-layer{ position:absolute; inset:0; z-index:0; pointer-events:none; }
-    .why-rain .wn, .why-rain h3, .why-rain p{ position:relative; z-index:1; }
-    .why-rain .rain-layer .rd{
-      position:absolute; top:0; left:0; width:1px; background:#FBF7EE; opacity:.3;
-      animation:rain-fall var(--dl,1.2s) linear var(--dly,0s) infinite;
-    }
-    .why-rain .rain-layer .rd.w2{ width:1.5px; }
-    @keyframes rain-fall{
-      from{ transform:rotate(12deg) translateY(-40px); opacity:0; }
-      8%{ opacity:1; }
-      92%{ opacity:1; }
-      to{ transform:rotate(12deg) translateY(calc(var(--card-h,400px) + 40px)); opacity:0; }
-    }
-    @media (max-width:600px){ .why-rain .rain-layer .rd.extra{ display:none; } }
     .m-more .rabbit-reviews {
       display: inline-block;
       width: 38px;
@@ -1091,10 +864,6 @@
 
     /* ============ THE STANDARD ============ */
     .standard{ background:var(--day); }
-    @media (max-width:640px){
-      .outside{ padding-bottom:0; }
-      .standard{ padding-top:20px; }
-    }
     .std-grid{ display:grid; grid-template-columns:1fr 1.15fr; gap:70px; align-items:start; }
     @media (max-width:880px){ .std-grid{ grid-template-columns:1fr; gap:40px; } }
     .std-sticky{ position:sticky; top:110px; }
@@ -1120,7 +889,7 @@
     .sig::after{ content:"”"; color:var(--dawn); margin-left:2px; }
 
     /* ============ MEMBERS ============ */
-    .members{ background:var(--day); padding-top:70px; }
+    .members{ background:var(--day); }
     .m-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
     @media (max-width:880px){ .m-grid{ grid-template-columns:1fr; } }
     .mcard{ background:#fff; border:1px solid var(--line-day); border-radius:20px; padding:30px 28px; display:flex; flex-direction:column; position:relative; transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease); }
@@ -1133,7 +902,7 @@
     .mcard .t-photo{ width:96px; height:96px; border-radius:50%; object-fit:cover; margin-bottom:16px; border:2px solid var(--dawn); overflow:hidden; }
     .mcard .vid{ font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; color:var(--dawn); text-decoration:none; margin-top:12px; display:inline-flex; align-items:center; gap:6px; text-transform:uppercase; }
     .mcard .vid:hover{ text-decoration:underline; text-underline-offset:3px; }
-    .m-more{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:30px; margin-bottom:0; flex-wrap:wrap; }
+    .m-more{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:40px; flex-wrap:wrap; }
     .m-more a{ font-weight:700; text-decoration:none; border-bottom:2px solid var(--dawn); padding-bottom:2px; transition:color .2s var(--ease); }
     .m-more a:hover{ color:var(--dawn); }
     @keyframes reviewsRabbitEnter {
@@ -1209,7 +978,7 @@
     .tier .backup-links{ margin-top:14px; text-align:center; font-size:.88rem; line-height:1.6; }
     .tier .backup-links a{ color:var(--gold); font-weight:700; }
     .tier.featured .backup-links a{ color:var(--dawn); }
-    .letter{ background:var(--day); padding-bottom:0; }
+    .letter{ background:var(--day); }
     .letter .letter-body{ max-width:720px; margin:0 auto; }
     .letter .letter-body p{ margin:0 0 1.1em; color:var(--ink); font-size:1.06rem; }
     .letter .letter-body .lede-kicker{ font-family:var(--display); font-size:clamp(1.35rem,2.4vw,1.75rem); font-weight:600; margin:1.4em 0 .6em; }
@@ -1422,8 +1191,7 @@
       .btn-dawn::after{ display:none; }
       .mq-track{ animation:none; }
       .grain{ display:none; }
-      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .j-coyote, .cy-travel, .cy-body, .cy-tail, .cy-head, .cy-ear, .cy-leg-hf, .cy-leg-ff, .cy-leg-hn, .cy-leg-fn, .ropers, .roper, .r-hop, .r-rope, .cloud-drift, .cloud-drift > *, .wild-squirrel, .wild-squirrel .sq-inner, .wild-squirrel .sq-tail{ animation:none !important; }
-      .cloud-drift, .cloud-drift.early, .cloud-drift > *{ animation:none !important; transform:none !important; opacity:0.5 !important; }
+      .duck, .rabbit, .egret, .egret-bob, .wing-t, .wing-b, .waddle, .hop, .ears, .jackers, .jacker, .j-body, .j-hop, .j-arm, .j-leg, .j-head, .j-torso, .j-tree, .ropers, .roper, .r-hop, .r-rope{ animation:none !important; }
       .egret{ transform:translate(60vw, calc(16vh + 12px - 75px)); opacity:.9; }
       .duck{ transform:none; opacity:1; }
       .duck.d1{ left:15vw; } .duck.d2{ left:22vw; }
@@ -1443,13 +1211,7 @@
       .wild-rabbit, { opacity:.75; }
       
       .wr-hero2, .wr-coach, .wr-schedule, .wr-freeweek{ opacity:.7; transform:none !important; }
-      .sq-proof { opacity:.8; transform:none !important; }
-      .sq-proof .sq-inner, .sq-proof .sq-tail { transform:none !important; }
-      .proof-turtle, .proof-turtle * { animation:none !important; }
-      .honest-owl, .honest-tree, .owl, .owl-head, .owl-eyes, .owl-card, .owl-wise svg, .owl-ground svg { animation:none !important; }
-      .owl-head, .owl-eyes { transform:none !important; }
-      .why-rain .rain-layer{ display:none; }
-    }}
+    }
   </style>
   <style>
     /* ============ EXTRA WILDLIFE & TREES (animated) ============ */
@@ -1527,41 +1289,6 @@
       100% { transform:translateX(0) translateY(0); opacity:1; }
     }
 
-    /* proof band squirrel (dawn tones on pine) */
-    .wild-squirrel { position:absolute; pointer-events:none; z-index:1; will-change:transform; }
-    .wild-squirrel svg { display:block; width:100%; height:auto; overflow:visible; }
-    .wild-squirrel .sq-inner { display:block; transform-origin:50% 100%; animation-play-state:paused; }
-    .wild-squirrel .sq-tail { transform-origin:32% 77%; animation-play-state:paused; }
-    .live .wild-squirrel .sq-inner,
-    .live .wild-squirrel .sq-tail { animation-play-state:running; }
-    .sq-proof { right:4%; bottom:8px; width:38px; }
-    .sq-proof .sq-inner { animation:sqDartEnter 7.5s var(--ease) .4s both, sqBob 2.8s ease-in-out 7.9s infinite; animation-play-state:paused; }
-    .sq-proof .sq-tail { animation:sqTailFlick 3.4s ease-in-out 1.2s infinite; animation-play-state:paused; }
-    @keyframes sqDartEnter {
-      0%   { transform:translateX(140%) translateY(0); opacity:0; }
-      6%   { opacity:1; }
-      14%  { transform:translateX(95%) translateY(-8px); }
-      20%  { transform:translateX(102%) translateY(0); }
-      30%  { transform:translateX(60%) translateY(-12px); }
-      36%  { transform:translateX(66%) translateY(0); }
-      46%  { transform:translateX(30%) translateY(-9px); }
-      52%  { transform:translateX(35%) translateY(0); }
-      62%  { transform:translateX(10%) translateY(-14px); }
-      70%  { transform:translateX(14%) translateY(0); }
-      82%  { transform:translateX(2%) translateY(-6px); }
-      100% { transform:translateX(0) translateY(0); opacity:1; }
-    }
-    @keyframes sqBob {
-      0%, 100% { transform:translateY(0) scaleY(1); }
-      45% { transform:translateY(-6px) scaleY(1.03); }
-      55% { transform:translateY(0) scaleY(.98); }
-    }
-    @keyframes sqTailFlick {
-      0%, 86%, 100% { transform:rotate(0); }
-      90% { transform:rotate(-13deg); }
-      94% { transform:rotate(7deg); }
-    }
-
     @keyframes wrHop {
       0%, 100% { transform:translateY(0) scaleY(1); }
       45% { transform:translateY(-12px) scaleY(1.04); }
@@ -1609,74 +1336,7 @@ to { transform:rotate(17deg); }
     "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"20"}
   }
   </script>
-<style>
-    /* Turtle, wise owl, and card owl additions */
-    .proof-in > div { position:relative; }
-    .proof-turtle { position:absolute; bottom:8px; left:8px; width:60px; opacity:.9; z-index:1; pointer-events:none; animation:turtleWalkIn 9s var(--ease) .2s both; animation-play-state:paused; }
-    .live .proof-turtle { animation-play-state:running; }
-    .proof-turtle svg { display:block; width:100%; height:auto; overflow:visible; }
-    .proof-turtle .turtle-head { animation:headForage 7s ease-in-out infinite; transform-origin:73px 28px; }
-    .proof-turtle .turtle-leg-front { animation:legF 1.6s ease-in-out infinite; transform-origin:58px 30px; }
-    .proof-turtle .turtle-leg-back { animation:legB 1.6s ease-in-out infinite; transform-origin:32px 30px; }
-    @keyframes headForage { 0%,70%,100%{ transform:rotate(0);} 78%,92%{ transform:rotate(9deg) translateY(2px);} }
-    @keyframes legF { 0%,100%{ transform:rotate(6deg);} 50%{ transform:rotate(-6deg);} }
-    @keyframes legB { 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
-    @keyframes turtleWalkIn {
-      0%   { transform:translateX(-70vw) translateY(0); opacity:0; }
-      5%   { opacity:1; }
-      30%  { transform:translateX(-40vw) translateY(-2px); }
-      55%  { transform:translateX(-18vw) translateY(0); }
-      80%  { transform:translateX(-4vw) translateY(-1px); }
-      100% { transform:translateX(0) translateY(0); opacity:.9; }
-    }
-
-    .honest-owl { display:flex; gap:14px; align-items:flex-end; position:absolute; top:-110px; right:4%; z-index:1; pointer-events:none; margin-bottom:12px; }
-    .honest-tree { width:100px; animation:treeSwayC 7s ease-in-out infinite; transform-origin:50% 100%; }
-    .honest-tree:nth-child(2){ animation-delay:.7s; }
-    .honest-tree:nth-child(3){ animation-delay:1.4s; }
-    .honest-tree svg { display:block; width:100%; height:auto; overflow:visible; }
-    @keyframes treeSwayC { 0%,100%{ transform:rotate(0);} 50%{ transform:rotate(1.2deg);} }
-    .owl-wise { position:absolute; top:0; left:50%; transform:translateX(-50%); width:66px; z-index:2; }
-    .owl-wise svg, .owl-card svg { display:block; width:100%; height:auto; overflow:visible; }
-    .owl-head { transform-origin:50% 62%; animation:owlTurn 5.4s ease-in-out infinite; }
-    .owl-eyes { transform-origin:50% 50%; animation:owlBlink 4.2s ease-in-out infinite; }
-    @keyframes owlTurn { 0%,100%{ transform:rotate(0);} 28%{ transform:rotate(6deg);} 62%{ transform:rotate(-4deg);} }
-    @keyframes owlBlink { 0%,96%,100%{ transform:scaleY(1);} 98%{ transform:scaleY(0.1);} }
-
-    /* Personality pass — two owls, not clones. Owl A (perched): alert. Owl B (ground): chill. */
-    .owl-wise .owl-head  { animation:owlTurnA 4.6s ease-in-out infinite; }
-    .owl-wise .owl-eyes  { animation:owlBlinkA 3.2s ease-in-out infinite; }
-    .owl-ground .owl-head{ animation:owlTurnB 7.8s ease-in-out 1.4s infinite; }
-    .owl-ground .owl-eyes{ animation:owlBlinkB 4.7s ease-in-out 2.2s infinite; }
-    .owl-wise svg   { animation:owlSwayA 6.4s ease-in-out infinite; transform-origin:50% 92%; }
-    .owl-ground svg { animation:owlSwayB 9.2s ease-in-out 2.6s infinite; transform-origin:50% 92%; }
-    @keyframes owlTurnA { 0%,100%{ transform:rotate(0);} 30%{ transform:rotate(7deg);} 64%{ transform:rotate(-5deg);} }
-    @keyframes owlTurnB { 0%,100%{ transform:rotate(0);} 34%{ transform:rotate(-4deg);} 68%{ transform:rotate(3deg);} }
-    @keyframes owlBlinkA { 0%,93%,100%{ transform:scaleY(1);} 96%{ transform:scaleY(0.1);} }
-    @keyframes owlBlinkB { 0%,90%,100%{ transform:scaleY(1);} 94%{ transform:scaleY(0.1);} }
-    @keyframes owlSwayA { 0%,100%{ transform:rotate(-1deg);} 50%{ transform:rotate(1.2deg);} }
-    @keyframes owlSwayB { 0%,100%{ transform:rotate(1deg);} 50%{ transform:rotate(-1.4deg);} }
-
-    .owl-card { position:absolute; top:-16px; right:10px; width:64px; z-index:2; pointer-events:none; }
-
-    .members-owl { display:flex; gap:12px; align-items:flex-end; position:absolute; bottom:-189px; left:4%; z-index:1; pointer-events:none; }
-    .members-owl .honest-tree { width:80px; }
-    .members-owl .owl-ground { width:44px; }
-    .members-owl .owl-ground svg { display:block; width:100%; height:auto; overflow:visible; }
-
-    @media (max-width:680px){ .proof-turtle { width:51px; bottom:6px; left:6px; } }
-    @media (max-width:920px){
-      .honest-owl { right:3%; top:-90px; gap:10px; }
-      .honest-tree { width:80px; }
-      .owl-wise { width:40px; top:0; }
-      .owl-card { width:56px; top:-12px; right:8px; }
-      .members-owl { left:2%; bottom:-150px; gap:8px; }
-      .members-owl .honest-tree { width:55px; }
-      .members-owl .owl-ground { width:34px; }
-    }
-  </style>
-
-  <!-- Trees fully removed. Deploy marker: 2026-07-27T05:15 -->
+<!-- Trees fully removed. Deploy marker: 2026-07-27T05:15 -->
 </head>
 <body data-variant="B-home">
   <a class="skip" href="#standard">Skip to content</a>
@@ -1690,7 +1350,6 @@ to { transform:rotate(17deg); }
         <a href="#members">Members</a>
         <a href="#membership">Membership</a>
         <a href="#schedule">Schedule</a>
-        <a href="runner/">Play the Runner</a>
         <a class="nav-cta" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Free Week</a>
       </div>
     </div>
@@ -1738,52 +1397,17 @@ to { transform:rotate(17deg); }
     </svg>
     <div class="hero-meta l" aria-hidden="true">33.8708° N · 117.9237° W</div>
     <div class="hero-meta r" aria-hidden="true">Est. 2005 — Same grass</div>
-    <!-- Clouds — grouped, varied, organic -->
-    <div class="cloud-drift early" aria-hidden="true" style="--size:260px;--top:7%;--delay:0s;--duration:68s;--start:22vw;">
-      <svg viewBox="0 0 200 80">
-        <ellipse cx="100" cy="48" rx="82" ry="26"/>
-        <ellipse cx="64" cy="38" rx="46" ry="32"/>
-        <ellipse cx="138" cy="34" rx="52" ry="36"/>
-        <ellipse cx="26" cy="48" rx="22" ry="14"/>
-        <ellipse cx="178" cy="46" rx="20" ry="15"/>
-      </svg>
-    </div>
-    <div class="cloud-drift early" aria-hidden="true" style="--size:160px;--top:18%;--delay:0s;--duration:58s;--start:64vw;">
-      <svg viewBox="0 0 200 80">
-        <ellipse cx="102" cy="50" rx="74" ry="22"/>
-        <ellipse cx="58" cy="40" rx="40" ry="28"/>
-        <ellipse cx="146" cy="42" rx="40" ry="26"/>
-        <ellipse cx="168" cy="52" rx="18" ry="12"/>
-      </svg>
-    </div>
-    <div class="cloud-drift" aria-hidden="true" style="--size:340px;--top:4%;--delay:38s;--duration:78s;">
-      <svg viewBox="0 0 240 100">
-        <ellipse cx="120" cy="58" rx="96" ry="34"/>
-        <ellipse cx="68" cy="46" rx="56" ry="42"/>
-        <ellipse cx="172" cy="44" rx="62" ry="44"/>
-        <ellipse cx="28" cy="58" rx="26" ry="18"/>
-        <ellipse cx="214" cy="56" rx="24" ry="18"/>
-      </svg>
-    </div>
-    <div class="cloud-drift" aria-hidden="true" style="--size:120px;--top:24%;--delay:50s;--duration:52s;">
-      <svg viewBox="0 0 200 80">
-        <ellipse cx="100" cy="50" rx="60" ry="18"/>
-        <ellipse cx="58" cy="44" rx="34" ry="22"/>
-        <ellipse cx="140" cy="44" rx="34" ry="22"/>
-      </svg>
-    </div>
-
     <!-- Soaring egret -->
     <div class="egret" aria-hidden="true">
       <div class="egret-bob">
         <svg viewBox="0 0 160 90" fill="none">
-          <path class="wing-b" d="M62 36 C50 46 52 64 62 84 C72 76 82 62 80 38 Z" fill="#C9D4E2" opacity=".85"/>
+          <path class="wing-b" d="M62 36 C46 40 28 52 14 70 C30 62 48 52 64 42 Z" fill="#C9D4E2" opacity=".85"/>
           <path d="M94 40 L118 46 M94 42 L117 52" stroke="#14100A" stroke-width="2.4" stroke-linecap="round"/>
           <path d="M52 34 C60 28 78 27 92 34 C100 38 100 44 92 46 C76 50 58 46 50 40 Z" fill="#FBF7EE"/>
           <path d="M54 36 C46 30 40 30 36 24 C33 19 36 14 41 15 C45 16 45 20 43 23 C46 27 52 29 58 33 Z" fill="#FBF7EE"/>
           <path d="M38 17 L18 21 L37 23 Z" fill="#E8933A"/>
           <circle cx="39.5" cy="18.5" r="1.3" fill="#14100A"/>
-          <path class="wing-t" d="M62 34 C50 22 52 4 62 -16 C72 -8 82 6 80 30 Z" fill="#F3ECDC"/>
+          <path class="wing-t" d="M62 34 C44 26 24 12 8 -6 C30 -2 52 10 68 28 Z" fill="#F3ECDC"/>
         </svg>
       </div>
     </div>
@@ -1836,69 +1460,25 @@ to { transform:rotate(17deg); }
     
 
     <div class="hero-in">
-      <span class="clock">Acacia Park · Fullerton · Since 2005</span>
+      <span class="clock">5:30 AM · Acacia Park · Fullerton</span>
       <span class="next-session" id="next-session">NEXT SESSION: —</span>
       <h1 class="display">
-        <span class="lm" style="--ld:.08s"><span class="lmi">I Talk Fullerton People Out Of Paying Me</span></span>
-        <span class="lm" style="--ld:.22s"><span class="lmi">$2,400 A Month For A Personal Trainer</span></span>
-        <span class="lm lm-sub" style="--ld:.38s"><span class="lmi"><em>(And Into An $11-A-Session Plan That Gets Them Results Faster)</em></span></span>
+        <span class="lm" style="--ld:.08s"><span class="lmi">Why This Fullerton Trainer</span></span>
+        <span class="lm" style="--ld:.22s"><span class="lmi">Keeps Talking People Out Of</span></span>
+        <span class="lm" style="--ld:.38s"><span class="lmi"><em>Paying Him $1,200 A Month</em></span></span>
       </h1>
-      <p class="sub reveal" style="--rd:.55s">Fifteen coached sessions a week at Acacia Park. Same coach since 2005. <strong>Your first week is free — no card, no contract, no sales script.</strong></p>
-      <p class="reveal" style="--rd:.7s;margin-top:22px">
-        <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week →</a>
-      </p>
-      <p class="reveal" style="--rd:.9s;margin-top:12px;font-size:.92rem;opacity:.9">Or text FREE WEEK to (657) 217-0820.</p>
+      <p class="sub reveal" style="--rd:.55s">*(And the $197 plan he talks them into instead — that works faster.)* Coached outdoors at Acacia Park since <strong>2005</strong>. Your first week is free.</p>
     </div>
 </header>
 
   <!-- ============ PROOF ============ -->
   <div class="proof" role="list" aria-label="Track record">
     <div class="proof-in">
-      <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span>
-        
-      </div>
-        
-        
-      
+      <div role="listitem" class="reveal"><b><span class="count" data-count="21">0</span><i> yrs</i></b><span>Years Coaching</span></div>
       <div role="listitem" class="reveal" style="--rd:.08s"><b><span class="count" data-count="15">0</span><i>K+</i></b><span>Coached Sessions</span></div>
-      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span>
-        <div class="proof-turtle" aria-hidden="true"><svg viewBox="0 0 90 42" fill="none">
-          <g class="turtle-leg-back">
-            <path d="M30 28 C28 34 26 37 28 38 C32 39 36 36 36 30 Z" fill="#9FB0C4"/>
-          </g>
-          <g class="turtle-leg-front">
-            <path d="M56 28 C54 34 52 37 54 38 C58 39 62 36 62 30 Z" fill="#9FB0C4"/>
-          </g>
-          <g class="turtle-shell">
-            <path d="M18 28 L8 26 L16 32 Z" fill="#9FB0C4"/>
-            <path d="M72 30 C76 16 62 7 46 7 C30 7 16 16 20 30 C34 32 58 32 72 30 Z" fill="var(--day)"/>
-            <path d="M46 7 C47 16 46 24 44 30 M46 7 C49 16 50 24 53 30 M26 12 C32 16 34 22 35 29 M66 12 C60 16 58 22 57 29" stroke="#2E5A3F" stroke-width="1.6" fill="none"/>
-          </g>
-          <g class="turtle-head">
-            <path d="M72 25 C80 23 86 23 89 25 C92 27 90 30 85 30 C81 30 76 30 73 29 Z" fill="#9FB0C4"/>
-            <circle cx="86" cy="26" r="1.2" fill="#14100A"/>
-          </g>
-        </svg></div>
-      </div>
-      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span>
-        <div class="wild-squirrel sq-proof" aria-hidden="true">
-      <span class="sq-inner">
-        <svg viewBox="0 0 52 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g class="sq-tail">
-            <circle cx="38" cy="18" r="11" fill="#E8933A"/>
-            <circle cx="41" cy="14" r="7" fill="#D07F2E"/>
-          </g>
-          <path d="M14 26 L10 30 L10 38 L14 44 L24 46 L34 46 L40 42 L40 34 L36 27 L28 24 L20 23 Z" fill="#E8933A"/>
-          <circle cx="14" cy="21" r="6.5" fill="#E8933A"/>
-          <path d="M11 16 L9 9 L13 12 Z" fill="#E8933A"/>
-          <circle cx="12" cy="19.5" r="1.3" fill="#14100A"/>
-          <path d="M16 46 L13 46 M32 46 L36 46" stroke="#14100A" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </span>
+      <div role="listitem" class="reveal" style="--rd:.16s"><b><span class="count" data-count="4.9" data-dec="1">0</span><i>★</i></b><span>Average Rating</span></div>
+      <div role="listitem" class="reveal" style="--rd:.24s"><b>#1</b><span>Fullerton Boot Camp</span></div>
     </div>
-      </div>
-    </div>
-    
   </div>
 
   <!-- ============ MARQUEE ============ -->
@@ -1914,7 +1494,7 @@ to { transform:rotate(17deg); }
     <div class="wrap">
       <div class="sec-head reveal">
         <h2 class="display k">Every gym in town trains under a roof. <em>We took the sky.</em></h2>
-        <p class="sec-lede">You've paid for the roof before. The January membership. The app with the streak counter. The keycard that got used twice. They all failed the same way: <strong>nobody noticed when you stopped showing up.</strong> What works is air, light, and a coach who expects you at 5:30.</p>
+        <p class="sec-lede">You've paid for the roof before. The January membership, the app with the streak counter, the keycard that got used twice. They all failed the same way — nobody noticed when you quit showing up. What works is air, light, and a coach who expects you at 5:30.</p>
       </div>
       <div class="why-grid">
         <div class="why reveal">
@@ -1943,99 +1523,56 @@ to { transform:rotate(17deg); }
           <h3>A crew, not a crowd</h3>
           <p>Sessions stay small enough that your absence gets noticed — kindly, but noticed. No keycard gym can sell you that at any price. That's the accountability that kills the start-over cycle.</p>
         </div>
-        <div class="why reveal why-rain" style="--rd:.2s">
-          <div class="rain-layer" aria-hidden="true">
-            <span class="rd" style="left:5%;height:11px;--dl:1.3s;--dly:-.4s"></span>
-            <span class="rd w2" style="left:13%;height:9px;--dl:1.0s;--dly:-1.1s"></span>
-            <span class="rd" style="left:21%;height:13px;--dl:1.5s;--dly:-.2s"></span>
-            <span class="rd" style="left:29%;height:8px;--dl:1.1s;--dly:-.9s"></span>
-            <span class="rd" style="left:37%;height:12px;--dl:1.4s;--dly:-.6s"></span>
-            <span class="rd w2" style="left:45%;height:10px;--dl:.9s;--dly:-1.4s"></span>
-            <span class="rd" style="left:53%;height:14px;--dl:1.6s;--dly:-.3s"></span>
-            <span class="rd" style="left:61%;height:9px;--dl:1.2s;--dly:-1.0s"></span>
-            <span class="rd" style="left:69%;height:11px;--dl:1.1s;--dly:-.7s"></span>
-            <span class="rd extra" style="left:8%;height:13px;--dl:1.4s;--dly:-.8s"></span>
-            <span class="rd extra w2" style="left:17%;height:10px;--dl:1.2s;--dly:-.1s"></span>
-            <span class="rd extra" style="left:26%;height:14px;--dl:1.5s;--dly:-1.2s"></span>
-            <span class="rd extra" style="left:34%;height:8px;--dl:.9s;--dly:-.5s"></span>
-            <span class="rd extra w2" style="left:42%;height:12px;--dl:1.3s;--dly:-1.5s"></span>
-            <span class="rd extra" style="left:50%;height:9px;--dl:1.0s;--dly:-.2s"></span>
-            <span class="rd extra" style="left:58%;height:11px;--dl:1.6s;--dly:-1.3s"></span>
-            <span class="rd extra" style="left:66%;height:10px;--dl:1.1s;--dly:-.9s"></span>
-            <span class="rd extra" style="left:74%;height:13px;--dl:1.4s;--dly:-.4s"></span>
-          </div>
+        <div class="why reveal" style="--rd:.2s">
           <span class="wn">03 — CLIMATE</span>
           <h3>Weather is our advantage</h3>
           <p>This is Fullerton. We train outside year-round. On the rare rough day, Curtis adjusts the plan and texts the group. Twenty-one years in the same park — while franchise studios open and close around us.</p>
+        <div class="sun" aria-hidden="true">
+          <svg viewBox="0 0 80 80" width="36" height="36">
+            <circle cx="40" cy="40" r="22" fill="#F3D36B" opacity="0.16"/>
+            <g class="sun-rays">
+              <line x1="40" y1="24" x2="40" y2="7" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="55" y1="25" x2="66" y2="14" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="65" y1="40" x2="78" y2="40" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="55" y1="55" x2="66" y2="66" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="40" y1="56" x2="40" y2="73" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="25" y1="55" x2="14" y2="66" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="15" y1="40" x2="2" y2="40" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+              <line x1="25" y1="25" x2="14" y2="14" stroke="#F3D36B" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <circle cx="40" cy="40" r="14" fill="#F3D36B" class="sun-core"/>
+          </svg>
+        </div>
         </div>
       </div>
     </div>
 
     <!-- Outside trees (different shapes) -->
-
+    
+    
   </section>
 
   <!-- ============ THE STANDARD · 8:00 AM ============ -->
   <section class="standard" id="standard" data-rail="standard">
     <div class="wrap">
     <div class="jackers" aria-hidden="true">
-<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<div class="j-tree t1" aria-hidden="true"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
-    <!-- top tight, slight right bias -->
-    <ellipse cx="46" cy="16" rx="11" ry="13" opacity=".95"/>
-    <ellipse cx="38" cy="30" rx="12" ry="12"/>
-    <ellipse cx="56" cy="28" rx="13" ry="12" opacity=".92"/>
-    <!-- upper -->
-    <ellipse cx="48" cy="46" rx="18" ry="15" opacity=".9"/>
-    <ellipse cx="34" cy="60" rx="14" ry="13" opacity=".93"/>
-    <ellipse cx="62" cy="58" rx="16" ry="14" opacity=".88"/>
-    <ellipse cx="50" cy="76" rx="24" ry="16"/>
-    <!-- mid fuller, leeward heavy -->
-    <ellipse cx="30" cy="94" rx="16" ry="15" opacity=".9"/>
-    <ellipse cx="68" cy="92" rx="18" ry="15" opacity=".87"/>
-    <ellipse cx="52" cy="110" rx="28" ry="16" opacity=".92"/>
-    <ellipse cx="34" cy="128" rx="18" ry="12" opacity=".88"/>
-    <ellipse cx="66" cy="126" rx="20" ry="13" opacity=".86"/>
-    <ellipse cx="50" cy="138" rx="26" ry="11" opacity=".84"/>
-    <!-- NEW bottom foliage — wide, wind-swept right -->
-    <ellipse cx="42" cy="152" rx="24" ry="12" opacity=".82"/>
-    <ellipse cx="70" cy="150" rx="22" ry="13" opacity=".8"/>
-    <ellipse cx="56" cy="162" rx="32" ry="12" opacity=".78"/>
-    <ellipse cx="72" cy="168" rx="18" ry="10" opacity=".75"/>
+    <!-- apex — slight leeward bias -->
+    <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
+    <!-- tier 2 — mass shifts right -->
+    <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
+    <!-- tier 3 -->
+    <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
+    <!-- previous under-skirt -->
+    <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
+    <!-- NEW bottom foliage layer — fullest, pushed leeward (right) -->
+    <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
+    <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
   </g>
-  <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
-  <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
+  <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
+  <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
 </svg></div>
-<div class="j-coyote" aria-hidden="true">
-  <div class="cy-travel">
-    <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <ellipse cx="132" cy="169" rx="118" ry="4" fill="currentColor" opacity=".12"/>
-      <g class="cy-body">
-        <g class="cy-leg-hf"><rect x="73" y="122" width="10" height="44" rx="3" fill="#8F8068"/></g>
-        <g class="cy-leg-ff"><rect x="127" y="126" width="10" height="40" rx="3" fill="#8F8068"/></g>
-        <path d="M74 100 C84 88 102 82 122 82 C144 82 162 86 172 92 C182 96 186 102 184 110 C182 118 172 122 162 122 C150 126 140 126 128 126 C112 126 98 126 92 122 C84 118 76 110 74 100 Z" fill="#9C8B70"/>
-        <path d="M 80 98 C 92 88, 108 84, 126 84 C 146 84, 160 88, 170 93 C 156 97, 132 97, 112 97 C 98 97, 88 98, 80 98 Z" fill="#6E5F49"/>
-        <g class="cy-leg-hn"><rect x="83" y="124" width="10" height="42" rx="3" fill="#9C8B70"/></g>
-        <g class="cy-leg-fn"><rect x="149" y="124" width="10" height="42" rx="3" fill="#9C8B70"/></g>
-        <g class="cy-tail">
-          <path d="M 74 106 C 56 104, 36 110, 24 124 C 16 133, 14 144, 20 150 C 27 157, 40 154, 52 144 C 62 136, 72 126, 78 116 Z" fill="#6E5F49"/>
-        </g>
-        <g class="cy-head">
-          <path d="M 160 92 C 168 78, 180 68, 194 66 C 206 64, 214 70, 220 76 L 240 88 C 246 91, 248 95, 246 98 C 243 101, 236 101, 228 99 L 204 94 C 196 100, 186 106, 176 108 C 166 110, 156 102, 160 92 Z" fill="#9C8B70"/>
-          <g class="cy-ear far">
-            <path d="M 192 66 L 186 40 L 206 58 Z" fill="#6E5F49"/>
-          </g>
-          <g class="cy-ear near">
-            <path d="M 208 62 L 208 36 L 224 56 Z" fill="#9C8B70"/>
-          </g>
-          <circle cx="216" cy="78" r="11" fill="#F3ECDC"/>
-          <circle cx="216" cy="78" r="3.8" fill="#14100A"/>
-          <circle cx="246" cy="94" r="3.5" fill="#D97B3F"/>
-        </g>
-      </g>
-    </svg>
-  </div>
-</div>
       <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="var(--pine)">
     <!-- top tight, slight right bias -->
@@ -2076,6 +1613,19 @@ to { transform:rotate(17deg); }
           </div>
         </div>
       </div>
+            <div class="jacker b">
+        <div class="j-ground"></div>
+        <div class="j-body">
+          <div class="j-hop">
+            <span class="j-head"></span>
+            <span class="j-torso"></span>
+            <span class="j-arm l"></span>
+            <span class="j-arm r"></span>
+            <span class="j-leg l"></span>
+            <span class="j-leg r"></span>
+          </div>
+        </div>
+      </div>
       </div>
       <div class="std-grid">
       <div class="reveal std-sticky">
@@ -2102,8 +1652,8 @@ to { transform:rotate(17deg); }
         <div class="std-item">
           <span class="n">KEPT</span>
           <div>
-            <h3>They stay because it works</h3>
-            <p>15,000+ coached sessions. Some members have trained here 17, 18 years. Nobody signs a 17-year lease on their first day — so we don't ask you to. <strong>Start with a free week. Nothing to cancel, because there's nothing to charge.</strong> After that it's month to month, forever, and you leave whenever you want. In twenty-one years there has never been a contract. People stay because the numbers move.</p>
+            <h3>Proof then stay</h3>
+            <p>15,000+ coached sessions. Some members have trained here 17, 18 years. Nobody signs a 17-year lease on their first day. You start with the 6-Week Challenge — 18 sessions, day-one and day-42 measurements, a money-back guarantee if your numbers don't budge. It's the short bet that proves the long bet is worth making. And once you've seen the proof? You stay because it works, not because we locked you in.</p>
           </div>
         </div>
       </div>
@@ -2117,9 +1667,8 @@ to { transform:rotate(17deg); }
     <div class="wrap coach-grid">
       <div class="bio reveal">
         <h2 class="display k">Curtis Ludlow</h2>
-        <p><strong>Two decades of coaching, one park, thousands of Fullerton mornings.</strong></p>
-        <p>Curtis founded Boot Camp FX in 2005 and has led it in person ever since — not a franchise operator, not a rotating staff, not a script. The same coach who measures you on day one is the one watching your form in year ten.</p>
-        <p>His members run from their 20s to their 80s — parents, teachers, nurses, business owners. He knows every name, every goal, every old injury. That's why the guarantee at the bottom of this page costs him almost nothing to make: <span class="hl-in">the people who show up get results.</span> Twenty-one years, every time.</p>
+        <p><strong>Two decades of coaching, one park, thousands of Fullerton mornings.</strong> Curtis founded Boot Camp FX in 2005 and has led it in person ever since — not a franchise operator, not a rotating staff, not a script. The same coach who measures you on day one is the one watching your form in year ten.</p>
+        <p>His members range from their 20s to their 80s — parents, teachers, nurses, business owners. He knows every name, every goal, every old injury. That's why he can make the promise at the bottom of this page: <span class="hl-in">the people who show up get results.</span> Every time. So his guarantee costs him almost nothing — and tells you everything.</p>
         <p class="sig">Show up. I'll handle the rest.</p>
       </div>
     </div>
@@ -2145,104 +1694,6 @@ to { transform:rotate(17deg); }
     
   </section>
 
-
-  <!-- ============ SALES LETTER (v4 craft) — above testimonials ============ -->
-  <section class="letter" id="letter" aria-label="Sales letter">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="clock" style="color:var(--dawn);">From Curtis · Acacia Park</span>
-        <h2 class="display k">I Talk People Out Of Paying Me $2,400 A Month</h2>
-        <p class="sec-lede"><em>(And into a $197 plan that works faster.)</em></p>
-      </div>
-      <div class="letter-body reveal">
-        <p>Once a month or so, somebody sits across from me at Acacia Park ready to buy.</p>
-        <p>They want personal training. Twice a week. <strong>$75 to $200 a session</strong>, depending on where in Orange County you shop. Ready to hand me <strong>$600 to $2,400 a month</strong> — right there on the spot.</p>
-        <p>Most of the time, I talk them out of it.</p>
-        <p>Not because I don't want the money. (Three dogs. A wife. A mortgage. I want the money.)</p>
-        <p>I talk them out of it because of what twenty-one years of coaching in Fullerton taught me:</p>
-        <p class="hl-in"><strong>The math of personal training is rigged against you.</strong></p>
-
-        <p>Here's the movie. Motivated person buys twice-a-week training. Six weeks of real progress. Then life happens — work trip, sick kid, a Tuesday that got away from them. Missed sessions. Already paid for. Progress stalls. They quit. They tell their friends, “I tried a trainer. It didn't work.”</p>
-        <p>The training worked.</p>
-        <p>The math didn't.</p>
-
-        <p class="lede-kicker">How often you train (this is the whole game)</p>
-        <p>Your body doesn't change based on how much you pay per session.</p>
-        <p>It changes based on how many sessions you show up to.</p>
-        <p><strong>Twice a week maintains. Four times a week transforms.</strong></p>
-        <p>That's the whole secret. Every single client I've watched completely rebuild their body had frequency working for them. Not genetics. Not a miracle program. Showing up often enough.</p>
-        <p>So I built a plan around it.</p>
-        <p><strong>$197 a month. Unlimited sessions. Fifteen coached sessions a week to choose from.</strong></p>
-        <p>Show up 4× a week: about <strong>$11 a session</strong>. Show up 5×: <strong>under $9.</strong></p>
-        <p>One hour of private training with me costs the same as <strong>twelve days</strong> of Unlimited.</p>
-        <p>Same coach. Same programming. More than double the reps. A fraction of the price.</p>
-
-        <div class="quote-block">
-          <p>“One of the best decisions I made many years ago was to join Curtis’s Bootcamp. His workouts never seem like a chore as he changes things up all the time. He meets you where you are and then proceeds to motivate and challenge you. And, because we’re outdoors at a park, we’re privileged to see wildlife; owls, geese, bunnies, coyotes, skunks, squirrels and an assortment of birds. Thank you Curtis for all the years of training.”</p>
-          <div class="quote-who">— <strong>Judi Heylek</strong> · Google · 5★</div>
-        </div>
-        <div class="quote-block">
-          <p>“Bootcamp FX has been a part of my daily routine for more than 15 years. Curtis Ludlow is an excellent trainer and always keeps the workouts fresh with the appropriate amount of challenge. In addition to helping me to stay fit, Bootcamp FX has been the source of creating lasting friendships. We sweat together and have a great time along the way!”</p>
-          <div class="quote-who">— <strong>Margaret Martinazzi</strong> · Google · 5★</div>
-        </div>
-
-        <p class="lede-kicker">The math of frequency</p>
-        <table class="math">
-          <thead><tr><th></th><th>★ Unlimited ★</th><th>Personal Training</th></tr></thead>
-          <tbody>
-            <tr><td>Price</td><td><strong>$197/mo</strong></td><td>$600–$2,400/mo</td></tr>
-            <tr><td>Sessions</td><td><strong>Unlimited</strong></td><td>2–3/week</td></tr>
-            <tr><td>Per session</td><td><strong>~$9–$11</strong></td><td>$75–$200</td></tr>
-            <tr><td>Coach</td><td><strong>Curtis</strong></td><td>Curtis</td></tr>
-            <tr><td>Status</td><td><strong>Open now</strong></td><td>Waitlist — text Curtis</td></tr>
-          </tbody>
-        </table>
-        <p>Right column costs a fortune for the same man. Middle column is the only one that makes sense, and it isn't close.</p>
-        <p>Over a year, the Unlimited member training 4× a week saves <strong>$4,800 to $12,000</strong> against 2× private training — and gets more than double the coached reps.</p>
-        <p>The only person this math is bad for is my accountant.</p>
-
-        <p class="lede-kicker">Your first week free. No card. No catch.</p>
-        <p>Seven days. Real coaching at Acacia Park. If you're not hooked, walk away. All you lost is a few mornings you'd have spent not training anyway.</p>
-        <p style="text-align:center; margin:18px 0;">
-          <a class="btn btn-dawn" href="sms:+165****0820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a>
-        </p>
-
-        <p class="lede-kicker">“Why is it so cheap? What's wrong with it?”</p>
-        <p>Fair question. Honest answer:</p>
-        <p>I can coach eight people in the same hour I used to coach one. That's it. That's the entire trick. The coaching didn't get cheaper — the delivery got smarter, and I passed the difference to you.</p>
-        <p>You get a price you can sustain. I get a business that isn't hostage to twelve rich clients' travel schedules.</p>
-        <p>Nobody's losing here except the studio down the street.</p>
-
-        <p class="lede-kicker">What $197 gets you that $2,400 doesn't</p>
-        <ul>
-          <li><strong>15 coached sessions a week</strong> — 5:30 AM, 8:00 AM, 6:00 PM Monday through Thursday, Friday mornings, Saturday at 8. Rain or shine.</li>
-          <li><strong>Every movement scaled to you</strong> — first-timer and former college athlete, same session, different weight on the bar.</li>
-          <li><strong>Your name, your goals, your old injuries</strong> — nobody hides in a group this size.</li>
-          <li><strong>Nutrition framework and check-ins</strong> — real food, no macro spreadsheets.</li>
-          <li><strong>A group that notices when you're gone</strong> — that's the accountability people pay a trainer $200 an hour for. Here it's free, and it works better.</li>
-          <li><strong>30-day Love It Or Leave It guarantee.</strong></li>
-        </ul>
-
-        <p class="lede-kicker">The guarantee</p>
-        <p>Train thirty days. Not stronger? Not looking forward to the next session? Just not for you? Tell me. Full refund. No forms, no exit interview, no retention specialist reading a script at you.</p>
-
-
-        <p class="lede-kicker">The catch (there's one)</p>
-        <p>I cap new Unlimited members at <strong>12 a month.</strong> Small groups are the product — the day I stop capping is the day this stops working. When the spots are gone the waitlist opens, and 5:30 AM always fills first.</p>
-
-        <p class="lede-kicker">Right now</p>
-        <p style="text-align:center; margin:18px 0;">
-          <strong><a class="btn btn-dawn" href="#membership">SUBSCRIBE — $197/MONTH UNLIMITED</a></strong></p>
-
-        <p>Or take the free week first and make me earn it. Either way — stop paying the math that's rigged against you.</p>
-        <p>See you at the park,<br><strong>Curtis Ludlow</strong><br>Boot Camp FX · Acacia Park, Fullerton</p>
-
-        <p><strong>P.S.</strong> — $197 a month. Unlimited sessions. Thirty-day guarantee. Under ten dollars a session if you show up four times a week. The only fitness plan in Fullerton that costs you more is the one you keep not showing up to.</p>
-        <p><strong>P.P.S.</strong> — Paying a trainer $600+ a month right now? Ask him one question: “What happens to my progress the weeks I can't make it?” Then read this letter again. Same coach. Same programming. Two price tags. One of them leaves four figures in your pocket every year.</p>
-        <p><strong>P.P.P.S.</strong> — Want a deadline and a measurement card instead of an open-ended membership? That's the <a href="/challenge/">6-Week Challenge</a>. Same park, same coach, day-1 and day-42 numbers, money back if they don't move. Stay after, and the $349 credits to membership ($197 + $152).</p>
-      </div>
-    </div>
-  </section>
   <!-- ============ MEMBERS · 12:30 PM ============ -->
   <section class="members" id="members" data-rail="members">
     <div class="wrap">
@@ -2297,151 +1748,18 @@ to { transform:rotate(17deg); }
           <div class="res">Lost 20 lbs in 3 weeks</div>
         </div>
       </div>
-      <p class="m-more reveal">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener">Read all 30+ five-star reviews on Google →</a></p>
+      <p class="m-more reveal">⭐ <a href="https://www.google.com/maps/place/Boot+Camp+FX/@33.8708,-117.9237,17z/data=!3m1!4b1!4m6!3m5!1s0x80dcd5c6c7af30c1:0xf4c969a957863503!8m2!3d33.8708!4d-117.9237!16s%2Fg%2F1hc1fysxg" target="_blank" rel="noopener">Read all 30+ five-star reviews on Google →</a><span class="rabbit-reviews" aria-hidden="true"><span class="wr-inner"><svg viewBox="0 0 52 48" fill="none"><g class="wr-ears"><path d="M20 14 C17 6 17 1 20 0 C23 1 23 8 23 14 Z" fill="currentColor"/><path d="M26 14 C25 5 26 1 29 1 C31 3 30 9 29 14 Z" fill="currentColor" opacity=".75"/></g><path d="M18 22 C12 24 8 30 9 36 C10 43 18 46 28 46 C38 46 44 42 44 35 C44 28 38 22 30 21 Z" fill="currentColor"/><circle cx="16" cy="22" r="6" fill="currentColor"/><circle cx="14" cy="20.5" r="1.3" fill="#14100A"/><circle cx="45" cy="40" r="4" fill="#F3ECDC"/><path d="M12 46 L8 46 M34 46 L40 46" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span></span></p>
 
-    <!-- Members trees + ground owl -->
-    <div class="members-owl" aria-hidden="true">
-      <div class="honest-tree"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="var(--pine)">
-    <!-- top tight, slight right bias -->
-    <ellipse cx="46" cy="16" rx="11" ry="13" opacity=".95"/>
-    <ellipse cx="38" cy="30" rx="12" ry="12"/>
-    <ellipse cx="56" cy="28" rx="13" ry="12" opacity=".92"/>
-    <!-- upper -->
-    <ellipse cx="48" cy="46" rx="18" ry="15" opacity=".9"/>
-    <ellipse cx="34" cy="60" rx="14" ry="13" opacity=".93"/>
-    <ellipse cx="62" cy="58" rx="16" ry="14" opacity=".88"/>
-    <ellipse cx="50" cy="76" rx="24" ry="16"/>
-    <!-- mid fuller, leeward heavy -->
-    <ellipse cx="30" cy="94" rx="16" ry="15" opacity=".9"/>
-    <ellipse cx="68" cy="92" rx="18" ry="15" opacity=".87"/>
-    <ellipse cx="52" cy="110" rx="28" ry="16" opacity=".92"/>
-    <ellipse cx="34" cy="128" rx="18" ry="12" opacity=".88"/>
-    <ellipse cx="66" cy="126" rx="20" ry="13" opacity=".86"/>
-    <ellipse cx="50" cy="138" rx="26" ry="11" opacity=".84"/>
-    <!-- NEW bottom foliage — wide, wind-swept right -->
-    <ellipse cx="42" cy="152" rx="24" ry="12" opacity=".82"/>
-    <ellipse cx="70" cy="150" rx="22" ry="13" opacity=".8"/>
-    <ellipse cx="56" cy="162" rx="32" ry="12" opacity=".78"/>
-    <ellipse cx="72" cy="168" rx="18" ry="10" opacity=".75"/>
-  </g>
-  <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
-  <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
-</svg></div>
-      <div class="honest-tree"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="var(--pine)">
-    <!-- top tight, slight right bias -->
-    <ellipse cx="46" cy="16" rx="11" ry="13" opacity=".95"/>
-    <ellipse cx="38" cy="30" rx="12" ry="12"/>
-    <ellipse cx="56" cy="28" rx="13" ry="12" opacity=".92"/>
-    <!-- upper -->
-    <ellipse cx="48" cy="46" rx="18" ry="15" opacity=".9"/>
-    <ellipse cx="34" cy="60" rx="14" ry="13" opacity=".93"/>
-    <ellipse cx="62" cy="58" rx="16" ry="14" opacity=".88"/>
-    <ellipse cx="50" cy="76" rx="24" ry="16"/>
-    <!-- mid fuller, leeward heavy -->
-    <ellipse cx="30" cy="94" rx="16" ry="15" opacity=".9"/>
-    <ellipse cx="68" cy="92" rx="18" ry="15" opacity=".87"/>
-    <ellipse cx="52" cy="110" rx="28" ry="16" opacity=".92"/>
-    <ellipse cx="34" cy="128" rx="18" ry="12" opacity=".88"/>
-    <ellipse cx="66" cy="126" rx="20" ry="13" opacity=".86"/>
-    <ellipse cx="50" cy="138" rx="26" ry="11" opacity=".84"/>
-    <!-- NEW bottom foliage — wide, wind-swept right -->
-    <ellipse cx="42" cy="152" rx="24" ry="12" opacity=".82"/>
-    <ellipse cx="70" cy="150" rx="22" ry="13" opacity=".8"/>
-    <ellipse cx="56" cy="162" rx="32" ry="12" opacity=".78"/>
-    <ellipse cx="72" cy="168" rx="18" ry="10" opacity=".75"/>
-  </g>
-  <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
-  <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
-</svg></div>
-      <div class="owl owl-ground"><svg viewBox="0 0 64 88" fill="none">
-      <path d="M4 78 L60 78" stroke="#6B5B4F" stroke-width="3.5" stroke-linecap="round"/>
-      <g class="owl-head">
-        <ellipse cx="32" cy="54" rx="18" ry="24" fill="#A8927E"/>
-        <ellipse cx="32" cy="63" rx="10" ry="12" fill="#EFE0C4"/>
-        <circle cx="32" cy="30" r="17" fill="#A8927E"/>
-        <path d="M19 17 L14 3 L22 15 Z" fill="#A8927E"/>
-        <path d="M45 17 L50 3 L42 15 Z" fill="#A8927E"/>
-        <g class="owl-eyes">
-          <circle cx="25" cy="28" r="6" fill="#F2E3BE"/>
-          <circle cx="39" cy="28" r="6" fill="#F2E3BE"/>
-          <circle cx="25" cy="28" r="2.2" fill="#14100A"/>
-          <circle cx="39" cy="28" r="2.2" fill="#14100A"/>
-        </g>
-        <path d="M32 33 L28 40 L32 38 L36 40 Z" fill="var(--dawn)"/>
-        <path d="M16 40 C12 50 12 62 18 66 L18 44 Z" fill="#8A7A64"/>
-        <path d="M48 40 C52 50 52 62 46 66 L46 44 Z" fill="#8A7A64"/>
-        <path d="M24 74 L24 80 M22 74 L22 80 M26 74 L26 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M40 74 L40 80 M38 74 L38 80 M42 74 L42 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-      </g>
-    </svg></div>
-    </div>
+    <!-- Members trees -->
+    
+    
     </div>
   </section>
 
   <!-- ============ HONEST FILTER · 3:30 PM ============ -->
   <section class="honest" id="honest" aria-label="Honest filter">
-    <div class="wrap" style="padding:50px 24px;">
-      <div class="honest-owl" aria-hidden="true">
-      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g fill="var(--pine)">
-        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
-        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
-        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
-        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
-        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
-        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
-      </g>
-      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
-      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
-    </svg></div>
-      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g fill="var(--pine)">
-        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
-        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
-        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
-        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
-        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
-        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
-      </g>
-      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
-      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
-    </svg></div>
-      <div class="honest-tree"><svg viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g fill="var(--pine)">
-        <path d="M48 4 L60 34 L54 34 L66 62 L48 62 L32 62 L42 34 L36 34 Z"/>
-        <path opacity=".96" d="M50 46 L74 90 L60 90 L82 128 L48 128 L18 128 L36 90 L24 90 Z"/>
-        <path opacity=".92" d="M52 105 L86 155 L68 155 L92 182 L48 185 L10 185 L30 155 L16 155 Z"/>
-        <path opacity=".88" d="M24 168 L52 150 L82 165 L88 188 L50 182 L18 190 Z"/>
-        <path opacity=".84" d="M16 185 L50 172 L90 180 L96 208 L52 200 L8 210 Z"/>
-        <path opacity=".8" d="M22 200 L54 190 L92 198 L94 218 L50 214 L14 220 Z"/>
-      </g>
-      <rect x="44" y="205" width="10" height="82" rx="2" fill="var(--ink)" opacity=".85"/>
-      <ellipse cx="49" cy="290" rx="20" ry="3.5" fill="var(--ink)" opacity=".12"/>
-    </svg></div>
-      <div class="owl owl-wise"><svg viewBox="0 0 64 88" fill="none">
-      <path d="M4 78 L60 78" stroke="#6B5B4F" stroke-width="3.5" stroke-linecap="round"/>
-      <g class="owl-head">
-        <ellipse cx="32" cy="54" rx="18" ry="24" fill="#9FB0C4"/>
-        <circle cx="32" cy="30" r="17" fill="#9FB0C4"/>
-        <path d="M19 17 L14 3 L22 15 Z" fill="#9FB0C4"/>
-        <path d="M45 17 L50 3 L42 15 Z" fill="#9FB0C4"/>
-        <g class="owl-eyes">
-          <circle cx="25" cy="28" r="6" fill="#F3ECDC"/>
-          <circle cx="39" cy="28" r="6" fill="#F3ECDC"/>
-          <circle cx="25" cy="28" r="2.2" fill="#14100A"/>
-          <circle cx="39" cy="28" r="2.2" fill="#14100A"/>
-        </g>
-        <path d="M32 33 L28 40 L32 38 L36 40 Z" fill="var(--dawn)"/>
-        <path d="M16 40 C12 50 12 62 18 66 L18 44 Z" fill="#7A8A9A"/>
-        <path d="M48 40 C52 50 52 62 46 66 L46 44 Z" fill="#7A8A9A"/>
-        <path d="M24 74 L24 80 M22 74 L22 80 M26 74 L26 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M40 74 L40 80 M38 74 L38 80 M42 74 L42 80" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-      </g>
-    </svg></div>
-    </div>
-    <h2 class="display k reveal" style="text-align:center;">This works for almost everyone. <em>It's not for everyone.</em></h2>
+    <div class="wrap" style="padding:60px 24px;">
+      <h2 class="display k reveal" style="text-align:center;">This works for almost everyone. <em>It's not for everyone.</em></h2>
       <p class="reveal" style="text-align:center; color:var(--stone); max-width:600px; margin:0 auto 40px;">
         Twenty-one years taught us exactly who thrives here. Read both columns before you spend a dollar — we'd rather lose a sale than take a member who won't show up.
       </p>
@@ -2459,7 +1777,7 @@ to { transform:rotate(17deg); }
         <div class="filter-card save">
           <h3>Save your money if</h3>
           <ul>
-            <li>✕ You want a $10 keycard membership you'll never use — Chuze is down the street, and I mean that without sarcasm</li>
+            <li>✕ You want a cheap keycard membership you'll never use — those are down the street</li>
             <li>✕ You're shopping for a discount, not a result</li>
             <li>✕ You can't make 2 sessions a week — come back when you can</li>
             <li>✕ You need it to be easy. It's simple. It isn't easy.</li>
@@ -2477,6 +1795,100 @@ to { transform:rotate(17deg); }
     </div>
   </div>
 
+  <!-- ============ SALES LETTER (v4 craft) ============ -->
+  <section class="letter" id="letter" aria-label="Sales letter">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="clock" style="color:var(--dawn);">From Curtis · Acacia Park</span>
+        <h2 class="display k">Why This Fullerton Trainer Keeps Talking People Out Of Paying Him $1,200 A Month</h2>
+        <p class="sec-lede">(And the $197 plan he talks them into instead — that works faster)</p>
+      </div>
+      <div class="letter-body reveal">
+        <p>Once a month or so, somebody sits across from me at Acacia Park ready to buy.</p>
+        <p>They want personal training. Twice a week. <strong>$75 to $200</strong> a session, depending on location. Ready to hand me <strong>$600 to $2,400 a month</strong> — right there on the spot.</p>
+        <p>Most of the time, I talk them out of it.</p>
+        <p>Not because I don't want the money. (Three dogs. A wife. A mortgage. I want the money.)</p>
+        <p>I talk them out of it because of what 20 years of coaching in Fullerton taught me:</p>
+        <p class="hl-in"><strong>The math of personal training is rigged against you.</strong></p>
+
+        <p>Here's the movie. Motivated person buys twice-a-week training. Six weeks of real progress. Then life happens — work trip, sick kid. Missed sessions. Already paid for. Progress stalls. Quits. Tells their friends, “I tried a trainer. It didn't work.”</p>
+        <p>The training worked.</p>
+        <p>The math didn't.</p>
+
+        <p class="lede-kicker">How often you train (this is the whole game)</p>
+        <p>Your body doesn't change based on how much you pay per session.</p>
+        <p>It changes based on how many sessions you show up to.</p>
+        <p><strong>Twice a week maintains.</strong></p>
+        <p><strong>Four times a week transforms.</strong></p>
+        <p>That's the whole secret. Every client I've ever watched completely rebuild their body had it working for them. Not genetics. Not a miracle program. Showing up often enough.</p>
+        <p>So I built a plan around it.</p>
+        <p><strong>$197 a month. Unlimited sessions. Fifteen coached sessions a week to choose from.</strong></p>
+        <p>Show up 4× a week: about <strong>$11 a session</strong>. Show up 5×: <strong>under $9.</strong></p>
+        <p>One hour of personal training with me costs the same as <strong>twelve days</strong> of Unlimited.</p>
+        <p>Same coach. Same programming. More than double the sessions. A fraction of the private-training price.</p>
+
+        <div class="quote-block">
+          <p>“One of the best decisions I made many years ago was to join Curtis’s Bootcamp. His workouts never seem like a chore as he changes things up all the time. He meets you where you are and then proceeds to motivate and challenge you. And, because we’re outdoors at a park, we’re privileged to see wildlife; owls, geese, bunnies, coyotes, skunks, squirrels and an assortment of birds. Thank you Curtis for all the years of training.”</p>
+          <div class="quote-who">— <strong>Judi Heylek</strong> · Google · 5★</div>
+        </div>
+        <div class="quote-block">
+          <p>“Bootcamp FX has been a part of my daily routine for more than 15 years. Curtis Ludlow is an excellent trainer and always keeps the workouts fresh with the appropriate amount of challenge. In addition to helping me to stay fit, Bootcamp FX has been the source of creating lasting friendships. We sweat together and have a great time along the way!”</p>
+          <div class="quote-who">— <strong>Margaret Martinazzi</strong> · Google · 5★</div>
+        </div>
+
+        <p class="lede-kicker">The math of frequency</p>
+        <table class="math">
+          <thead><tr><th></th><th>★ Unlimited ★</th><th>Personal Training</th></tr></thead>
+          <tbody>
+            <tr><td>Price</td><td><strong>$197/mo</strong></td><td>$600–$2,400/mo</td></tr>
+            <tr><td>Sessions</td><td><strong>Unlimited</strong></td><td>2–3/week</td></tr>
+            <tr><td>Per session</td><td><strong>~$9–$11</strong></td><td>$75–$200</td></tr>
+            <tr><td>Coach</td><td><strong>Curtis</strong></td><td>Curtis</td></tr>
+            <tr><td>Status</td><td><strong>Live now</strong></td><td>Waitlist — text Curtis</td></tr>
+          </tbody>
+        </table>
+        <p>The right column costs a fortune for the same man. The middle is the only one that makes sense — and it's not close.</p>
+        <p>Over a year, the Unlimited member training 4× a week saves <strong>$4,800 to $12,000</strong> vs. paying for 2× personal training — and gets more than double the coached reps. The only person this math is bad for is my accountant.</p>
+
+        <p class="lede-kicker">Your first week free. No card. No catch.</p>
+        <p>Seven days. Real coaching at Acacia Park. If you're not hooked, walk away. All you lost is a few mornings you'd have spent not training anyway.</p>
+        <p style="text-align:center; margin:18px 0;">
+          <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a><br>
+          <span style="font-size:.9rem;">Or <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">use the form</a> — Curtis answers his own phone.</span>
+        </p>
+
+        <p class="lede-kicker">“Why is it so cheap? What's wrong with it?”</p>
+        <p>Fair question. Honest answer:</p>
+        <p>I can coach a small group in the same hour I used to coach one person. I pass that efficiency to you. The coaching is the same — the delivery is smarter.</p>
+        <p>You get a price that works. I get a business that works.</p>
+
+        <p class="lede-kicker">What $197 gets you that $1,200 doesn't</p>
+        <p><strong>15 coached sessions a week</strong> — 5:30 AM, 8:00 AM, 6:00 PM (Mon–Thu pattern), Friday mornings, Saturday 8:00 AM. Rain or shine.</p>
+        <p><strong>Every movement scaled to you</strong> — beginner to former athlete, same class.</p>
+        <p><strong>Your name, your goals, your plan</strong> — nobody hides here.</p>
+        <p><strong>Priority nutrition framework and check-ins</strong> — Unlimited tier.</p>
+        <p><strong>A group that notices when you're gone</strong> — the accountability people pay trainers for, built in.</p>
+        <p><strong>30-day Love It Or Leave It guarantee</strong></p>
+        <p><em>(Private onboarding assessment: not included — cut per lock.)</em></p>
+
+        <p class="lede-kicker">The guarantee</p>
+        <p>Train 30 days. Not stronger? Not looking forward to the next session? Just not your thing? Tell me. Full refund. No forms. No exit interview. No retention specialist.</p>
+
+        <p class="lede-kicker">The catch (there's one)</p>
+        <p>I cap new Unlimited members at <strong>12 per month</strong>. Small groups keep coaching tight. When spots are gone, the waitlist opens — and the 5:30 AM session always fills first.</p>
+
+        <p class="lede-kicker">Right now</p>
+        <p style="text-align:center; margin:18px 0;">
+          <strong><a class="btn btn-dawn" href="#membership">SUBSCRIBE — $197/MONTH UNLIMITED</a></strong></p>
+
+        <p>Or take the free week first and make me earn it. Either way, stop paying the math that's rigged against you.</p>
+        <p>See you at the park,<br><strong>Curtis Ludlow</strong><br>BootCampFX — Acacia Park, Fullerton<br>support@bootcampfx.com</p>
+
+        <p><strong>P.S.</strong> — $197 a month. Unlimited sessions. 30-day guarantee. Under $10 a session if you show up four times a week. The only fitness plan in Fullerton that costs more is the one you keep not showing up to.</p>
+        <p><strong>P.P.S.</strong> — Paying a trainer $600+ a month right now? Ask him one question: “What happens to my progress the weeks I can't make it?” Then read this letter again. Same coach. Same programming. Two price tags. One of them leaves thousands in your pocket every year.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ FREE WEEK · 9:00 PM ============ -->
   <section class="freeweek" id="freeweek" data-rail="freeweek">
@@ -2486,7 +1898,7 @@ to { transform:rotate(17deg); }
         <h2 class="display">Your first week is <em>free.</em></h2>
         <p>No credit card, no contract, no sales script — there's nothing to reverse because there's nothing to charge. Come train with us for a week: meet the crew, feel the coaching, see the park at sunrise. If it's not for you, you've lost nothing but a few early mornings. If it is, you'll wonder why you waited. <span class="hl-in">Same offer for 21 years, because the sessions do the selling.</span></p>
         <a class="btn btn-dawn" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Claim Your Free Week</a>
-
+        <p class="fw-fine">Prefer a form? <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">Use the free week form</a> · or text FREE WEEK to (657) 217-0820 — Curtis answers his own phone.</p>
       </div>
 
     <!-- Freeweek rabbit -->
@@ -2518,7 +1930,7 @@ to { transform:rotate(17deg); }
       <div class="sec-head reveal">
         <span class="clock">Membership · One offer</span>
         <h2 class="display k">One offer. <em>One honest comparison.</em></h2>
-        <p class="sec-lede"><strong>Free week first</strong> if you want proof before a pitch. Then <strong>$197 a month, unlimited</strong>, coached by me, outdoors at Acacia Park. Month to month. Cancel anytime. There has never been a contract and there never will be. The only comparison I still show you is what private training costs — so you can see the math with open eyes.</p>
+        <p class="sec-lede">Free week first if you want proof. Then <strong>$197 unlimited</strong> — coached by me, outdoors at Acacia Park. Month to month. Cancel anytime. The only comparison I still show you is what private training costs, so you see the math with open eyes.</p>
       </div>
       <div class="tier-grid">
         <div class="tier disabled reveal" data-decoy="pt" style="--rd:.2s">
@@ -2536,26 +1948,7 @@ to { transform:rotate(17deg); }
           <p class="decoy-reason">Waitlist only — text Curtis</p>
         </div>
 
-        <div class="tier featured reveal" id="tier-unlimited" style="--rd:.1s;">
-      <div class="owl owl-card" aria-hidden="true"><svg viewBox="0 0 64 84" fill="none">
-      <g class="owl-head">
-        <ellipse cx="32" cy="50" rx="18" ry="24" fill="#9FB0C4"/>
-        <circle cx="32" cy="26" r="17" fill="#9FB0C4"/>
-        <path d="M19 14 L14 0 L22 12 Z" fill="#9FB0C4"/>
-        <path d="M45 14 L50 0 L42 12 Z" fill="#9FB0C4"/>
-        <g class="owl-eyes">
-          <circle cx="25" cy="24" r="6" fill="#F3ECDC"/>
-          <circle cx="39" cy="24" r="6" fill="#F3ECDC"/>
-          <circle cx="25" cy="24" r="2.2" fill="#14100A"/>
-          <circle cx="39" cy="24" r="2.2" fill="#14100A"/>
-        </g>
-        <path d="M32 29 L28 36 L32 34 L36 36 Z" fill="var(--dawn)"/>
-        <path d="M16 36 C12 46 12 58 18 62 L18 40 Z" fill="#7A8A9A"/>
-        <path d="M48 36 C52 46 52 58 46 62 L46 40 Z" fill="#7A8A9A"/>
-        <path d="M24 70 L24 76 M22 70 L22 76 M26 70 L26 76" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M40 70 L40 76 M38 70 L38 76 M42 70 L42 76" stroke="var(--dawn)" stroke-width="2.2" stroke-linecap="round"/>
-      </g>
-    </svg></div>
+        <div class="tier featured reveal" id="tier-unlimited" style="--rd:.1s">
           <h3>Unlimited</h3>
           <p class="for">The frequency advantage</p>
           <div class="amt">$197<span>/mo</span></div>
@@ -2578,7 +1971,7 @@ to { transform:rotate(17deg); }
         </div>
 
       </div>
-            <p class="under reveal">Not sure yet? <a href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Take a free week</a> — proof before a pitch. Prefer a deadline and a measurement card? The <a href="/challenge/">6-Week Challenge</a> is $349, guaranteed in writing, and it credits back to your membership when you stay ($197 to month one + $152 toward month two).</p>
+      <p class="under reveal">Not sure yet? <a href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Your first week is free</a> — proof before a pitch (or <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgpBGX2zRrKjjnEgKHbOF-KaRD6mmCx71qQ0Y9Iag8tPYGLA/viewform" target="_blank" rel="noopener">use the form</a> if you'd rather not text). Prefer a six-week test run? Ask about the <a href="/challenge/">6-Week Challenge</a>.</p>
     </div>
   </section>
 
@@ -2630,14 +2023,12 @@ to { transform:rotate(17deg); }
   <section class="faq">
     <div class="narrow">
       <div class="reveal">
-        <button class="fq" aria-expanded="false">What does starting actually look like?</button>
-        <div class="fa"><p>Text Curtis. Show up. Train free for a week — no card, nothing to cancel. If you like it, you're $197 a month, month to month, starting whenever you say so. If you want a hard deadline and measured proof instead, ask about the 6-Week Challenge. That's the entire process. There is no consultation, no assessment fee, and no one will call you.</p></div>
         <button class="fq" aria-expanded="false">Am I fit enough to start?</button>
         <div class="fa"><p>If you can show up, you can start. Every exercise scales to your level — the same session serves first-timers, post-injury comebacks, and 74-year-old Elizabeth, who's trained here 18 years. Your only job is to show up; Curtis's job is everything else.</p></div>
         <button class="fq" aria-expanded="false">I've quit gyms before. Why is this different?</button>
         <div class="fa"><p>Because every other plan depended on your willpower, and this one depends on design. A coach expects you at 5:30. A crew notices when you're gone. Your progress is written on a card, so you can see it working. That's the accountability a keycard can't sell you — and it's why members stay 17, 18 years instead of two months.</p></div>
         <button class="fq" aria-expanded="false">Are there contracts?</button>
-        <div class="fa"><p>Never have been, never will be — not in 21 years. Every membership is month to month, cancel anytime. People stay because it works, not because paperwork traps them: 30+ five-star reviews say so.</p></div>
+        <div class="fa"><p>Never have been, never will be — not in 21 years. Every membership is month to month, cancel anytime. People stay because it works, not because paperwork traps them: 20+ five-star reviews say so.</p></div>
         <button class="fq" aria-expanded="false">Why is Unlimited only $197?</button>
         <div class="fa"><p>Because it isn't a gym keycard — it's coaching, delivered in a small outdoor group so the hour is efficient. Same coach who would charge $75–$200 for a private session. Unlimited is $197/mo so you can show up often enough for a body to change. Personal training at $600–$2,400/mo exists — most people are happier in Unlimited.</p></div>
 
@@ -2668,7 +2059,7 @@ to { transform:rotate(17deg); }
           <div><a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a></div>
           <div style="margin-top:4px;"><a href="tel:+16572170820">(657) 217-0820</a></div>
           <div style="margin-top:10px;"><a href="/challenge/">6-Week Challenge</a> · <a href="#membership">Membership</a> · <a href="#schedule">Schedule</a></div>
-          <div class="f-legal"><a href="contact.html">Contact</a> <a href="faq.html">FAQ</a> <a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a> <a href="waiver.html">Waiver</a> <a href="refund.html">Refunds</a> <a href="copyright.html">Copyright</a> <a href="basketball/">Basketball</a> <a href="chess/">Chess</a> <a href="go/">Go</a> <a href="mahjong/">Mahjong</a> <a href="runner/">Runner</a></div>
+          <div class="f-legal"><a href="contact.html">Contact</a> <a href="faq.html">FAQ</a> <a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a> <a href="waiver.html">Waiver</a> <a href="refund.html">Refunds</a> <a href="copyright.html">Copyright</a></div>
         </div>
         <div class="f-copy">© <span id="yr">2026</span> BOOT CAMP FX</div>
       </div>
@@ -2824,7 +2215,7 @@ to { transform:rotate(17deg); }
 
     // Live wildlife in scenes (rabbits + unique foreground trees)
     (function(){
-      const scenes = document.querySelectorAll('.outside, .coach, .members, .standard, .sched, .freeweek, .hero, .proof');
+      const scenes = document.querySelectorAll('.outside, .coach, .members, .sched, .freeweek, .hero');
       if (reduced){ scenes.forEach(s => s.classList.add('live')); return; }
       const sio = new IntersectionObserver(es => es.forEach(e => {
         if (e.isIntersecting){ e.target.classList.add('live'); sio.unobserve(e.target); }
@@ -2900,17 +2291,6 @@ to { transform:rotate(17deg); }
     })();
 
     document.getElementById('yr').textContent = new Date().getFullYear();
-  </script>
-  <script>
-    /* Rain in the 03 — CLIMATE card: set the drop travel distance to the card height once */
-    (function(){
-      var rl = document.querySelector('.why-rain .rain-layer');
-      if (!rl) return;
-      function setH(){ rl.style.setProperty('--card-h', rl.parentElement.offsetHeight + 'px'); }
-      setH();
-      if ('ResizeObserver' in window){ new ResizeObserver(setH).observe(rl.parentElement); }
-      else { window.addEventListener('resize', setH); }
-    })();
   </script>
 </body>
 </html>
