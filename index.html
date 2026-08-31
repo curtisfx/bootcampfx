@@ -558,11 +558,6 @@
       width:130px;
       animation:treeSwayA 7.5s ease-in-out infinite;
     }
-    .jackers .j-tree.t2 {
-      width:100px;
-      margin-left:4px;
-      animation:treeSwayB 6.2s ease-in-out 0.4s infinite;
-    }
     /* clear air between tree cluster and people / people and far trees */
     .jackers .j-tree.t1 { margin-right:6px; }
     .jackers .jacker.a { margin-left:28px; }
@@ -577,7 +572,7 @@
       overflow: visible;
       width: 313px;
       height: 150px;
-      margin-left: 28px;
+      margin-left: 0;
     }
     .j-bay .j-tent {
       position: absolute;
@@ -976,7 +971,6 @@
       .jacker .j-leg.l{ left:14px; } .jacker .j-leg.r{ right:14px; }
       .jackers{ min-height:340px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
-      .jackers .j-tree.t2{ width:78px; }
       .jackers .j-coyote{ width:56px; }
       .jackers .j-coyote .cy-travel{ width:128px; margin-left:-64px; bottom:-6px; --t-out:45px; }
       .jackers .jacker.a{ margin-left:14px; }
@@ -985,7 +979,7 @@
       .jacker .j-ground{ bottom:2px; }
     }
     @media (max-width:640px){
-      .j-bay { width:243px; height:118px; margin-left:14px; }
+      .j-bay { width:243px; height:118px; margin-left:0; }
       .j-bay .j-tent { width:243px; height:280px; bottom:-12px; }
       .j-bay .jacker.a { margin-left:auto; margin-right:auto; }
     }
@@ -2038,6 +2032,22 @@ to { transform:rotate(17deg); }
   <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
   <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
 </svg></div>
+<div class="j-bay">
+  <img class="j-tent" src="basketball/bootcamp-fx-tent.svg" alt="" aria-hidden="true">
+  <div class="jacker a">
+        <div class="j-ground"></div>
+        <div class="j-body">
+          <div class="j-hop">
+            <span class="j-head"></span>
+            <span class="j-torso"></span>
+            <span class="j-arm l"></span>
+            <span class="j-arm r"></span>
+            <span class="j-leg l"></span>
+            <span class="j-leg r"></span>
+          </div>
+        </div>
+      </div>
+</div>
 <div class="j-coyote" aria-hidden="true">
   <div class="cy-travel">
     <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -2067,49 +2077,6 @@ to { transform:rotate(17deg); }
       </g>
     </svg>
   </div>
-</div>
-      <div class="j-tree t2" aria-hidden="true"><svg viewBox="0 0 96 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g fill="var(--pine)">
-    <!-- top tight, slight right bias -->
-    <ellipse cx="46" cy="16" rx="11" ry="13" opacity=".95"/>
-    <ellipse cx="38" cy="30" rx="12" ry="12"/>
-    <ellipse cx="56" cy="28" rx="13" ry="12" opacity=".92"/>
-    <!-- upper -->
-    <ellipse cx="48" cy="46" rx="18" ry="15" opacity=".9"/>
-    <ellipse cx="34" cy="60" rx="14" ry="13" opacity=".93"/>
-    <ellipse cx="62" cy="58" rx="16" ry="14" opacity=".88"/>
-    <ellipse cx="50" cy="76" rx="24" ry="16"/>
-    <!-- mid fuller, leeward heavy -->
-    <ellipse cx="30" cy="94" rx="16" ry="15" opacity=".9"/>
-    <ellipse cx="68" cy="92" rx="18" ry="15" opacity=".87"/>
-    <ellipse cx="52" cy="110" rx="28" ry="16" opacity=".92"/>
-    <ellipse cx="34" cy="128" rx="18" ry="12" opacity=".88"/>
-    <ellipse cx="66" cy="126" rx="20" ry="13" opacity=".86"/>
-    <ellipse cx="50" cy="138" rx="26" ry="11" opacity=".84"/>
-    <!-- NEW bottom foliage — wide, wind-swept right -->
-    <ellipse cx="42" cy="152" rx="24" ry="12" opacity=".82"/>
-    <ellipse cx="70" cy="150" rx="22" ry="13" opacity=".8"/>
-    <ellipse cx="56" cy="162" rx="32" ry="12" opacity=".78"/>
-    <ellipse cx="72" cy="168" rx="18" ry="10" opacity=".75"/>
-  </g>
-  <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
-  <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
-</svg></div>
-<div class="j-bay">
-  <img class="j-tent" src="basketball/bootcamp-fx-tent.svg" alt="" aria-hidden="true">
-  <div class="jacker a">
-        <div class="j-ground"></div>
-        <div class="j-body">
-          <div class="j-hop">
-            <span class="j-head"></span>
-            <span class="j-torso"></span>
-            <span class="j-arm l"></span>
-            <span class="j-arm r"></span>
-            <span class="j-leg l"></span>
-            <span class="j-leg r"></span>
-          </div>
-        </div>
-      </div>
 </div>
       </div>
       <div class="std-grid">
