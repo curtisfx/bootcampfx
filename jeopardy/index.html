@@ -246,7 +246,7 @@
 (function(){
 "use strict";
 /* ================= CATEGORY POOL =================
-   106 categories x 5 clues. Format per clue:
+   125 categories x 5 clues. Format per clue:
    [clue text, correct answer, distractor, distractor]
    Seasonal/new boards: swap this block only — core code never changes. */
 var CATS = [];
@@ -887,6 +887,120 @@ CATS.push({c:"Landmarks",e:"🗽",q:[
 ["This ancient circle of stones stands in England.","Stonehenge","Avebury","Newgrange"],
 ["This Sydney landmark resembles sails.","The Opera House","The Harbour Bridge","The Tower Eye"]]});
 
+CATS.push({c:"From Olive Wreaths to Gold Medals",e:"🏅",q:[
+["Victors at the ancient Games in Olympia were crowned with a wreath of leaves from this tree, sacred to Zeus — no medals back then.","The olive tree","The fig tree","The laurel tree"],
+["This French baron revived the ancient Games in 1896 and personally designed the five-ring symbol in 1913.","Pierre de Coubertin","Baron Haussmann","Louis Pasteur"],
+["The 1900 Paris Games quietly made history when women competed for the first time — Charlotte Cooper of Great Britain became the first female champion in this racket sport.","Tennis","Badminton","Croquet"],
+["The Olympic motto 'Citius, Altius, Fortius' — coined by a Dominican priest friend of de Coubertin — translates to this three-word English phrase.","Faster, Higher, Stronger","Higher, Faster, Further","Stronger, Braver, Swifter"],
+["This American swimmer won gold in the 200-meter individual medley at four consecutive Games, 2004 through 2016.","Michael Phelps","Ryan Lochte","Mark Spitz"]]});
+CATS.push({c:"Ancient Healing Arts",e:"🧘",q:[
+["This ancient Indian mind-body practice of postures, breath, and meditation — its name means 'union' in Sanskrit — is now practiced by more than 300 million people worldwide.","Yoga","Pilates","Tai chi"],
+["In this traditional Chinese therapy, heated cups are placed on the skin to create suction — it left those round bruises all over Michael Phelps at the 2016 Rio Games.","Cupping","Acupuncture","Moxibustion"],
+["This 18th-century German system of medicine treats 'like with like,' using remedies so heavily diluted that often no molecules of the original substance remain.","Homeopathy","Naturopathy","Chiropractic"],
+["Written as a dialogue between the Yellow Emperor and his physician Qi Bo, this text is the most important ancient work in Chinese medicine — the foundation of acupuncture and herbal theory.","The Huangdi Neijing (Yellow Emperor's Classic)","The I Ching (Book of Changes)","The Tao Te Ching"],
+["This 12th-century German Benedictine abbess wrote 'Physica,' an encyclopedia of herbal healing that made her the patron saint of naturalists — and she also composed hauntingly beautiful chants.","Hildegard of Bingen","Catherine of Siena","Teresa of Ávila"]]});
+CATS.push({c:"Star Anise & the Spice Rack",e:"🌟",q:[
+["This star-shaped spice from an evergreen tree in the magnolia family is the signature flavor of pho broth and a key member of Chinese five-spice.","Star anise","Fennel seeds","Allspice"],
+["This spice is the dried inner bark of a tree, sold as quills — the two main types are Ceylon and the cheaper, stronger cassia.","Cinnamon","Nutmeg","Turmeric"],
+["These dried flower buds from Indonesia's Moluccas were so valuable that the Dutch fought wars to control the 'Spice Islands' — they stud the holiday ham and mulled cider.","Cloves","Allspice","Caraway"],
+["Called the 'Queen of Spices,' this green pod from the ginger family is the world's third most expensive spice by weight — behind only saffron and vanilla.","Cardamom","Fennel seeds","Coriander seeds"],
+["This seed and its lacy red covering, mace, come from the same Indonesian tree — in large doses, the seed is a hallucinogen that has sent sailors on nightmarish 'trips.'","Nutmeg","Turmeric","Cinnamon"]]});
+CATS.push({c:"Bodyweight Basics — No Gym Required",e:"💪",q:[
+["This classic exercise — chest to the floor, press back up — is the bodyweight benchmark the U.S. military uses to test recruits.","The push-up","The pull-up","The dip"],
+["This isometric hold, body in a straight line on forearms and toes, is named for a flat wooden board and is the gold standard of core tests.","The plank","The dead bug","The hollow hold"],
+["In this advanced squat, you balance on one leg with the other extended straight in front — it's named after a type of firearm.","The pistol squat","The lunge","The sissy squat"],
+["This street-workout party trick combines a pull-up with a dip, pulling your chest over the bar and pressing up — a staple of calisthenics parks worldwide.","The muscle-up","The pull-over","The skin-the-cat"],
+["In this hardest of calisthenics holds, the body stays parallel to the floor, supported only by straight arms — a move from gymnastics rings named after the French word for 'plank.'","The planche","The front lever","The back lever"]]});
+CATS.push({c:"Blue Zones & Longevity Secrets",e:"🏝️",q:[
+["Okinawa, Sardinia, Ikaria, Nicoya, and Loma Linda — the five regions where people live measurably longest — got this color-coded nickname from explorer Dan Buettner's National Geographic map.","The Blue Zones","The Green Zones","The Red Zones"],
+["On this Japanese island, the first Blue Zone identified, elders live by 'ikigai' — a reason for waking up in the morning — and eat purple sweet potatoes daily.","Okinawa","Hokkaido","Kyushu"],
+["On this Greek island, roughly one in three residents lives past 90 — the secrets include afternoon naps, goat's milk, and strong coffee brewed with mountain herbs.","Ikaria","Crete","Santorini"],
+["This California city is the only U.S. Blue Zone — its Seventh-day Adventist community follows a plant-based diet and rests on the Sabbath.","Loma Linda","Santa Barbara","Fresno"],
+["In 1965, this Japanese company launched the 'manpo-kei,' the world's first consumer pedometer — its name means '10,000-step meter,' birthing the daily step goal that became a global health rule.","Yamasa","Sony","Casio"]]});
+CATS.push({c:"Busted! Nutrition Myths",e:"🥗",q:[
+["Decades of studies show this sweetener doesn't actually make kids hyperactive — parents just expect it to, so they see it.","Sugar","Caffeine","Artificial food dyes"],
+["Long blamed for 'Chinese restaurant syndrome,' this flavor enhancer occurs naturally in tomatoes, Parmesan, and mushrooms — the FDA classifies it as safe.","MSG (monosodium glutamate)","Yeast extract","Sea salt"],
+["Once the villain of breakfast, this dietary substance was finally cleared by the 2015 U.S. Dietary Guidelines, which dropped all limits on it for healthy people.","Cholesterol","Saturated fat","Trans fat"],
+["The '8 glasses a day' water rule traces to a 1945 recommendation by this federal nutrition board — which noted that most of the water comes from food.","The Food and Nutrition Board","The FDA","The USDA"],
+["Juice fasts, colonics, and 'cleansing' teas claim to flush these out of your body — but no scientific evidence exists, because your liver and kidneys already do the job for free.","Toxins","Parasites","Free radicals"]]});
+CATS.push({c:"Dance Legends — Moves That Made History",e:"💃",q:[
+["This song-and-dance man splashed through puddles in 'Singin' in the Rain' and headlined MGM musicals in the 1940s and '50s.","Gene Kelly","Fred Astaire","Sammy Davis Jr."],
+["Fred Astaire's most famous screen partner, famously described as doing everything he did 'backwards and in high heels.'","Ginger Rogers","Judy Garland","Doris Day"],
+["This pop superstar debuted the moonwalk on a 1983 TV special, turning it into the most imitated dance move on Earth.","Michael Jackson","Prince","Usher"],
+["This Russian-born ballet star defected from the Bolshoi in Toronto in 1974 and became the era's most famous male dancer with American Ballet Theatre.","Mikhail Baryshnikov","Rudolf Nureyev","Vaslav Nijinsky"],
+["In 2015 she became the first Black woman named a principal dancer at American Ballet Theatre.","Misty Copeland","Judith Jamison","Carmen de Lavallade"]]});
+CATS.push({c:"Taboos — Don't Cross the Line",e:"🚫",q:[
+["In Japan, standing these eating tools upright in a bowl of rice mimics a funeral ritual and is a serious breach of table manners.","Chopsticks","Spoons","Forks"],
+["The English word 'taboo' comes from 'tabu,' meaning forbidden, recorded by Captain Cook in this Polynesian language.","Tongan","Hawaiian","Maori"],
+["In ancient Egypt, killing one of these sacred animals — even by accident — could carry the death penalty.","A cat","A crocodile","A scarab beetle"],
+["The Hebrew Bible's rule against boiling a young goat in its mother's milk is why kosher kitchens keep these two food groups completely separate.","Meat and dairy","Fish and meat","Grains and legumes"],
+["In traditional Polynesian tapu, a commoner who touched a chief or stepped on his shadow could face this punishment.","Death","A heavy fine","Banishment"]]});
+CATS.push({c:"Sports Superstitions — Rally Caps & Rituals",e:"🍀",q:[
+["Desperate baseball fans turn these hats inside-out or backwards to rally their team in the late innings.","A rally cap","A batting helmet","A lucky glove"],
+["NHL players refuse to touch this trophy before winning it — a superstition that a single touch jinxes the whole run.","The Stanley Cup","The Lombardi Trophy","The Commissioner's Trophy"],
+["This basketball legend wore his old college shorts under his pro uniform for his entire NBA career.","Michael Jordan","Magic Johnson","Kobe Bryant"],
+["Rafael Nadal famously lines up these two items — labels facing the court — at the same spot on every changeover.","Water bottles","His wristbands","His towel"],
+["This Hall of Fame third baseman ate fried chicken before nearly every game of his career, a ritual he credited for his consistency.","Wade Boggs","Cal Ripken Jr.","Tony Gwynn"]]});
+CATS.push({c:"Memory Challenge — Remember This",e:"🧠",q:[
+["This type of memory holds about seven items for just a few seconds — like repeating a phone number until you dial it.","Short-term memory","Long-term memory","Muscle memory"],
+["Ancient orators memorized speeches by mentally placing key points along a familiar route — a technique still known by this name.","The method of loci","The peg system","The Feynman technique"],
+["This German psychologist mapped the 'forgetting curve' in the 1880s, showing how quickly we lose newly learned information.","Hermann Ebbinghaus","Ivan Pavlov","B.F. Skinner"],
+["This Soviet journalist, studied by psychologist Alexander Luria, could recall vast lists of numbers years later — the ultimate 'mnemonist.'","Solomon Shereshevsky","Carl Jung","Jean Piaget"],
+["After surgery, the famous patient HM could remember his childhood but not what he ate for lunch — a condition known by this name.","Anterograde amnesia","Retrograde amnesia","Dissociative fugue"]]});
+CATS.push({c:"Brain Teasers — Think Fast",e:"🤔",q:[
+["What has a bottom at the top?","A leg","A chair","A shoe"],
+["What runs all around a yard but never moves?","A fence","A dog","A lawnmower"],
+["What has a thumb and four fingers but is not alive?","A glove","A hand puppet","A baseball mitt"],
+["What begins with T, ends with T, and has T in it?","A teapot","A taxi","A tomato"],
+["Three doctors said Robert was their brother, but Robert said he had no brothers. Who is lying?","No one — the doctors are his sisters","Robert — he forgot his brothers","The doctors — they are not related"]]});
+CATS.push({c:"Dad Jokes — The Groan Zone",e:"😂",q:[
+["Why can't you trust stairs?","Because they're always up to something","Because they creak when you step on them","Because they're always down to something"],
+["What do you call a fake stone in Ireland?","A sham rock","A leprechaun marble","A lucky pebble"],
+["Why do ducks have feathers?","To cover their butt quacks","To keep their bread warm","To win the quack parade"],
+["Why did the picture go to jail?","Because it was framed","Because it was hung too high","Because it stole the spotlight"],
+["What do you call a Frenchman wearing sandals?","Philippe Philoppe","Jacques Flip-Flop","Pierre Flop"]]});
+CATS.push({c:"Box Office Gold",e:"🎟️",q:[
+["This 1997 blockbuster was the first film ever to gross $1 billion worldwide.","Titanic","Jurassic Park","Star Wars"],
+["James Cameron's 2009 sci-fi epic held the all-time box office record until a Marvel film took the crown a decade later.","Avatar","Titanic","Jurassic World"],
+["'Avengers: Endgame' (2019) briefly became the highest-grossing film ever, ending its run at roughly this many billions of dollars.","$2.8 billion","$2.1 billion","$3.6 billion"],
+["This 2019 Disney sequel — featuring the song 'Into the Unknown' — grossed more than $1.4 billion worldwide.","Frozen II","Moana","Encanto"],
+["George Miller said pre-release projections had this 2015 action film losing $70 million; it went on to gross $380 million and win six Oscars.","Mad Max: Fury Road","Furious 7","John Wick: Chapter 4"]]});
+CATS.push({c:"Elementary Physics — Force & Motion",e:"⚡",q:[
+["This invisible force pulls everything toward the center of the Earth.","Gravity","Friction","Magnetism"],
+["Newton's first law — an object at rest stays at rest — is also called this.","The law of inertia","The law of action-reaction","The law of universal gravitation"],
+["The energy of motion, like a bowling ball rolling down the lane, is known as this.","Kinetic energy","Potential energy","Thermal energy"],
+["A doorknob and a screwdriver are examples of this simple machine — a wheel attached to a rod.","A wheel and axle","A lever","A pulley"],
+["Sound travels fastest through this state of matter: solid, liquid, or gas.","A solid","A liquid","A gas"]]});
+CATS.push({c:"Roadside Attractions — America the Quirky",e:"🗿",q:[
+["This South Dakota city is home to the Corn Palace, a building decorated each year with murals made of corn.","Mitchell","Sioux Falls","Rapid City"],
+["This Texas landmark features ten Cadillacs buried nose-first in a field along the old Route 66.","Cadillac Ranch","Carhenge","The Big Texan Steak Ranch"],
+["The Guinness-recognized world's largest ball of twine, rolled by one man over decades, sits in this state.","Kansas","Nebraska","Iowa"],
+["Wall Drug, famous for free ice water and giant dinosaur statues, has lured travelers for a century in this state.","South Dakota","Montana","Wyoming"],
+["At this California attraction near Santa Cruz, balls roll uphill and visitors appear to lean at impossible angles.","The Mystery Spot","The Winchester Mystery House","The Enchanted Forest"]]});
+CATS.push({c:"Record Labels — Moguls & Imprints",e:"🎙️",q:[
+["Founded by Berry Gordy in Detroit, this label launched The Supremes, The Temptations, and Stevie Wonder.","Motown","Atlantic","Chess"],
+["Sam Phillips ran this Memphis label, where Elvis Presley cut his first records.","Sun Records","Capitol Records","Columbia Records"],
+["Founded by Rick Rubin and Russell Simmons, this New York label broke Run-D.M.C. and the Beastie Boys.","Def Jam","Death Row","Bad Boy"],
+["This Memphis soul label, founded in 1959, was home to Otis Redding and Booker T. & the M.G.'s.","Stax","Motown","Philadelphia International"],
+["Founded in 1939 by Alfred Lion, this jazz label's blue-and-white cover art graced classic recordings by Thelonious Monk.","Blue Note","Verve","Columbia"]]});
+CATS.push({c:"The Animal Kingdom — Class Acts",e:"🐾",q:[
+["Humans, dogs, and whales all belong to this class of vertebrates, named for their milk-producing glands.","Mammalia (mammals)","Aves (birds)","Reptilia (reptiles)"],
+["This is the only mammal capable of true, sustained flight.","A bat","A flying squirrel","A sugar glider"],
+["Frog and salamander babies hatch with these feathery breathing organs, which they lose as adults.","Gills","Lungs","Spiracles"],
+["This order of mammals — grasping hands, forward-facing eyes — includes humans, apes, and monkeys.","Primates","Rodents","Carnivora"],
+["Birds are considered the living descendants of this group of mostly meat-eating dinosaurs, which included T. rex.","Theropods","Sauropods","Ornithischians"]]});
+CATS.push({c:"Seasons — The Wheel of the Year",e:"🌦️",q:[
+["The two days each year when day and night are nearly equal everywhere on Earth are called these.","Equinoxes","Solstices","Eclipses"],
+["The longest day of the year in the Northern Hemisphere — the summer solstice — falls in this month.","June","March","September"],
+["Earth's seasons are caused mainly by this 23.5-degree feature of our planet.","Axial tilt","Distance from the Sun","The Moon's gravity"],
+["Groundhog Day, when a furry forecaster predicts six more weeks of winter, falls on this date.","February 2","March 21","January 15"],
+["This country's traditional calendar divides the year into 24 'solar terms,' including 'Grain Rain' and 'White Dew.'","China","Japan","India"]]});
+CATS.push({c:"Diners — Chrome & Coffee",e:"🍳",q:[
+["Order a BLT at any diner and you'll get bacon, lettuce, and this.","Tomato","Cheese","Avocado"],
+["This Jersey-born diner favorite piles french fries with brown gravy and melted mozzarella.","Disco fries","Poutine","Tater tots"],
+["Despite its name, this diner dessert — layered sponge cake, custard, and chocolate glaze — was created at a Boston hotel, not baked as a pie.","Boston cream pie","Banana cream pie","Key lime pie"],
+["The word 'diner' comes from these — the railcars whose dining service inspired America's first lunch wagons.","Railroad dining cars","Steamship galleys","Trolley kitchens"],
+["In 1872, Walter Scott began selling sandwiches and coffee from a horse-drawn lunch wagon in this city — America's first 'diner' predecessor.","Providence, Rhode Island","Boston, Massachusetts","Hartford, Connecticut"]]});
 /* ================= FOLLOW-UP FACTS =================
    One "you'll want to know this" fact per clue, same order as CATS. */
 var FACTS = [];
@@ -1535,6 +1649,120 @@ var FINAL = {
 var CLUE_TIME = 15;
 
 /* ---------- host dialogue ---------- */
+FACTS.push([ /* From Olive Wreaths to Gold Medals */
+"The olive wreath was cut from a sacred tree at Olympia with a golden sickle.",
+"The five rings represent the five inhabited continents — every national flag has at least one of their colors.",
+"In 1900, the Games were a sideshow of the Paris World's Fair — some winners never knew they'd been Olympians.",
+"The motto's three Latin words were joined by 'Communiter' (together) in 2021.",
+"Phelps's 23 golds make him the most decorated Olympian of all time — 28 medals total."]);
+FACTS.push([ /* Ancient Healing Arts */
+"Yoga's 300 million practitioners make it one of the most exported Indian cultural products ever.",
+"Cupping was used by ancient Egyptians, Greeks, and Chinese — the marks are broken capillaries, not toxins.",
+"Homeopathic remedies are often diluted past the point where a single molecule of the original remains.",
+"The Huangdi Neijing is roughly 2,200 years old and still studied in TCM schools today.",
+"Hildegard wrote 'Ordo Virtutum,' the earliest surviving morality play with music."]);
+FACTS.push([ /* Star Anise & the Spice Rack */
+"Star anise is a key source of shikimic acid, the starting material for the flu drug Tamiflu.",
+"Ceylon cinnamon is soft enough to crumble; cassia is the hard, cheap stuff in most grocery jars.",
+"In the 1600s the Dutch traded their claim to Manhattan for the nutmeg island of Run.",
+"Cardamom's 'Queen of Spices' nickname reflects its price: only saffron and vanilla cost more per pound.",
+"A few whole nutmegs can cause 'nutmeg psychosis' — the sailors' trips were very real."]);
+FACTS.push([ /* Bodyweight Basics */
+"The Army's two-minute push-up record sits above 100 — most recruits pass with a fraction of that.",
+"A 30-second plank burns almost nothing — its value is strength and stability, not cardio.",
+"The pistol squat is usually the first single-leg move gymnasts learn on the road to ring work.",
+"The muscle-up was the signature move of 19th-century strongmen and early circus athletes.",
+"The planche is so hard that most calisthenics athletes spend years just building the wrist strength."]);
+FACTS.push([ /* Blue Zones & Longevity Secrets */
+"Dan Buettner's team circled the regions in blue marker on a map — hence the name.",
+"Okinawans traditionally stop eating at 80% full, a practice called 'hara hachi bu.'",
+"Ikaria has almost no dementia and one of the lowest rates of heart disease on Earth.",
+"Loma Linda's Adventist community has been plant-based and Sabbath-keeping for over a century.",
+"The 10,000-step goal was a marketing number — the health sweet spot is closer to 7,000."]);
+FACTS.push([ /* Busted! Nutrition Myths */
+"Double-blind trials show sugar doesn't spike kids' behavior — the 'sugar rush' is a placebo effect.",
+"MSG is the sodium salt of glutamate — the same compound that makes Parmesan taste savory.",
+"Cholesterol in food barely moves blood cholesterol for most people; the body makes its own.",
+"That 1945 board note literally said 'most of this quantity is contained in prepared foods.'",
+"Your kidneys filter about 50 gallons of blood a day — no cleanse tea needed."]);
+FACTS.push([ /* Dance Legends */
+"Gene Kelly choreographed his own rain dance — the downpour was water mixed with milk so it would show on film.",
+"Ginger Rogers won an Oscar for 'Kitty Foyle' in 1940 — the only one of her 73 films with no dancing.",
+"The moonwalk was originally called the backslide; Jackson added the toe-heel glide that made it magic.",
+"Baryshnikov danced with ABT for 11 years before becoming its artistic director.",
+"Copeland debuted on Broadway at 13 and joined ABT's corps at 17 — late by ballet standards."]);
+FACTS.push([ /* Taboos */
+"Diodorus wrote that accidental cat-killers in Egypt were put to death by mobs — no trial needed.",
+"Captain Cook's crew brought 'taboo' to Europe after their 1777 visit to Tonga.",
+"The Egyptian cat goddess Bastet had her own city, Bubastis, with a vast cat cemetery.",
+"Kosher law infers the milk-and-meat ban from that single verse, repeated three times in the Torah.",
+"Polynesian chiefs were so sacred that even their names were sometimes taboo to speak aloud."]);
+FACTS.push([ /* Sports Superstitions */
+"The rally cap tradition is often traced to the 1986 Mets, who wore caps inside-out during their epic comeback.",
+"The only hands allowed on the Cup before a win are the league's — even engravers wait.",
+"Jordan's lucky shorts were UNC practice shorts, worn under every Bulls and Wizards uniform.",
+"Nadal's bottles must sit in a precise diagonal — he has adjusted them mid-match for years.",
+"Boggs's pre-game chicken was often KFC, eaten in the clubhouse every single day."]);
+FACTS.push([ /* Memory Challenge */
+"George Miller's 'magical number seven' paper is one of the most cited in psychology.",
+"The method of loci is why ancient orators could deliver hour-long speeches with no notes.",
+"Ebbinghaus tested himself on nonsense syllables daily and graphed his own forgetting.",
+"Shereshevsky's memory was so strong it was a burden — he struggled to forget anything.",
+"Patient HM's case proved the hippocampus is where new memories are formed — he was studied for 50 years."]);
+FACTS.push([ /* Brain Teasers */
+"The leg riddle is a classic 'think about the words, not the body' trap.",
+"The fence riddle dates back to Victorian parlor-game books.",
+"The glove riddle works because mitts have no fingers — the clue is doing double duty.",
+"The teapot riddle puns on the letter T and the drink 'tea' inside it.",
+"The doctors riddle is a gender-bias test — most people assume doctors are men."]);
+FACTS.push([ /* Dad Jokes */
+"The stairs joke puns on 'up to something' — mischief and elevation at once.",
+"The sham rock pun fuses Ireland's shamrock with a fake stone.",
+"The duck joke is a 'butt quacks' sound pun — it works best read aloud.",
+"The picture joke plays on 'framed' — both a picture frame and a frame-up.",
+"Philippe Philoppe is a punchline that only works when you say it out loud."]);
+FACTS.push([ /* Box Office Gold */
+"Titanic held the all-time record for 12 years — until its own director broke it with Avatar.",
+"Avatar's 2009 run was the first film ever to cross $2 billion.",
+"Endgame's $2.8 billion haul briefly topped Avatar — then Avatar's 2021 re-release took the crown back.",
+"Frozen II's 'Into the Unknown' became a global hit in 40 languages.",
+"Fury Road won six Oscars — including Best Editing — from a film that nearly didn't get made."]);
+FACTS.push([ /* Elementary Physics */
+"Gravity is the weakest of the four fundamental forces — yet it rules the cosmos.",
+"Inertia is why you lurch forward when a car stops suddenly — your body wants to keep moving.",
+"A bowling ball's kinetic energy is mass times velocity squared — that's why the pins explode.",
+"A doorknob is a wheel-and-axle that multiplies your twisting force by the knob's radius.",
+"Sound needs a medium — in a vacuum no one hears you scream, and in steel it races at about 5,000 m/s."]);
+FACTS.push([ /* Roadside Attractions */
+"The Corn Palace is re-skinned with new corn murals every single year.",
+"Cadillac Ranch was a 1974 art prank — the cars are buried nose-down at 51 degrees.",
+"Cawker City's twine ball weighs over 20,000 pounds and is still growing.",
+"Wall Drug gives away free ice water — and now sells over a million donuts a year too.",
+"The Mystery Spot's 'uphill' effect is a tilted cabin that tricks your inner ear."]);
+FACTS.push([ /* Record Labels */
+"Motown's house band, the Funk Brothers, played on more #1 hits than the Beatles, Elvis, and the Stones combined.",
+"Elvis recorded 'That's All Right' at Sun in 1954 — Phillips sold his contract to RCA for $35,000.",
+"Def Jam started in Rick Rubin's NYU dorm room with a $5,000 loan.",
+"Stax was built in an old movie theater — and its integrated house band defied segregation.",
+"Blue Note's Reid Miles designed over 500 album covers, mostly for $50 a pop."]);
+FACTS.push([ /* The Animal Kingdom */
+"There are about 6,500 mammal species — a tiny sliver of the 1.5 million known animals.",
+"A bat's wing is a modified hand — its fingers are the wing struts.",
+"Tadpoles absorb their own tails as fuel while their gills close over.",
+"Primates' grasping hands and big brains evolved together in the trees.",
+"Chickens are the closest living bird to T. rex — both are theropods."]);
+FACTS.push([ /* Seasons */
+"Equinox comes from Latin for 'equal night' — the Sun sits directly over the equator.",
+"The June solstice is the same day the Southern Hemisphere has its shortest day.",
+"Earth is actually closest to the Sun in January — distance isn't what makes summer.",
+"Punxsutawney Phil's accuracy is around 40% — worse than a coin flip, but he keeps the gig.",
+"China's 24 solar terms were so precise that farmers used them to time planting for 2,000 years."]);
+FACTS.push([ /* Diners */
+"The BLT's tomato must be ripe — a green tomato is a war crime in diner law.",
+"Disco fries got their name from late-night Jersey diners after the clubs let out.",
+"Boston cream pie was created in 1856 at the Parker House — and it's legally a cake.",
+"The first 'diner cars' were literally converted railroad dining cars parked as restaurants.",
+"Walter Scott's wagon served night-shift workers — America's first 24-hour food service."]);
 var LINES = {
   welcome: [ 'Hoo-hoo! Welcome to Dawn Jeopardy.', 'Pick a clue, friend. The sun is climbing.' ],
   pick:    [ 'Ooh, a fine choice.', 'Let\'s see… this one.', 'Ah yes, a favorite of mine.' ],
