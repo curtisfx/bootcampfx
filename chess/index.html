@@ -540,6 +540,84 @@ function drawTurtleShelled(t, side){
   ctx.restore();
 }
 
+/* ---------- Egyptian goose (the Acacia Park pair). Canvas-drawn like every other
+   animal — strokes only, no background, so it sits on any sky. ---------- */
+function drawGoose(t, side, flying){
+  var bodyC = tint('#EDE4D0', side);
+  var wingC = tint('#7A5C42', side);
+  var darkC = tint('#2A241C', side);
+  var pinkC = tint('#D89B9B', side);
+  var bob = RM ? 0 : Math.sin(t * 2) * 1;
+  ctx.save();
+  if (flying){
+    /* far wing */
+    ctx.save();
+    ctx.translate(3, -30); ctx.rotate((-30 - (RM ? 0 : Math.sin(t * 7) * 25)) * Math.PI / 180);
+    ctx.fillStyle = tint('#6B4F38', side);
+    ctx.beginPath(); ctx.ellipse(0, -9, 6, 13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    /* body */
+    ctx.fillStyle = bodyC;
+    ctx.beginPath(); ctx.ellipse(0, -22, 20, 12.5, 0, 0, Math.PI * 2); ctx.fill();
+    /* tail */
+    ctx.fillStyle = darkC;
+    poly([[17,-26],[27,-23],[18,-17]]);
+    /* near wing */
+    ctx.save();
+    ctx.translate(0, -28); ctx.rotate((-12 + (RM ? 0 : Math.sin(t * 7) * 30)) * Math.PI / 180);
+    ctx.fillStyle = wingC;
+    ctx.beginPath(); ctx.ellipse(0, -10, 7, 15, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    /* neck + head, stretched forward */
+    ctx.strokeStyle = bodyC; ctx.lineWidth = 8; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-14, -26); ctx.lineTo(-24, -37); ctx.stroke();
+    ctx.fillStyle = bodyC;
+    ctx.beginPath(); ctx.arc(-25, -39, 7.5, 0, Math.PI * 2); ctx.fill();
+    /* eye mask */
+    ctx.fillStyle = tint('#5C3A28', side);
+    ctx.beginPath(); ctx.arc(-27.8, -40.8, 3.2, 0, Math.PI * 2); ctx.fill();
+    face(-28.1, -41.1, 2.4);
+    /* bill */
+    ctx.fillStyle = pinkC;
+    poly([(-31,-42),(-39.5,-39),(-31,-36)]);
+    ctx.fillStyle = darkC;
+    poly([(-36.5,-40.6),(-39.5,-39),(-36.5,-37.8)]);
+    /* tucked feet */
+    ctx.fillStyle = pinkC;
+    poly([[8,-12],[14,-9],[9,-9]]);
+  } else {
+    /* standing pose, feet at y=0 */
+    ctx.translate(0, bob);
+    ctx.strokeStyle = pinkC; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-6, -10); ctx.lineTo(-7, 0);
+    ctx.moveTo(5, -10); ctx.lineTo(6, 0);
+    ctx.stroke();
+    ctx.fillStyle = pinkC;
+    poly([[-11,0],[-3,0],[-7,-3]]);
+    poly([[2,0],[10,0],[6,-3]]);
+    ctx.fillStyle = bodyC;
+    ctx.beginPath(); ctx.ellipse(0, -22, 19, 13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = wingC;
+    ctx.beginPath(); ctx.ellipse(5, -25, 11, 6.5, -0.15, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = darkC;
+    poly([[16,-28],[25,-24],[16,-19]]);
+    var dip = RM ? 0 : anim(t, 6.5, [[0,0],[0.8,0],[0.86,9],[0.94,9],[1,0]]);
+    ctx.strokeStyle = bodyC; ctx.lineWidth = 7; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-12, -28); ctx.lineTo(-17, -42 + dip); ctx.stroke();
+    ctx.fillStyle = bodyC;
+    ctx.beginPath(); ctx.arc(-18, -44 + dip, 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = tint('#5C3A28', side);
+    ctx.beginPath(); ctx.arc(-20.5, -45.5 + dip, 2.8, 0, Math.PI * 2); ctx.fill();
+    face(-20.8, -45.8 + dip, 2.1);
+    ctx.fillStyle = pinkC;
+    poly([(-23,-46+dip),(-31,-43.5+dip),(-23,-41+dip)]);
+    ctx.fillStyle = darkC;
+    poly([(-28.5,-45+dip),(-31,-43.5+dip),(-28.5,-42.6+dip)]);
+  }
+  ctx.restore();
+}
+
 var DRAW = {
   king: drawOwl, queen: drawSquirrel, rook: drawRabbit,
   knight: drawCoyote, bishop: drawBee, pawn: drawTurtle
@@ -1377,6 +1455,7 @@ cv.addEventListener('pointerdown', onPointer);
 
 /* ---------- scenery ---------- */
 var clouds = [], stars = [];
+var geese = null, geeseTimer = 9;
 function initScene(){
   clouds = []; stars = [];
   for (var i = 0; i < 5; i++) clouds.push({ x: rnd(0, W), y: rnd(H*0.05, H*0.28), s: rnd(0.5, 1.1), a: rnd(0.12, 0.28), v: rnd(4, 12) });
@@ -1416,6 +1495,15 @@ function update(dt){
     if (skyFrac() > 0.55 && now > nextChirp){
       chirp();
       nextChirp = now + rnd(5, 13);
+    }
+    /* the Acacia Park pair drops by now and then */
+    if (!geese){
+      geeseTimer -= dt;
+      if (geeseTimer <= 0) geese = { x: W + 140, y: rnd(H * 0.09, H * 0.26), t: 0 };
+    } else {
+      geese.x -= 52 * dt;
+      geese.t += dt;
+      if (geese.x < -220){ geese = null; geeseTimer = rnd(22, 40); }
     }
   }
   if (hop){
@@ -1640,12 +1728,28 @@ function drawPieces(){
   }
 }
 
+function drawGeese(){
+  if (!geese || RM) return;
+  var bobY = Math.sin(geese.t * 2.2) * 4;
+  ctx.save();
+  ctx.translate(geese.x, geese.y + bobY);
+  ctx.scale(0.85, 0.85);
+  drawGoose(geese.t, 'w', true);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(geese.x + 52, geese.y + 24 - bobY * 0.7);
+  ctx.scale(0.68, 0.68);
+  drawGoose(geese.t + 1.4, 'w', true);
+  ctx.restore();
+}
+
 function draw(){
   ctx.clearRect(0, 0, W, H);
   drawSky();
   drawBoard();
   drawMarks();
   drawPieces();
+  drawGeese();
 }
 
 var last = performance.now();
