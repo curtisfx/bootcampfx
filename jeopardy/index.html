@@ -1614,6 +1614,10 @@ function buildBoard(){
   }
   $('hudLeft').textContent = String(cluesLeft());
   $('hudPhase').textContent = cluesLeft() > 0 ? 'Board 1' : 'Sunrise Wager';
+  /* played cells go dark instantly — kill any marquee light tagged to a played cell */
+  for (var fi = fgFire.length - 1; fi >= 0; fi--){
+    if (fgFire[fi].cell && fgFire[fi].cell.classList.contains('done')) fgFire.splice(fi, 1);
+  }
 }
 function cluesLeft(){
   var n = 0;
@@ -1674,25 +1678,26 @@ function spawnMarqueeFireflies(){
     var k = Math.floor(Math.random() * (i + 1));
     var t = cells[i]; cells[i] = cells[k]; cells[k] = t;
   }
-  var N = 2 + Math.floor(Math.random() * 2);   /* 2–3 per cell per tick — every cell guaranteed */
+  var N = 3 + Math.floor(Math.random() * 3);   /* 3–5 per cell per tick — slow cadence + long life need a bigger quota to hold the dense coverage */
   for (i = 0; i < cells.length; i++){
-    var rect = cells[i].getBoundingClientRect();
-    for (var n = 0; n < N; n++) emitMarquee(rect);
+    for (var n = 0; n < N; n++) emitMarquee(cells[i]);
   }
 }
-function emitMarquee(rect){
-  var side = Math.floor(Math.random() * 4), x, y;
-  if (side === 0){ x = rect.left + Math.random() * rect.width; y = rect.top; }
-  else if (side === 1){ x = rect.left + Math.random() * rect.width; y = rect.bottom; }
-  else if (side === 2){ x = rect.left; y = rect.top + Math.random() * rect.height; }
-  else { x = rect.right; y = rect.top + Math.random() * rect.height; }
+function emitMarquee(cell){
+  var rect = cell.getBoundingClientRect();
+  var side = Math.floor(Math.random() * 4), x, y, d;
+  if (side === 0){ x = rect.left + Math.random() * rect.width; y = rect.top; d = x - rect.left; }
+  else if (side === 1){ x = rect.left + Math.random() * rect.width; y = rect.bottom; d = rect.width + (rect.right - x); }
+  else if (side === 2){ x = rect.left; y = rect.top + Math.random() * rect.height; d = rect.width + rect.height + (rect.bottom - y); }
+  else { x = rect.right; y = rect.top + Math.random() * rect.height; d = rect.width + (y - rect.top); }
   /* corner bias: a border point near a true corner reads brighter, like a marquee bulb */
   var corner = (x - rect.left < 7 || rect.right - x < 7) && (y - rect.top < 7 || rect.bottom - y < 7);
   if (fgFire.length >= 2000) return;   /* hard safety valve only — never aborts the pass */
-  fgFire.push({ x: x, y: y, vx: (Math.random() - 0.5) * 4, vy: -2 - Math.random() * 4,
-    t: 0, life: 0.5 + Math.random() * 0.3,
+  var perim = 2 * (rect.width + rect.height) || 1;
+  fgFire.push({ x: x, y: y, vx: (Math.random() - 0.5) * 0.8, vy: -0.3 - Math.random() * 0.5,
+    t: 0, life: 3 + Math.random() * 2,
     r: (corner ? 0.7 : 0) + 1 + Math.random() * 1.4,
-    p: Math.random() * 6, gold: Math.random() < (corner ? 0.97 : 0.85) });
+    p: (d / perim) * 6.283, gold: Math.random() < (corner ? 0.97 : 0.85), cell: cell });
 }
 function pickClue(c, r, btn){
   if (STATE !== 'board' || done[c][r]) return;
@@ -2151,7 +2156,9 @@ function drawFg(now){
   for (i = fgFire.length - 1; i >= 0; i--){
     var p = fgFire[i];
     var u = p.t / p.life;
-    fgCtx.globalAlpha = Math.max(0, 0.9 * (1 - u)) * (0.6 + 0.4 * Math.sin(now * 14 + p.p));
+    /* slow breathe: warm up 15%, hold near full, ease out over the last 40% */
+    var fade = u < 0.15 ? u / 0.15 : (u < 0.6 ? 1 : Math.max(0, 1 - (u - 0.6) / 0.4));
+    fgCtx.globalAlpha = fade * 0.9 * (0.6 + 0.4 * Math.sin(now * 2.2 + p.p));
     fgCtx.fillStyle = p.gold ? C.gold : C.day;
     fgCtx.beginPath(); fgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); fgCtx.fill();
   }
@@ -2177,7 +2184,7 @@ function frame(nowMs){
   /* marquee: dense flickering border lights around unplayed cells while the board is live */
   if (!RM && STATE === 'board'){
     ambT -= dt;
-    if (ambT <= 0){ spawnMarqueeFireflies(); ambT = 0.08 + Math.random() * 0.04; }
+    if (ambT <= 0){ spawnMarqueeFireflies(); ambT = 0.8 + Math.random() * 0.4; }
   }
   for (var i = 0; i < fireflies.length; i++){
     var f = fireflies[i];
