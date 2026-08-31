@@ -541,12 +541,14 @@ function drawTurtleShelled(t, side){
 }
 
 /* ---------- Egyptian goose (the Acacia Park pair). Canvas-drawn like every other
-   animal — strokes only, no background, so it sits on any sky. ---------- */
+   animal — strokes only, no background, so it sits on any sky.
+   Signature marks, all REQUIRED: dark brown eye mask (#5C3A28),
+   PINK bill with black tip (#F0A0AC), PINK legs/feet (#F0A0AC). ---------- */
 function drawGoose(t, side, flying){
   var bodyC = tint('#EDE4D0', side);
   var wingC = tint('#7A5C42', side);
   var darkC = tint('#2A241C', side);
-  var pinkC = tint('#D89B9B', side);
+  var pinkC = tint('#F0A0AC', side);
   var bob = RM ? 0 : Math.sin(t * 2) * 1;
   ctx.save();
   if (flying){
@@ -582,9 +584,15 @@ function drawGoose(t, side, flying){
     poly([(-31,-42),(-39.5,-39),(-31,-36)]);
     ctx.fillStyle = darkC;
     poly([(-36.5,-40.6),(-39.5,-39),(-36.5,-37.8)]);
-    /* tucked feet */
+    /* trailing pink legs and feet */
+    ctx.strokeStyle = pinkC; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(10, -13); ctx.lineTo(17, -8);
+    ctx.moveTo(14, -14); ctx.lineTo(21, -9);
+    ctx.stroke();
     ctx.fillStyle = pinkC;
-    poly([[8,-12],[14,-9],[9,-9]]);
+    poly([[17,-8],[23,-5.5],[17.5,-4.5]]);
+    poly([[21,-9],[27,-6.5],[21.5,-5.5]]);
   } else {
     /* standing pose, feet at y=0 */
     ctx.translate(0, bob);
