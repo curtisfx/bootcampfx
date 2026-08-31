@@ -568,6 +568,33 @@
     .jackers .jacker.a { margin-left:28px; }
     .jackers .jacker.b { margin-right:0; }
     .jackers .jacker { position:relative; z-index:1; }
+
+    /* ============ TENT — Jacker A does jumping jacks under the canopy ============ */
+    .j-bay {
+      position: relative;
+      flex: 0 0 auto;
+      align-self: flex-end;
+      overflow: visible;
+      width: 313px;
+      height: 150px;
+      margin-left: 28px;
+    }
+    .j-bay .j-tent {
+      position: absolute;
+      left: 0;
+      bottom: -15px;
+      width: 313px;
+      height: 360px;
+      display: block;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .j-bay .jacker.a {
+      position: relative;
+      z-index: 1;
+      margin-left: auto;
+      margin-right: auto;
+    }
     @keyframes treeSwayA {
       0%, 100% { transform:rotate(-1.2deg); }
       50% { transform:rotate(1.4deg); }
@@ -956,6 +983,11 @@
       .jackers .jacker.b{ margin-right:0; }
       .jacker .j-body{ bottom:4px; }
       .jacker .j-ground{ bottom:2px; }
+    }
+    @media (max-width:640px){
+      .j-bay { width:243px; height:118px; margin-left:14px; }
+      .j-bay .j-tent { width:243px; height:280px; bottom:-12px; }
+      .j-bay .jacker.a { margin-left:auto; margin-right:auto; }
     }
 
     /* ============ PROOF ============ */
@@ -2063,7 +2095,9 @@ to { transform:rotate(17deg); }
   <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
   <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
 </svg></div>
-<div class="jacker a">
+<div class="j-bay">
+  <img class="j-tent" src="basketball/bootcamp-fx-tent.svg" alt="" aria-hidden="true">
+  <div class="jacker a">
         <div class="j-ground"></div>
         <div class="j-body">
           <div class="j-hop">
@@ -2076,6 +2110,7 @@ to { transform:rotate(17deg); }
           </div>
         </div>
       </div>
+</div>
       </div>
       <div class="std-grid">
       <div class="reveal std-sticky">
