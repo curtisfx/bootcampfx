@@ -548,7 +548,7 @@ function drawGoose(t, side, flying){
   var bodyC = tint('#EDE4D0', side);
   var wingC = tint('#7A5C42', side);
   var darkC = tint('#2A241C', side);
-  var pinkC = tint('#F0A0AC', side);
+  var pinkC = '#FF7A96';
   var bob = RM ? 0 : Math.sin(t * 2) * 1;
   ctx.save();
   if (flying){
@@ -570,20 +570,20 @@ function drawGoose(t, side, flying){
     ctx.fillStyle = wingC;
     ctx.beginPath(); ctx.ellipse(0, -10, 7, 15, 0, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
-    /* neck + head, stretched forward */
+    /* neck + oval head, stretched toward the bill */
     ctx.strokeStyle = bodyC; ctx.lineWidth = 8; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(-14, -26); ctx.lineTo(-24, -37); ctx.stroke();
     ctx.fillStyle = bodyC;
-    ctx.beginPath(); ctx.arc(-25, -39, 7.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-26, -39, 10, 6.5, -0.45, 0, Math.PI * 2); ctx.fill();
     /* eye mask */
     ctx.fillStyle = tint('#5C3A28', side);
-    ctx.beginPath(); ctx.arc(-27.8, -40.8, 3.2, 0, Math.PI * 2); ctx.fill();
-    face(-28.1, -41.1, 2.4);
-    /* bill */
+    ctx.beginPath(); ctx.ellipse(-29.5, -40.5, 3.6, 2.6, -0.4, 0, Math.PI * 2); ctx.fill();
+    face(-29.8, -40.8, 2.4);
+    /* PINK bill — large, raw pink, small black tip */
     ctx.fillStyle = pinkC;
-    poly([(-31,-42),(-39.5,-39),(-31,-36)]);
+    poly([(-34,-44),(-48,-39),(-34,-34)]);
     ctx.fillStyle = darkC;
-    poly([(-36.5,-40.6),(-39.5,-39),(-36.5,-37.8)]);
+    poly([(-44,-40.5),(-48,-39),(-44,-37.5)]);
     /* trailing pink legs and feet */
     ctx.strokeStyle = pinkC; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
     ctx.beginPath();
@@ -614,14 +614,14 @@ function drawGoose(t, side, flying){
     ctx.strokeStyle = bodyC; ctx.lineWidth = 7; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(-12, -28); ctx.lineTo(-17, -42 + dip); ctx.stroke();
     ctx.fillStyle = bodyC;
-    ctx.beginPath(); ctx.arc(-18, -44 + dip, 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-19, -44 + dip, 8.5, 5.5, -0.4, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = tint('#5C3A28', side);
-    ctx.beginPath(); ctx.arc(-20.5, -45.5 + dip, 2.8, 0, Math.PI * 2); ctx.fill();
-    face(-20.8, -45.8 + dip, 2.1);
+    ctx.beginPath(); ctx.ellipse(-22, -45.2 + dip, 3.2, 2.3, -0.35, 0, Math.PI * 2); ctx.fill();
+    face(-22.3, -45.5 + dip, 2.1);
     ctx.fillStyle = pinkC;
-    poly([(-23,-46+dip),(-31,-43.5+dip),(-23,-41+dip)]);
+    poly([(-25,-47+dip),(-40,-43.5+dip),(-25,-40+dip)]);
     ctx.fillStyle = darkC;
-    poly([(-28.5,-45+dip),(-31,-43.5+dip),(-28.5,-42.6+dip)]);
+    poly([(-36,-44.5+dip),(-40,-43.5+dip),(-36,-42.5+dip)]);
   }
   ctx.restore();
 }
