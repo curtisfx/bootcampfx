@@ -602,8 +602,8 @@
     /* ============ COYOTE — Kimi reference, scroll-triggered entry + in-scene loop ============
        One-shot entry (3.5s trot-in from offscreen, gated by #standard.live) →
        infinite 12s in-scene loop: alert freeze (0–16%) → sniff + tail wag (16–33%) →
-       look at viewer (33–50%) → trot to round tree + paw lift (50–75%) → trot back
-       to mid-gap (75–100%). No retreat, no opacity fade — stays in frame after entry. */
+       look at viewer (33–50%) → short step in the tree–tent gap + paw lift (50–75%) →
+       back to mid-gap (75–100%). Parks between the left tree and the tent. */
     .jackers .j-coyote {
       position:relative; flex:0 0 auto; align-self:flex-end;
       pointer-events:none; z-index:2; color:var(--ink);
@@ -612,7 +612,7 @@
     .jackers .j-coyote .cy-travel {
       position:absolute; left:50%; bottom:-8px;
       width:162px; margin-left:-81px;
-      --t-in:-700px; --t-out:95px;
+      --t-in:-700px; --t-out:18px;
       will-change:transform;
       animation:cyEnter 3.5s ease-out both, cyLoop 12s linear 3.5s infinite;
       animation-play-state:paused;
@@ -972,7 +972,7 @@
       .jackers{ min-height:340px; gap:12px; }
       .jackers .j-tree.t1{ width:96px; margin-right:2px; }
       .jackers .j-coyote{ width:56px; }
-      .jackers .j-coyote .cy-travel{ width:128px; margin-left:-64px; bottom:-6px; --t-out:45px; }
+      .jackers .j-coyote .cy-travel{ width:128px; margin-left:-64px; bottom:-6px; --t-out:0; }
       .jackers .jacker.a{ margin-left:14px; }
       .jackers .jacker.b{ margin-right:0; }
       .jacker .j-body{ bottom:4px; }
@@ -2032,22 +2032,6 @@ to { transform:rotate(17deg); }
   <rect x="44" y="165" width="8" height="82" rx="2" fill="var(--stone)"/>
   <ellipse cx="48" cy="250" rx="18" ry="3" fill="var(--ink)" opacity=".1"/>
 </svg></div>
-<div class="j-bay">
-  <img class="j-tent" src="basketball/bootcamp-fx-tent.svg" alt="" aria-hidden="true">
-  <div class="jacker a">
-        <div class="j-ground"></div>
-        <div class="j-body">
-          <div class="j-hop">
-            <span class="j-head"></span>
-            <span class="j-torso"></span>
-            <span class="j-arm l"></span>
-            <span class="j-arm r"></span>
-            <span class="j-leg l"></span>
-            <span class="j-leg r"></span>
-          </div>
-        </div>
-      </div>
-</div>
 <div class="j-coyote" aria-hidden="true">
   <div class="cy-travel">
     <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -2078,6 +2062,23 @@ to { transform:rotate(17deg); }
     </svg>
   </div>
 </div>
+<div class="j-bay">
+  <img class="j-tent" src="basketball/bootcamp-fx-tent.svg" alt="" aria-hidden="true">
+  <div class="jacker a">
+        <div class="j-ground"></div>
+        <div class="j-body">
+          <div class="j-hop">
+            <span class="j-head"></span>
+            <span class="j-torso"></span>
+            <span class="j-arm l"></span>
+            <span class="j-arm r"></span>
+            <span class="j-leg l"></span>
+            <span class="j-leg r"></span>
+          </div>
+        </div>
+      </div>
+</div>
+
       </div>
       <div class="std-grid">
       <div class="reveal std-sticky">
