@@ -1663,34 +1663,34 @@ function spawnFire(x, y){
       p: Math.random() * 6, gold: Math.random() < 0.6 });
   }
 }
-/* marquee: dense twinkling ring of fireflies around every unplayed cell border */
+/* marquee: dense twinkling ring of fireflies around every unplayed cell border.
+   Per-cell quota — every row gets the same budget, no first-come starvation. */
 function spawnMarqueeFireflies(){
-  if (fgFire.length > 900) return;
-  var cells = boardEl.querySelectorAll('.cell:not(.done)');
+  var cells = Array.prototype.slice.call(boardEl.querySelectorAll('.cell:not(.done)'));
   if (!cells.length) return;
-  var SP = 11, i, j, pts, div;
+  /* Fisher–Yates shuffle — if the safety valve ever bites, the shortage is spread
+     randomly across all rows instead of always starving the bottom ones */
+  for (var i = cells.length - 1; i > 0; i--){
+    var k = Math.floor(Math.random() * (i + 1));
+    var t = cells[i]; cells[i] = cells[k]; cells[k] = t;
+  }
+  var N = 2 + Math.floor(Math.random() * 2);   /* 2–3 per cell per tick — every cell guaranteed */
   for (i = 0; i < cells.length; i++){
     var rect = cells[i].getBoundingClientRect();
-    /* top + bottom edges: ~11px spacing, endpoints sit on the true corners */
-    pts = Math.max(1, Math.round(rect.width / SP));
-    div = pts - 1 || 1;
-    for (j = 0; j < pts; j++){
-      emitMarquee(rect.left + j / div * rect.width, rect.top, j === 0 || j === pts - 1);
-      emitMarquee(rect.left + j / div * rect.width, rect.bottom, j === 0 || j === pts - 1);
-    }
-    /* left + right edges */
-    pts = Math.max(1, Math.round(rect.height / SP));
-    div = pts - 1 || 1;
-    for (j = 0; j < pts; j++){
-      emitMarquee(rect.left, rect.top + j / div * rect.height, j === 0 || j === pts - 1);
-      emitMarquee(rect.right, rect.top + j / div * rect.height, j === 0 || j === pts - 1);
-    }
+    for (var n = 0; n < N; n++) emitMarquee(rect);
   }
 }
-function emitMarquee(x, y, corner){
-  if (Math.random() >= 0.35 || fgFire.length > 900) return;
+function emitMarquee(rect){
+  var side = Math.floor(Math.random() * 4), x, y;
+  if (side === 0){ x = rect.left + Math.random() * rect.width; y = rect.top; }
+  else if (side === 1){ x = rect.left + Math.random() * rect.width; y = rect.bottom; }
+  else if (side === 2){ x = rect.left; y = rect.top + Math.random() * rect.height; }
+  else { x = rect.right; y = rect.top + Math.random() * rect.height; }
+  /* corner bias: a border point near a true corner reads brighter, like a marquee bulb */
+  var corner = (x - rect.left < 7 || rect.right - x < 7) && (y - rect.top < 7 || rect.bottom - y < 7);
+  if (fgFire.length >= 2000) return;   /* hard safety valve only — never aborts the pass */
   fgFire.push({ x: x, y: y, vx: (Math.random() - 0.5) * 4, vy: -2 - Math.random() * 4,
-    t: 0, life: 0.5 + Math.random() * 0.5,
+    t: 0, life: 0.5 + Math.random() * 0.3,
     r: (corner ? 0.7 : 0) + 1 + Math.random() * 1.4,
     p: Math.random() * 6, gold: Math.random() < (corner ? 0.97 : 0.85) });
 }
