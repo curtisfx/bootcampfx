@@ -579,11 +579,11 @@ function drawGoose(t, side, flying){
     ctx.fillStyle = tint('#5C3A28', side);
     ctx.beginPath(); ctx.ellipse(-29.5, -40.5, 3.6, 2.6, -0.4, 0, Math.PI * 2); ctx.fill();
     face(-29.8, -40.8, 2.4);
-    /* PINK bill — large, raw pink, small black tip */
+    /* PINK bill — in front of the oval, nested-array poly (comma-operator was a no-op) */
     ctx.fillStyle = pinkC;
-    poly([(-34,-44),(-48,-39),(-34,-34)]);
+    poly([[-36,-46],[-56,-39],[-36,-32]]);
     ctx.fillStyle = darkC;
-    poly([(-44,-40.5),(-48,-39),(-44,-37.5)]);
+    poly([[-50,-41],[-56,-39],[-50,-37]]);
     /* trailing pink legs and feet */
     ctx.strokeStyle = pinkC; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
     ctx.beginPath();
@@ -619,9 +619,9 @@ function drawGoose(t, side, flying){
     ctx.beginPath(); ctx.ellipse(-22, -45.2 + dip, 3.2, 2.3, -0.35, 0, Math.PI * 2); ctx.fill();
     face(-22.3, -45.5 + dip, 2.1);
     ctx.fillStyle = pinkC;
-    poly([(-25,-47+dip),(-40,-43.5+dip),(-25,-40+dip)]);
+    poly([[-27,-48+dip],[-46,-43.5+dip],[-27,-39+dip]]);
     ctx.fillStyle = darkC;
-    poly([(-36,-44.5+dip),(-40,-43.5+dip),(-36,-42.5+dip)]);
+    poly([[-41,-45+dip],[-46,-43.5+dip],[-41,-42+dip]]);
   }
   ctx.restore();
 }
