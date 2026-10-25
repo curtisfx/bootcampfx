@@ -362,8 +362,7 @@
           <li>Measured results — or a full refund</li>
         </ul>
         <div class="seats">
-          <div class="s-label"><span>Spots claimed</span><b id="seats-left">— of 12 left</b></div>
-          <div class="s-bar"><div class="s-fill" id="seats-fill"></div></div>
+          <div class="s-label"><span>Cohort size</span><b>12 spots — hard cap</b></div>
         </div>
       </aside>
     </div>
@@ -671,9 +670,6 @@
     // ===== Cohort logic =====
     // Drago: to pin a specific cohort start, set PINNED_COHORT to e.g. '2026-07-20T05:30:00-07:00'
     const PINNED_COHORT = null;
-    // Drago: update SPOTS_LEFT as enrollments come in (honest scarcity only)
-    const SPOTS_LEFT = 8;
-    const SPOTS_TOTAL = 12;
 
     function nextCohort(){
       if (PINNED_COHORT) return new Date(PINNED_COHORT);
@@ -691,10 +687,6 @@
     document.getElementById('cohort-date').textContent = fmt;
     document.getElementById('final-date').textContent = fmt.split(',')[0] + ', ' + fmt.split(', ')[1];
 
-    // ===== Seats bar =====
-    document.getElementById('seats-left').textContent = SPOTS_LEFT + ' of ' + SPOTS_TOTAL + ' left';
-    const claimedPct = ((SPOTS_TOTAL - SPOTS_LEFT) / SPOTS_TOTAL) * 100;
-    setTimeout(() => { document.getElementById('seats-fill').style.width = claimedPct + '%'; }, 600);
 
     document.getElementById('yr').textContent = new Date().getFullYear();
 
