@@ -18,15 +18,15 @@
       --mono:'Spline Sans Mono',monospace; --ease:cubic-bezier(.22,.7,.25,1);
     }
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:var(--body);background:var(--day);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+    body{font-family:var(--body);background:var(--day);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
     a{color:inherit;}
-    .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+    .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
     h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-.02em;}
     .sec-head{max-width:680px;margin-bottom:54px;}
     .sec-head.center{text-align:center;margin-left:auto;margin-right:auto;}
     .sec-head h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:18px;}
-    .sec-lede{font-size:1.06rem;color:var(--stone);}
-    .top{padding:80px 0 40px;}
+    .sec-lede{font-size:1.12rem;color:var(--stone);}
+    .top{padding:128px 0 44px;}
     .members{background:var(--day);padding:70px 0;}
     .m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
     @media (max-width:880px){ .m-grid{grid-template-columns:1fr;} }
@@ -51,29 +51,72 @@
     .m-pager a{font-family:var(--mono);font-size:.8rem;text-decoration:none;border:1px solid var(--line-day);border-radius:8px;min-width:38px;padding:8px 12px;text-align:center;color:var(--stone);}
     .m-pager a:hover{border-color:var(--dawn);color:var(--ink);}
     .m-pager a.is-active{background:var(--predawn);color:var(--day);border-color:var(--predawn);}
-    .letter{background:var(--pine);color:var(--day);padding:70px 0;}
-    .letter .quote-block{border-left:3px solid var(--dawn);padding:8px 0 8px 18px;margin:22px 0;}
-    .letter .quote-block p{font-style:italic;margin-bottom:.4em;color:var(--cream);}
-    .letter .quote-who{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);}
+    .band-dark{background:var(--pine);color:var(--day);padding:70px 0;}
+    .band-dark h2{color:var(--day);}
+    .band-dark .sec-lede{color:rgba(251,247,238,.9);}
     .full-stories{background:var(--day-2);padding:70px 0;}
     .full-stories .quote-block{border-left:3px solid var(--dawn);padding:10px 0 10px 20px;margin:26px 0;max-width:900px;}
     .full-stories .quote-block p{font-size:1.05rem;margin-bottom:.5em;}
     .full-stories .quote-who{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);}
-    .cta{background:var(--predawn);color:var(--day);padding:70px 0;text-align:center;}
+    .band-cta{background:var(--predawn);color:var(--day);padding:70px 0;text-align:center;}
+    .band-cta h2{color:var(--day);}
+    .band-cta p{color:var(--mist);margin-top:12px;}
+    .band-cta a{display:inline-block;margin-top:22px;background:var(--dawn);color:#1B1206;font-weight:700;text-decoration:none;padding:14px 26px;border-radius:12px;}
     .cta a{display:inline-block;margin-top:24px;background:var(--dawn);color:var(--predawn);font-weight:700;text-decoration:none;padding:16px 34px;border-radius:999px;}
-    .foot{padding:40px 0;text-align:center;color:var(--stone);font-size:.85rem;}
     .reveal{opacity:1;}
+  
+    /* ===== SITE CHROME — parity with the main page ===== */
+    .nav{ position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(15,27,44,.96); backdrop-filter:blur(10px) saturate(1.1);
+      box-shadow:0 1px 0 rgba(255,255,255,.06); }
+    .nav-in{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; max-width:1280px; margin:0 auto; color:#fff; }
+    .logo{ font-family:var(--display); font-weight:700; font-size:1.3rem; text-decoration:none; letter-spacing:.01em; color:#fff; }
+    .logo em{ font-style:normal; color:var(--gold); }
+    .nav-links{ display:flex; gap:30px; align-items:center; font-size:.92rem; font-weight:600; }
+    .nav-links a{ text-decoration:none; opacity:.8; transition:opacity .2s var(--ease); color:#fff; position:relative; }
+    .nav-links a:hover{ opacity:1; }
+    .nav-cta{ background:var(--dawn); color:#1B1206 !important; padding:11px 22px; border-radius:12px; opacity:1 !important; white-space:nowrap; flex-shrink:0; }
+    @media (max-width:820px){ .nav-links a:not(.nav-cta){ display:none; } .nav-in{ padding:14px 16px; } .nav-cta{ font-size:.85rem; padding:8px 14px; } }
+    .display{ font-family:var(--display); font-weight:600; line-height:1.04; letter-spacing:-.015em; }
+    .display em{ font-style:italic; color:var(--dawn); }
+    .k{ font-size:clamp(2.3rem,5vw,3.6rem); margin:18px 0 18px; line-height:1.02; }
+    .sec-head.center{ text-align:center; margin-left:auto; margin-right:auto; }
+    footer{ position:relative; background:var(--predawn); color:var(--mist); padding:80px 0 60px; font-size:.94rem; overflow:hidden; }
+    .f-word{ font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,8vw,6rem); color:#fff; letter-spacing:-.02em; line-height:1; margin-bottom:44px; }
+    .f-word em{ font-style:normal; color:var(--gold); }
+    .f-grid{ display:flex; flex-wrap:wrap; gap:26px 60px; justify-content:space-between; align-items:flex-start; border-top:1px solid rgba(255,255,255,.1); padding-top:40px; }
+    .f-grid a{ color:var(--mist); text-decoration:none; }
+    .f-grid a:hover{ color:#fff; }
+    .f-copy{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; }
+    .f-legal{ margin-top:8px; font-size:.8rem; opacity:.75; display:flex; flex-wrap:wrap; gap:4px 14px; }
+    .f-clock{ font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; margin-top:16px; color:#5E7089; }
+
   </style>
 </head>
 <body>
 
+
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="nav-in">
+    <a class="logo" href="/">Boot Camp <em>FX</em></a>
+    <div class="nav-links">
+      <a href="/#standard">The Standard</a>
+      <a href="/#members">Members</a>
+      <a href="/#membership">Membership</a>
+      <a href="/#schedule">Schedule</a>
+      <a href="/testimonials/">Testimonials</a>
+      <a class="nav-cta" href="sms:+16572170820?&body=I%20want%20to%20start%20my%20free%20week.%20My%20name%20is%20">Free Week</a>
+    </div>
+  </div>
+</nav>
+
 <main>
 <section class="top"><div class="wrap"><div class="sec-head center">
-<h2 class="display">Every one of them. In their own words.</h2>
+<h2 class="display k">Every one of them. In their own words.</h2>
 <p class="sec-lede">Unedited testimonials from 113 clients across 21 years at Acacia Park. Not a highlight reel — the whole file.</p>
 </div><div class="m-filters"><a href="#voices">Watch</a><a href="#full-stories">Long stories</a><a href="/review.html">Reviews</a></div></div></section>
 <section class="members" id="members"><div class="wrap">
-<div class="sec-head"><h2>What they say</h2></div>
+<div class="sec-head"><h2 class="display k">What they say</h2></div>
       <div class="m-grid">
         <div class="mcard reveal m-feature">
           <span class="qmark" aria-hidden="true">”</span>
@@ -287,7 +330,7 @@ I have seen growth in my endurance, flexibility, arm size, and cardiovascular fi
         </nav>
 </div></section>
 <section class="full-stories" id="full-stories"><div class="wrap">
-<div class="sec-head"><h2>In full</h2><p class="sec-lede">Longer accounts, published complete. Nothing cut.</p></div>
+<div class="sec-head"><h2 class="display k">In full</h2><p class="sec-lede">Longer accounts, published complete. Nothing cut.</p></div>
         <div class="quote-block" id="story-sandi-eberhardt">
           <p>“&quot;Boot Camp FX is a workout I can always be proud of and feel great from. If I work out on my own, I&#x27;m constantly battling mentally with trying to work harder than I feel like giving. Curtis mixes it up and makes it fun but challenging. I don&#x27;t have to think about how hard it is. I just do whatever he says. With someone pushing me, I can give far more than I think I can on my own and I love that. I&#x27;ve also achieved tone and muscle mass I never really saw even after decades of working out. First and foremost, I&#x27;m a wife and mom to a great husband and 3 awesome kids. (That&#x27;s my favorite job.) I&#x27;m also a graphic designer and an actress (that is, if I can book the job) and I sometimes write and produce scripts for the Children&#x27;s Ministry at my church. I&#x27;ve always had a strong focus on sports and working out since elementary school. The fact that I&#x27;ve always been fairly fit, made it hard for me to think going to a boot camp was going to be worth my time and effort. But what I learned was that I was a Cardio Queen. I ran hard daily with no recovery days in between, which permanently messed up my knee. I never did full-body strength &amp; cardio workouts. I did weights, but I always did the exact same weight exercises and not enough real weight to challenge my muscles. I could never figure out why my body never seemed to change with as hard as I believed I worked out. When I started seeing Curtis, I could handle what he threw at me because I was already in a pretty fit cardio state, but I started seeing definition all over that I never saw in years of working out. In addition, I now use boot camp as a daily goal to push myself harder and faster than I think I can go. I always leave boot camp feeling great. A friend I hadn&#x27;t seen in a year or two was meeting me and another friend at a coffee house to hang out. Kristin walked into the coffee house and my jaw dropped. She looked awesome. She wasn&#x27;t even flexing but her muscles were super defined, she was lean and toned, looking like a fitness model. I said, &quot;What did you do? I want to look like you. You look amazing!&quot; What&#x27;s funny is that she looked great before the transformation. That fact that I even saw a difference was a definite &quot;I want what you have&quot; advertisement for Curtis&#x27; training. Boot camp was my first introduction to his killer fat burning exercises and it was fun getting pushed around. I started working out with another hard-core, butt-kicking boot camper named Nicole. She&#x27;s become my favorite workout partner because she&#x27;s encouraging but also such a hard worker that I am motivated to keep up with her high level of fitness. When you have people who can challenge you and make you encouraged to do more than you think you can do, you know you&#x27;re in the right place. Muscle definition that was visible to me was the result that I initially saw, and that keeps me coming back for more. Now if I can just have more discipline in my eating, I might be able to look the way I want. In general, I&#x27;m a pretty happy person (spiritually, mentally and physically), but I definitely think that I get a huge mental boost after my boot camp fx workouts. My favorite feeling of accomplishment is when I go to a really hard boot camp that makes me feel like I want to pass out or throw up afterwards. I love that feeling of knowing I climbed a mountain I initially didn&#x27;t think I could climb. I brought my friends Jaylene and Anita to boot camp. They love it. Jaylene still goes every day. All the women I work out with at the morning bootcamp are all motivated and have great attitudes. It makes for a fun, exciting atmosphere. I love working out with people who want to work hard. The newsletter: I always read the Fitness Cybernetics e-newsletter because it keeps my mind on the right track. It is not only a reminder to stay the course, but I value the information contained in it. Even if it&#x27;s something I already know, the reminder solidifies it more completely in my mind. Boot camp: I appreciate that Curtis doesn&#x27;t make everyone go at the exact same level all the time. Everyone does similar exercises, but if someone is more fit and can handle more, Curtis recognizes that and makes that person do something harder in order to fatigue more quickly. Someone asked me if Bootcamp was something I could replicate on my own and I answered that I didn&#x27;t think I could fully replicate it on my own for several reasons. First, Curtis pushes me harder and further than I would push myself, and I appreciate that. When I ask Curtis if I can have a breather or stop for a second, he tells me &quot;no, don&#x27;t stop, go harder&quot;. Since I can&#x27;t resist a challenge and I feel like he thinks there is more to squeeze out of me, I do what he tells me and I am prouder of accomplishing what I thought I didn&#x27;t have the strength or energy to do. I know I couldn&#x27;t do that to myself while working out alone. Secondly, I like not having to think about what exercise is coming next. If I&#x27;m going to utilize my strength and energy full force, the last thing I want to do is think. I&#x27;d rather get pushed around, being told what to do. Boot camp has also allowed me to stay dedicated and disciplined to both my fitness and nutrition in a way I&#x27;ve not been able to maintain on my own in the last 2 years since my baby was born. I&#x27;m not certain why that is, but perhaps it&#x27;s because I&#x27;m accountable to someone else besides myself...and I&#x27;m also paying for the change to happen and I don&#x27;t want to slack off because of it. I&#x27;ve dragged some friends with me to the Boot camp workouts and it&#x27;s psychologically boosting for me to have my friends workout with me and being on the same nutrition plan. I don&#x27;t feel alone in it, and we can all share our accomplishments together and encourage each other. Keep kicking my butt Curtis. I love it.”</p>
           <div class="quote-who">— <strong>Sandi Eberhardt</strong> · Website archive (bootcampfx.com)</div>
@@ -349,13 +392,31 @@ I feel strong. I feel confident. I am informed. I can box. I can do extremely di
           <a href="page-2.html">2</a>
         </nav>
 </div></section>
-<section class="letter" id="voices"><div class="wrap">
-<div class="sec-head center"><h2 style="color:var(--day)">Voices</h2></div>
+<section class="band-dark" id="voices"><div class="wrap">
+<div class="sec-head center"><h2 class="display k">Voices</h2></div>
 <video class="m-voice" controls preload="none" poster="images/testimonials/ellen-poster.jpg"><source src="videos/testimonials/ellen.mp4" type="video/mp4">Ellen</video>
 <video class="m-voice" controls preload="none" poster="images/testimonials/gina-bono-yorba-linda-poster.jpg"><source src="videos/testimonials/gina-bono-yorba-linda.mp4" type="video/mp4">Gina Bono (Yorba Linda)</video>
 <video class="m-voice" controls preload="none" poster="images/testimonials/nicole-title-nicole-s-success-story-speaker-not-named-in-audio-poster.jpg"><source src="videos/testimonials/nicole-title-nicole-s-success-story-speaker-not-named-in-audio.mp4" type="video/mp4">Nicole (title: &quot;Nicole&#x27;s Success Story&quot;; speaker not named in audio)</video>
 </div></section>
-<section class="cta"><div class="wrap"><h2 style="color:var(--day)">Your first week is free.</h2><p style="color:var(--mist);margin-top:12px">Come see what a coached morning feels like.</p><a href="/review.html">Leave a review</a></div></section>
+<section class="band-cta"><div class="wrap"><h2 class="display k">Your first week is free.</h2><p>Come see what a coached morning feels like.</p><a href="/review.html">Leave a review</a></div></section>
 </main>
-<footer class="foot"><div class="wrap">Boot Camp FX · Acacia Park, Fullerton · Individual results vary.</div></footer>
+<footer>
+  <div class="wrap">
+    <div class="f-word">Boot Camp <em>FX</em></div>
+    <div class="f-grid">
+      <div>
+        <div>Acacia Park · Fullerton, California</div>
+        <div class="f-clock">Est. 2005 · Trained through 7,600 sunrises</div>
+      </div>
+      <div>
+        <div><a href="mailto:support@bootcampfx.com">support@bootcampfx.com</a></div>
+        <div style="margin-top:4px;"><a href="tel:+16572170820">(657) 217-0820</a></div>
+        <div style="margin-top:10px;"><a href="/challenge/">6-Week Challenge</a> · <a href="/#membership">Membership</a> · <a href="/#schedule">Schedule</a> · <a href="/testimonials/">Testimonials</a></div>
+        <div class="f-legal"><a href="/contact.html">Contact</a> <a href="/faq.html">FAQ</a> <a href="/privacy.html">Privacy</a> <a href="/terms.html">Terms</a> <a href="/waiver.html">Waiver</a> <a href="/refund.html">Refunds</a> <a href="/copyright.html">Copyright</a></div>
+      </div>
+      <div class="f-copy">© <span id="yr">2026</span> BOOT CAMP FX</div>
+    </div>
+  </div>
+</footer>
+
 </body></html>
