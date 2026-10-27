@@ -53,6 +53,8 @@ Clients with at least one published testimonial: 113 (94 cards + 19 full-length 
 -> minus 8 clients with a name but no testimonial body (HOLD-NOTEXT), minus 2 harvest-flagged
 DROP, minus 6 unnamed = 121 published. Fully explained; no orphaned rows.
 
-## Still open for Actual
-- Merge approval (SPEC: Actual owns main).
-- Consent posture: 113 clients published from a 2008-2019 archive, order 2B, no re-confirmation.
+## Status at close
+- Consent: CONFIRMED by Actual 2026-10-27. All featured clients have given consent. No row is
+  held on consent grounds. Remaining holds are attribution-only (unnamed/third-party) and
+  no-body rows. This item is closed and must not be reopened without new information.
+- Merge approval: Actual owns main. PR #1 open against main, mergeable_state=clean.
