@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Testimonials | Boot Camp FX — Fullerton</title>
+  <meta name="description" content="Every client testimonial from Boot Camp FX and Curtis Ludlow, in their own words, unedited.">
+  <meta name="theme-color" content="#0F1B2C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --predawn:#0F1B2C; --pine:#14291F; --dawn:#E8933A; --gold:#F2B84B;
+      --cream:#FFE9B8; --day:#FBF7EE; --day-2:#F3ECDC; --ink:#14100A;
+      --mist:#9FB0C4; --stone:#6A6255; --line-day:#E4DAC6;
+      --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif;
+      --mono:'Spline Sans Mono',monospace; --ease:cubic-bezier(.22,.7,.25,1);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--body);background:var(--day);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+    a{color:inherit;}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+    h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-.02em;}
+    .sec-head{max-width:680px;margin-bottom:54px;}
+    .sec-head.center{text-align:center;margin-left:auto;margin-right:auto;}
+    .sec-head h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:18px;}
+    .sec-lede{font-size:1.06rem;color:var(--stone);}
+    .top{padding:80px 0 40px;}
+    .members{background:var(--day);padding:70px 0;}
+    .m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+    @media (max-width:880px){ .m-grid{grid-template-columns:1fr;} }
+    .mcard{background:#fff;border:1px solid var(--line-day);border-radius:20px;padding:30px 28px;display:flex;flex-direction:column;position:relative;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease);}
+    .mcard:hover{transform:translateY(-7px);box-shadow:0 26px 60px rgba(20,16,10,.12);border-color:#D8CCAF;}
+    .mcard .qmark{position:absolute;top:18px;right:24px;font-family:var(--display);font-size:3.2rem;line-height:1;color:var(--day-2);font-weight:700;}
+    .mcard .stars{color:var(--dawn);letter-spacing:3px;margin-bottom:14px;font-size:.9rem;}
+    .mcard .q{font-size:1rem;margin-bottom:20px;flex:1;}
+    .mcard .who{font-weight:700;font-size:.95rem;}
+    .mcard .res{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:var(--stone);margin-top:4px;text-transform:uppercase;}
+    .mcard .t-photo{width:96px;height:96px;border-radius:50%;object-fit:cover;margin-bottom:16px;border:2px solid var(--dawn);overflow:hidden;}
+    .mcard .vid{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;color:var(--dawn);text-decoration:none;margin-top:12px;display:inline-flex;align-items:center;gap:6px;text-transform:uppercase;}
+    .mcard .vid:hover{text-decoration:underline;text-underline-offset:3px;}
+    /* --- permitted additions --- */
+    .m-filters{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
+    .m-filters a{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--line-day);border-radius:999px;padding:9px 18px;color:var(--stone);transition:all .2s var(--ease);}
+    .m-filters a:hover{border-color:var(--dawn);color:var(--ink);}
+    .mcard.m-feature{border-color:var(--gold);background:#FFFDF7;}
+    .m-voice{display:block;width:100%;max-width:640px;margin:0 auto 28px;border-radius:16px;overflow:hidden;border:1px solid var(--line-day);}
+    .m-voice video{display:block;width:100%;height:auto;}
+    .m-pager{display:flex;gap:8px;justify-content:center;margin-top:44px;flex-wrap:wrap;}
+    .m-pager a{font-family:var(--mono);font-size:.8rem;text-decoration:none;border:1px solid var(--line-day);border-radius:8px;min-width:38px;padding:8px 12px;text-align:center;color:var(--stone);}
+    .m-pager a:hover{border-color:var(--dawn);color:var(--ink);}
+    .m-pager a.is-active{background:var(--predawn);color:var(--day);border-color:var(--predawn);}
+    .letter{background:var(--pine);color:var(--day);padding:70px 0;}
+    .letter .quote-block{border-left:3px solid var(--dawn);padding:8px 0 8px 18px;margin:22px 0;}
+    .letter .quote-block p{font-style:italic;margin-bottom:.4em;color:var(--cream);}
+    .letter .quote-who{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);}
+    .full-stories{background:var(--day-2);padding:70px 0;}
+    .full-stories .quote-block{border-left:3px solid var(--dawn);padding:10px 0 10px 20px;margin:26px 0;max-width:900px;}
+    .full-stories .quote-block p{font-size:1.05rem;margin-bottom:.5em;}
+    .full-stories .quote-who{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);}
+    .cta{background:var(--predawn);color:var(--day);padding:70px 0;text-align:center;}
+    .cta a{display:inline-block;margin-top:24px;background:var(--dawn);color:var(--predawn);font-weight:700;text-decoration:none;padding:16px 34px;border-radius:999px;}
+    .foot{padding:40px 0;text-align:center;color:var(--stone);font-size:.85rem;}
+    .reveal{opacity:1;}
+  </style>
+</head>
+<body>
+
+<main>
+<section class="members" id="members"><div class="wrap">
+      <div class="m-grid">
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“hi my name is Socorro and I have been Curtis for about a year now and I do pay online it is very convenient and easy to do and it&#x27;s something less for me to think about”</p>
+          <div class="who">Socorro</div>
+          <div class="res">YouTube</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“Hi I&#x27;m Farahna and I joined Curtis&#x27; boot camp and I lost 30 pounds within three months. I love coming to boot camp. It give me energy and keeps me energetic all day.”</p>
+          <div class="who">Farahna D.</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“&quot;Curtis Ludlow has been very satisfactory as a personal trainer. He has challenged my strength and stamina but not exceeded my limits. I could not ask for more.&quot;”</p>
+          <div class="who">Virgil Woodicka</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“Curtis is a great motivator and joke teller! I have never enjoyed my workouts as much as with him and the great group of clients he has.”</p>
+          <div class="who">Pamela T.</div>
+          <div class="res">Yelp (direct)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“&quot;My name is Rich from Fountain Valley. The best thing I found on the web was Curtis&#x27; boot camp. I lost 20 pounds in four weeks.&quot;”</p>
+          <div class="who">Rich</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“My mom and I do the boot camp together with Curtis and we love it! Great workout with a great trainer!”</p>
+          <div class="who">Marissa S</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“I found out about Curtis when a friend recommended BootCampFX to me…”</p>
+          <div class="who">Ben Bushman, MBA</div>
+          <div class="res">LinkedIn recommendation (search snippet only)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <img class="t-photo" src="images/testimonials/karen-c-400.webp" alt="Karen C., Boot Camp FX member since" loading="lazy" width="96" height="96">
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“I Have More Energy, Running is Super Easy, and I&#x27;m Stronger...&quot;”</p>
+          <div class="who">Karen C.</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“I lost 15 pounds in my first month of Curtis’ Boot Camp FX.”</p>
+          <div class="who">Keith W.</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“Curtis is one of Orange County&#x27;s best fitness experts…”</p>
+          <div class="who">Jonathan Higashi</div>
+          <div class="res">LinkedIn recommendation (search snippet only)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“I LOST 30 POUNDS with Curtis Ludlow’s Boot Camp FX!”</p>
+          <div class="who">Ariana A.</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+        <div class="mcard reveal">
+          <span class="qmark" aria-hidden="true">”</span>
+          <img class="t-photo" src="images/testimonials/heike-f-400.webp" alt="Heike F., Boot Camp FX member since" loading="lazy" width="96" height="96">
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="q">“Thank you Curtis!”</p>
+          <div class="who">Heike F.</div>
+          <div class="res">Website archive (bootcampfx.com)</div>
+        </div>
+      </div>
+        <nav class="m-pager" aria-label="Testimonial grid pages">
+          <a href="index.html">1</a>
+          <a href="page-2.html">2</a>
+          <a href="page-3.html">3</a>
+          <a href="page-4.html" class="is-active">4</a>
+        </nav>
+</div></section>
+</main>
+<footer class="foot"><div class="wrap">Boot Camp FX · Acacia Park, Fullerton · Individual results vary.</div></footer>
+</body></html>
