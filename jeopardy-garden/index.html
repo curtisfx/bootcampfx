@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Acacia Park — Garden Party Jeopardy</title>
+<meta name="description" content="Garden Party Jeopardy at Acacia Park. Hoot the Owl hosts from his moonlit tree as the sun comes up. Free to play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --predawn:#0F1B2C; --predawn-2:#16273D; --pine:#14291F;
+    --dawn:#E8933A; --gold:#F2B84B; --day:#FBF7EE; --day-2:#F3ECDC;
+    --ink:#14100A; --mist:#9FB0C4; --stone:#6A6255;
+    --display:'Fraunces',serif; --body:'Instrument Sans',sans-serif; --mono:'Spline Sans Mono',monospace;
+    --ease:cubic-bezier(.22,.7,.25,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--predawn);overflow:hidden;
+    font-family:var(--body);color:var(--day);
+    -webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+  #bg{position:fixed;inset:0;width:100vw;height:100vh;display:block;}
+  /* foreground layer — clouds + acorn fireflies float in front of the board */
+  #fg{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:5;pointer-events:none;}
+  .hud{z-index:6;}
+  #speech{z-index:7;}
+  #hudTools{position:fixed;top:48px;left:50%;transform:translateX(-50%);z-index:8;display:flex;gap:8px;}
+  .iconbtn{appearance:none;border:1px solid rgba(159,176,196,.28);border-radius:10px;cursor:pointer;
+    background:rgba(15,27,44,.5);color:var(--mist);font-family:var(--mono);font-size:.6rem;
+    font-weight:600;letter-spacing:.18em;padding:9px 12px;transition:border-color .15s,color .15s;}
+  .iconbtn:hover{border-color:var(--gold);color:var(--gold);}
+  #app{position:fixed;inset:0;display:flex;flex-direction:column;}
+
+  .hud{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;
+    padding:12px 16px 0;text-shadow:0 2px 8px rgba(0,0,0,.45);pointer-events:none;gap:8px;}
+  .hud .stat{font-weight:700;letter-spacing:.02em;min-width:72px;}
+  .hud .stat b{display:block;font-family:var(--display);font-weight:600;font-size:1.55rem;line-height:1.1;}
+  .hud .stat span{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.22em;color:var(--mist);}
+  .hud .mid{text-align:center;flex:1;}
+  .hud .mid .game{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);}
+  .hud .mid .phase{font-family:var(--mono);font-size:.95rem;font-weight:600;letter-spacing:.12em;color:var(--gold);}
+  .hud .right{text-align:right;}
+  .hud .neg b{color:var(--dawn);}
+
+  #speech{position:fixed;z-index:6;max-width:280px;pointer-events:none;
+    background:var(--day);color:var(--ink);border-radius:14px;padding:10px 14px;
+    font-size:.86rem;font-weight:600;line-height:1.35;opacity:0;transform:translateY(6px);
+    transition:opacity .25s var(--ease),transform .25s var(--ease);
+    box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  #speech.on{opacity:1;transform:translateY(0);}
+  #speech::after{content:'';position:absolute;left:28px;bottom:-8px;border:9px solid transparent;
+    border-top-color:var(--day);border-bottom:0;}
+
+  /* board — shifted right of Hoot's tree so the host stays visible */
+  #board{position:relative;z-index:4;flex:1;display:grid;grid-template-columns:repeat(5,1fr);
+    grid-template-rows:auto repeat(5,1fr);gap:6px;padding:14px 16px 18px;max-width:1100px;width:100%;
+    margin:0 0 0 auto;padding-left:max(250px, 22vw);}
+  .cat{display:flex;align-items:center;justify-content:center;text-align:center;
+    font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);padding:8px 4px;line-height:1.3;}
+  .cell{border:1px solid rgba(159,176,196,.28);border-radius:10px;cursor:pointer;
+    background:color-mix(in srgb, var(--predawn-2) 72%, transparent);
+    backdrop-filter:blur(2px);
+    color:var(--gold);font-family:var(--display);font-weight:600;font-size:clamp(1rem,3.2vw,1.7rem);
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .15s var(--ease),border-color .15s,background .15s;}
+  .cell:hover{transform:translateY(-2px);border-color:var(--gold);background:color-mix(in srgb, var(--dawn) 18%, var(--predawn-2));}
+  .cell.done{pointer-events:none;color:var(--mist);font-family:var(--mono);font-weight:600;
+    font-size:clamp(.5rem,1.4vw,.66rem);letter-spacing:.04em;line-height:1.25;padding:4px;
+    background:color-mix(in srgb, var(--predawn-2) 40%, transparent);opacity:.85;}
+  .cell.acorn{border-color:var(--gold);}
+
+  /* overlays */
+  .overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+    background:rgba(15,27,44,.55);backdrop-filter:blur(4px);opacity:0;pointer-events:none;
+    transition:opacity .3s var(--ease);padding:16px;}
+  .overlay.on{opacity:1;pointer-events:auto;}
+  .modal{max-width:640px;width:100%;text-align:center;background:color-mix(in srgb, var(--predawn-2) 88%, transparent);
+    border:1px solid rgba(159,176,196,.25);border-radius:18px;padding:28px 26px;
+    box-shadow:0 24px 64px rgba(0,0,0,.5);position:relative;}
+  .title{font-family:var(--display);font-weight:700;font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;letter-spacing:.01em;}
+  .title em{font-style:normal;color:var(--dawn);}
+  .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--mist);margin:10px 0 18px;}
+  .rules{text-align:left;margin:0 auto;max-width:440px;display:flex;flex-direction:column;gap:8px;}
+  .rl{display:grid;grid-template-columns:14px 92px 1fr auto;gap:10px;align-items:baseline;font-size:.9rem;}
+  .rl .dot{width:9px;height:9px;border-radius:99px;align-self:center;}
+  .rl .lbl{font-weight:700;letter-spacing:.03em;}
+  .rl .keys{color:var(--day-2);}
+  .rl .why{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);text-align:right;}
+  .tip{margin-top:16px;font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
+  .btn{margin-top:22px;appearance:none;border:0;border-radius:12px;cursor:pointer;
+    background:var(--dawn);color:var(--ink);font-family:var(--body);font-weight:700;font-size:1.02rem;
+    padding:14px 34px;letter-spacing:.02em;transition:transform .15s var(--ease),background .15s;}
+  .btn:hover{transform:translateY(-2px);background:var(--gold);}
+
+  /* clue card — cartoon speech bubble, Hoot perched on its left edge */
+  #clueOv .modal{
+    background:var(--day);color:var(--ink);border:3px solid var(--ink);border-radius:26px;
+    box-shadow:8px 10px 0 rgba(20,16,10,.45);padding:30px 28px 26px;margin-left:96px;max-width:600px;
+    text-align:left;}
+  #clueOv .modal::after{
+    content:'';position:absolute;left:-26px;bottom:74px;width:0;height:0;
+    border:16px solid transparent;border-right-color:var(--ink);border-left:0;}
+  #clueOv .modal::before{
+    content:'';position:absolute;left:-19px;bottom:78px;width:0;height:0;z-index:1;
+    border:12px solid transparent;border-right-color:var(--day);border-left:0;}
+  #clueOwl{position:absolute;left:-118px;bottom:-10px;width:130px;height:160px;pointer-events:none;z-index:2;}
+  .clue-cat{font-family:var(--mono);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#B06A12;}
+  .clue-val{font-family:var(--display);font-weight:600;font-size:1.9rem;color:var(--ink);margin:2px 0 12px;}
+  .clue-text{font-family:var(--display);font-weight:500;font-size:clamp(1.1rem,2.6vw,1.45rem);line-height:1.42;margin-bottom:18px;color:var(--ink);}
+  .choices{display:flex;flex-direction:column;gap:8px;}
+  .choice{appearance:none;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;
+    background:var(--day-2);color:var(--ink);border:2px solid var(--ink);border-radius:12px;
+    padding:11px 14px;font-family:var(--body);font-weight:600;font-size:.98rem;
+    transition:transform .12s var(--ease),background .12s;}
+  .choice:hover{transform:translateX(4px);background:#EFE3C8;}
+  .choice .key{font-family:var(--mono);font-weight:600;font-size:.8rem;background:var(--ink);color:var(--gold);
+    border-radius:8px;padding:3px 9px;letter-spacing:.08em;flex:none;}
+  .choice.right{background:#DDE8C9;border-color:#4A7A2E;}
+  .choice.right .key{background:#4A7A2E;color:var(--day);}
+  .choice.wrong{background:#F4D9C4;border-color:#B04A12;}
+  .choice.wrong .key{background:#B04A12;color:var(--day);}
+  .choice:disabled{cursor:default;}
+  .choice:disabled:not(.right):not(.wrong){opacity:.55;}
+  .verdict{font-family:var(--display);font-weight:600;font-size:1.35rem;margin:4px 0 2px;min-height:1.7rem;color:var(--ink);text-align:left;}
+  .fact{font-size:.88rem;line-height:1.4;color:#4A4234;text-align:left;min-height:1.2rem;margin-top:2px;}
+  .fact b{color:#B06A12;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;}
+  .verdict.good{color:#4A7A2E;}
+  .verdict.bad{color:#B04A12;}
+  #clueOv .btn{margin-top:14px;}
+  .timer{height:5px;border-radius:99px;background:rgba(20,16,10,.15);overflow:hidden;margin:16px 0 0;max-width:none;}
+  .timer i{display:block;height:100%;background:var(--dawn);width:100%;border-radius:99px;}
+  .acorn-badge{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--ink);background:var(--gold);border:2px solid var(--ink);border-radius:99px;padding:5px 14px;margin-bottom:10px;}
+
+  .wager-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .wager-row .btn{margin-top:0;padding:10px 18px;font-size:.9rem;}
+
+  #over .scores{display:flex;gap:26px;justify-content:center;margin:18px 0 8px;}
+  #over .num{font-family:var(--display);font-weight:600;font-size:2.4rem;}
+  #over .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);}
+  .breakdown{display:flex;gap:18px;justify-content:center;margin:10px 0 4px;flex-wrap:wrap;}
+  .breakdown .n{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--day-2);}
+  .breakdown .l{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);}
+  .newrec{font-family:var(--mono);color:var(--gold);letter-spacing:.2em;font-size:.8rem;margin-bottom:8px;display:none;}
+  .hint{margin-top:14px;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;color:var(--mist);text-transform:uppercase;}
+  .hint b{color:var(--gold);}
+
+  @media (max-width:760px){
+    #board{padding-left:16px;}
+    .cat{font-size:.54rem;letter-spacing:.08em;}
+    #speech{max-width:210px;font-size:.78rem;}
+    .rl{grid-template-columns:12px 78px 1fr;font-size:.82rem;}
+    .rl .why{display:none;}
+    #clueOv .modal{margin-left:64px;padding:22px 18px 18px;}
+    #clueOwl{left:-78px;width:96px;height:120px;}
+  }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<canvas id="fg"></canvas>
+<div id="hudTools">
+  <button class="iconbtn" id="newBtn" type="button">NEW</button>
+  <button class="iconbtn" id="resetBtn" type="button">RESET</button>
+</div>
+<div id="app">
+  <div class="hud">
+    <div class="stat" id="scoreBox"><b id="hudScore">0</b><span>Score</span></div>
+    <div class="mid">
+      <div class="game">Acacia Park · Garden Party Jeopardy</div>
+      <div class="phase" id="hudPhase">Board 1</div>
+    </div>
+    <div class="stat right"><b id="hudLeft">25</b><span>Clues left</span></div>
+  </div>
+  <div id="board"></div>
+</div>
+<div id="speech"></div>
+
+<!-- start menu -->
+<div class="overlay on" id="menu">
+  <div class="modal">
+    <div class="title">Acacia Park<br><em>Garden Party</em> Jeopardy</div>
+    <div class="tag">Hoot hosts · Garden, classroom &amp; kitchen · Twenty-five clues</div>
+    <div class="rules">
+      <div class="rl"><span class="dot" style="background:var(--gold);"></span><span class="lbl">Pick</span><span class="keys">Choose a category and value</span><span class="why">100–500</span></div>
+      <div class="rl"><span class="dot" style="background:var(--dawn);"></span><span class="lbl">Answer</span><span class="keys">Pick A, B or C before the timer runs out</span><span class="why">15s</span></div>
+      <div class="rl"><span class="dot" style="background:var(--day);"></span><span class="lbl">Score</span><span class="keys">Right pays, wrong costs</span><span class="why">±value</span></div>
+      <div class="rl"><span class="dot" style="background:var(--mist);"></span><span class="lbl">Golden Acorn</span><span class="keys">One hidden daily double — wager big</span><span class="why">2×</span></div>
+    </div>
+    <div class="tip">Clear the board and Hoot offers the Sunrise Wager · the sun rises as you play</div>
+    <button class="btn" id="startBtn">Start the Game</button>
+  </div>
+</div>
+
+<!-- clue card: speech bubble + host overlay -->
+<div class="overlay" id="clueOv">
+  <div class="modal">
+    <canvas id="clueOwl" width="260" height="320"></canvas>
+    <div id="acornBadge" class="acorn-badge" style="display:none;">◆ Golden Acorn — Daily Double ◆</div>
+    <div class="clue-cat" id="clueCat"></div>
+    <div class="clue-val" id="clueVal"></div>
+    <div class="clue-text" id="clueText"></div>
+    <div class="choices" id="choices"></div>
+    <div class="verdict" id="verdict"></div>
+    <div class="fact" id="factLine"></div>
+    <div class="answer-row" id="nextRow" style="display:none;">
+      <button class="btn" id="nextBtn" style="margin-top:0;">Back to the Board</button>
+    </div>
+    <div class="timer" id="timerBar"><i id="timerFill"></i></div>
+  </div>
+</div>
+
+<!-- wager modal -->
+<div class="overlay" id="wagerOv">
+  <div class="modal">
+    <div id="wagerBadge" class="acorn-badge">◆ Golden Acorn — Daily Double ◆</div>
+    <div class="clue-cat" id="wagerCat" style="color:var(--gold);"></div>
+    <div class="clue-text" id="wagerPrompt" style="color:var(--day);">How much will you wager?</div>
+    <div class="wager-row" id="wagerRow"></div>
+  </div>
+</div>
+
+<!-- game over -->
+<div class="overlay" id="over">
+  <div class="modal">
+    <div class="newrec" id="newRec">★ New Record ★</div>
+    <div class="title" style="font-size:clamp(1.6rem,4.5vw,2.4rem);" id="vTitle">Sunrise <em>complete</em></div>
+    <div class="scores">
+      <div><div class="num" id="finScore">0</div><div class="lbl">Score</div></div>
+      <div><div class="num" id="finRight">0</div><div class="lbl">Correct</div></div>
+      <div><div class="num" id="finBest">0</div><div class="lbl">Best</div></div>
+    </div>
+    <div class="breakdown">
+      <div><div class="n" id="finAcorn">—</div><div class="l">Golden Acorn</div></div>
+      <div><div class="n" id="finWager">—</div><div class="l">Sunrise Wager</div></div>
+      <div><div class="n" id="finAcc">0%</div><div class="l">Accuracy</div></div>
+    </div>
+    <button class="btn" id="againBtn">Play Again</button>
+    <div class="hint"><b>Hoot</b> returns to his tree at dusk</div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= CATEGORY POOL =================
+   25 Drago fun categories x 5 clues. Format per clue:
+   [clue text, correct answer, distractor, distractor]
+   Seasonal/new boards: swap this block only — core code never changes. */
+var CATS = [];
+CATS.push({c:"Kitchen Garden",e:"🌱",q:[
+["This red garden favorite is botanically a fruit — and a berry.","A tomato","A bell pepper","A strawberry"],
+["This leafy herb is the green in pesto and the top of a caprese salad.","Basil","Oregano","Parsley"],
+["This cool-weather vegetable is picked small and brined to make a pickle.","A cucumber","A zucchini","Celery"],
+["This summer squash is famous for growing faster than you can give it away.","Zucchini","An eggplant","A pumpkin"],
+["Beans and peas belong to this family, which pulls nitrogen from the air and feeds the soil.","Legumes","Grains","Root crops"]]});
+CATS.push({c:"The Classroom",e:"🏫",q:[
+["The three R's are reading, writing, and this.","Arithmetic","Recess","Recitation"],
+["A teacher writes the day's outline in this.","A lesson plan","A report card","A seating chart"],
+["This 1954 Supreme Court ruling ended racial segregation in public schools.","Brown v. Board of Education","Plessy v. Ferguson","Roe v. Wade"],
+["This New Hampshire teacher died aboard the Challenger in 1986.","Christa McAuliffe","Sally Ride","Judith Resnik"],
+["This educator founded Alabama's Tuskegee Institute in 1881.","Booker T. Washington","Frederick Douglass","George Washington Carver"]]});
+CATS.push({c:"Pollinators",e:"🐝",q:[
+["Bees turn nectar into this sweet golden food.","Honey","Maple syrup","Jam"],
+["Carrying pollen from one flower to another is called this.","Pollination","Germination","Photosynthesis"],
+["Monarch butterflies migrate each fall to the mountain forests of this country.","Mexico","Canada","Brazil"],
+["Honeybees tell the hive where flowers are with this dance.","The waggle dance","The shimmy","The two-step"],
+["About one out of every this many bites of food depends on pollinators.","Three","Ten","Twenty"]]});
+CATS.push({c:"Perennials",e:"🌻",q:[
+["These spring bulbs naturalize and return every year, and deer leave them alone.","Daffodils","Marigolds","Petunias"],
+["This fragrant purple shrub feeds the bees and comes back bigger every season.","Lavender","Cosmos","Zinnias"],
+["California's orange state flower is this kind of poppy.","The California poppy","The Iceland poppy","The Oriental poppy"],
+["This purple coneflower, also sold as an herbal remedy, is known as echinacea.","The coneflower","The black-eyed Susan","The coreopsis"],
+["Given good soil, a peony planting can bloom for this long.","Fifty years or more","Five years","Twenty years"]]});
+CATS.push({c:"Sing-Along",e:"🎶",q:[
+["Somewhere Over the Rainbow comes from this 1939 film.","The Wizard of Oz","Gone with the Wind","Casablanca"],
+["This singer was crowned the Queen of Soul.","Aretha Franklin","Etta James","Tina Turner"],
+["Take Me Home, Country Roads names this state.","West Virginia","Virginia","Kentucky"],
+["This 1971 Carole King album includes You've Got a Friend.","Tapestry","Rumours","Blue"],
+["Irving Berlin wrote it, and this singer's 1942 version became the best-selling single of all time.","Bing Crosby","Frank Sinatra","Nat King Cole"]]});
+CATS.push({c:"Garden Sayings",e:"💬",q:[
+["A rolling stone gathers no this.","Moss","Dust","Weeds"],
+["To nip something in the bud means to do this.","Stop it early","Encourage it","Hide it"],
+["Money doesn't grow on these.","Trees","Bushes","Vines"],
+["To lead someone down the garden blank means to mislead them.","Path","Gate","Shed"],
+["A late bloomer is someone who does this.","Succeeds later than expected","Never succeeds","Repeats themselves"]]});
+CATS.push({c:"Trailblazers",e:"👒",q:[
+["This pilot was the first woman to fly solo across the Atlantic.","Amelia Earhart","Bessie Coleman","Jackie Cochran"],
+["In 1955 she refused to give up her bus seat in Montgomery, Alabama.","Rosa Parks","Harriet Tubman","Ida B. Wells"],
+["This physicist became the first American woman in space in 1983.","Sally Ride","Mae Jemison","Christa McAuliffe"],
+["This abolitionist asked Ain't I a Woman at an 1851 convention.","Sojourner Truth","Susan B. Anthony","Elizabeth Cady Stanton"],
+["She is the only person ever to win Nobel Prizes in two different sciences.","Marie Curie","Rosalind Franklin","Lise Meitner"]]});
+CATS.push({c:"Church Cookbook",e:"🥧",q:[
+["This gelatin dessert turned up in every molded salad at the church supper.","Jell-O","Tapioca","Sherbet"],
+["Green bean casserole is held together by this canned soup.","Cream of mushroom","Cream of chicken","Tomato"],
+["A dump cake is called that because you do this with the ingredients.","Dump them in without mixing","Drop them from a height","Throw out the box"],
+["A pound cake gets its name from this.","A pound each of butter, sugar, flour and eggs","It weighs exactly one pound","It cost a pound to bake"],
+["This quick bread made from cornmeal is the classic partner to a bowl of chili.","Cornbread","Sourdough","A biscuit"]]});
+CATS.push({c:"Pruning",e:"✂️",q:[
+["Deadheading means cutting off these.","Spent flowers","New buds","Side shoots"],
+["This two-handled tool with curved blades is the one for cutting stems.","Pruners","A trowel","A hoe"],
+["Gardeners prune most spring-blooming shrubs at this time.","Right after they bloom","In deep winter","Just before they bloom"],
+["The three D's of pruning are dead, damaged, and this.","Diseased","Dormant","Dense"],
+["Pinching off a basil flower does this to the plant.","Keeps the leaves sweet and coming","Makes it flower faster","Stops its growth"]]});
+CATS.push({c:"Read Aloud",e:"📚",q:[
+["This very hungry insect eats its way through Eric Carle's book.","A caterpillar","A ladybug","A cricket"],
+["In this book a mouse is given a cookie, and then asks for milk.","If You Give a Mouse a Cookie","The Mouse and the Motorcycle","Mouse Soup"],
+["This author wrote and illustrated Where the Wild Things Are.","Maurice Sendak","Dr. Seuss","Eric Carle"],
+["In E. B. White's book, this spider saves a pig named Wilbur.","Charlotte","Templeton","Fern"],
+["This author created Ramona Quimby and Henry Huggins.","Beverly Cleary","Judy Blume","Laura Ingalls Wilder"]]});
+/* ================= FOLLOW-UP FACTS =================
+   One "you'll want to know this" fact per clue, same order as CATS. */
+var FACTS = [];
+FACTS.push([ /* The Kitchen Garden */
+"A fruit botanically, a vegetable legally, and always better warm off the vine.",
+"Basil bolts in heat — pinch the flowers and the leaves stay sweet.",
+"Kirby cucumbers make the crunchiest pickle.",
+"Lock your car in July. Somebody will leave zucchini in it.",
+"Legumes fix nitrogen with root bacteria — free fertilizer, grown in place."]);
+FACTS.push([ /* Life in the Classroom */
+"Reading, writing, arithmetic — the third one is spelled wrong on purpose.",
+"The best lesson plan leaves room for the day that actually shows up.",
+"Brown v. Board: one unanimous ruling, and the doors opened.",
+"She was chosen from more than 11,000 applicants to teach from orbit.",
+"Carver taught there too — Washington hired him the same year."]);
+FACTS.push([ /* The Pollinators */
+"A worker bee makes about a twelfth of a teaspoon of honey in her whole life.",
+"Pollination is plant romance with a delivery fee.",
+"Monarchs fly up to 3,000 miles to the same oyamel firs every year.",
+"The angle of the waggle tells direction. The length tells distance.",
+"One in three bites — and nearly all of your fruit."]);
+FACTS.push([ /* Perennials That Come Back */
+"Daffodils are deer-proof and will outlive most mortgages.",
+"Lavender wants sun, sharp drainage, and to be left alone.",
+"The petals fold shut at night and on cold days, like a tent.",
+"Echinacea is named from the Greek for hedgehog, for its spiny cone.",
+"Peonies have been known to outlive the gardeners who planted them."]);
+FACTS.push([ /* Songs Everybody Knows */
+"Judy Garland was sixteen when she recorded it.",
+"Otis Redding wrote Respect. Aretha made it hers.",
+"John Denver had never set foot in West Virginia when he wrote it.",
+"Tapestry stayed on the charts for more than 300 weeks.",
+"White Christmas has sold an estimated 50 million copies."]);
+FACTS.push([ /* Garden Sayings */
+"Moss only grows where nothing moves.",
+"Nip the bud, and the flower never spends itself.",
+"Money grows on trees in exactly one place: the mint.",
+"The garden path is winding on purpose.",
+"Late bloomers last longest. They had time to build roots."]);
+FACTS.push([ /* Women Who Broke Ground */
+"1932. One engine, one pilot, fifteen hours.",
+"She was a seamstress and an NAACP secretary — and the refusal was planned.",
+"Sally Ride was also the first American woman to walk in space.",
+"Born enslaved in New York, she won her freedom in court.",
+"Physics in 1903, chemistry in 1911. Nobody else has done it."]);
+FACTS.push([ /* Church Cookbook Classics */
+"The molded ring was the flex. Bonus points for suspended fruit.",
+"Campbell's printed the recipe in 1955. The fried onions did the rest.",
+"One bowl, one pan, no stirring. That's the entire method.",
+"A pound of each — butter, sugar, flour, eggs. That's the whole recipe.",
+"No yeast, no rising. Cornmeal and buttermilk do the work."]);
+FACTS.push([ /* Pruning & Deadheading */
+"Cut the flower and the plant stops making seed and starts making more blooms.",
+"Bypass pruners cut clean. Anvil pruners crush the stem.",
+"Prune after bloom, and you keep this year's flowers and next year's buds.",
+"Dead, damaged, diseased — everything else is a matter of taste.",
+"Pinch early, pinch often, and eat the evidence."]);
+FACTS.push([ /* Books Read Aloud */
+"Carle's caterpillar has eaten through more than 50 million copies.",
+"One cookie leads to an entire afternoon of errands.",
+"Sendak modeled the wild things on his immigrant relatives.",
+"A spider who spells, and a rat who eats. That's the whole book.",
+"Ramona was born from a kid Beverly Cleary met at a library."]);
+
+var LINES = {
+  welcome: [ 'Hoo-hoo! Welcome to Garden Party Jeopardy.', 'Pick a clue, friend. The sun is climbing.' ],
+  pick:    [ 'Ooh, a fine choice.', 'Let\'s see… this one.', 'Ah yes, a favorite of mine.' ],
+  good:    [ 'Correct! The stars dim for you.', 'Hoot-hoot! Beautifully done.', 'Sharp as a talon. Well played.', 'Yes! The dawn approves.' ],
+  bad:     [ 'Oh my feathers… not quite.', 'The squirrel would have loved that one. No.', 'Hoo… sadly no.', 'A brave guess, but no.' ],
+  timeout: [ 'Time\'s up! Even the sun doesn\'t wait.', 'Too slow, friend — the dawn marches on.' ],
+  acorn:   [ 'THE GOLDEN ACORN! The squirrel will be furious.', 'A Golden Acorn! Wager bravely!' ],
+  final:   [ 'The board is clear… time for the Sunrise Wager.', 'One last clue before the sun crests. Wager well.' ],
+  win:     [ 'What a morning! You glow brighter than the sunrise.', 'Champion of the dawn! Hoot-hoot!' ],
+  lose:    [ 'The sun still rose. There\'s always tomorrow.', 'A cloudy morning — but dawn comes again.' ]
+};
+function pickLine(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ---------- state ---------- */
+var STATE = 'menu';
+var score = 0, best = 0;
+var GAME = [];                /* 5 categories picked for this game */
+var done = (function(){ var d = []; for (var c = 0; c < 5; c++) d.push([false, false, false, false, false]); return d; })();
+var acorn = { c: -1, r: -1 };
+var cur = null;               /* { c, r, q, options:[{t,ok}], v } */
+var wager = 0, isFinal = false;
+var right = 0, answered = 0, acornHit = false, acornRight = false, finalRight = false;
+var timerT = 0, timerOn = false;
+var speechT = 0;
+var progress = 0;
+var owlExcited = 0;
+
+var $ = function(id){ return document.getElementById(id); };
+var boardEl = $('board'), speechEl = $('speech');
+function loadBest(){ try{ best = parseInt(localStorage.getItem('dawnJepBest') || '0', 10) || 0; }catch(e){ best = 0; } }
+function saveBest(){ try{ localStorage.setItem('dawnJepBest', String(best)); }catch(e){} }
+
+function say(text, dur){
+  speechEl.textContent = text;
+  speechEl.classList.add('on');
+  speechT = dur || 2.6;
+  if (LINES.good.indexOf(text) >= 0 || LINES.acorn.indexOf(text) >= 0) owlExcited = 0.8;
+}
+function colBoundary(k){
+  /* x of the gap after board column k (0-based) — the exact midpoint between two columns */
+  var br = boardEl.getBoundingClientRect();
+  var cs = getComputedStyle(boardEl);
+  var padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+  var colW = (br.width - padL - padR - 4 * 6) / 5;
+  return br.left + padL + (k + 1) * colW + k * 6 + 3;
+}
+function hootPos(){
+  /* host perch: exactly centered between the 4th and 5th category columns */
+  return { x: colBoundary(3), y: Math.max(96, H * 0.13) };
+}
+function placeSpeech(){
+  var h = hootPos();
+  speechEl.style.left = Math.min(W - 300, Math.max(12, h.x + 40)) + 'px';
+  speechEl.style.top = Math.max(64, h.y - 120) + 'px';
+}
+
+/* ---------- board ---------- */
+function buildBoard(){
+  boardEl.innerHTML = '';
+  for (var c = 0; c < 5; c++){
+    var h = document.createElement('div');
+    h.className = 'cat'; h.textContent = GAME[c].e + ' ' + GAME[c].c;
+    boardEl.appendChild(h);
+  }
+  for (var r = 0; r < 5; r++){
+    for (var c2 = 0; c2 < 5; c2++){
+      (function(cc, rr){
+        var b = document.createElement('button');
+        b.className = 'cell';
+        b.textContent = (rr + 1) * 100;
+        if (done[cc][rr]){ b.classList.add('done'); b.textContent = done[cc][rr]; }
+        if (cc === acorn.c && rr === acorn.r && !done[cc][rr]) b.classList.add('acorn');
+        b.addEventListener('click', function(){ pickClue(cc, rr, b); });
+        boardEl.appendChild(b);
+      })(c2, r);
+    }
+  }
+  $('hudLeft').textContent = String(cluesLeft());
+  $('hudPhase').textContent = cluesLeft() > 0 ? 'Board 1' : 'Sunrise Wager';
+  /* played cells go dark instantly — kill any marquee light tagged to a played cell */
+  for (var fi = fgFire.length - 1; fi >= 0; fi--){
+    if (fgFire[fi].cell && fgFire[fi].cell.classList.contains('done')) fgFire.splice(fi, 1);
+  }
+}
+function cluesLeft(){
+  var n = 0;
+  for (var c = 0; c < 5; c++) for (var r = 0; r < 5; r++) if (!done[c][r]) n++;
+  return n;
+}
+
+/* ---------- flow ---------- */
+function pickGame(){
+  var pool = CATS.slice();
+  GAME = [];
+  for (var i = 0; i < 5; i++){
+    var k = Math.floor(Math.random() * pool.length);
+    GAME.push(pool.splice(k, 1)[0]);
+  }
+}
+function startGame(){
+  score = 0; right = 0; answered = 0; progress = 0;
+  acornHit = false; acornRight = false; finalRight = false; wager = 0;
+  done = [];
+  for (var c = 0; c < 5; c++){ done.push([false, false, false, false, false]); }
+  pickGame();
+  acorn.c = Math.floor(Math.random() * 5);
+  acorn.r = Math.floor(Math.random() * 5);
+  STATE = 'board';
+  $('menu').classList.remove('on');
+  $('over').classList.remove('on');
+  timerOn = false;
+  $('hudScore').textContent = '0';
+  $('scoreBox').classList.remove('neg');
+  buildBoard();
+  placeSpeech();
+  say(pickLine(LINES.welcome), 3.4);
+}
+function shuffle(a){
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function spawnFire(x, y){
+  for (var i = 0; i < 18; i++){
+    var a = Math.random() * Math.PI * 2, s = 30 + Math.random() * 90;
+    fgFire.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40,
+      t: 0, life: 1.2 + Math.random() * 1.2, r: 1.5 + Math.random() * 2.5,
+      p: Math.random() * 6, gold: Math.random() < 0.6 });
+  }
+}
+/* marquee: dense twinkling ring of fireflies around every unplayed cell border.
+   Per-cell quota — every row gets the same budget, no first-come starvation. */
+function spawnMarqueeFireflies(){
+  var cells = Array.prototype.slice.call(boardEl.querySelectorAll('.cell:not(.done)'));
+  if (!cells.length) return;
+  /* Fisher–Yates shuffle — if the safety valve ever bites, the shortage is spread
+     randomly across all rows instead of always starving the bottom ones */
+  for (var i = cells.length - 1; i > 0; i--){
+    var k = Math.floor(Math.random() * (i + 1));
+    var t = cells[i]; cells[i] = cells[k]; cells[k] = t;
+  }
+  var N = 3 + Math.floor(Math.random() * 3);   /* 3–5 per cell per tick — slow cadence + long life need a bigger quota to hold the dense coverage */
+  for (i = 0; i < cells.length; i++){
+    for (var n = 0; n < N; n++) emitMarquee(cells[i]);
+  }
+}
+function emitMarquee(cell){
+  var rect = cell.getBoundingClientRect();
+  var side = Math.floor(Math.random() * 4), x, y, d;
+  if (side === 0){ x = rect.left + Math.random() * rect.width; y = rect.top; d = x - rect.left; }
+  else if (side === 1){ x = rect.left + Math.random() * rect.width; y = rect.bottom; d = rect.width + (rect.right - x); }
+  else if (side === 2){ x = rect.left; y = rect.top + Math.random() * rect.height; d = rect.width + rect.height + (rect.bottom - y); }
+  else { x = rect.right; y = rect.top + Math.random() * rect.height; d = rect.width + (y - rect.top); }
+  /* corner bias: a border point near a true corner reads brighter, like a marquee bulb */
+  var corner = (x - rect.left < 7 || rect.right - x < 7) && (y - rect.top < 7 || rect.bottom - y < 7);
+  if (fgFire.length >= 2000) return;   /* hard safety valve only — never aborts the pass */
+  var perim = 2 * (rect.width + rect.height) || 1;
+  fgFire.push({ x: x, y: y, vx: (Math.random() - 0.5) * 0.8, vy: -0.3 - Math.random() * 0.5,
+    t: 0, life: 3 + Math.random() * 2,
+    r: (corner ? 0.7 : 0) + 1 + Math.random() * 1.4,
+    p: (d / perim) * 6.283, gold: Math.random() < (corner ? 0.97 : 0.85), cell: cell });
+}
+function pickClue(c, r, btn){
+  if (STATE !== 'board' || done[c][r]) return;
+  var raw = GAME[c].q[r];
+  cur = { c: c, r: r, q: raw[0], fact: FACTS[CATS.indexOf(GAME[c])][r], options: shuffle([
+    { t: raw[1], ok: true }, { t: raw[2], ok: false }, { t: raw[3], ok: false }
+  ]), v: (r + 1) * 100, cat: GAME[c].c, e: GAME[c].e };
+  isFinal = false;
+  if (c === acorn.c && r === acorn.r){
+    acornHit = true;
+    if (btn){
+      var rect = btn.getBoundingClientRect();
+      spawnFire(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+    say(pickLine(LINES.acorn), 3);
+    openWager(false);
+  } else {
+    say(pickLine(LINES.pick), 1.8);
+    openClue(cur.v);
+  }
+}
+function openWager(finalMode){
+  STATE = 'wager';
+  isFinal = finalMode;
+  var maxW = finalMode ? Math.max(score, 0) : Math.max(score, cur ? cur.v * 2 : 1000);
+  maxW = Math.max(maxW, finalMode ? 0 : 500);
+  $('wagerBadge').textContent = finalMode ? '◆ Sunrise Wager — Final ◆' : '◆ Golden Acorn — Daily Double ◆';
+  $('wagerCat').textContent = finalMode ? FINAL.cat : (GAME[cur.c].e + ' ' + GAME[cur.c].c);
+  $('wagerPrompt').textContent = finalMode
+    ? (maxW > 0 ? 'One clue left. Wager up to ' + maxW + '?' : 'One clue left — play it for pride.')
+    : 'Daily double! Wager up to ' + maxW + '.';
+  var row = $('wagerRow');
+  row.innerHTML = '';
+  var opts;
+  if (maxW <= 0){ opts = [0]; }
+  else {
+    var half = Math.round(maxW / 2);
+    opts = [];
+    [100, half, maxW].forEach(function(v){
+      v = Math.min(v, maxW);
+      if (v > 0 && opts.indexOf(v) < 0) opts.push(v);
+    });
+  }
+  opts.forEach(function(v){
+    var b = document.createElement('button');
+    b.className = 'btn';
+    b.textContent = maxW <= 0 ? 'No wager — just play' : (v === maxW && maxW > 100 ? 'All in · ' + v : String(v));
+    b.addEventListener('click', function(){
+      wager = v;
+      $('wagerOv').classList.remove('on');
+      if (finalMode){
+        cur = { c: -1, r: -1, q: FINAL.q, cat: FINAL.cat, e: '🌞', v: v,
+          options: shuffle([
+            { t: FINAL.a[0], ok: true }, { t: FINAL.a[1], ok: false }, { t: FINAL.a[2], ok: false }
+          ]) };
+      }
+      openClue(v);
+    });
+    row.appendChild(b);
+  });
+  $('wagerOv').classList.add('on');
+}
+function openClue(v){
+  STATE = 'clue';
+  var isAcorn = !isFinal && cur.c === acorn.c && cur.r === acorn.r;
+  $('acornBadge').style.display = isAcorn ? 'inline-block' : 'none';
+  $('clueCat').textContent = cur.e + ' ' + cur.cat;
+  $('clueVal').textContent = v > 0 ? v : '—';
+  $('clueText').textContent = cur.q;
+  $('verdict').textContent = '';
+  $('verdict').className = 'verdict';
+  $('factLine').innerHTML = '';
+  showSquirrel = false;
+  var box = $('choices');
+  box.innerHTML = '';
+  var keys = ['A', 'B', 'C'];
+  cur.options.forEach(function(op, i){
+    var b = document.createElement('button');
+    b.className = 'choice';
+    b.innerHTML = '<span class="key">' + keys[i] + '</span><span>' + op.t + '</span>';
+    b.addEventListener('click', function(){ submitAnswer(false, i); });
+    box.appendChild(b);
+  });
+  $('choices').style.display = 'flex';
+  $('nextRow').style.display = 'none';
+  $('nextBtn').textContent = isFinal ? 'See the Sunrise' : 'Back to the Board';
+  $('clueOv').classList.add('on');
+  timerT = CLUE_TIME; timerOn = true;
+}
+function submitAnswer(timedOut, choiceI){
+  if (STATE !== 'clue' || $('nextRow').style.display !== 'none') return;
+  timerOn = false;
+  var isAcorn = !isFinal && cur.c === acorn.c && cur.r === acorn.r;
+  var val = (isFinal || isAcorn) ? wager : cur.v;
+  var ok = !timedOut && choiceI != null && cur.options[choiceI].ok;
+  answered++;
+  if (!isFinal) done[cur.c][cur.r] = cur.options.find(function(o){ return o.ok; }).t;
+  progress = Math.min(1, (25 - cluesLeft()) / 25 * 0.85 + (isFinal ? 0.15 : 0));
+  /* paint the choices */
+  var btns = $('choices').children;
+  var correctTxt = '';
+  for (var i = 0; i < btns.length; i++){
+    btns[i].disabled = true;
+    if (cur.options[i].ok){ btns[i].classList.add('right'); correctTxt = cur.options[i].t; }
+  }
+  if (!ok && choiceI != null && btns[choiceI]) btns[choiceI].classList.add('wrong');
+  var vEl = $('verdict');
+  if (ok){
+    right++;
+    score += val;
+    vEl.textContent = 'Correct +' + val + ' — ' + correctTxt;
+    vEl.className = 'verdict good';
+    say(pickLine(LINES.good), 2.6);
+    if (isAcorn) acornRight = true;
+    if (isFinal) finalRight = true;
+  } else {
+    score -= val;
+    vEl.textContent = (timedOut ? 'Time! −' : 'Missed −') + val + ' — it was ' + correctTxt;
+    vEl.className = 'verdict bad';
+    say(timedOut ? pickLine(LINES.timeout) : pickLine(LINES.bad), 2.8);
+  }
+  $('hudScore').textContent = String(score);
+  $('scoreBox').classList.toggle('neg', score < 0);
+  /* the correct answer plus the follow-up fact everyone wants next */
+  var fact = isFinal ? FINAL.fact : cur.fact;
+  $('factLine').innerHTML = '<b>Answer</b> ' + correctTxt + (fact ? ' &nbsp;·&nbsp; <b>Good to know</b> ' + fact : '');
+  if (!ok) showSquirrel = true;
+  $('nextRow').style.display = 'flex';
+  setTimeout(function(){ $('nextBtn').focus(); }, 60);
+}
+function nextAfterClue(){
+  $('clueOv').classList.remove('on');
+  if (isFinal){ showOver(); return; }
+  buildBoard();
+  if (cluesLeft() === 0){
+    STATE = 'final';
+    say(pickLine(LINES.final), 3.2);
+    setTimeout(function(){ openWager(true); }, 900);
+  } else {
+    STATE = 'board';
+  }
+}
+/* reset = same five categories, fresh board; new game = draw new categories */
+function resetGame(){
+  if (!GAME.length){ startGame(); return; }
+  score = 0; right = 0; answered = 0; progress = 0;
+  acornHit = false; acornRight = false; finalRight = false; wager = 0;
+  done = [];
+  for (var c = 0; c < 5; c++){ done.push([false, false, false, false, false]); }
+  acorn.c = Math.floor(Math.random() * 5);
+  acorn.r = Math.floor(Math.random() * 5);
+  STATE = 'board';
+  $('menu').classList.remove('on');
+  $('over').classList.remove('on');
+  $('clueOv').classList.remove('on');
+  $('wagerOv').classList.remove('on');
+  timerOn = false;
+  $('hudScore').textContent = '0';
+  $('scoreBox').classList.remove('neg');
+  buildBoard();
+  say('Same board, fresh sunrise. Go again!', 2.6);
+}
+function showOver(){
+  STATE = 'over';
+  if (score > best){ best = score; saveBest(); $('newRec').style.display = 'block'; }
+  else $('newRec').style.display = 'none';
+  $('finScore').textContent = String(score);
+  $('finRight').textContent = right + ' / ' + answered;
+  $('finBest').textContent = String(best);
+  $('finAcorn').textContent = acornHit ? (acornRight ? 'Won' : 'Lost') : '—';
+  $('finWager').textContent = wager ? (finalRight ? '+' : '−') + wager : '—';
+  $('finAcc').textContent = answered ? Math.round(right / answered * 100) + '%' : '0%';
+  $('vTitle').innerHTML = score > 0 ? 'Sunrise <em>complete</em>' : 'Cloudy <em>morning</em>';
+  say(pickLine(score > 0 ? LINES.win : LINES.lose), 4);
+  $('over').classList.add('on');
+}
+
+/* ---------- canvas setup ---------- */
+var cv = document.getElementById('bg');
+var ctx = cv.getContext('2d');
+var fgCv = document.getElementById('fg');
+var fgCtx = fgCv.getContext('2d');
+var owlCv = document.getElementById('clueOwl');
+var owlCtx = owlCv.getContext('2d');
+var fgFire = [];        /* firefly burst particles on the foreground layer */
+var ambT = 0.8;         /* marquee border-light spawn timer */
+var showSquirrel = false;  /* squirrel joins the clue card after a wrong answer */
+var W = 0, H = 0, GROUND = 0, DPR = 1;
+var C = {
+  predawn:'#0F1B2C', predawn2:'#16273D', pine:'#14291F',
+  ink:'#14100A', dawn:'#E8933A', gold:'#F2B84B',
+  day:'#FBF7EE', day2:'#F3ECDC', mist:'#9FB0C4', stone:'#6A6255'
+};
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = W * DPR; cv.height = H * DPR;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  fgCv.width = W * DPR; fgCv.height = H * DPR;
+  fgCv.style.width = W + 'px'; fgCv.style.height = H + 'px';
+  fgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  GROUND = H - Math.max(84, H * 0.14);
+}
+window.addEventListener('resize', resize);
+
+function poly(c2, pts){
+  c2.beginPath();
+  c2.moveTo(pts[0][0], pts[0][1]);
+  for (var i = 1; i < pts.length; i++) c2.lineTo(pts[i][0], pts[i][1]);
+  c2.closePath(); c2.fill();
+}
+function owlAnim(now, dur, keys){
+  var t = (now % dur) / dur;
+  for (var i = 0; i < keys.length - 1; i++){
+    var a = keys[i], b = keys[i + 1];
+    if (t >= a[0] && t <= b[0]){
+      var u = (t - a[0]) / ((b[0] - a[0]) || 1);
+      u = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      return a[1] + (b[1] - a[1]) * u;
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+/* Hoot — the exact basketball-game owl. drawCtx = any 2d context. */
+function drawHoot(drawCtx, x, y, scale, now){
+  var sway = owlAnim(now, 5.4, [[0, 0], [0.28, 6], [0.62, -4], [1, 0]]);
+  var blink = owlAnim(now, 4.2, [[0, 1], [0.96, 1], [0.98, 0.1], [1, 1]]);
+  drawCtx.save();
+  drawCtx.translate(x, y);
+  drawCtx.scale(scale * 1.1, scale * 1.1);
+  drawCtx.translate(0, -76);
+  drawCtx.translate(32, 47);
+  drawCtx.rotate(sway * Math.PI / 180);
+  drawCtx.translate(-32, -47);
+  drawCtx.fillStyle = C.mist;
+  drawCtx.beginPath(); drawCtx.ellipse(32, 50, 18, 24, 0, 0, Math.PI * 2); drawCtx.fill();
+  poly(drawCtx, [[19, 14], [14, 0], [22, 12]]);
+  poly(drawCtx, [[45, 14], [50, 0], [42, 12]]);
+  drawCtx.beginPath(); drawCtx.arc(32, 26, 17, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.save();
+  drawCtx.translate(32, 24); drawCtx.scale(1, blink); drawCtx.translate(-32, -24);
+  drawCtx.fillStyle = C.day2;
+  drawCtx.beginPath(); drawCtx.arc(25, 24, 6, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.beginPath(); drawCtx.arc(39, 24, 6, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.fillStyle = C.ink;      /* black pupils */
+  drawCtx.beginPath(); drawCtx.arc(25, 24, 2.2, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.beginPath(); drawCtx.arc(39, 24, 2.2, 0, Math.PI * 2); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.fillStyle = C.dawn;
+  poly(drawCtx, [[32, 29], [28, 36], [32, 34], [36, 36]]);
+  var flap = owlExcited > 0 && !RM ? Math.sin(now * 18) * 24 : Math.sin(now * 1.3) * 2.4;
+  drawCtx.fillStyle = '#7A8A9A';
+  drawCtx.save();
+  drawCtx.translate(16, 36); drawCtx.rotate(-flap * Math.PI / 180); drawCtx.translate(-16, -36);
+  drawCtx.beginPath(); drawCtx.moveTo(16, 36); drawCtx.bezierCurveTo(12, 46, 12, 58, 18, 62); drawCtx.lineTo(18, 40); drawCtx.closePath(); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.save();
+  drawCtx.translate(48, 36); drawCtx.rotate(flap * Math.PI / 180); drawCtx.translate(-48, -36);
+  drawCtx.beginPath(); drawCtx.moveTo(48, 36); drawCtx.bezierCurveTo(52, 46, 52, 58, 46, 62); drawCtx.lineTo(46, 40); drawCtx.closePath(); drawCtx.fill();
+  drawCtx.restore();
+  drawCtx.strokeStyle = C.dawn; drawCtx.lineWidth = 2.2; drawCtx.lineCap = 'round';
+  drawCtx.beginPath();
+  drawCtx.moveTo(24, 70); drawCtx.lineTo(24, 76); drawCtx.moveTo(22, 70); drawCtx.lineTo(22, 76); drawCtx.moveTo(26, 70); drawCtx.lineTo(26, 76);
+  drawCtx.moveTo(40, 70); drawCtx.lineTo(40, 76); drawCtx.moveTo(38, 70); drawCtx.lineTo(38, 76); drawCtx.moveTo(42, 70); drawCtx.lineTo(42, 76);
+  drawCtx.stroke();
+  drawCtx.restore();
+}
+function drawSquirrelMini(x, y, wag){
+  wag = wag || 0;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(30 + wag, 14, 9, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(26 + wag * 0.6, 26, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18, 34, 8, 10, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.ellipse(16, 36, 4.5, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.arc(10, 24, 6, 0, Math.PI * 2); ctx.fill();
+  poly(ctx, [[9, 20], [8, 14], [12, 18]]);
+  ctx.fillStyle = C.day2;
+  ctx.beginPath(); ctx.arc(9.5, 23.5, 2.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(9, 23.5, 1.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.day;
+  ctx.beginPath(); ctx.arc(8.5, 22.9, 0.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.ink;
+  ctx.beginPath(); ctx.arc(4.5, 25.5, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function drawAcorn(x, y, s){
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = C.gold;
+  ctx.beginPath(); ctx.ellipse(0, 6, 9, 11, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dawn;
+  ctx.beginPath(); ctx.ellipse(0, -3, 10, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, -8); ctx.quadraticCurveTo(2, -12, 5, -13); ctx.stroke();
+  ctx.restore();
+}
+var stars = [], fireflies = [], clouds = [];
+/* squirrel fidget physics — a tiny spring that gets random little impulses */
+var sqF = { y: 0, v: 0, next: 1.2 };
+function initScenery(){
+  stars = []; fireflies = []; clouds = [];
+  var i;
+  for (i = 0; i < 26; i++) stars.push({ x: Math.random() * W, y: Math.random() * H * 0.4, a: 0.15 + Math.random() * 0.45, p: Math.random() * 6.2 });
+  for (i = 0; i < 7; i++) fireflies.push({ x: W * (0.3 + Math.random() * 0.65), y: GROUND - 20 - Math.random() * 70, p: Math.random() * 6, s: 0.6 + Math.random() * 0.6 });
+  for (i = 0; i < 9; i++) clouds.push({ x: Math.random() * W, y: H * (0.05 + Math.random() * 0.4), s: 0.5 + Math.random() * 0.7, a: 0.22 + Math.random() * 0.28 });
+}
+function mixRGB(a, b, t){
+  var r = Math.round(a[0] + (b[0] - a[0]) * t);
+  var g = Math.round(a[1] + (b[1] - a[1]) * t);
+  var bl = Math.round(a[2] + (b[2] - a[2]) * t);
+  return 'rgb(' + r + ',' + g + ',' + bl + ')';
+}
+function draw(now){
+  var i;
+  var k = progress;
+  var skyTop = mixRGB([15, 27, 44], [62, 74, 96], k * 0.8);
+  var skyMid = mixRGB([22, 39, 61], [232, 147, 58], k * 0.55);
+  var g = ctx.createLinearGradient(0, 0, 0, GROUND);
+  g.addColorStop(0, skyTop);
+  g.addColorStop(1, skyMid);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, GROUND + 2);
+  for (i = 0; i < stars.length; i++){
+    var st = stars[i];
+    var tw = RM ? 1 : 0.6 + 0.4 * Math.sin(now * 1.4 + st.p);
+    ctx.globalAlpha = st.a * tw * (1 - k * 0.9);
+    ctx.fillStyle = C.day;
+    ctx.beginPath(); ctx.arc(st.x, st.y, 1.3, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  var sunX = W * 0.78, sunR = 54;
+  var sunY = GROUND + sunR + 20 - k * (sunR * 2 + H * 0.30);
+  var sg = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, sunR * 2.6);
+  sg.addColorStop(0, 'rgba(242,184,75,' + (0.25 + k * 0.65) + ')');
+  sg.addColorStop(1, 'rgba(242,184,75,0)');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.arc(sunX, sunY, sunR * 2.6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.gold;
+  ctx.beginPath(); ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.pine;
+  ctx.fillRect(0, GROUND, W, H - GROUND);
+  ctx.fillStyle = 'rgba(232,147,58,' + (0.08 + k * 0.15) + ')';
+  ctx.fillRect(0, GROUND, W, 3);
+  ctx.fillStyle = 'rgba(20,41,31,0.8)';
+  for (i = 0; i < 8; i++){
+    var tx = W * 0.34 + i * (W * 0.09), ts = 0.5 + (i % 3) * 0.16;
+    ctx.save(); ctx.translate(tx, GROUND); ctx.scale(ts, ts);
+    ctx.beginPath(); ctx.moveTo(0, -86); ctx.lineTo(28, -28); ctx.lineTo(-28, -28); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -64); ctx.lineTo(34, -6); ctx.lineTo(-34, -6); ctx.fill();
+    ctx.restore();
+  }
+  /* the big moonlit tree — TALL, so its canopy touches the top of the screen */
+  var treeX = W * 0.12, treeS = GROUND / 272;
+  ctx.save();
+  ctx.translate(treeX, GROUND); ctx.scale(treeS, treeS);
+  ctx.fillStyle = '#2E2015';
+  ctx.fillRect(-9, -150, 18, 154);
+  ctx.fillStyle = C.pine;
+  ctx.beginPath(); ctx.arc(0, -196, 74, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-52, -162, 46, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(56, -166, 50, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  if (!RM){
+    for (i = 0; i < fireflies.length; i++){
+      var f = fireflies[i];
+      ctx.globalAlpha = (0.35 + 0.35 * Math.sin(now * 2 + f.p)) * (1 - k * 0.8);
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(f.x, f.y, 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  /* two dedicated branches reach right from the tree — one to each perched friend */
+  var hp = hootPos();
+  /* the squirrel's spot: exactly centered between the 1st and 2nd category columns */
+  var sqCX = colBoundary(0);
+  /* two dedicated branches grow out of the tree — one to each perched friend */
+  ctx.strokeStyle = '#2E2015'; ctx.lineCap = 'round';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(treeX - 8, hp.y + 46);
+  ctx.quadraticCurveTo((treeX + sqCX) / 2, hp.y + 32, sqCX + 22, hp.y + 8);
+  ctx.stroke();
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(treeX - 2, hp.y + 56);
+  ctx.quadraticCurveTo((treeX + hp.x) / 2, hp.y + 38, hp.x + 96, hp.y + 11);
+  ctx.stroke();
+  /* the squirrel perches on his own branch between columns 1 and 2,
+     with his subtle springy fidget and a slow lateral shuffle along the branch */
+  var sqDX = RM ? 0 : Math.sin(now * 0.5 + 1.1) * 8 + Math.sin(now * 0.21 + 3.7) * 5;
+  ctx.save();
+  ctx.translate(sqCX - 20 + sqDX, hp.y - 36 + sqF.y);
+  ctx.rotate(sqF.y * 0.012 + sqDX * 0.002);
+  drawSquirrelMini(0, 0, Math.sin(now * 5.2) * 3 + sqF.y * 0.4);
+  ctx.restore();
+  /* Hoot sidles along his branch — anchored between the 4th and 5th columns,
+     drifting slowly into the 4th column and back across into the 5th.
+     Owl biomechanics: a slight body lean into the walk, and a soft step-bounce
+     whose height follows how fast he's moving. */
+  var owlAmp = RM ? 0 : (colBoundary(3) - colBoundary(2)) * 0.36;
+  var owlPh = now * 0.16;
+  var owlDX = Math.sin(owlPh) * owlAmp;
+  var owlVX = Math.cos(owlPh) * owlAmp * 0.16;
+  var owlLean = Math.max(-0.055, Math.min(0.055, owlVX * 0.0038));
+  var owlBob = RM ? 0 : Math.abs(Math.sin(now * 1.15)) * Math.min(2.4, Math.abs(owlVX) * 0.07);
+  ctx.save();
+  ctx.translate(hp.x + owlDX, hp.y + 11 - owlBob);
+  ctx.rotate(owlLean);
+  ctx.translate(-(hp.x + owlDX), -(hp.y + 11 - owlBob));
+  drawHoot(ctx, hp.x + owlDX, hp.y + 11 - owlBob, 0.72, now);
+  ctx.restore();
+  if (acornHit && STATE !== 'menu'){
+    drawSquirrelMini(treeX - 44 * treeS + W * 0.04, GROUND - 46);
+    drawAcorn(treeX - 44 * treeS + W * 0.04 + 6, GROUND - 52, 0.8);
+  }
+  /* host overlay on the clue card — same owl, perched on the bubble's left edge */
+  if ($('clueOv').classList.contains('on')){
+    owlCtx.setTransform(2, 0, 0, 2, 0, 0);
+    owlCtx.clearRect(0, 0, 130, 160);
+    drawHoot(owlCtx, 40, 158, 1.6, now);
+    if (showSquirrel){
+      /* the ball-hawking squirrel crashes the card after a wrong answer */
+      owlCtx.save();
+      owlCtx.translate(72, 92);
+      owlCtx.scale(0.9, 0.9);
+      var keep = ctx; ctx = owlCtx;
+      drawSquirrelMini(0, 0);
+      ctx = keep;
+      owlCtx.restore();
+    }
+  }
+  drawFg(now);
+}
+
+/* foreground layer — clouds drift in FRONT of the board; acorn fireflies burst here */
+function drawFg(now){
+  fgCtx.clearRect(0, 0, W, H);
+  var i;
+  for (i = 0; i < clouds.length; i++){
+    var cl = clouds[i];
+    fgCtx.globalAlpha = cl.a * 0.9;
+    fgCtx.fillStyle = C.mist;
+    fgCtx.beginPath(); fgCtx.arc(cl.x, cl.y, 18 * cl.s, 0, Math.PI * 2);
+    fgCtx.arc(cl.x + 22 * cl.s, cl.y + 4, 14 * cl.s, 0, Math.PI * 2);
+    fgCtx.arc(cl.x - 18 * cl.s, cl.y + 6, 12 * cl.s, 0, Math.PI * 2);
+    fgCtx.fill();
+  }
+  fgCtx.globalAlpha = 1;
+  for (i = fgFire.length - 1; i >= 0; i--){
+    var p = fgFire[i];
+    var u = p.t / p.life;
+    /* slow breathe: warm up 15%, hold near full, ease out over the last 40% */
+    var fade = u < 0.15 ? u / 0.15 : (u < 0.6 ? 1 : Math.max(0, 1 - (u - 0.6) / 0.4));
+    fgCtx.globalAlpha = fade * 0.9 * (0.6 + 0.4 * Math.sin(now * 2.2 + p.p));
+    fgCtx.fillStyle = p.gold ? C.gold : C.day;
+    fgCtx.beginPath(); fgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); fgCtx.fill();
+  }
+  fgCtx.globalAlpha = 1;
+}
+
+/* ---------- frame loop ---------- */
+var last = performance.now();
+function frame(nowMs){
+  var dt = Math.min((nowMs - last) / 1000, 0.05);
+  last = nowMs;
+  var now = nowMs / 1000;
+  if (owlExcited > 0) owlExcited -= dt;
+  if (speechT > 0){
+    speechT -= dt;
+    if (speechT <= 0) speechEl.classList.remove('on');
+  }
+  if (timerOn && STATE === 'clue'){
+    timerT -= dt;
+    $('timerFill').style.width = Math.max(0, timerT / CLUE_TIME * 100) + '%';
+    if (timerT <= 0){ timerOn = false; submitAnswer(true, null); }
+  }
+  /* marquee: dense flickering border lights around unplayed cells while the board is live */
+  if (!RM && STATE === 'board'){
+    ambT -= dt;
+    if (ambT <= 0){ spawnMarqueeFireflies(); ambT = 0.8 + Math.random() * 0.4; }
+  }
+  for (var i = 0; i < fireflies.length; i++){
+    var f = fireflies[i];
+    f.p += dt * f.s;
+    f.x += Math.sin(f.p * 1.4) * 10 * dt;
+    f.y += Math.cos(f.p * 0.9) * 7 * dt;
+  }
+  for (i = 0; i < clouds.length; i++){
+    clouds[i].x -= 4 * dt;
+    if (clouds[i].x < -160) clouds[i].x = W + 120;
+  }
+  /* squirrel fidget: a damped spring, kicked by small random impulses */
+  if (!RM){
+    sqF.next -= dt;
+    if (sqF.next <= 0){ sqF.v -= 26 + Math.random() * 30; sqF.next = 1.4 + Math.random() * 2.4; }
+    sqF.v += (-90 * sqF.y - 7 * sqF.v) * dt;
+    sqF.y += sqF.v * dt;
+  } else { sqF.y = 0; sqF.v = 0; }
+  for (i = fgFire.length - 1; i >= 0; i--){
+    var p = fgFire[i];
+    p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.t >= p.life) fgFire.splice(i, 1);
+  }
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wire up ---------- */
+$('startBtn').addEventListener('click', startGame);
+$('againBtn').addEventListener('click', startGame);
+$('nextBtn').addEventListener('click', nextAfterClue);
+$('newBtn').addEventListener('click', function(){ $('clueOv').classList.remove('on'); $('wagerOv').classList.remove('on'); $('over').classList.remove('on'); timerOn = false; startGame(); });
+$('resetBtn').addEventListener('click', resetGame);
+document.addEventListener('keydown', function(e){
+  if (STATE === 'clue' && $('nextRow').style.display === 'none'){
+    var k = e.key.toLowerCase();
+    if (k === 'a' || k === '1') submitAnswer(false, 0);
+    if (k === 'b' || k === '2') submitAnswer(false, 1);
+    if (k === 'c' || k === '3') submitAnswer(false, 2);
+  }
+  if (e.key === 'Enter' && $('nextRow').style.display !== 'none' && $('clueOv').classList.contains('on')) nextAfterClue();
+  if ((e.key === 'Enter' || e.key === ' ') && (STATE === 'menu' || STATE === 'over')) startGame();
+});
+
+loadBest();
+resize();
+initScenery();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
