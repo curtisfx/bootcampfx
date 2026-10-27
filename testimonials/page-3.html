@@ -144,6 +144,34 @@
     .full-stories .t-photo{width:96px;height:96px;display:inline-block;vertical-align:middle;margin:0 10px 0 0;}
     .ftc-note{max-width:900px;margin:48px auto 0;padding:0 4px;font-family:var(--mono);font-size:.72rem;
       letter-spacing:.08em;text-transform:uppercase;color:var(--stone);text-align:center;}
+
+    /* pass 3: story avatars are 96px circles like every other avatar */
+    .full-stories .t-photo{width:96px;height:96px;border-radius:50%;border:2px solid var(--dawn);object-fit:cover;object-position:center top;display:inline-block;vertical-align:middle;margin:0 10px 0 0;}
+    .full-stories .t-mono{display:inline-flex;vertical-align:middle;margin:0 10px 0 0;}
+    /* quote clamp with Read more */
+    .mcard .q{-webkit-line-clamp:7;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+    .mcard.is-open .q{-webkit-line-clamp:unset;display:block;overflow:visible;}
+    .mcard .more{margin-top:10px;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dawn);background:none;border:0;padding:0;cursor:pointer;}
+    /* masonry so short cards do not stretch */
+    .m-grid{display:block;columns:3 340px;column-gap:22px;}
+    .mcard{break-inside:avoid;margin-bottom:22px;}
+    @media (max-width:880px){ .m-grid{columns:1;} }
+    /* featured portraits */
+    .featured{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:34px;}
+    @media (max-width:880px){ .featured{grid-template-columns:1fr;} }
+    .featured .fcard{background:#fff;border:1px solid var(--line-day);border-radius:20px;padding:26px;text-align:center;}
+    .featured .fcard img{width:100%;height:240px;object-fit:cover;object-position:center 25%;border-radius:14px;margin-bottom:16px;}
+    .featured .fcard .fname{font-family:var(--display);font-size:1.3rem;margin-bottom:6px;}
+    .featured .fcard .fq{font-size:.95rem;color:var(--stone);}
+
+    /* monogram tones (existing tokens only) */
+    .t-mono[data-tone="1"]{background:var(--day-2);color:var(--stone);}
+    .t-mono[data-tone="2"]{background:var(--cream);color:var(--pine);}
+    .t-mono[data-tone="3"]{background:var(--gold);color:var(--pine);}
+    .t-mono[data-tone="4"]{background:var(--mist);color:var(--pine);}
+    /* one gentle grade so mixed source quality reads as a style */
+    .t-photo{filter:saturate(.94) contrast(1.03);}
+    .featured .fcard img{filter:saturate(.94) contrast(1.03);}
 </style>
 </head>
 <body>
@@ -171,7 +199,6 @@
 <section class="members" id="members"><div class="wrap">
       <div class="m-grid">
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">FS</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“Super fun class with lots of challenging work outs. Facing new challenges everyday is what makes this class fun and exciting. Curtis who runs the camp is a great guy who can help you to back into shape and achieve your goals. Lots of cardio and weight lifting and workouts are never boring. We do something new every session. Highly recommended.”</p>
@@ -179,16 +206,14 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">EL</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi I&#x27;m Elizabeth Ros I&#x27;m 63 years will be 63 March 19th I&#x27;ve been working out with Curtis and since I&#x27;ve been working out with Curtis my booty was down south and now it&#x27;s up and tight and tough and I&#x27;ve lost inches I know I&#x27;ve lost inches cuz my clothes fit me a lot better and I&#x27;m more defined in my arms and shoulders and back yay Curtis”</p>
           <div class="who">Elizabeth &quot;Liz&quot; (caption: &quot;Elizabeth Ros&quot;)</div>
           <div class="res">YouTube</div>
-          <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/elizabeth-liz-caption-elizabeth-ros-poster.jpg"><track kind="captions" src="/videos/testimonials/elizabeth-liz-caption-elizabeth-ros.vtt" srclang="en" label="English"><source src="/videos/testimonials/elizabeth-liz-caption-elizabeth-ros.mp4" type="video/mp4"></video>
+          <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/elizabeth-liz-poster.jpg"><track kind="captions" src="/videos/testimonials/elizabeth-liz.vtt" srclang="en" label="English"><source src="/videos/testimonials/elizabeth-liz.mp4" type="video/mp4"></video>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">TD</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“&quot;In 2002, as I was ascending the summit of Mt. Kilimanjaro, it occurred to me that without my intense personal training sessions with Curtis Ludlow, I would be at the base camp with the rest of the 50 somethings. Although nothing can prepare you for no oxygen, Curtis provided the motivation and skill sets to make the difference for me.&quot;”</p>
@@ -196,7 +221,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">AM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi my name is amber and I&#x27;ve been with boot camp effects for about seven months I paid on online and I had no problems at one point I had to stop boot camp and I was able to send Curtis email and he stopped it right away so if you have any reservations about it you shouldn&#x27;t I had a good experience with it so you can trust this website”</p>
@@ -205,7 +229,6 @@
           <p class="m-voice-note" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);">Video unavailable</p>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">ND</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I feel very lucky to have been introduced to Curtis! I was searching to find a challenging and innovative workout and each PT session I have is exactly that. I am feeling more confident and in better shape each week and just know that with continued sessions with Curtis, I will feel and look great come my wedding day. Thanks Curtis:)”</p>
@@ -213,7 +236,6 @@
           <div class="res">Website archive (curtisludlow.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">AS</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi I&#x27;m ariella from ian financial services I&#x27;ve been coming through boot camp FX for approximately three and a half years mother of four kids all my four kids come here I do credit card services without a problem every month on the spot same day I&#x27;ll have any problems whatsoever I love it can do anything better than this”</p>
@@ -221,7 +243,6 @@
           <div class="res">YouTube</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">JM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“Curtis is an excellent coach. His workouts are challenging and effective. I am a runner and enjoy long distance running. My running had greatly improved by the strength workouts I get in Bootcamp. Curtis customized his workouts for each individual fitness level so that everyone has a challenging yet successful workout.”</p>
@@ -229,7 +250,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">OA</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I started a boot-camp about 3 weeks ago and already see results. Every workout is different and keep you challenged, no matter what you fitness level is. Classes are tough, but give you energy level for a whole day. I strongly recommend you to try it for yourself, and for surely you will fall in love with the program.”</p>
@@ -237,7 +257,6 @@
           <div class="res">Yelp (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <img class="t-photo" src="/images/testimonials/delores-h-circle.webp" alt="Delores H., Boot Camp FX member" loading="lazy" width="192" height="192" style="object-position:center top">
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“&quot;Curtis puts his money where his mouth is; he is in great shape and knows how to get people in great shape. The training sessions are fun, different, and the people he works with always end up looking very athletic. If anybody where to ask me who to train with, I would definitely recommend Curtis. &quot; Thank you Curtis,”</p>
@@ -245,7 +264,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">LM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“Starting Boot Camp FX has been one of my best fitness decisions to date. In 30 to 40 minutes you never stop moving and get a super efficient and challenging work out. Curtis, who runs the camp is attentive and is always ready and organized with the trainings. I truly recommend this fitness boot camp. Lafleche”</p>
@@ -253,7 +271,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">JM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“&quot;After reading Curtis&#x27; meal plans I now have decided to include foods that I never thought that I would eat. I eat tomatoes, TOFU, and red peppers. Since doing so I am losing the love handles and marbles of fat on my waistline. Thanks to you Curtis and your meal plans, I am making myself and you look good!&quot;”</p>
@@ -261,16 +278,14 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">HE</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi my name is a and I&#x27;ve started training with Curtis since February and I&#x27;m proud to say that I&#x27;ve lost over 50 pounds and I&#x27;ve worked my way up from 1 to 3 boot camps today and I love every one of them he keeps it interesting and fun and I hope that I can continue to work with him for a long time to come”</p>
           <div class="who">Heike (per title/description; name garbled in captions as &quot;a&quot;)</div>
           <div class="res">YouTube</div>
-          <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/heike-per-title-description-name-garbled-in-captions-as-a-poster.jpg"><source src="/videos/testimonials/heike-per-title-description-name-garbled-in-captions-as-a.mp4" type="video/mp4"></video>
+          <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/heike-poster.jpg"><source src="/videos/testimonials/heike.mp4" type="video/mp4"></video>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">NT</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I never thought that boot camp fx would be this great! Every day gets better and better! I just like how Curtis trains us. He gets us motivated and keeps us pumped on working out every time we go out there. There are a variety of people that you get to work with and I meet new friends every time. THE BEST!”</p>
@@ -278,7 +293,6 @@
           <div class="res">Yelp (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">AS</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I have been going to Curtis for over 7 years and am in the best shape ever! He gives individual attention to each client, even the group sessions. My strength and endurance have increased tenfold and I&#x27;ve lost over 25 pounds. I am so happy with my results. I highly recommend Curtis Ludlow FX Bootcamp.”</p>
@@ -286,7 +300,6 @@
           <div class="res">Google Maps (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">AN</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi i&#x27;m annie it is 6 30 on friday morning and we just finished our workout and it was fabulous every day is fabulous i never thought i&#x27;d like getting up at six o&#x27;clock in the morning to come here but actually it&#x27;s pretty fun and i&#x27;m done for the day now so it&#x27;s a great way to start today”</p>
@@ -295,7 +308,6 @@
           <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/annie-poster.jpg"><track kind="captions" src="/videos/testimonials/annie.vtt" srclang="en" label="English"><source src="/videos/testimonials/annie.mp4" type="video/mp4"></video>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">BD</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I joined Boot Camp FX to get in condition for this year’s LA to Barstow to Vegas off road motorcycle ride. At age 49, I completed the two day, 440 mile ride through difficult desert terrain with only slightly sore hands at the completion. I could have easily done a third day.”</p>
@@ -303,7 +315,6 @@
           <div class="res">Website archive (curtisludlow.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <img class="t-photo" src="/images/testimonials/john-h-circle.webp" alt="John H., Boot Camp FX member" loading="lazy" width="400" height="400" style="object-position:center 22%">
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“&quot;Curtis I really enjoy reading the newsletter. It&#x27;s very informative on subjects like eating a balanced diet, exercise routine when on a tight schedule, about different food types and their effects. There is so much of information to lead a healthy and balanced life style&quot;”</p>
@@ -311,7 +322,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">KP</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I started boot camp Fx almost 6 years ago and fell in love with it. I took a break for a few years and started back up again. Curtis is a great guy and will def help you get back into shape. He makes the work out fun and enjoyable. Will definitely recommend for anyone.”</p>
@@ -319,7 +329,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">LV</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“Since I have started Boot Camp it&#x27;s been very motivating. I look forward to class each day. I feel so good after each class. It&#x27;s been very energizing. Each day it&#x27;s different and it&#x27;s a total body workout. Curtis works every part of your body and is very encouraging.”</p>
@@ -327,7 +336,6 @@
           <div class="res">Yelp (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">NI</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi guys my name&#x27;s Nicole I&#x27;ve been doing Curtis&#x27;s boot camp for going on 3 to four weeks when I started I weighed 14 lb and I dropped 8 lb I&#x27;m at 132 so I&#x27;m feeling good energetic and this is really helping me out and making me feel good about myself so go Cur Camp”</p>
@@ -335,7 +343,6 @@
           <div class="res">YouTube</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">MM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi my name is Monica Malone I&#x27;ve been coming to boot cap FX for the past six months and I signed up using the online credit card system it&#x27;s been easy super easy and I think you that it&#x27;s very convenient as well you&#x27;ve made a great decision congratulations [Music]”</p>
@@ -343,7 +350,6 @@
           <div class="res">YouTube</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">SS</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“My daughter and I have been members of Boot Camp FX for about 2 months and what an experience! Curtis is motivating and always changing up the workouts! The workouts include cardio and weights so you see results quickly! Thank you Curtis for keeping us motivated!”</p>
@@ -351,7 +357,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">MM</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi I&#x27;m Melissa Martinez and I&#x27;ve been working out with Curtis for about four and a half weeks and since then my arms have become more defined my stomach&#x27;s starting to curve in and I&#x27;m starting to get a little six-pack and uh my legs feel a lot tighter thank you”</p>
@@ -360,7 +365,6 @@
           <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/melissa-martinez-poster.jpg"><track kind="captions" src="/videos/testimonials/melissa-martinez.vtt" srclang="en" label="English"><source src="/videos/testimonials/melissa-martinez.mp4" type="video/mp4"></video>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">AH</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I&#x27;ve been doing Boot Camp FX for about 2 1/2 weeks so far and I love it! Curtis is an excellent trainer and works within everyone&#x27;s individual fitness levels. Working with a group keeps me motivated and is a lot of fun. I highly recommed this boot camp!”</p>
@@ -368,7 +372,6 @@
           <div class="res">Yelp (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">MS</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“I started Bootcampfx last week, oh goodness you will get the heck of workout. Curtis is very particular in a positive way and I like it. Bootcampfx is the best workout it every part of your body. I can&#x27;t wait for the next day workout.”</p>
@@ -376,7 +379,6 @@
           <div class="res">Yelp (direct)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">HE</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi I&#x27;m hiker and I&#x27;ve been coming to boot camps almost two years now and it&#x27;s fun it&#x27;s a great workout pushes you to the max and always pay online never have any problems it&#x27;s secure and easy and you don&#x27;t have to worry about it”</p>
@@ -384,7 +386,6 @@
           <div class="res">YouTube</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">KE</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“The combination of cardio and full body strengthening in an outdoor space is a perfect mix. Curtis offers a variety of workouts that benefit his clients both physically and mentally. Don&#x27;t hesitate to join.”</p>
@@ -392,7 +393,6 @@
           <div class="res">Website archive (bootcampfx.com)</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">TO</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“hi my name is Tony with a realty world and I&#x27;ve been coming to boot camp effects for about two years and I&#x27;ve been paying online with my credit card have not had any problems and I can cancel at any time”</p>
@@ -400,7 +400,6 @@
           <div class="res">YouTube</div>
         </div>
         <div class="mcard reveal">
-          <span class="qmark" aria-hidden="true">”</span>
           <span class="t-mono" aria-hidden="true">RP</span>
           <div class="stars" aria-hidden="true">★★★★★</div>
           <p class="q">“&quot;The training and advise you have given me have exceeded my expectations. I see results in my arms and feel energized from every workout! Thanks Curtis for your expertise!&quot;”</p>
@@ -436,4 +435,27 @@
   </div>
 </footer>
 
+
+<script>
+/* testimonials-uplift-2026-10-27 */
+(function(){
+  document.querySelectorAll('.mcard').forEach(function(card){
+    var q=card.querySelector('.q'); if(!q) return;
+    if(q.scrollHeight - q.clientHeight > 8){
+      var b=document.createElement('button');
+      b.className='more'; b.type='button'; b.textContent='Read more';
+      b.addEventListener('click',function(){
+        var open=card.classList.toggle('is-open');
+        b.textContent = open ? 'Show less' : 'Read more';
+      });
+      q.parentNode.insertBefore(b,q.nextSibling);
+    }
+  });
+  document.querySelectorAll('.t-mono').forEach(function(m){
+    var t=0,s=(m.textContent||'X');
+    for(var i=0;i<s.length;i++) t+=s.charCodeAt(i);
+    m.setAttribute('data-tone',String((t%4)+1));
+  });
+})();
+</script>
 </body></html>
