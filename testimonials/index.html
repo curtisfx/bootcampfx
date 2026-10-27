@@ -92,10 +92,6 @@
 
   
     /* ===== SKY GRADIENT — the main page's signature sunrise sweep ===== */
-    .top{
-      background:linear-gradient(180deg,#2C3A50 0%,#6E5A54 30%,var(--dawn) 68%,var(--gold) 88%,var(--day) 100%);
-      color:#fff; padding:150px 0 84px; overflow:hidden;
-    }
     .top .display, .top h2{ color:#fff; }
     .top .sec-lede{ color:rgba(255,255,255,.94); }
     .top .m-filters a{ border-color:rgba(255,255,255,.38); color:#fff; background:rgba(15,27,44,.16); }
@@ -108,6 +104,29 @@
         to{ background:rgba(15,27,44,.96); box-shadow:0 1px 0 rgba(255,255,255,.06); }
       }
     }
+
+  
+    /* ===== FULL-PAGE SKY — gradient runs the entire document, not just the header ===== */
+    html{ background:var(--predawn); }
+    body{
+      background:linear-gradient(180deg,
+        #2C3A50 0%,
+        #3E4C62 3%,
+        #6E5A54 6%,
+        var(--dawn) 10%,
+        var(--gold) 16%,
+        #F7D9A0 26%,
+        var(--day) 40%,
+        var(--day-2) 70%,
+        var(--day) 100%);
+      background-attachment:scroll;
+      background-repeat:no-repeat;
+    }
+    /* sections stop painting their own flat fills so the sky shows through */
+    .top, .members, .full-stories{ background:transparent; }
+    /* dark bands become translucent so the sky tints them instead of cutting them off */
+    .band-dark{ background:rgba(15,27,44,.82); color:var(--day); }
+    .band-cta{ background:rgba(15,27,44,.9); }
 
   </style>
 </head>
