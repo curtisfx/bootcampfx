@@ -137,6 +137,13 @@
     /* section label sits on the dark sky at the top of the page: use light ink */
     .members .sec-head h2{color:var(--day);}
     .top{padding-top:26px;}
+
+    /* --- Katya audit fixes 2026-10-27 --- */
+    .q{overflow-wrap:anywhere;word-break:break-word;}
+    .mcard .t-photo:not(.is-rect),.full-stories .t-photo:not(.is-rect){object-fit:cover;object-position:center top;}
+    .t-photo.is-rect{object-position:center 30%;}
+    .ftc-note{max-width:900px;margin:48px auto 0;padding:0 4px;font-family:var(--mono);font-size:.72rem;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--stone);text-align:center;}
 </style>
 </head>
 <body>
@@ -267,6 +274,7 @@
           <a href="page-4.html" class="is-active">4</a>
         </nav>
 </div></section>
+<p class="ftc-note">Individual results vary. Every member’s experience is their own.</p>
 </main>
 <footer>
   <div class="wrap">

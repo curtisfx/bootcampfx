@@ -137,6 +137,13 @@
     /* section label sits on the dark sky at the top of the page: use light ink */
     .members .sec-head h2{color:var(--day);}
     .top{padding-top:26px;}
+
+    /* --- Katya audit fixes 2026-10-27 --- */
+    .q{overflow-wrap:anywhere;word-break:break-word;}
+    .mcard .t-photo:not(.is-rect),.full-stories .t-photo:not(.is-rect){object-fit:cover;object-position:center top;}
+    .t-photo.is-rect{object-position:center 30%;}
+    .ftc-note{max-width:900px;margin:48px auto 0;padding:0 4px;font-family:var(--mono);font-size:.72rem;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--stone);text-align:center;}
 </style>
 </head>
 <body>
@@ -195,7 +202,7 @@
           <p class="q">“hi my name is amber and I&#x27;ve been with boot camp effects for about seven months I paid on online and I had no problems at one point I had to stop boot camp and I was able to send Curtis email and he stopped it right away so if you have any reservations about it you shouldn&#x27;t I had a good experience with it so you can trust this website”</p>
           <div class="who">Amber</div>
           <div class="res">YouTube</div>
-          <video class="m-voice" controls preload="none" playsinline poster="/images/testimonials/amber-poster.jpg"><source src="/videos/testimonials/amber.mp4" type="video/mp4"></video>
+          <p class="m-voice-note" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);">Video unavailable</p>
         </div>
         <div class="mcard reveal">
           <span class="qmark" aria-hidden="true">”</span>
@@ -408,6 +415,7 @@
           <a href="page-4.html">4</a>
         </nav>
 </div></section>
+<p class="ftc-note">Individual results vary. Every member’s experience is their own.</p>
 </main>
 <footer>
   <div class="wrap">
