@@ -26,7 +26,6 @@
     .sec-head.center{text-align:center;margin-left:auto;margin-right:auto;}
     .sec-head h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:18px;}
     .sec-lede{font-size:1.12rem;color:var(--stone);}
-    .top{padding:128px 0 44px;}
     .members{background:var(--day);padding:70px 0;}
     .m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
     @media (max-width:880px){ .m-grid{grid-template-columns:1fr;} }
@@ -90,6 +89,25 @@
     .f-copy{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; }
     .f-legal{ margin-top:8px; font-size:.8rem; opacity:.75; display:flex; flex-wrap:wrap; gap:4px 14px; }
     .f-clock{ font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; margin-top:16px; color:#5E7089; }
+
+  
+    /* ===== SKY GRADIENT — the main page's signature sunrise sweep ===== */
+    .top{
+      background:linear-gradient(180deg,#2C3A50 0%,#6E5A54 30%,var(--dawn) 68%,var(--gold) 88%,var(--day) 100%);
+      color:#fff; padding:150px 0 84px; overflow:hidden;
+    }
+    .top .display, .top h2{ color:#fff; }
+    .top .sec-lede{ color:rgba(255,255,255,.94); }
+    .top .m-filters a{ border-color:rgba(255,255,255,.38); color:#fff; background:rgba(15,27,44,.16); }
+    .top .m-filters a:hover{ border-color:var(--gold); color:#fff; background:rgba(15,27,44,.32); }
+    .nav{ background:rgba(15,27,44,.96); box-shadow:0 1px 0 rgba(255,255,255,.06); }
+    @supports (animation-timeline: scroll()){
+      .nav{ animation:navSolid linear both; animation-timeline:scroll(root block); animation-range:0 220px; }
+      @keyframes navSolid{
+        from{ background:rgba(15,27,44,0); box-shadow:none; }
+        to{ background:rgba(15,27,44,.96); box-shadow:0 1px 0 rgba(255,255,255,.06); }
+      }
+    }
 
   </style>
 </head>
