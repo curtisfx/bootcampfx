@@ -1,0 +1,4 @@
+key4first,key4last,variants,rows,row_numbers,risk,reason
+marg,p,"""Margie P"" | ""Margie and Krutav P.""",2,,"SPLIT RECOMMENDED","Possible two-person household. Krutav may be a separate client erased by this merge. Cannot resolve from CSV."
+mari,i,"""Mariela I."" | ""Mariela I""",2,,"ACCEPT","Trailing period only. Same person."
+eliz,lizz,"""Elizabeth (Liz AKA Lizzy)"" (both rows identical)",2,,"ACCEPT","Identical string both rows. Self-labeled nickname."
